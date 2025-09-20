@@ -50,3 +50,19 @@ def create_model():
         min_samples_split=50,   # giới hạn độ sâu → chống overfit
         random_state=1          # cố định kết quả
     )
+
+# chon feature quan trong , giam thoi gian train , tranh overfitting
+def select_features(df, predictors, threshold=0.01):
+    # train model tren toan bo du lieu de tinh importance 
+    # giu lai feature co importance > threshold
+
+    model = create_model()
+    model.fit(df[predictors], df["Target"])
+
+    # lay importance
+    feat_importances = pd.Series(model.feature_importances_, index = predictors)
+    feat_importances = feat_importances.sort_values(ascending=False)
+
+    # Giữ feature quan trọng hơn threshold
+    selected = feat_importances[feat_importances > threshold].index.tolist()
+    return selected, feat_importances
