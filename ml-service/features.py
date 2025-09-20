@@ -5,7 +5,7 @@ import pandas as pd
 # ========================
 def add_features(df: pd.DataFrame):
     # Tạo biến Target (nhãn dự đoán)
-    df["Tomorrow"] = df["Close"].shift(-1)  # Giá đóng cửa ngày mai
+    df["Tomorrow"] = df["Close"].shift(-5)  # Giá đóng cửa sau 5 ngay
     df["Target"] = (df["Tomorrow"] > df["Close"]).astype(
         int
     )  # 1 nếu ngày mai cao hơn hôm nay
