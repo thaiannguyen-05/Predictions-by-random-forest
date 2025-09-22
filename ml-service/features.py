@@ -18,7 +18,7 @@ def add_features(df: pd.DataFrame, horizon: int = 5):
     for horizon in horizons:
         rolling_averages = df.rolling(horizon).mean()
         df[f"Close_Ratio_{horizon}"] = df["Close"] / rolling_averages["Close"]
-        df[f"Trend_{horizon}"] = df.shift(1).rolling(horizon).sum()["Target"]
+        df[f"Trend_{horizon}"] = df["Target"].shift(1).rolling(horizon).sum()
         predictors += [f"Close_Ratio_{horizon}", f"Trend_{horizon}"]
 
     # Lag features (dùng giá quá khứ để dự đoán hiện tại)
