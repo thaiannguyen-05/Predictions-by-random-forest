@@ -1,0 +1,27 @@
+/* frontend/src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Các CSS tùy chỉnh của bạn ở đây (ví dụ background grid) */
+body {
+    background-color: #111827; /* gray-900 */
+    color: #f3f4f6; /* gray-100 */
+
+    background-image: linear-gradient(to right, #1f2937 1px, transparent 1px),
+                      linear-gradient(to bottom, #1f2937 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-attachment: fixed;
+}
+
+/* Keyframe cho ticker (nếu chưa có trong tailwind.config.js extend) */
+@keyframes ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.animate-ticker {
+  animation: ticker 25s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}

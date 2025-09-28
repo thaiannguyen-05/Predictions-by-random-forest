@@ -1,0 +1,5 @@
+# Cài react + react-dom + lucide-react
+npm install react react-dom lucide-react
+
+# Cài type cho React
+npm install -D @types/react @types/react-dom
