@@ -1,0 +1,102 @@
+model UserDevice {
+  id         String   @id @default(uuid()) @map("device_id") @db.Uuid
+  nameDevice String   @map("device_name")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  // foreign keys
+  userId     String   @map("user_id") @db.Uuid
+
+  //relation
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSession Session?
+
+  @@index([userId])
+  @@map("user_devices")
+}
+
+model Session {
+  id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
+  hashedRefreshToken String   @map("hashed_refresh_token")
+  userIp             String   @map("user_ip")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  // foreign keys
+  userDeviceId String     @unique @map("user_device_id") @db.Uuid
+  userId       String     @map("user_id") @db.Uuid
+  // relations
+  userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userDeviceId])
+  @@map("sessions")
+}
+
+model Oauth2User {
+  id             String   @id @default(uuid()) @db.Uuid
+  provider       Provider
+  providerUserId String   @map("provider_user_id") @db.VarChar(500)
+  email          String   @unique @db.VarChar(255)
+  phone          String?  @db.VarChar(20)
+  firstname      String?  @db.VarChar(50)
+  lastname       String?  @db.VarChar(50)
+  fullname       String?  @db.VarChar(50)
+  avatarUrl      String?  @map("avatar_url") @db.VarChar(500)
+  username       String?  @db.VarChar(50)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("oauth2_user")
+}
+
+model Code {
+  id        String   @id @default(uuid()) @db.Uuid
+  code      String
+  createdAt DateTime @default(now())
+
+  // foregin keys
+  userId String @db.Uuid
+
+  //relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Provider {
+  FACEBOOK
+  GOOGLE
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid()) @map("user_id") @db.Uuid
+  email          String   @unique @map("email_address")
+  username       String   @map("user_name")
+  firstName      String   @map("first_name")
+  lastName       String   @map("last_name")
+  hashedPassword String   @map("hashed_password")
+  phoneNumber    String?  @map("phone_number")
+  dateOfBirth    DateTime @map("birth_or_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // relations
+  userDevice UserDevice[]
+  sessions   Session[]
+  codes      Code[]
+
+  @@index([username])
+  @@index([email])
+  @@index([createdAt])
+  @@map("users") // Changed to plural form which is common in PostgreSQL
+}
