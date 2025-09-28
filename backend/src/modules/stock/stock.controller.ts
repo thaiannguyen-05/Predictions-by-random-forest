@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { StockPredictionService } from './stock-prediction.service';
 
 @Controller('api/stock')
