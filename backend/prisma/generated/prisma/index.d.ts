@@ -50,11 +50,25 @@ export namespace $Enums {
 
 export type Provider = (typeof Provider)[keyof typeof Provider]
 
+
+export const CodeType: {
+  VERIFICATION: 'VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET',
+  EMAIL_CHANGE: 'EMAIL_CHANGE',
+  PHONE_CHANGE: 'PHONE_CHANGE'
+};
+
+export type CodeType = (typeof CodeType)[keyof typeof CodeType]
+
 }
 
 export type Provider = $Enums.Provider
 
 export const Provider: typeof $Enums.Provider
+
+export type CodeType = $Enums.CodeType
+
+export const CodeType: typeof $Enums.CodeType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -4561,21 +4575,27 @@ export namespace Prisma {
   export type CodeMinAggregateOutputType = {
     id: string | null
     code: string | null
+    type: $Enums.CodeType | null
     createdAt: Date | null
+    updatedAt: Date | null
     userId: string | null
   }
 
   export type CodeMaxAggregateOutputType = {
     id: string | null
     code: string | null
+    type: $Enums.CodeType | null
     createdAt: Date | null
+    updatedAt: Date | null
     userId: string | null
   }
 
   export type CodeCountAggregateOutputType = {
     id: number
     code: number
+    type: number
     createdAt: number
+    updatedAt: number
     userId: number
     _all: number
   }
@@ -4584,21 +4604,27 @@ export namespace Prisma {
   export type CodeMinAggregateInputType = {
     id?: true
     code?: true
+    type?: true
     createdAt?: true
+    updatedAt?: true
     userId?: true
   }
 
   export type CodeMaxAggregateInputType = {
     id?: true
     code?: true
+    type?: true
     createdAt?: true
+    updatedAt?: true
     userId?: true
   }
 
   export type CodeCountAggregateInputType = {
     id?: true
     code?: true
+    type?: true
     createdAt?: true
+    updatedAt?: true
     userId?: true
     _all?: true
   }
@@ -4678,7 +4704,9 @@ export namespace Prisma {
   export type CodeGroupByOutputType = {
     id: string
     code: string
+    type: $Enums.CodeType
     createdAt: Date
+    updatedAt: Date
     userId: string
     _count: CodeCountAggregateOutputType | null
     _min: CodeMinAggregateOutputType | null
@@ -4702,7 +4730,9 @@ export namespace Prisma {
   export type CodeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     code?: boolean
+    type?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["code"]>
@@ -4710,7 +4740,9 @@ export namespace Prisma {
   export type CodeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     code?: boolean
+    type?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["code"]>
@@ -4718,7 +4750,9 @@ export namespace Prisma {
   export type CodeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     code?: boolean
+    type?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["code"]>
@@ -4726,11 +4760,13 @@ export namespace Prisma {
   export type CodeSelectScalar = {
     id?: boolean
     code?: boolean
+    type?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     userId?: boolean
   }
 
-  export type CodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "createdAt" | "userId", ExtArgs["result"]["code"]>
+  export type CodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "type" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["code"]>
   export type CodeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4749,7 +4785,9 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       code: string
+      type: $Enums.CodeType
       createdAt: Date
+      updatedAt: Date
       userId: string
     }, ExtArgs["result"]["code"]>
     composites: {}
@@ -5177,7 +5215,9 @@ export namespace Prisma {
   interface CodeFieldRefs {
     readonly id: FieldRef<"Code", 'String'>
     readonly code: FieldRef<"Code", 'String'>
+    readonly type: FieldRef<"Code", 'CodeType'>
     readonly createdAt: FieldRef<"Code", 'DateTime'>
+    readonly updatedAt: FieldRef<"Code", 'DateTime'>
     readonly userId: FieldRef<"Code", 'String'>
   }
     
@@ -5612,6 +5652,7 @@ export namespace Prisma {
     hashedPassword: string | null
     phoneNumber: string | null
     dateOfBirth: Date | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5625,6 +5666,7 @@ export namespace Prisma {
     hashedPassword: string | null
     phoneNumber: string | null
     dateOfBirth: Date | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5638,6 +5680,7 @@ export namespace Prisma {
     hashedPassword: number
     phoneNumber: number
     dateOfBirth: number
+    isActive: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5653,6 +5696,7 @@ export namespace Prisma {
     hashedPassword?: true
     phoneNumber?: true
     dateOfBirth?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5666,6 +5710,7 @@ export namespace Prisma {
     hashedPassword?: true
     phoneNumber?: true
     dateOfBirth?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5679,6 +5724,7 @@ export namespace Prisma {
     hashedPassword?: true
     phoneNumber?: true
     dateOfBirth?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5765,6 +5811,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber: string | null
     dateOfBirth: Date
+    isActive: boolean
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -5795,6 +5842,7 @@ export namespace Prisma {
     hashedPassword?: boolean
     phoneNumber?: boolean
     dateOfBirth?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
@@ -5812,6 +5860,7 @@ export namespace Prisma {
     hashedPassword?: boolean
     phoneNumber?: boolean
     dateOfBirth?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -5825,6 +5874,7 @@ export namespace Prisma {
     hashedPassword?: boolean
     phoneNumber?: boolean
     dateOfBirth?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -5838,11 +5888,12 @@ export namespace Prisma {
     hashedPassword?: boolean
     phoneNumber?: boolean
     dateOfBirth?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -5868,6 +5919,7 @@ export namespace Prisma {
       hashedPassword: string
       phoneNumber: string | null
       dateOfBirth: Date
+      isActive: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -6304,6 +6356,7 @@ export namespace Prisma {
     readonly hashedPassword: FieldRef<"User", 'String'>
     readonly phoneNumber: FieldRef<"User", 'String'>
     readonly dateOfBirth: FieldRef<"User", 'DateTime'>
+    readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -6843,7 +6896,9 @@ export namespace Prisma {
   export const CodeScalarFieldEnum: {
     id: 'id',
     code: 'code',
+    type: 'type',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     userId: 'userId'
   };
 
@@ -6859,6 +6914,7 @@ export namespace Prisma {
     hashedPassword: 'hashedPassword',
     phoneNumber: 'phoneNumber',
     dateOfBirth: 'dateOfBirth',
+    isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -6934,6 +6990,27 @@ export namespace Prisma {
    * Reference to a field of type 'Provider[]'
    */
   export type ListEnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CodeType'
+   */
+  export type EnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CodeType[]'
+   */
+  export type ListEnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -7173,7 +7250,9 @@ export namespace Prisma {
     NOT?: CodeWhereInput | CodeWhereInput[]
     id?: UuidFilter<"Code"> | string
     code?: StringFilter<"Code"> | string
+    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
     createdAt?: DateTimeFilter<"Code"> | Date | string
+    updatedAt?: DateTimeFilter<"Code"> | Date | string
     userId?: UuidFilter<"Code"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -7181,26 +7260,33 @@ export namespace Prisma {
   export type CodeOrderByWithRelationInput = {
     id?: SortOrder
     code?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     userId?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
   export type CodeWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    code_userId?: CodeCodeUserIdCompoundUniqueInput
     AND?: CodeWhereInput | CodeWhereInput[]
     OR?: CodeWhereInput[]
     NOT?: CodeWhereInput | CodeWhereInput[]
     code?: StringFilter<"Code"> | string
+    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
     createdAt?: DateTimeFilter<"Code"> | Date | string
+    updatedAt?: DateTimeFilter<"Code"> | Date | string
     userId?: UuidFilter<"Code"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "code_userId">
 
   export type CodeOrderByWithAggregationInput = {
     id?: SortOrder
     code?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     userId?: SortOrder
     _count?: CodeCountOrderByAggregateInput
     _max?: CodeMaxOrderByAggregateInput
@@ -7213,7 +7299,9 @@ export namespace Prisma {
     NOT?: CodeScalarWhereWithAggregatesInput | CodeScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Code"> | string
     code?: StringWithAggregatesFilter<"Code"> | string
+    type?: EnumCodeTypeWithAggregatesFilter<"Code"> | $Enums.CodeType
     createdAt?: DateTimeWithAggregatesFilter<"Code"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Code"> | Date | string
     userId?: UuidWithAggregatesFilter<"Code"> | string
   }
 
@@ -7229,6 +7317,7 @@ export namespace Prisma {
     hashedPassword?: StringFilter<"User"> | string
     phoneNumber?: StringNullableFilter<"User"> | string | null
     dateOfBirth?: DateTimeFilter<"User"> | Date | string
+    isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     userDevice?: UserDeviceListRelationFilter
@@ -7245,6 +7334,7 @@ export namespace Prisma {
     hashedPassword?: SortOrder
     phoneNumber?: SortOrderInput | SortOrder
     dateOfBirth?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userDevice?: UserDeviceOrderByRelationAggregateInput
@@ -7264,6 +7354,7 @@ export namespace Prisma {
     hashedPassword?: StringFilter<"User"> | string
     phoneNumber?: StringNullableFilter<"User"> | string | null
     dateOfBirth?: DateTimeFilter<"User"> | Date | string
+    isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     userDevice?: UserDeviceListRelationFilter
@@ -7280,6 +7371,7 @@ export namespace Prisma {
     hashedPassword?: SortOrder
     phoneNumber?: SortOrderInput | SortOrder
     dateOfBirth?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -7299,6 +7391,7 @@ export namespace Prisma {
     hashedPassword?: StringWithAggregatesFilter<"User"> | string
     phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
     dateOfBirth?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -7538,48 +7631,62 @@ export namespace Prisma {
   export type CodeCreateInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCodesInput
   }
 
   export type CodeUncheckedCreateInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
     userId: string
   }
 
   export type CodeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCodesNestedInput
   }
 
   export type CodeUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type CodeCreateManyInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
     userId: string
   }
 
   export type CodeUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CodeUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -7592,6 +7699,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -7608,6 +7716,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -7624,6 +7733,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -7640,6 +7750,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -7656,6 +7767,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7669,6 +7781,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7682,6 +7795,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7940,25 +8054,58 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type EnumCodeTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCodeTypeFilter<$PrismaModel> | $Enums.CodeType
+  }
+
+  export type CodeCodeUserIdCompoundUniqueInput = {
+    code: string
+    userId: string
+  }
+
   export type CodeCountOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     userId?: SortOrder
   }
 
   export type CodeMaxOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     userId?: SortOrder
   }
 
   export type CodeMinOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     userId?: SortOrder
+  }
+
+  export type EnumCodeTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel> | $Enums.CodeType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCodeTypeFilter<$PrismaModel>
+    _max?: NestedEnumCodeTypeFilter<$PrismaModel>
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type UserDeviceListRelationFilter = {
@@ -8000,6 +8147,7 @@ export namespace Prisma {
     hashedPassword?: SortOrder
     phoneNumber?: SortOrder
     dateOfBirth?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -8013,6 +8161,7 @@ export namespace Prisma {
     hashedPassword?: SortOrder
     phoneNumber?: SortOrder
     dateOfBirth?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -8026,8 +8175,17 @@ export namespace Prisma {
     hashedPassword?: SortOrder
     phoneNumber?: SortOrder
     dateOfBirth?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type UserCreateNestedOneWithoutUserDeviceInput = {
@@ -8126,6 +8284,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumCodeTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CodeType
+  }
+
   export type UserUpdateOneRequiredWithoutCodesNestedInput = {
     create?: XOR<UserCreateWithoutCodesInput, UserUncheckedCreateWithoutCodesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCodesInput
@@ -8174,6 +8336,10 @@ export namespace Prisma {
     connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
     createMany?: CodeCreateManyUserInputEnvelope
     connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type UserDeviceUpdateManyWithoutUserNestedInput = {
@@ -8411,6 +8577,36 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumCodeTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCodeTypeFilter<$PrismaModel> | $Enums.CodeType
+  }
+
+  export type NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel> | $Enums.CodeType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCodeTypeFilter<$PrismaModel>
+    _max?: NestedEnumCodeTypeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutUserDeviceInput = {
     id?: string
     email: string
@@ -8420,6 +8616,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -8435,6 +8632,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -8489,6 +8687,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -8504,6 +8703,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8569,6 +8769,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -8584,6 +8785,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -8642,6 +8844,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -8657,6 +8860,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -8672,6 +8876,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -8687,6 +8892,7 @@ export namespace Prisma {
     hashedPassword: string
     phoneNumber?: string | null
     dateOfBirth: Date | string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -8718,6 +8924,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -8733,6 +8940,7 @@ export namespace Prisma {
     hashedPassword?: StringFieldUpdateOperationsInput | string
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -8796,13 +9004,17 @@ export namespace Prisma {
   export type CodeCreateWithoutUserInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CodeUncheckedCreateWithoutUserInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CodeCreateOrConnectWithoutUserInput = {
@@ -8893,7 +9105,9 @@ export namespace Prisma {
     NOT?: CodeScalarWhereInput | CodeScalarWhereInput[]
     id?: UuidFilter<"Code"> | string
     code?: StringFilter<"Code"> | string
+    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
     createdAt?: DateTimeFilter<"Code"> | Date | string
+    updatedAt?: DateTimeFilter<"Code"> | Date | string
     userId?: UuidFilter<"Code"> | string
   }
 
@@ -8916,7 +9130,9 @@ export namespace Prisma {
   export type CodeCreateManyUserInput = {
     id?: string
     code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserDeviceUpdateWithoutUserInput = {
@@ -8972,19 +9188,25 @@ export namespace Prisma {
   export type CodeUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CodeUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CodeUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

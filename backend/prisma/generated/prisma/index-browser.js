@@ -156,7 +156,9 @@ exports.Prisma.Oauth2UserScalarFieldEnum = {
 exports.Prisma.CodeScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  type: 'type',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   userId: 'userId'
 };
 
@@ -169,6 +171,7 @@ exports.Prisma.UserScalarFieldEnum = {
   hashedPassword: 'hashedPassword',
   phoneNumber: 'phoneNumber',
   dateOfBirth: 'dateOfBirth',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -190,6 +193,13 @@ exports.Prisma.NullsOrder = {
 exports.Provider = exports.$Enums.Provider = {
   FACEBOOK: 'FACEBOOK',
   GOOGLE: 'GOOGLE'
+};
+
+exports.CodeType = exports.$Enums.CodeType = {
+  VERIFICATION: 'VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET',
+  EMAIL_CHANGE: 'EMAIL_CHANGE',
+  PHONE_CHANGE: 'PHONE_CHANGE'
 };
 
 exports.Prisma.ModelName = {
