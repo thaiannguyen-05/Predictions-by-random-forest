@@ -1,6 +1,6 @@
 model UserDevice {
     id         String   @id @default(uuid()) @map("device_id") @db.Uuid
-    nameDevice String   @map("device_name")
+    nameDevice String   @map("device_name") 
     createdAt  DateTime @default(now()) @map("created_at")
     updatedAt  DateTime @updatedAt @map("updated_at")
     // foreign keys
@@ -11,6 +11,7 @@ model UserDevice {
     userSession Session?
 
     @@index([userId])
+    @@unique([nameDevice, userId])
     @@map("user_devices")
 }
 
@@ -30,6 +31,7 @@ model Session {
 
     @@index([userId])
     @@index([userDeviceId])
+    @@unique([userId, userDeviceId])
     @@map("sessions")
 }
 

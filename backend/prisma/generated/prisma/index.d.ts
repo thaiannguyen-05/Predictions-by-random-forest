@@ -7056,6 +7056,7 @@ export namespace Prisma {
 
   export type UserDeviceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    nameDevice_userId?: UserDeviceNameDeviceUserIdCompoundUniqueInput
     AND?: UserDeviceWhereInput | UserDeviceWhereInput[]
     OR?: UserDeviceWhereInput[]
     NOT?: UserDeviceWhereInput | UserDeviceWhereInput[]
@@ -7065,7 +7066,7 @@ export namespace Prisma {
     userId?: UuidFilter<"UserDevice"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     userSession?: XOR<SessionNullableScalarRelationFilter, SessionWhereInput> | null
-  }, "id">
+  }, "id" | "nameDevice_userId">
 
   export type UserDeviceOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7119,6 +7120,7 @@ export namespace Prisma {
   export type SessionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     userDeviceId?: string
+    userId_userDeviceId?: SessionUserIdUserDeviceIdCompoundUniqueInput
     AND?: SessionWhereInput | SessionWhereInput[]
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
@@ -7129,7 +7131,7 @@ export namespace Prisma {
     userId?: UuidFilter<"Session"> | string
     userDevice?: XOR<UserDeviceScalarRelationFilter, UserDeviceWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "userDeviceId">
+  }, "id" | "userDeviceId" | "userId_userDeviceId">
 
   export type SessionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7345,10 +7347,10 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    username?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    username?: StringFilter<"User"> | string
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     hashedPassword?: StringFilter<"User"> | string
@@ -7360,7 +7362,7 @@ export namespace Prisma {
     userDevice?: UserDeviceListRelationFilter
     sessions?: SessionListRelationFilter
     codes?: CodeListRelationFilter
-  }, "id" | "email">
+  }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7848,6 +7850,11 @@ export namespace Prisma {
     isNot?: SessionWhereInput | null
   }
 
+  export type UserDeviceNameDeviceUserIdCompoundUniqueInput = {
+    nameDevice: string
+    userId: string
+  }
+
   export type UserDeviceCountOrderByAggregateInput = {
     id?: SortOrder
     nameDevice?: SortOrder
@@ -7922,6 +7929,11 @@ export namespace Prisma {
   export type UserDeviceScalarRelationFilter = {
     is?: UserDeviceWhereInput
     isNot?: UserDeviceWhereInput
+  }
+
+  export type SessionUserIdUserDeviceIdCompoundUniqueInput = {
+    userId: string
+    userDeviceId: string
   }
 
   export type SessionCountOrderByAggregateInput = {
