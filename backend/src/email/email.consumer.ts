@@ -11,4 +11,9 @@ export class EmailConsumer {
 	async handleSendCodeRegister(@Payload() data: { to: string, code: string }) {
 		await this.emailService.sendVerificationRegister(data.to, data.code)
 	}
+
+	@EventPattern('send-detect-other-device')
+	async handleSendDetectOtherDevice(@Payload() data: { to: string, username: string }) {
+		return this.emailService.detectdOtherDevice(data.to, data.username)
+	}
 }

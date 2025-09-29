@@ -7,13 +7,15 @@ import { ConfigService } from "@nestjs/config";
 import { hash } from "argon2";
 import { Response } from "express";
 import { AUTH_CONSTANT } from "../auth.constants";
+import { EmailProducer } from "src/email/emai.producer";
 @Injectable()
 export class AuthTokenSerivec {
 
 	constructor(
 		private readonly prismaService: PrismaService,
 		private readonly jwtService: JwtService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly emailProducer: EmailProducer
 	) { }
 
 	// generate tokens
@@ -53,6 +55,8 @@ export class AuthTokenSerivec {
 
 		if (!session) {
 			// check if session is not available -> create userdevice and new session
+			// new device notification
+			await this.emailProducer.sendDetectOtherDevice({ to: user.email, username: user.username })
 			const newUserDevice = await this.prismaService.userDevice.create({
 				data: {
 					nameDevice: userDevice,
