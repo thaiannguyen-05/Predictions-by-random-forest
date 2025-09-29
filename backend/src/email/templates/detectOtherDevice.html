@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" style="margin: 0; padding: 0">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>New Device Login Detected</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+		.alert-box {
+			background-color: #fef2f2;
+			border: 2px solid #ef4444;
+			color: #991b1b;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+			padding: 20px;
+			margin: 24px 0;
+			border-radius: 8px;
+		}
+
+		.time-detected {
+			background-color: #f3f4f6;
+			border: 1px solid #d1d5db;
+			color: #111827;
+			font-family: 'Courier New', monospace;
+			font-size: 18px;
+			font-weight: bold;
+			text-align: center;
+			padding: 15px;
+			margin: 16px 0;
+			border-radius: 6px;
+			letter-spacing: 1px;
+		}
+
+		.container {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			max-width: 600px;
+			margin: auto;
+			padding: 32px;
+			background: #ffffff;
+			border-radius: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.footer {
+			text-align: center;
+			font-size: 12px;
+			color: #888888;
+			margin-top: 32px;
+		}
+
+		.highlight {
+			background-color: #fef3c7;
+			color: #92400e;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-weight: 600;
+		}
+
+		.security-btn {
+			background-color: #ef4444;
+			color: white;
+			padding: 12px 24px;
+			text-decoration: none;
+			border-radius: 6px;
+			font-weight: 600;
+			display: inline-block;
+			margin: 16px 0;
+		}
+	</style>
+</head>
+
+<body style="background-color: #f4f4f5; margin: 0; padding: 40px 0">
+	<div class="container">
+		<h2 style="color: #ef4444">🔒 Security Alert: New Device Login Detected</h2>
+		<p style="color: #374151">
+			Hello <span class="highlight">{USER_NAME}</span>, we detected a login to your account from a new device.
+		</p>
+
+		<div class="alert-box">
+			⚠️ SECURITY NOTIFICATION
+		</div>
+
+		<p style="color: #374151; font-size: 16px;">
+			<strong>Login Details:</strong>
+		</p>
+
+		<div class="time-detected">
+			{TIME_DETECTED}
+		</div>
+
+		<p style="color: #6b7280; text-align: center; margin: 24px 0; font-size: 14px;">
+			If this was you, you can safely ignore this email
+		</p>
+
+		<p
+			style="color: #ef4444; font-size: 14px; background-color: #fef2f2; padding: 12px; border-radius: 6px; border-left: 4px solid #ef4444;">
+			<strong>If this wasn't you:</strong> Please immediately change your password and review your account
+			security settings. Someone may have unauthorized access to your account.
+		</p>
+
+		<div style="text-align: center; margin: 24px 0;">
+			<a href="#" class="security-btn">Secure My Account</a>
+		</div>
+
+		<p style="color: #6b7280; font-size: 14px;">
+			For your security, we recommend:
+			<br>• Change your password immediately
+			<br>• Enable two-factor authentication
+			<br>• Review recent account activity
+			<br>• Contact support if you need assistance
+		</p>
+
+		<div class="footer">&copy; 2025 Your Company. All rights reserved.</div>
+	</div>
+</body>
+
+</html>
