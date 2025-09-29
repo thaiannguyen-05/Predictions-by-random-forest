@@ -10,6 +10,7 @@ model UserDevice {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userSession Session?
 
+  @@unique([nameDevice, userId])
   @@index([userId])
   @@map("user_devices")
 }
@@ -28,6 +29,7 @@ model Session {
   userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, userDeviceId])
   @@index([userId])
   @@index([userDeviceId])
   @@map("sessions")
@@ -93,7 +95,7 @@ datasource db {
 model User {
   id             String   @id @default(uuid()) @map("user_id") @db.Uuid
   email          String   @unique @map("email_address")
-  username       String   @map("user_name")
+  username       String   @unique @map("user_name")
   firstName      String   @map("first_name")
   lastName       String   @map("last_name")
   hashedPassword String   @map("hashed_password")

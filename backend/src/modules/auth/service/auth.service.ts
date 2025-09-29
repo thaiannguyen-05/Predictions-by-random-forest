@@ -1,15 +1,21 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { hash } from 'argon2'
-import { CreateAccountDto } from './dto/create-account.dto';
+import { hash, verify } from 'argon2'
+import { CreateAccountDto } from '../dto/create-account.dto';
 import { DateUtils } from 'src/common/utils/string-to-date.utils';
 import { EmailProducer } from 'src/email/emai.producer';
-import { VerifyAccount } from './dto/verify-account.dto';
+import { VerifyAccount } from '../dto/verify-account.dto';
+import { LoginDto } from '../dto/login.dto';
+import { Response } from 'express';
+import { AuthOtherService } from './auth.other.service';
+import { AuthTokenSerivec } from './auth.token.service';
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		private readonly emailProducer: EmailProducer
+		private readonly emailProducer: EmailProducer,
+		private readonly authOtherService: AuthOtherService,
+		private readonly tokenService: AuthTokenSerivec
 	) { }
 
 	// check available account
@@ -20,6 +26,35 @@ export class AuthService {
 	// genereate code 
 	private generateVerificationCode(): string {
 		return Math.floor(100000 + Math.random() * 900000).toString();
+	}
+
+	// check available user and active user
+	private async getActiveAccount(access: string) {
+		return await this.prismaService.user.findFirst({
+			where: {
+				AND: [
+					{
+						OR: [
+							{ email: access },
+							{ username: access }
+						]
+					}, {
+						isActive: true
+					}
+
+				]
+			},
+			omit: { hashedPassword: false }
+		})
+	}
+
+	// detect other device
+	async detectOtherDevice(userDevice: string, userId: string) {
+		const device = await this.prismaService.userDevice.findUnique({
+			where: { nameDevice_userId: { userId: userId, nameDevice: userDevice } }
+		})
+
+		return (device) ? true : false
 	}
 
 	// register
@@ -114,6 +149,36 @@ export class AuthService {
 		return {
 			status: false
 		}
-
 	}
+
+	// login
+	async login(dto: LoginDto, res: Response) {
+		// check available user
+		const user = await this.getActiveAccount(dto.access)
+		if (!user) throw new NotFoundException("User not found")
+
+		// check valid password
+		const isValidPassword = verify(user.hashedPassword, dto.password)
+		if (!isValidPassword) throw new ForbiddenException("Password is not corrected")
+
+		// get present device 
+		const hardware = await this.authOtherService.getClientInfo(res.req)
+
+		// create session
+		const { session, tokens } = await this.tokenService.createSession(user, hardware.ip, hardware.userAgent, res)
+
+		const { hashedPassword, ...userWithoutPassword } = user
+
+		return {
+			data: userWithoutPassword,
+			session: {
+				id: session.id,
+				userAgent: hardware.userAgent,
+				userIp: session.userIp,
+				loginedAt: session.createdAt
+			},
+			tokens
+		}
+	}
+
 }
