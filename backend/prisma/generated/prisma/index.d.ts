@@ -5646,6 +5646,7 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: string | null
     email: string | null
+    avtUrl: string | null
     username: string | null
     firstName: string | null
     lastName: string | null
@@ -5660,6 +5661,7 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     id: string | null
     email: string | null
+    avtUrl: string | null
     username: string | null
     firstName: string | null
     lastName: string | null
@@ -5674,6 +5676,7 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     id: number
     email: number
+    avtUrl: number
     username: number
     firstName: number
     lastName: number
@@ -5690,6 +5693,7 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5704,6 +5708,7 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5718,6 +5723,7 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5805,6 +5811,7 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     email: string
+    avtUrl: string | null
     username: string
     firstName: string
     lastName: string
@@ -5836,6 +5843,7 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5854,6 +5862,7 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5868,6 +5877,7 @@ export namespace Prisma {
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5882,6 +5892,7 @@ export namespace Prisma {
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5893,7 +5904,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "avtUrl" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -5913,6 +5924,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
+      avtUrl: string | null
       username: string
       firstName: string
       lastName: string
@@ -6350,6 +6362,7 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly avtUrl: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
@@ -6908,6 +6921,7 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
+    avtUrl: 'avtUrl',
     username: 'username',
     firstName: 'firstName',
     lastName: 'lastName',
@@ -7313,6 +7327,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
+    avtUrl?: StringNullableFilter<"User"> | string | null
     username?: StringFilter<"User"> | string
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
@@ -7330,6 +7345,7 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -7351,6 +7367,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    avtUrl?: StringNullableFilter<"User"> | string | null
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     hashedPassword?: StringFilter<"User"> | string
@@ -7367,6 +7384,7 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -7387,6 +7405,7 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
+    avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     username?: StringWithAggregatesFilter<"User"> | string
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringWithAggregatesFilter<"User"> | string
@@ -7695,6 +7714,7 @@ export namespace Prisma {
   export type UserCreateInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7712,6 +7732,7 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7729,6 +7750,7 @@ export namespace Prisma {
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7746,6 +7768,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7763,6 +7786,7 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7777,6 +7801,7 @@ export namespace Prisma {
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7791,6 +7816,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8153,6 +8179,7 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8167,6 +8194,7 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8181,6 +8209,7 @@ export namespace Prisma {
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8622,6 +8651,7 @@ export namespace Prisma {
   export type UserCreateWithoutUserDeviceInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8638,6 +8668,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutUserDeviceInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8693,6 +8724,7 @@ export namespace Prisma {
   export type UserUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8709,6 +8741,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8775,6 +8808,7 @@ export namespace Prisma {
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8791,6 +8825,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSessionsInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8850,6 +8885,7 @@ export namespace Prisma {
   export type UserUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8866,6 +8902,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8882,6 +8919,7 @@ export namespace Prisma {
   export type UserCreateWithoutCodesInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8898,6 +8936,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutCodesInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8930,6 +8969,7 @@ export namespace Prisma {
   export type UserUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8946,6 +8986,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string

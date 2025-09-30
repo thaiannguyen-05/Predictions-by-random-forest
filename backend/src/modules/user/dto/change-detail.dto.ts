@@ -4,4 +4,5 @@ export class ChangeDetailDto {
 	lastName?: string
 	phoneNumber?: string
 	dateOfBirth?: string
+	avtUrl?: string
 }
