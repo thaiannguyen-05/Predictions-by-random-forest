@@ -270,4 +270,14 @@ export class AuthService {
 		}
 	}
 
+	// refresh token
+	async refreshToken(sesisonId: string, refreshToken: string, res: Response) {
+		// get sid
+		const sid = sesisonId || res.req.cookies.session_id
+
+		// get user hardware
+		const hardware = await this.authOtherService.getClientInfo(res.req)
+		return await this.tokenService.refreshToken(sid, refreshToken, hardware.ip, hardware.userAgent, res)
+	}
+
 }

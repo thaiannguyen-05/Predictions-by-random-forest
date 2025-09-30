@@ -38,7 +38,11 @@ export class AuthController {
 
 	@Patch('change-password')
 	async changePassword(@Req() req: express.Request, @Body() dto: ChangePasswordDto) {
-		console.log(req.user)
 		return this.authService.changePassword(req, dto)
+	}
+
+	@Patch('refresh-token')
+	async refreshToken(@Cookies('session_id') sessionId: string, @Cookies('refresh_token') refreshToken: string, @Res({ passthrough: true }) res: express.Response) {
+		return this.authService.refreshToken(sessionId, refreshToken, res)
 	}
 }
