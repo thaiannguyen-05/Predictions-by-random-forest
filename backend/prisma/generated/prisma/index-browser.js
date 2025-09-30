@@ -165,6 +165,7 @@ exports.Prisma.CodeScalarFieldEnum = {
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  avtUrl: 'avtUrl',
   username: 'username',
   firstName: 'firstName',
   lastName: 'lastName',

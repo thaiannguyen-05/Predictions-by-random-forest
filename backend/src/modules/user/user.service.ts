@@ -46,7 +46,8 @@ export class UserService {
 				...(dto.firstName && { firstName: dto.firstName }),
 				...(dto.lastName && { lastName: dto.lastName }),
 				...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
-				...(dto.dateOfBirth && { dateOfBirth: dateOfBirth })
+				...(dto.dateOfBirth && { dateOfBirth: dateOfBirth }),
+				...(dto.avtUrl && { avtUrl: dto.avtUrl })
 			}
 		})
 
@@ -55,4 +56,6 @@ export class UserService {
 			data: newUser
 		}
 	}
+
+	
 }
