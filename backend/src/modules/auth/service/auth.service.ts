@@ -181,4 +181,29 @@ export class AuthService {
 		}
 	}
 
+	// logout 
+	async logout(res: Response, sessionId?: string) {
+		// get sesison id
+		const sid = res.req.cookies?.sesison_id || sessionId
+
+		if (!sid) throw new BadRequestException("Sesison id required")
+
+		// clear refresh token
+		const newSesison = await this.prismaService.session.update({
+			where: { id: sessionId },
+			data: { hashedRefreshToken: null }
+		})
+
+		// clear session
+		res
+			.clearCookie('access_token', { path: '/' })
+			.clearCookie('refresh_token', { path: '/' })
+			.clearCookie('session_id', { path: '/' })
+
+		return {
+			status: true,
+			newSesison
+		}
+	}
+
 }
