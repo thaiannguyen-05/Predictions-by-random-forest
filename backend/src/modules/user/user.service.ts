@@ -46,7 +46,7 @@ export class UserService {
 				...(dto.firstName && { firstName: dto.firstName }),
 				...(dto.lastName && { lastName: dto.lastName }),
 				...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
-				...(dto.dateOfBirth && { dateOfBirth: dto.dateOfBirth })
+				...(dto.dateOfBirth && { dateOfBirth: dateOfBirth })
 			}
 		})
 
