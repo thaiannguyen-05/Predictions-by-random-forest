@@ -194,7 +194,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/andev/work_space/prediction-by-radom-forest/backend/prisma/generated/prisma",
+      "value": "D:\\PreTrade\\Predictions-by-random-forest\\backend\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -203,12 +203,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/andev/work_space/prediction-by-radom-forest/backend/prisma/schema/schema.prisma",
+    "sourceFilePath": "D:\\PreTrade\\Predictions-by-random-forest\\backend\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -222,6 +226,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -230,8 +235,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "model UserDevice {\n  id         String   @id @default(uuid()) @map(\"device_id\") @db.Uuid\n  nameDevice String   @map(\"device_name\")\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n  updatedAt  DateTime @updatedAt @map(\"updated_at\")\n  // foreign keys\n  userId     String   @map(\"user_id\") @db.Uuid\n\n  //relation\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userSession Session?\n\n  @@unique([nameDevice, userId])\n  @@index([userId])\n  @@map(\"user_devices\")\n}\n\nmodel Session {\n  id                 String   @id @default(uuid()) @map(\"session_id\") @db.Uuid\n  hashedRefreshToken String?  @map(\"hashed_refresh_token\")\n  userIp             String   @map(\"user_ip\")\n  createdAt          DateTime @default(now()) @map(\"created_at\")\n  updatedAt          DateTime @updatedAt @map(\"updated_at\")\n\n  // foreign keys\n  userDeviceId String     @unique @map(\"user_device_id\") @db.Uuid\n  userId       String     @map(\"user_id\") @db.Uuid\n  // relations\n  userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)\n  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, userDeviceId])\n  @@index([userId])\n  @@index([userDeviceId])\n  @@map(\"sessions\")\n}\n\nmodel Oauth2User {\n  id             String   @id @default(uuid()) @db.Uuid\n  provider       Provider\n  providerUserId String   @map(\"provider_user_id\") @db.VarChar(500)\n  email          String   @unique @db.VarChar(255)\n  phone          String?  @db.VarChar(20)\n  firstname      String?  @db.VarChar(50)\n  lastname       String?  @db.VarChar(50)\n  fullname       String?  @db.VarChar(50)\n  avatarUrl      String?  @map(\"avatar_url\") @db.VarChar(500)\n  username       String?  @db.VarChar(50)\n  createdAt      DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt      DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  @@map(\"oauth2_user\")\n}\n\nmodel Code {\n  id        String   @id @default(uuid()) @map(\"code_id\") @db.Uuid\n  code      String   @db.VarChar(255)\n  type      CodeType @default(VERIFICATION) @map(\"code_type\")\n  createdAt DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  // foreign keys\n  userId String @map(\"user_id\") @db.Uuid\n\n  // relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([code, userId])\n  @@index([userId])\n  @@map(\"codes\")\n}\n\nenum Provider {\n  FACEBOOK\n  GOOGLE\n}\n\nenum CodeType {\n  VERIFICATION\n  PASSWORD_RESET\n  EMAIL_CHANGE\n  PHONE_CHANGE\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id             String   @id @default(uuid()) @map(\"user_id\") @db.Uuid\n  email          String   @unique @map(\"email_address\")\n  avtUrl         String?  @map(\"avt_url\")\n  username       String   @unique @map(\"user_name\")\n  firstName      String   @map(\"first_name\")\n  lastName       String   @map(\"last_name\")\n  hashedPassword String   @map(\"hashed_password\")\n  phoneNumber    String?  @map(\"phone_number\")\n  dateOfBirth    DateTime @map(\"birth_or_date\")\n  isActive       Boolean  @default(false) @map(\"is_active\")\n  createdAt      DateTime @default(now()) @map(\"created_at\")\n  updatedAt      DateTime @updatedAt @map(\"updated_at\")\n\n  // relations\n  userDevice UserDevice[]\n  sessions   Session[]\n  codes      Code[]\n\n  @@index([username])\n  @@index([email])\n  @@index([createdAt])\n  @@map(\"users\") // Changed to plural form which is common in PostgreSQL\n}\n",
-  "inlineSchemaHash": "cd878c69aa5182573880e7823957d395ee402af35c99262c809fed418339efcc",
+  "inlineSchema": "model UserDevice {\n  id         String   @id @default(uuid()) @map(\"device_id\") @db.Uuid\n  nameDevice String   @map(\"device_name\")\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n  updatedAt  DateTime @updatedAt @map(\"updated_at\")\n  // foreign keys\n  userId     String   @map(\"user_id\") @db.Uuid\n\n  //relation\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userSession Session?\n\n  @@unique([nameDevice, userId])\n  @@index([userId])\n  @@map(\"user_devices\")\n}\n\nmodel Session {\n  id                 String   @id @default(uuid()) @map(\"session_id\") @db.Uuid\n  hashedRefreshToken String?  @map(\"hashed_refresh_token\")\n  userIp             String   @map(\"user_ip\")\n  createdAt          DateTime @default(now()) @map(\"created_at\")\n  updatedAt          DateTime @updatedAt @map(\"updated_at\")\n\n  // foreign keys\n  userDeviceId String     @unique @map(\"user_device_id\") @db.Uuid\n  userId       String     @map(\"user_id\") @db.Uuid\n  // relations\n  userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)\n  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, userDeviceId])\n  @@index([userId])\n  @@index([userDeviceId])\n  @@map(\"sessions\")\n}\n\nmodel Oauth2User {\n  id             String   @id @default(uuid()) @db.Uuid\n  provider       Provider\n  providerUserId String   @map(\"provider_user_id\") @db.VarChar(500)\n  email          String   @unique @db.VarChar(255)\n  phone          String?  @db.VarChar(20)\n  firstname      String?  @db.VarChar(50)\n  lastname       String?  @db.VarChar(50)\n  fullname       String?  @db.VarChar(50)\n  avatarUrl      String?  @map(\"avatar_url\") @db.VarChar(500)\n  username       String?  @db.VarChar(50)\n  createdAt      DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt      DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  @@map(\"oauth2_user\")\n}\n\nmodel Code {\n  id        String   @id @default(uuid()) @map(\"code_id\") @db.Uuid\n  code      String   @db.VarChar(255)\n  type      CodeType @default(VERIFICATION) @map(\"code_type\")\n  createdAt DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  // foreign keys\n  userId String @map(\"user_id\") @db.Uuid\n\n  // relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([code, userId])\n  @@index([userId])\n  @@map(\"codes\")\n}\n\nenum Provider {\n  FACEBOOK\n  GOOGLE\n}\n\nenum CodeType {\n  VERIFICATION\n  PASSWORD_RESET\n  EMAIL_CHANGE\n  PHONE_CHANGE\n}\n\n// // use Linux\n// generator client {\n//   provider = \"prisma-client-js\"\n//   output   = \"../generated/prisma\"\n// }\n// use Windows\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"windows\"]\n  output        = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id             String   @id @default(uuid()) @map(\"user_id\") @db.Uuid\n  email          String   @unique @map(\"email_address\")\n  avtUrl         String?  @map(\"avt_url\")\n  username       String   @unique @map(\"user_name\")\n  firstName      String   @map(\"first_name\")\n  lastName       String   @map(\"last_name\")\n  hashedPassword String   @map(\"hashed_password\")\n  phoneNumber    String?  @map(\"phone_number\")\n  dateOfBirth    DateTime @map(\"birth_or_date\")\n  isActive       Boolean  @default(false) @map(\"is_active\")\n  createdAt      DateTime @default(now()) @map(\"created_at\")\n  updatedAt      DateTime @updatedAt @map(\"updated_at\")\n\n  // relations\n  userDevice UserDevice[]\n  sessions   Session[]\n  codes      Code[]\n\n  @@index([username])\n  @@index([email])\n  @@index([createdAt])\n  @@map(\"users\") // Changed to plural form which is common in PostgreSQL\n}\n",
+  "inlineSchemaHash": "3722f8078ce8f0d55921a0a94c1b63e3c8cab1ee4d3a84316113c855119e4af4",
   "copyEngine": true
 }
 
@@ -270,8 +275,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(process.cwd(), "prisma/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process.cwd(), "prisma/generated/prisma/query_engine-windows.dll.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/generated/prisma/schema.prisma")

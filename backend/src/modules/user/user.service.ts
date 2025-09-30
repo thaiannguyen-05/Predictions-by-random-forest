@@ -38,23 +38,26 @@ export class UserService {
 		// trans date time
 		const dateOfBirth = dto.dateOfBirth ? DateUtils.stringToBirthday(dto.dateOfBirth) : undefined
 
-		// update data
-		const newUser = await this.prismaService.user.update({
-			where: { id: user.id },
-			data: {
-				...(dto.username && { username: dto.username }),
-				...(dto.firstName && { firstName: dto.firstName }),
-				...(dto.lastName && { lastName: dto.lastName }),
-				...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
-				...(dto.dateOfBirth && { dateOfBirth: dateOfBirth }),
-				...(dto.avtUrl && { avtUrl: dto.avtUrl })
-			}
-		})
+		   // update data
+		   const newUser = await this.prismaService.user.update({
+			   where: { id: user.id },
+			   data: {
+				   ...(dto.username && { username: dto.username }),
+				   ...(dto.firstName && { firstName: dto.firstName }),
+				   ...(dto.lastName && { lastName: dto.lastName }),
+				   ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
+				   ...(dto.dateOfBirth && { dateOfBirth: dateOfBirth }),
+				   ...(dto.avtUrl && { avtUrl: dto.avtUrl })
+			   }
+		   })
 
-		return {
-			status: true,
-			data: newUser
-		}
+		   // Remove hashedPassword before returning
+		   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+		   const { hashedPassword, ...userWithoutPassword } = newUser as any;
+		   return {
+			   status: true,
+			   data: userWithoutPassword
+		   }
 	}
 
 	
