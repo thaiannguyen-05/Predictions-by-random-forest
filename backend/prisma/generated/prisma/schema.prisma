@@ -17,7 +17,7 @@ model UserDevice {
 
 model Session {
   id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
-  hashedRefreshToken String   @map("hashed_refresh_token")
+  hashedRefreshToken String?  @map("hashed_refresh_token")
   userIp             String   @map("user_ip")
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
