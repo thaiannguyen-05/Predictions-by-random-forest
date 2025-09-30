@@ -89,4 +89,29 @@ export class EmailService {
 			return false
 		}
 	}
+
+	// send notify change password
+	async changePassword(toEmail: string, username: string) {
+		try {
+			// get template
+			const template = await this.getTemplate('notifyChangePassword')
+			const subject = 'Notify Changepassword'
+			const html = template
+				?.replace('{USER_NAME}', username)
+				.replace('{BEHAVIOR_TIME}', new Date().toLocaleString())
+			const mailOptions = {
+				from: `Thaiandev Service: ${this.configService.getOrThrow<string>("EMAIL_USER")}`,
+				subject,
+				to: toEmail,
+				html
+			}
+
+			// send email
+			const info = await this.transporter.sendMail(mailOptions)
+			return !!(info && (Array.isArray((info as any).accepted) ? (info as any).accepted.length > 0 : (info as any).messageId))
+		} catch (error) {
+			this.logger.error('Send email failed:', error)
+			return false
+		}
+	}
 }

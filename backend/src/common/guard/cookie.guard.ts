@@ -1,8 +1,9 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { AuthGuard } from "@nestjs/passport";
-import { Observable } from "rxjs";
-import { IS_PUBLIC_KEY } from "../decorator/public.decorator";
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from '../decorator/public.decorator';
+import express from 'express';
+import { AuthGuard } from '@nestjs/passport';
+
 @Injectable()
 export class CookieGuard extends AuthGuard('cookie') {
 	constructor(private reflector: Reflector) {
@@ -10,15 +11,20 @@ export class CookieGuard extends AuthGuard('cookie') {
 	}
 
 	canActivate(context: ExecutionContext) {
-		if(context.getType() == 'http') return true
+		// check type request
+		if (context.getType() !== 'http') {
+			return true
+		}
 
+		// check public
 		const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
 			context.getHandler(),
 			context.getClass()
 		])
 
-		if(isPublic) return true
+		if (isPublic) return true
 
-		return  super.canActivate(context)
+		return super.canActivate(context)
 	}
+
 }

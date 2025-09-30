@@ -6,7 +6,8 @@ import { StockModule } from './modules/stock/stock.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { EmailModule } from './email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { APP_GUARD, Reflector } from '@nestjs/core';
+import { CookieGuard } from './common/guard/cookie.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -15,6 +16,12 @@ import { AuthModule } from './modules/auth/auth.module';
     StockModule, PrismaModule, EmailModule, AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppService,
+    {
+      provide: APP_GUARD,
+      inject: [Reflector],
+      useFactory: (reflector: Reflector) => new CookieGuard(reflector),
+    },
+  ],
 })
 export class AppModule { }
