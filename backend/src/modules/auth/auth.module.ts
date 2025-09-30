@@ -6,6 +6,7 @@ import { AuthOtherService } from './service/auth.other.service';
 import { AuthTokenSerivec } from './service/auth.token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CookieStrategy } from 'src/common/strategy/auth-cookie.strategy';
 @Module({
   imports: [
     EmailModule,
@@ -18,7 +19,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       })
     })
   ],
-  providers: [AuthService, AuthOtherService, AuthTokenSerivec],
-  controllers: [AuthController]
+  providers: [AuthService, AuthOtherService, AuthTokenSerivec, CookieStrategy],
+  controllers: [AuthController],
+  exports: [AuthService]
 })
 export class AuthModule { }

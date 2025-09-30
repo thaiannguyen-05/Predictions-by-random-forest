@@ -1,21 +1,26 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { hash, verify } from 'argon2'
-import { CreateAccountDto } from '../dto/create-account.dto';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { hash, verify } from 'argon2';
+import { Request, Response } from 'express';
 import { DateUtils } from 'src/common/utils/string-to-date.utils';
 import { EmailProducer } from 'src/email/emai.producer';
-import { VerifyAccount } from '../dto/verify-account.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
-import { Response } from 'express';
+import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
 import { AuthTokenSerivec } from './auth.token.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly prismaService: PrismaService,
 		private readonly emailProducer: EmailProducer,
 		private readonly authOtherService: AuthOtherService,
-		private readonly tokenService: AuthTokenSerivec
+		private readonly tokenService: AuthTokenSerivec,
+		private readonly jwtService: JwtService,
+		private readonly configService: ConfigService
 	) { }
 
 	// check available account
@@ -46,6 +51,31 @@ export class AuthService {
 			},
 			omit: { hashedPassword: false }
 		})
+	}
+
+	// verify account with accesstoken
+	public async validate(accessToken: string) {
+		try {
+			// get id in payload
+			const payload = await this.jwtService.verifyAsync(accessToken, {
+				secret: this.configService.getOrThrow<string>("JWT_SECRET")
+			})
+
+			// find user 
+			const exitingUser = await this.prismaService.user.findUnique({
+				where: { id: payload.sub }
+			})
+
+			if (!exitingUser) throw new NotFoundException('User not found')
+
+			return exitingUser
+
+		} catch (error) {
+			if (error instanceof UnauthorizedException) {
+				throw error
+			}
+			throw new UnauthorizedException("Invalid or expired access token")
+		}
 	}
 
 	// detect other device
@@ -203,6 +233,40 @@ export class AuthService {
 		return {
 			status: true,
 			newSesison
+		}
+	}
+
+	// change password 
+	async changePassword(req: Request, dto: ChangePasswordDto) {
+		// check available account
+		const requestId = req.user?.id || 'unknow'
+		const account = await this.getActiveAccount(dto.accessor)
+		if (!account) throw new NotFoundException("User not found")
+
+		console.log(account)
+
+		console.log(requestId)
+		// check permission
+		if (account.id !== requestId) throw new BadRequestException("You are not author")
+
+		// check valid password
+		const isValied = verify(account.hashedPassword, dto.password)
+		if (!isValied) throw new ForbiddenException("Password is not corrected")
+
+		// hasing password
+		const newHashedpassword = await hash(dto.newPassword)
+
+		// change password
+		await this.prismaService.user.update({
+			where: { id: account.id },
+			data: { hashedPassword: newHashedpassword }
+		})
+
+		// sending email
+		await this.emailProducer.sendNotifiCaitonChangePassword({ to: account.email, username: account.username })
+
+		return {
+			status: true
 		}
 	}
 
