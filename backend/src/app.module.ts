@@ -6,15 +6,23 @@ import { StockModule } from './modules/stock/stock.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { EmailModule } from './email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { APP_GUARD, Reflector } from '@nestjs/core';
+import { CookieGuard } from './common/guard/cookie.guard';
+import { UserModule } from './modules/user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    StockModule, PrismaModule, EmailModule, AuthModule
+    StockModule, PrismaModule, EmailModule, AuthModule, UserModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppService,
+    {
+      provide: APP_GUARD,
+      inject: [Reflector],
+      useFactory: (reflector: Reflector) => new CookieGuard(reflector),
+    },
+  ],
 })
 export class AppModule { }

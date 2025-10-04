@@ -14,4 +14,8 @@ export class EmailProducer {
 	async sendDetectOtherDevice(data: { to: string, username: string }) {
 		await this.client.emit('send-detect-other-device', data)
 	}
+
+	async sendNotifiCaitonChangePassword(data: { to: string, username: string }) {
+		await this.client.emit('send-notification-password', data)
+	}
 }

@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { User } from "prisma/generated/prisma";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Payload } from "../auth.interface";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import { hash } from "argon2";
+import { hash, verify } from "argon2";
 import { Response } from "express";
 import { AUTH_CONSTANT } from "../auth.constants";
 import { EmailProducer } from "src/email/emai.producer";
@@ -108,5 +108,101 @@ export class AuthTokenSerivec {
 			})
 
 		return { session, tokens }
+	}
+
+	// refresh tokens
+	async refreshToken(sessionId: string, refreshToken: string, ip: string, userAgent: string, res: Response) {
+		try {
+			// validate session
+			const session = await this.prismaService.session.findUnique({
+				where: { id: sessionId },
+				include: {
+					user: true,
+					userDevice: true
+				}
+			})
+			if (!session) throw new UnauthorizedException("Invalid session")
+
+			// verify refresh token 
+			if (!session.hashedRefreshToken) throw new UnauthorizedException("Invalid session")
+			const isValidToken = await verify(session.hashedRefreshToken, refreshToken)
+			if (!isValidToken) throw new UnauthorizedException("Invalid refreshtoken")
+
+			// verify jwt token
+			let payload: Payload
+			try {
+				payload = await this.jwtService.verifyAsync(refreshToken, {
+					secret: this.configService.getOrThrow<string>("JWT_SECRET")
+				})
+			} catch (error) {
+				// delete expired/invalid session
+				await this.prismaService.session.delete({ where: { id: sessionId } })
+				throw new UnauthorizedException("Refresh token expired or invalid")
+			}
+
+			// security checks
+			if (payload.sub !== session.userId) {
+				await this.prismaService.session.delete({ where: { id: sessionId } })
+				throw new UnauthorizedException("Token user mismatch")
+			}
+
+			// check available user
+			const user = await this.prismaService.user.findUnique({
+				where: { id: session.userId, isActive: true }
+			})
+			if (!user) throw new NotFoundException("User not found or active")
+
+			// update device info or create session
+			await this.storeSession(user, ip, userAgent, session.hashedRefreshToken)
+
+			// generate new tokens
+			const newTokens = await this.generateTokens(user)
+			const newHashedRefreshToken = await hash(newTokens.refreshToken)
+
+			// update new sesison
+			const newSesison = await this.prismaService.session.update({
+				where: { id: sessionId },
+				data: {
+					hashedRefreshToken: newHashedRefreshToken,
+					userIp: ip
+				}
+			})
+
+			// set new cookie
+			res
+				.cookie('session_id', session.id, {
+					maxAge: AUTH_CONSTANT.TIME_LIFE_SESSION,
+					...AUTH_CONSTANT.COOKIE_CONFIG.SESSION
+				})
+				.cookie('access_token', newTokens.accessToken, {
+					maxAge: AUTH_CONSTANT.TIME_LIFE_ACCESS_TOKEN,
+					...AUTH_CONSTANT.COOKIE_CONFIG.ACCESS_TOKEN
+				})
+				.cookie('refresh_token', newTokens.refreshToken, {
+					maxAge: AUTH_CONSTANT.TIME_LIFE_REFRESH_TOKEN,
+					...AUTH_CONSTANT.COOKIE_CONFIG.REFRESH_TOKEN
+				})
+
+			return {
+				session: newSesison,
+				tokens: newTokens,
+				user: {
+					id: user.id,
+					email: user.email,
+					username: user.username
+				}
+			}
+		} catch (error) {
+			// Log security events
+			console.error('Refresh token error:', {
+				sessionId,
+				ip,
+				userAgent,
+				error: error.message,
+				timestamp: new Date()
+			});
+
+			throw error;
+		}
 	}
 }

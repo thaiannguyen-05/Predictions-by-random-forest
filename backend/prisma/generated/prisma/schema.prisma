@@ -17,7 +17,7 @@ model UserDevice {
 
 model Session {
   id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
-  hashedRefreshToken String   @map("hashed_refresh_token")
+  hashedRefreshToken String?  @map("hashed_refresh_token")
   userIp             String   @map("user_ip")
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
@@ -82,9 +82,16 @@ enum CodeType {
   PHONE_CHANGE
 }
 
+// // use Linux
+// generator client {
+//   provider = "prisma-client-js"
+//   output   = "../generated/prisma"
+// }
+// use Windows
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
+  output        = "../generated/prisma"
 }
 
 datasource db {
@@ -95,6 +102,7 @@ datasource db {
 model User {
   id             String   @id @default(uuid()) @map("user_id") @db.Uuid
   email          String   @unique @map("email_address")
+  avtUrl         String?  @map("avt_url")
   username       String   @unique @map("user_name")
   firstName      String   @map("first_name")
   lastName       String   @map("last_name")

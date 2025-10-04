@@ -2531,7 +2531,7 @@ export namespace Prisma {
 
   export type SessionGroupByOutputType = {
     id: string
-    hashedRefreshToken: string
+    hashedRefreshToken: string | null
     userIp: string
     createdAt: Date
     updatedAt: Date
@@ -2624,7 +2624,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      hashedRefreshToken: string
+      hashedRefreshToken: string | null
       userIp: string
       createdAt: Date
       updatedAt: Date
@@ -5646,6 +5646,7 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: string | null
     email: string | null
+    avtUrl: string | null
     username: string | null
     firstName: string | null
     lastName: string | null
@@ -5660,6 +5661,7 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     id: string | null
     email: string | null
+    avtUrl: string | null
     username: string | null
     firstName: string | null
     lastName: string | null
@@ -5674,6 +5676,7 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     id: number
     email: number
+    avtUrl: number
     username: number
     firstName: number
     lastName: number
@@ -5690,6 +5693,7 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5704,6 +5708,7 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5718,6 +5723,7 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     id?: true
     email?: true
+    avtUrl?: true
     username?: true
     firstName?: true
     lastName?: true
@@ -5805,6 +5811,7 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     email: string
+    avtUrl: string | null
     username: string
     firstName: string
     lastName: string
@@ -5836,6 +5843,7 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5854,6 +5862,7 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5868,6 +5877,7 @@ export namespace Prisma {
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5882,6 +5892,7 @@ export namespace Prisma {
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
+    avtUrl?: boolean
     username?: boolean
     firstName?: boolean
     lastName?: boolean
@@ -5893,7 +5904,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "avtUrl" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -5913,6 +5924,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
+      avtUrl: string | null
       username: string
       firstName: string
       lastName: string
@@ -6350,6 +6362,7 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly avtUrl: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
@@ -6908,6 +6921,7 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
+    avtUrl: 'avtUrl',
     username: 'username',
     firstName: 'firstName',
     lastName: 'lastName',
@@ -7095,7 +7109,7 @@ export namespace Prisma {
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
     id?: UuidFilter<"Session"> | string
-    hashedRefreshToken?: StringFilter<"Session"> | string
+    hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
@@ -7107,7 +7121,7 @@ export namespace Prisma {
 
   export type SessionOrderByWithRelationInput = {
     id?: SortOrder
-    hashedRefreshToken?: SortOrder
+    hashedRefreshToken?: SortOrderInput | SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7124,7 +7138,7 @@ export namespace Prisma {
     AND?: SessionWhereInput | SessionWhereInput[]
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
-    hashedRefreshToken?: StringFilter<"Session"> | string
+    hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
@@ -7135,7 +7149,7 @@ export namespace Prisma {
 
   export type SessionOrderByWithAggregationInput = {
     id?: SortOrder
-    hashedRefreshToken?: SortOrder
+    hashedRefreshToken?: SortOrderInput | SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7151,7 +7165,7 @@ export namespace Prisma {
     OR?: SessionScalarWhereWithAggregatesInput[]
     NOT?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Session"> | string
-    hashedRefreshToken?: StringWithAggregatesFilter<"Session"> | string
+    hashedRefreshToken?: StringNullableWithAggregatesFilter<"Session"> | string | null
     userIp?: StringWithAggregatesFilter<"Session"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
@@ -7313,6 +7327,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
+    avtUrl?: StringNullableFilter<"User"> | string | null
     username?: StringFilter<"User"> | string
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
@@ -7330,6 +7345,7 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -7351,6 +7367,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    avtUrl?: StringNullableFilter<"User"> | string | null
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     hashedPassword?: StringFilter<"User"> | string
@@ -7367,6 +7384,7 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -7387,6 +7405,7 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
+    avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     username?: StringWithAggregatesFilter<"User"> | string
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringWithAggregatesFilter<"User"> | string
@@ -7459,7 +7478,7 @@ export namespace Prisma {
 
   export type SessionCreateInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7469,7 +7488,7 @@ export namespace Prisma {
 
   export type SessionUncheckedCreateInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7479,7 +7498,7 @@ export namespace Prisma {
 
   export type SessionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7489,7 +7508,7 @@ export namespace Prisma {
 
   export type SessionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7499,7 +7518,7 @@ export namespace Prisma {
 
   export type SessionCreateManyInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7509,7 +7528,7 @@ export namespace Prisma {
 
   export type SessionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7517,7 +7536,7 @@ export namespace Prisma {
 
   export type SessionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7695,6 +7714,7 @@ export namespace Prisma {
   export type UserCreateInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7712,6 +7732,7 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7729,6 +7750,7 @@ export namespace Prisma {
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7746,6 +7768,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7763,6 +7786,7 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -7777,6 +7801,7 @@ export namespace Prisma {
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7791,6 +7816,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -7926,9 +7952,29 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type UserDeviceScalarRelationFilter = {
     is?: UserDeviceWhereInput
     isNot?: UserDeviceWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type SessionUserIdUserDeviceIdCompoundUniqueInput = {
@@ -7966,14 +8012,7 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
-  export type EnumProviderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -7985,12 +8024,17 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type EnumProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
   }
 
   export type Oauth2UserCountOrderByAggregateInput = {
@@ -8046,24 +8090,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProviderFilter<$PrismaModel>
     _max?: NestedEnumProviderFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumCodeTypeFilter<$PrismaModel = never> = {
@@ -8153,6 +8179,7 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8167,6 +8194,7 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8181,6 +8209,7 @@ export namespace Prisma {
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
+    avtUrl?: SortOrder
     username?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
@@ -8266,6 +8295,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type UserDeviceUpdateOneRequiredWithoutUserSessionNestedInput = {
     create?: XOR<UserDeviceCreateWithoutUserSessionInput, UserDeviceUncheckedCreateWithoutUserSessionInput>
     connectOrCreate?: UserDeviceCreateOrConnectWithoutUserSessionInput
@@ -8284,10 +8317,6 @@ export namespace Prisma {
 
   export type EnumProviderFieldUpdateOperationsInput = {
     set?: $Enums.Provider
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type UserCreateNestedOneWithoutCodesInput = {
@@ -8530,13 +8559,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumProviderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -8549,16 +8571,6 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedEnumProviderWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumProviderFilter<$PrismaModel>
-    _max?: NestedEnumProviderFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -8587,6 +8599,23 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
+  }
+
+  export type NestedEnumProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProviderFilter<$PrismaModel>
+    _max?: NestedEnumProviderFilter<$PrismaModel>
   }
 
   export type NestedEnumCodeTypeFilter<$PrismaModel = never> = {
@@ -8622,6 +8651,7 @@ export namespace Prisma {
   export type UserCreateWithoutUserDeviceInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8638,6 +8668,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutUserDeviceInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8658,7 +8689,7 @@ export namespace Prisma {
 
   export type SessionCreateWithoutUserDeviceInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8667,7 +8698,7 @@ export namespace Prisma {
 
   export type SessionUncheckedCreateWithoutUserDeviceInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8693,6 +8724,7 @@ export namespace Prisma {
   export type UserUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8709,6 +8741,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8735,7 +8768,7 @@ export namespace Prisma {
 
   export type SessionUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8744,7 +8777,7 @@ export namespace Prisma {
 
   export type SessionUncheckedUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8775,6 +8808,7 @@ export namespace Prisma {
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8791,6 +8825,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSessionsInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8850,6 +8885,7 @@ export namespace Prisma {
   export type UserUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8866,6 +8902,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8882,6 +8919,7 @@ export namespace Prisma {
   export type UserCreateWithoutCodesInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8898,6 +8936,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutCodesInput = {
     id?: string
     email: string
+    avtUrl?: string | null
     username: string
     firstName: string
     lastName: string
@@ -8930,6 +8969,7 @@ export namespace Prisma {
   export type UserUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8946,6 +8986,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
@@ -8987,7 +9028,7 @@ export namespace Prisma {
 
   export type SessionCreateWithoutUserInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8996,7 +9037,7 @@ export namespace Prisma {
 
   export type SessionUncheckedCreateWithoutUserInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9087,7 +9128,7 @@ export namespace Prisma {
     OR?: SessionScalarWhereInput[]
     NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
     id?: UuidFilter<"Session"> | string
-    hashedRefreshToken?: StringFilter<"Session"> | string
+    hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
@@ -9132,7 +9173,7 @@ export namespace Prisma {
 
   export type SessionCreateManyUserInput = {
     id?: string
-    hashedRefreshToken: string
+    hashedRefreshToken?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9172,7 +9213,7 @@ export namespace Prisma {
 
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9181,7 +9222,7 @@ export namespace Prisma {
 
   export type SessionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9190,7 +9231,7 @@ export namespace Prisma {
 
   export type SessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
