@@ -9,8 +9,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CookieStrategy } from '../../common/strategy/auth-cookie.strategy';
 import { GoogleStrategy } from '../../common/strategy/google.strategy';
 import { FacebookStrategy } from '../../common/strategy/facebook.strategy';
+import { PassportModule } from '@nestjs/passport';
+
 @Module({
   imports: [
+    PassportModule.register({ session: false }),
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

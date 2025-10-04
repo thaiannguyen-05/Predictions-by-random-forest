@@ -1,4 +1,4 @@
-// src/common/strategy/google.strategy.ts
+// src/common/strategy/google.strategy.ts (Mã đã sửa cuối cùng)
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
@@ -9,7 +9,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         super({
             clientID: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            callbackURL: process.env.GOOGLE_CALLBACK_URL ?? 'http://localhost:3000/auth/google/callback',
+            // SỬA: Đảm bảo mặc định là cổng 4000
+            callbackURL: process.env.GOOGLE_CALLBACK_URL ?? 'http://localhost:4000/auth/google/callback', 
             scope: ['email', 'profile'],
         });
     }
@@ -22,10 +23,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     ): Promise<any> {
         const { name, emails, photos } = profile;
         const user = {
-            email: emails[0].value,
+            // SỬA: Thêm optional chaining (?.)
+            email: emails?.[0]?.value,
             firstName: name.givenName,
             lastName: name.familyName,
-            picture: photos[0].value,
+            // SỬA: Thêm optional chaining (?.)
+            picture: photos?.[0]?.value,
             accessToken,
         };
         done(null, user);

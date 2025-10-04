@@ -174,7 +174,8 @@ exports.Prisma.UserScalarFieldEnum = {
   dateOfBirth: 'dateOfBirth',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  picture: 'picture'
 };
 
 exports.Prisma.SortOrder = {

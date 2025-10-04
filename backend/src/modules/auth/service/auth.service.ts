@@ -31,178 +31,78 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  // check available account
-  private async getAccountWithId(email: string) {
-    return await this.prismaService.user.findUnique({ where: { email } });
-  }
-
-  // generate code
-  private generateVerificationCode(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  }
-
-  // check available user and active user
-  private async getActiveAccount(access: string) {
-    // return full user (including hashedPassword) so verify() can use it
-    return await this.prismaService.user.findFirst({
-      where: {
-        AND: [
-          {
-            OR: [{ email: access }, { username: access }],
-          },
-          { isActive: true },
-        ],
-      },
-    });
-  }
-
-  // verify account with accesstoken
-  public async validate(accessToken: string) {
-    try {
-      // get id in payload
-      const payload = await this.jwtService.verifyAsync(accessToken, {
-        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-      });
-
-      // find user
-      const exitingUser = await this.prismaService.user.findUnique({
-        where: { id: payload.sub },
-      });
-
-      if (!exitingUser) throw new NotFoundException('User not found');
-
-      return exitingUser;
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-      throw new UnauthorizedException('Invalid or expired access token');
-    }
-  }
-
-  // detect other device
-  async detectOtherDevice(userDevice: string, userId: string) {
-    const device = await this.prismaService.userDevice.findUnique({
-      where: { nameDevice_userId: { userId: userId, nameDevice: userDevice } },
-    });
-
-    return !!device;
-  }
-
-  // register
-  async register(dto: CreateAccountDto) {
-    // checking available account
-    const account = await this.getAccountWithId(dto.email);
+  // ===============================
+  // REGISTER
+  // ===============================
+  public async register(dto: CreateAccountDto) {
+    const account = await this.prismaService.user.findUnique({ where: { email: dto.email } });
     if (account) throw new ConflictException('Account is available');
 
-    // hashing password
     const hashedPassword = await hash(dto.password);
-
-    // trans string to date type
     const dateOfBirth = DateUtils.stringToBirthday(dto.dateOfBirth);
 
-    // create new record
     const newAccount = await this.prismaService.user.create({
       data: {
         email: dto.email,
         username: dto.username,
         firstName: dto.firstName,
         lastName: dto.lastName,
-        hashedPassword: hashedPassword,
+        hashedPassword,
         ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
         dateOfBirth,
       },
     });
 
-    // create code object
-    const code = await this.generateVerificationCode();
-    await this.prismaService.code.create({
-      data: {
-        code,
-        userId: newAccount.id,
-      },
-    });
-
-    // emit event send verify
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    await this.prismaService.code.create({ data: { code, userId: newAccount.id } });
     await this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
 
-    return {
-      status: true,
-      data: newAccount,
-    };
+    return { status: true, data: newAccount };
   }
 
-  // verify account
-  async verifyAccount(dto: VerifyAccount) {
-    // check available account
+  // ===============================
+  // VERIFY ACCOUNT
+  // ===============================
+  public async verifyAccount(dto: VerifyAccount) {
     const account = await this.prismaService.user.findUnique({
       where: { email: dto.email },
-      select: {
-        id: true,
-        isActive: true,
-        codes: true,
-      },
+      select: { id: true, isActive: true, codes: true },
     });
     if (!account) throw new NotFoundException('Account not found');
+    if (account.isActive) throw new ConflictException('Account is already active');
 
-    // get list codeuser
-    const listcodeuser = account.codes.map((c) => c.code);
-
-    // check status account
-    if (account.isActive) {
-      throw new ConflictException('Account is already active');
-    }
-
-    // checking code
     const code = await this.prismaService.code.findUnique({
       where: { code_userId: { code: dto.code, userId: account.id } },
     });
-    if (!code) throw new BadRequestException('Code is not existed or expried');
+    if (!code) throw new BadRequestException('Code is not existed or expired');
 
-    // check valid code
-    const isValied = listcodeuser.some((value) => value === code.code);
-    if (isValied) {
-      await this.prismaService.$transaction([
-        // change status account
-        this.prismaService.user.update({
-          where: { id: account.id },
-          data: { isActive: true },
-        }),
-        // delete code verify
-        this.prismaService.code.delete({
-          where: { id: code.id },
-        }),
-      ]);
+    await this.prismaService.$transaction([
+      this.prismaService.user.update({ where: { id: account.id }, data: { isActive: true } }),
+      this.prismaService.code.delete({ where: { id: code.id } }),
+    ]);
 
-      return {
-        status: true,
-      };
-    }
-
-    return {
-      status: false,
-    };
+    return { status: true };
   }
 
-  // login
-  async login(dto: LoginDto, res: Response) {
-    // check available user
-    const user = await this.getActiveAccount(dto.access);
+  // ===============================
+  // LOGIN
+  // ===============================
+  public async login(dto: LoginDto, res: Response) {
+    const user = await this.prismaService.user.findFirst({
+      where: { OR: [{ email: dto.access }, { username: dto.access }], isActive: true },
+    });
     if (!user) throw new NotFoundException('User not found');
+    
+    // FIX 1: Handle nullable hashedPassword
+    if (!user.hashedPassword) {
+        throw new ForbiddenException('Invalid login credentials or method.');
+    }
 
-    // check valid password — IMPORTANT: await verify (argon2)
-    const isValidPassword = await verify(user.hashedPassword, dto.password);
-    if (!isValidPassword) throw new ForbiddenException('Password is not corrected');
+    const valid = await verify(user.hashedPassword, dto.password);
+    if (!valid) throw new ForbiddenException('Password is not correct');
 
-    // get present device
-  const hardware = await this.authOtherService.getClientInfo(res.req as Request);
-
-    // remove hashedPassword before gán vào req.user (nếu có middleware sử dụng)
-    const { hashedPassword, ...userWithoutPassword } = user as any;
-    // Nếu có middleware hoặc controller gán req.user, hãy dùng:
-    // req.user = userWithoutPassword as UserWithoutPassword;
-
-    // create session
+    const { hashedPassword, ...userWithoutPassword } = user;
+    const hardware = await this.authOtherService.getClientInfo(res.req as Request);
     const { session, tokens } = await this.tokenService.createSession(
       user,
       hardware.ip,
@@ -210,87 +110,120 @@ export class AuthService {
       res,
     );
 
-    return {
-      data: userWithoutPassword,
-      session: {
-        id: session.id,
-        userAgent: hardware.userAgent,
-        userIp: session.userIp,
-        loginedAt: session.createdAt,
-      },
-      tokens,
-    };
+    return { data: userWithoutPassword, session: { id: session.id, userAgent: hardware.userAgent, userIp: session.userIp, loginedAt: session.createdAt }, tokens };
   }
 
-  // logout
-  async logout(res: Response, sessionId?: string) {
-    // get session id (priority parameter then cookie)
+  // ===============================
+  // LOGOUT
+  // ===============================
+  public async logout(res: Response, sessionId?: string) {
     const sid = sessionId || (res.req.cookies?.session_id as string | undefined);
-
     if (!sid) throw new BadRequestException('Session id required');
 
-    // clear refresh token — use sid (not sessionId variable which might be undefined)
-    const newSession = await this.prismaService.session.update({
-      where: { id: sid },
-      data: { hashedRefreshToken: null },
-    });
+    await this.prismaService.session.update({ where: { id: sid }, data: { hashedRefreshToken: null } });
+    res.clearCookie('access_token', { path: '/' }).clearCookie('refresh_token', { path: '/' }).clearCookie('session_id', { path: '/' });
 
-    // clear cookies (use consistent cookie name 'session_id')
-    res
-      .clearCookie('access_token', { path: '/' })
-      .clearCookie('refresh_token', { path: '/' })
-      .clearCookie('session_id', { path: '/' });
-
-    return {
-      status: true,
-      newSession,
-    };
+    return { status: true };
   }
 
-  // change password
-  async changePassword(req: Request, dto: ChangePasswordDto) {
-    // ensure req.user has an id (safe casting)
-    const requestId = (req.user as { id?: string } | undefined)?.id;
+  // ===============================
+  // CHANGE PASSWORD
+  // ===============================
+  public async changePassword(req: Request, dto: ChangePasswordDto) {
+    const requestId = req.user?.id;
     if (!requestId) throw new UnauthorizedException('Unauthorized');
 
-    // check available account (by accessor)
-    const account = await this.getActiveAccount(dto.accessor);
+    const account = await this.prismaService.user.findFirst({
+      where: { OR: [{ email: dto.accessor }, { username: dto.accessor }], isActive: true },
+    });
     if (!account) throw new NotFoundException('User not found');
-
-    // check permission
     if (account.id !== requestId) throw new BadRequestException('You are not author');
 
-    // check valid password (await verify)
-    const isValied = await verify(account.hashedPassword, dto.password);
-    if (!isValied) throw new ForbiddenException('Password is not corrected');
+    // FIX 2: Handle nullable hashedPassword
+    if (!account.hashedPassword) {
+        throw new ForbiddenException('Account does not have a locally set password.');
+    }
 
-    // hashing new password
-    const newHashedpassword = await hash(dto.newPassword);
+    const valid = await verify(account.hashedPassword, dto.password);
+    if (!valid) throw new ForbiddenException('Password is not correct');
 
-    // change password
-    await this.prismaService.user.update({
-      where: { id: account.id },
-      data: { hashedPassword: newHashedpassword },
-    });
+    const newHashedPassword = await hash(dto.newPassword);
+    await this.prismaService.user.update({ where: { id: account.id }, data: { hashedPassword: newHashedPassword } });
 
-    // sending email
-    await this.emailProducer.sendNotifiCaitonChangePassword({
-      to: account.email,
-      username: account.username,
-    });
+    await this.emailProducer.sendNotifiCaitonChangePassword({ to: account.email, username: account.username });
 
-    return {
-      status: true,
-    };
+    return { status: true };
   }
 
-  // refresh token
-  async refreshToken(sessionId: string | undefined, refreshToken: string, res: Response) {
-    // get sid — prefer passed sessionId, else cookie
+  // ===============================
+  // REFRESH TOKEN
+  // ===============================
+  public async refreshToken(sessionId: string | undefined, refreshToken: string, res: Response) {
     const sid = sessionId || (res.req.cookies?.session_id as string | undefined);
-
-    // get user hardware
-  const hardware = await this.authOtherService.getClientInfo(res.req as Request);
+    const hardware = await this.authOtherService.getClientInfo(res.req as Request);
     return await this.tokenService.refreshToken(sid as string, refreshToken, hardware.ip, hardware.userAgent, res);
+  }
+
+  // ===============================
+  // SOCIAL LOGIN
+  // ===============================
+  public async socialLogin(profile: any) {
+    const email = profile.email;
+    if (!email) throw new BadRequestException('Email not provided by social provider');
+
+    let user = await this.prismaService.user.findUnique({ where: { email } });
+    if (!user) {
+      // FIX 3: Add dateOfBirth (required field) with a placeholder value.
+      // NOTE: You MUST run 'npx prisma generate' after adding 'picture' and if you make 'dateOfBirth' nullable.
+      user = await this.prismaService.user.create({
+        data: {
+          email,
+          firstName: profile.firstName || profile.name?.givenName || '',
+          lastName: profile.lastName || profile.name?.familyName || '',
+          username: profile.username || email.split('@')[0],
+          isActive: true,
+          picture: profile.picture || profile.photos?.[0]?.value || '',
+          hashedPassword: '', // Set to empty string if nullable, or null if schema allows.
+          dateOfBirth: new Date('1900-01-01'), // Placeholder date if required
+        },
+      });
+    }
+
+    const token = this.jwtService.sign(
+      { sub: user.id, email: user.email },
+      { secret: this.configService.getOrThrow<string>('JWT_SECRET'), expiresIn: '1d' },
+    );
+
+    return { user, token };
+  }
+  
+  // ===============================
+  // VALIDATE
+  // ===============================
+  public async validate(accessToken: string): Promise<any> {
+    try {
+        // 1. Verify the token using the secret key
+        const payload = this.jwtService.verify(accessToken, {
+            secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+        });
+        
+        // 2. Fetch the user from the database
+        const user = await this.prismaService.user.findUnique({
+            where: { id: payload.sub },
+            select: { id: true, email: true, username: true, isActive: true }, // Select necessary fields
+        });
+
+        // 3. Return the user if found, otherwise return null/throw
+        if (!user || !user.isActive) {
+            throw new UnauthorizedException('Invalid or inactive user');
+        }
+
+        // The returned value is what NestJS Passport injects into the request object (req.user)
+        return user; 
+        
+    } catch (error) {
+        // Handle common JWT errors (e.g., expiration, invalid signature)
+        throw new UnauthorizedException('Token validation failed');
+    }
   }
 }
