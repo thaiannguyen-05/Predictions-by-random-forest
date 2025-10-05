@@ -3,9 +3,11 @@ import { Request } from "express";
 import { ChangeDetailDto } from "./dto/change-detail.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { DateUtils } from "src/common/utils/string-to-date.utils";
+import { LoginUserDto } from "./dto/login-user.dto";
+import type { CreateUserDto } from "./dto/create-user.dto";
 @Injectable()
 export class UserService {
-
+	private users: any[] = [];
 	constructor(
 		private readonly prismaService: PrismaService
 	) { }
@@ -34,31 +36,45 @@ export class UserService {
 		// validate user
 		const user = await this.getActiveAccount(userId)
 		if (!user) throw new NotFoundException("User not found or not active")
-		
+
 		// trans date time
 		const dateOfBirth = dto.dateOfBirth ? DateUtils.stringToBirthday(dto.dateOfBirth) : undefined
 
-		   // update data
-		   const newUser = await this.prismaService.user.update({
-			   where: { id: user.id },
-			   data: {
-				   ...(dto.username && { username: dto.username }),
-				   ...(dto.firstName && { firstName: dto.firstName }),
-				   ...(dto.lastName && { lastName: dto.lastName }),
-				   ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
-				   ...(dto.dateOfBirth && { dateOfBirth: dateOfBirth }),
-				   ...(dto.avtUrl && { avtUrl: dto.avtUrl })
-			   }
-		   })
+		// update data
+		const newUser = await this.prismaService.user.update({
+			where: { id: user.id },
+			data: {
+				...(dto.username && { username: dto.username }),
+				...(dto.firstName && { firstName: dto.firstName }),
+				...(dto.lastName && { lastName: dto.lastName }),
+				...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
+				...(dto.dateOfBirth && { dateOfBirth: dateOfBirth }),
+				...(dto.avtUrl && { avtUrl: dto.avtUrl })
+			}
+		})
 
-		   // Remove hashedPassword before returning
-		   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-		   const { hashedPassword, ...userWithoutPassword } = newUser as any;
-		   return {
-			   status: true,
-			   data: userWithoutPassword
-		   }
+		// Remove hashedPassword before returning
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { hashedPassword, ...userWithoutPassword } = newUser as any;
+		return {
+			status: true,
+			data: userWithoutPassword
+		}
+	}
+	async register(dto: CreateUserDto) {
+		// Thêm logic register
+		const user = { id: Date.now(), ...dto };
+		this.users.push(user);
+		return user;
 	}
 
-	
+	async login(dto: LoginUserDto) {
+		// Thêm logic login
+		const user = this.users.find(u => u.email === dto.email && u.password === dto.password);
+		if (!user) {
+			throw new Error('Invalid credentials');
+		}
+		return user;
+	}
+
 }
