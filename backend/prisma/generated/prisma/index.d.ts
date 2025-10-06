@@ -24,11 +24,6 @@ export type UserDevice = $Result.DefaultSelection<Prisma.$UserDevicePayload>
  */
 export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
 /**
- * Model Oauth2User
- * 
- */
-export type Oauth2User = $Result.DefaultSelection<Prisma.$Oauth2UserPayload>
-/**
  * Model Code
  * 
  */
@@ -38,6 +33,11 @@ export type Code = $Result.DefaultSelection<Prisma.$CodePayload>
  * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+/**
+ * Model Oauth2User
+ * 
+ */
+export type Oauth2User = $Result.DefaultSelection<Prisma.$Oauth2UserPayload>
 
 /**
  * Enums
@@ -209,16 +209,6 @@ export class PrismaClient<
   get session(): Prisma.SessionDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.oauth2User`: Exposes CRUD operations for the **Oauth2User** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Oauth2Users
-    * const oauth2Users = await prisma.oauth2User.findMany()
-    * ```
-    */
-  get oauth2User(): Prisma.Oauth2UserDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.code`: Exposes CRUD operations for the **Code** model.
     * Example usage:
     * ```ts
@@ -237,6 +227,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.oauth2User`: Exposes CRUD operations for the **Oauth2User** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Oauth2Users
+    * const oauth2Users = await prisma.oauth2User.findMany()
+    * ```
+    */
+  get oauth2User(): Prisma.Oauth2UserDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -679,9 +679,9 @@ export namespace Prisma {
   export const ModelName: {
     UserDevice: 'UserDevice',
     Session: 'Session',
-    Oauth2User: 'Oauth2User',
     Code: 'Code',
-    User: 'User'
+    User: 'User',
+    Oauth2User: 'Oauth2User'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -700,7 +700,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userDevice" | "session" | "oauth2User" | "code" | "user"
+      modelProps: "userDevice" | "session" | "code" | "user" | "oauth2User"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -852,80 +852,6 @@ export namespace Prisma {
           }
         }
       }
-      Oauth2User: {
-        payload: Prisma.$Oauth2UserPayload<ExtArgs>
-        fields: Prisma.Oauth2UserFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.Oauth2UserFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.Oauth2UserFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          findFirst: {
-            args: Prisma.Oauth2UserFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.Oauth2UserFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          findMany: {
-            args: Prisma.Oauth2UserFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
-          }
-          create: {
-            args: Prisma.Oauth2UserCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          createMany: {
-            args: Prisma.Oauth2UserCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.Oauth2UserCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
-          }
-          delete: {
-            args: Prisma.Oauth2UserDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          update: {
-            args: Prisma.Oauth2UserUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          deleteMany: {
-            args: Prisma.Oauth2UserDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.Oauth2UserUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.Oauth2UserUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
-          }
-          upsert: {
-            args: Prisma.Oauth2UserUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
-          }
-          aggregate: {
-            args: Prisma.Oauth2UserAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateOauth2User>
-          }
-          groupBy: {
-            args: Prisma.Oauth2UserGroupByArgs<ExtArgs>
-            result: $Utils.Optional<Oauth2UserGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.Oauth2UserCountArgs<ExtArgs>
-            result: $Utils.Optional<Oauth2UserCountAggregateOutputType> | number
-          }
-        }
-      }
       Code: {
         payload: Prisma.$CodePayload<ExtArgs>
         fields: Prisma.CodeFieldRefs
@@ -1074,6 +1000,80 @@ export namespace Prisma {
           }
         }
       }
+      Oauth2User: {
+        payload: Prisma.$Oauth2UserPayload<ExtArgs>
+        fields: Prisma.Oauth2UserFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.Oauth2UserFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.Oauth2UserFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          findFirst: {
+            args: Prisma.Oauth2UserFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.Oauth2UserFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          findMany: {
+            args: Prisma.Oauth2UserFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
+          }
+          create: {
+            args: Prisma.Oauth2UserCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          createMany: {
+            args: Prisma.Oauth2UserCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.Oauth2UserCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
+          }
+          delete: {
+            args: Prisma.Oauth2UserDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          update: {
+            args: Prisma.Oauth2UserUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          deleteMany: {
+            args: Prisma.Oauth2UserDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.Oauth2UserUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.Oauth2UserUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>[]
+          }
+          upsert: {
+            args: Prisma.Oauth2UserUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Oauth2UserPayload>
+          }
+          aggregate: {
+            args: Prisma.Oauth2UserAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOauth2User>
+          }
+          groupBy: {
+            args: Prisma.Oauth2UserGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Oauth2UserGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.Oauth2UserCountArgs<ExtArgs>
+            result: $Utils.Optional<Oauth2UserCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1172,9 +1172,9 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     userDevice?: UserDeviceOmit
     session?: SessionOmit
-    oauth2User?: Oauth2UserOmit
     code?: CodeOmit
     user?: UserOmit
+    oauth2User?: Oauth2UserOmit
   }
 
   /* Types for Logging */
@@ -3473,1092 +3473,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SessionInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Oauth2User
-   */
-
-  export type AggregateOauth2User = {
-    _count: Oauth2UserCountAggregateOutputType | null
-    _min: Oauth2UserMinAggregateOutputType | null
-    _max: Oauth2UserMaxAggregateOutputType | null
-  }
-
-  export type Oauth2UserMinAggregateOutputType = {
-    id: string | null
-    provider: $Enums.Provider | null
-    providerUserId: string | null
-    email: string | null
-    phone: string | null
-    firstname: string | null
-    lastname: string | null
-    fullname: string | null
-    avatarUrl: string | null
-    username: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type Oauth2UserMaxAggregateOutputType = {
-    id: string | null
-    provider: $Enums.Provider | null
-    providerUserId: string | null
-    email: string | null
-    phone: string | null
-    firstname: string | null
-    lastname: string | null
-    fullname: string | null
-    avatarUrl: string | null
-    username: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type Oauth2UserCountAggregateOutputType = {
-    id: number
-    provider: number
-    providerUserId: number
-    email: number
-    phone: number
-    firstname: number
-    lastname: number
-    fullname: number
-    avatarUrl: number
-    username: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type Oauth2UserMinAggregateInputType = {
-    id?: true
-    provider?: true
-    providerUserId?: true
-    email?: true
-    phone?: true
-    firstname?: true
-    lastname?: true
-    fullname?: true
-    avatarUrl?: true
-    username?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type Oauth2UserMaxAggregateInputType = {
-    id?: true
-    provider?: true
-    providerUserId?: true
-    email?: true
-    phone?: true
-    firstname?: true
-    lastname?: true
-    fullname?: true
-    avatarUrl?: true
-    username?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type Oauth2UserCountAggregateInputType = {
-    id?: true
-    provider?: true
-    providerUserId?: true
-    email?: true
-    phone?: true
-    firstname?: true
-    lastname?: true
-    fullname?: true
-    avatarUrl?: true
-    username?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type Oauth2UserAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Oauth2User to aggregate.
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Oauth2Users to fetch.
-     */
-    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: Oauth2UserWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Oauth2Users from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Oauth2Users.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Oauth2Users
-    **/
-    _count?: true | Oauth2UserCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: Oauth2UserMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: Oauth2UserMaxAggregateInputType
-  }
-
-  export type GetOauth2UserAggregateType<T extends Oauth2UserAggregateArgs> = {
-        [P in keyof T & keyof AggregateOauth2User]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateOauth2User[P]>
-      : GetScalarType<T[P], AggregateOauth2User[P]>
-  }
-
-
-
-
-  export type Oauth2UserGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: Oauth2UserWhereInput
-    orderBy?: Oauth2UserOrderByWithAggregationInput | Oauth2UserOrderByWithAggregationInput[]
-    by: Oauth2UserScalarFieldEnum[] | Oauth2UserScalarFieldEnum
-    having?: Oauth2UserScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: Oauth2UserCountAggregateInputType | true
-    _min?: Oauth2UserMinAggregateInputType
-    _max?: Oauth2UserMaxAggregateInputType
-  }
-
-  export type Oauth2UserGroupByOutputType = {
-    id: string
-    provider: $Enums.Provider
-    providerUserId: string
-    email: string
-    phone: string | null
-    firstname: string | null
-    lastname: string | null
-    fullname: string | null
-    avatarUrl: string | null
-    username: string | null
-    createdAt: Date
-    updatedAt: Date
-    _count: Oauth2UserCountAggregateOutputType | null
-    _min: Oauth2UserMinAggregateOutputType | null
-    _max: Oauth2UserMaxAggregateOutputType | null
-  }
-
-  type GetOauth2UserGroupByPayload<T extends Oauth2UserGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<Oauth2UserGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof Oauth2UserGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], Oauth2UserGroupByOutputType[P]>
-            : GetScalarType<T[P], Oauth2UserGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type Oauth2UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    provider?: boolean
-    providerUserId?: boolean
-    email?: boolean
-    phone?: boolean
-    firstname?: boolean
-    lastname?: boolean
-    fullname?: boolean
-    avatarUrl?: boolean
-    username?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["oauth2User"]>
-
-  export type Oauth2UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    provider?: boolean
-    providerUserId?: boolean
-    email?: boolean
-    phone?: boolean
-    firstname?: boolean
-    lastname?: boolean
-    fullname?: boolean
-    avatarUrl?: boolean
-    username?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["oauth2User"]>
-
-  export type Oauth2UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    provider?: boolean
-    providerUserId?: boolean
-    email?: boolean
-    phone?: boolean
-    firstname?: boolean
-    lastname?: boolean
-    fullname?: boolean
-    avatarUrl?: boolean
-    username?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["oauth2User"]>
-
-  export type Oauth2UserSelectScalar = {
-    id?: boolean
-    provider?: boolean
-    providerUserId?: boolean
-    email?: boolean
-    phone?: boolean
-    firstname?: boolean
-    lastname?: boolean
-    fullname?: boolean
-    avatarUrl?: boolean
-    username?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type Oauth2UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerUserId" | "email" | "phone" | "firstname" | "lastname" | "fullname" | "avatarUrl" | "username" | "createdAt" | "updatedAt", ExtArgs["result"]["oauth2User"]>
-
-  export type $Oauth2UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Oauth2User"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      provider: $Enums.Provider
-      providerUserId: string
-      email: string
-      phone: string | null
-      firstname: string | null
-      lastname: string | null
-      fullname: string | null
-      avatarUrl: string | null
-      username: string | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["oauth2User"]>
-    composites: {}
-  }
-
-  type Oauth2UserGetPayload<S extends boolean | null | undefined | Oauth2UserDefaultArgs> = $Result.GetResult<Prisma.$Oauth2UserPayload, S>
-
-  type Oauth2UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<Oauth2UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: Oauth2UserCountAggregateInputType | true
-    }
-
-  export interface Oauth2UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Oauth2User'], meta: { name: 'Oauth2User' } }
-    /**
-     * Find zero or one Oauth2User that matches the filter.
-     * @param {Oauth2UserFindUniqueArgs} args - Arguments to find a Oauth2User
-     * @example
-     * // Get one Oauth2User
-     * const oauth2User = await prisma.oauth2User.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends Oauth2UserFindUniqueArgs>(args: SelectSubset<T, Oauth2UserFindUniqueArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Oauth2User that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {Oauth2UserFindUniqueOrThrowArgs} args - Arguments to find a Oauth2User
-     * @example
-     * // Get one Oauth2User
-     * const oauth2User = await prisma.oauth2User.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends Oauth2UserFindUniqueOrThrowArgs>(args: SelectSubset<T, Oauth2UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Oauth2User that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserFindFirstArgs} args - Arguments to find a Oauth2User
-     * @example
-     * // Get one Oauth2User
-     * const oauth2User = await prisma.oauth2User.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends Oauth2UserFindFirstArgs>(args?: SelectSubset<T, Oauth2UserFindFirstArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Oauth2User that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserFindFirstOrThrowArgs} args - Arguments to find a Oauth2User
-     * @example
-     * // Get one Oauth2User
-     * const oauth2User = await prisma.oauth2User.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends Oauth2UserFindFirstOrThrowArgs>(args?: SelectSubset<T, Oauth2UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Oauth2Users that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Oauth2Users
-     * const oauth2Users = await prisma.oauth2User.findMany()
-     * 
-     * // Get first 10 Oauth2Users
-     * const oauth2Users = await prisma.oauth2User.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const oauth2UserWithIdOnly = await prisma.oauth2User.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends Oauth2UserFindManyArgs>(args?: SelectSubset<T, Oauth2UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Oauth2User.
-     * @param {Oauth2UserCreateArgs} args - Arguments to create a Oauth2User.
-     * @example
-     * // Create one Oauth2User
-     * const Oauth2User = await prisma.oauth2User.create({
-     *   data: {
-     *     // ... data to create a Oauth2User
-     *   }
-     * })
-     * 
-     */
-    create<T extends Oauth2UserCreateArgs>(args: SelectSubset<T, Oauth2UserCreateArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Oauth2Users.
-     * @param {Oauth2UserCreateManyArgs} args - Arguments to create many Oauth2Users.
-     * @example
-     * // Create many Oauth2Users
-     * const oauth2User = await prisma.oauth2User.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends Oauth2UserCreateManyArgs>(args?: SelectSubset<T, Oauth2UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Oauth2Users and returns the data saved in the database.
-     * @param {Oauth2UserCreateManyAndReturnArgs} args - Arguments to create many Oauth2Users.
-     * @example
-     * // Create many Oauth2Users
-     * const oauth2User = await prisma.oauth2User.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Oauth2Users and only return the `id`
-     * const oauth2UserWithIdOnly = await prisma.oauth2User.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends Oauth2UserCreateManyAndReturnArgs>(args?: SelectSubset<T, Oauth2UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Oauth2User.
-     * @param {Oauth2UserDeleteArgs} args - Arguments to delete one Oauth2User.
-     * @example
-     * // Delete one Oauth2User
-     * const Oauth2User = await prisma.oauth2User.delete({
-     *   where: {
-     *     // ... filter to delete one Oauth2User
-     *   }
-     * })
-     * 
-     */
-    delete<T extends Oauth2UserDeleteArgs>(args: SelectSubset<T, Oauth2UserDeleteArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Oauth2User.
-     * @param {Oauth2UserUpdateArgs} args - Arguments to update one Oauth2User.
-     * @example
-     * // Update one Oauth2User
-     * const oauth2User = await prisma.oauth2User.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends Oauth2UserUpdateArgs>(args: SelectSubset<T, Oauth2UserUpdateArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Oauth2Users.
-     * @param {Oauth2UserDeleteManyArgs} args - Arguments to filter Oauth2Users to delete.
-     * @example
-     * // Delete a few Oauth2Users
-     * const { count } = await prisma.oauth2User.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends Oauth2UserDeleteManyArgs>(args?: SelectSubset<T, Oauth2UserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Oauth2Users.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Oauth2Users
-     * const oauth2User = await prisma.oauth2User.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends Oauth2UserUpdateManyArgs>(args: SelectSubset<T, Oauth2UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Oauth2Users and returns the data updated in the database.
-     * @param {Oauth2UserUpdateManyAndReturnArgs} args - Arguments to update many Oauth2Users.
-     * @example
-     * // Update many Oauth2Users
-     * const oauth2User = await prisma.oauth2User.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Oauth2Users and only return the `id`
-     * const oauth2UserWithIdOnly = await prisma.oauth2User.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends Oauth2UserUpdateManyAndReturnArgs>(args: SelectSubset<T, Oauth2UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Oauth2User.
-     * @param {Oauth2UserUpsertArgs} args - Arguments to update or create a Oauth2User.
-     * @example
-     * // Update or create a Oauth2User
-     * const oauth2User = await prisma.oauth2User.upsert({
-     *   create: {
-     *     // ... data to create a Oauth2User
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Oauth2User we want to update
-     *   }
-     * })
-     */
-    upsert<T extends Oauth2UserUpsertArgs>(args: SelectSubset<T, Oauth2UserUpsertArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Oauth2Users.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserCountArgs} args - Arguments to filter Oauth2Users to count.
-     * @example
-     * // Count the number of Oauth2Users
-     * const count = await prisma.oauth2User.count({
-     *   where: {
-     *     // ... the filter for the Oauth2Users we want to count
-     *   }
-     * })
-    **/
-    count<T extends Oauth2UserCountArgs>(
-      args?: Subset<T, Oauth2UserCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], Oauth2UserCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Oauth2User.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends Oauth2UserAggregateArgs>(args: Subset<T, Oauth2UserAggregateArgs>): Prisma.PrismaPromise<GetOauth2UserAggregateType<T>>
-
-    /**
-     * Group by Oauth2User.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Oauth2UserGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends Oauth2UserGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: Oauth2UserGroupByArgs['orderBy'] }
-        : { orderBy?: Oauth2UserGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, Oauth2UserGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOauth2UserGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Oauth2User model
-   */
-  readonly fields: Oauth2UserFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Oauth2User.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__Oauth2UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Oauth2User model
-   */
-  interface Oauth2UserFieldRefs {
-    readonly id: FieldRef<"Oauth2User", 'String'>
-    readonly provider: FieldRef<"Oauth2User", 'Provider'>
-    readonly providerUserId: FieldRef<"Oauth2User", 'String'>
-    readonly email: FieldRef<"Oauth2User", 'String'>
-    readonly phone: FieldRef<"Oauth2User", 'String'>
-    readonly firstname: FieldRef<"Oauth2User", 'String'>
-    readonly lastname: FieldRef<"Oauth2User", 'String'>
-    readonly fullname: FieldRef<"Oauth2User", 'String'>
-    readonly avatarUrl: FieldRef<"Oauth2User", 'String'>
-    readonly username: FieldRef<"Oauth2User", 'String'>
-    readonly createdAt: FieldRef<"Oauth2User", 'DateTime'>
-    readonly updatedAt: FieldRef<"Oauth2User", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Oauth2User findUnique
-   */
-  export type Oauth2UserFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter, which Oauth2User to fetch.
-     */
-    where: Oauth2UserWhereUniqueInput
-  }
-
-  /**
-   * Oauth2User findUniqueOrThrow
-   */
-  export type Oauth2UserFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter, which Oauth2User to fetch.
-     */
-    where: Oauth2UserWhereUniqueInput
-  }
-
-  /**
-   * Oauth2User findFirst
-   */
-  export type Oauth2UserFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter, which Oauth2User to fetch.
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Oauth2Users to fetch.
-     */
-    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Oauth2Users.
-     */
-    cursor?: Oauth2UserWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Oauth2Users from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Oauth2Users.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Oauth2Users.
-     */
-    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
-  }
-
-  /**
-   * Oauth2User findFirstOrThrow
-   */
-  export type Oauth2UserFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter, which Oauth2User to fetch.
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Oauth2Users to fetch.
-     */
-    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Oauth2Users.
-     */
-    cursor?: Oauth2UserWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Oauth2Users from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Oauth2Users.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Oauth2Users.
-     */
-    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
-  }
-
-  /**
-   * Oauth2User findMany
-   */
-  export type Oauth2UserFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter, which Oauth2Users to fetch.
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Oauth2Users to fetch.
-     */
-    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Oauth2Users.
-     */
-    cursor?: Oauth2UserWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Oauth2Users from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Oauth2Users.
-     */
-    skip?: number
-    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
-  }
-
-  /**
-   * Oauth2User create
-   */
-  export type Oauth2UserCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * The data needed to create a Oauth2User.
-     */
-    data: XOR<Oauth2UserCreateInput, Oauth2UserUncheckedCreateInput>
-  }
-
-  /**
-   * Oauth2User createMany
-   */
-  export type Oauth2UserCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Oauth2Users.
-     */
-    data: Oauth2UserCreateManyInput | Oauth2UserCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Oauth2User createManyAndReturn
-   */
-  export type Oauth2UserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * The data used to create many Oauth2Users.
-     */
-    data: Oauth2UserCreateManyInput | Oauth2UserCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Oauth2User update
-   */
-  export type Oauth2UserUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * The data needed to update a Oauth2User.
-     */
-    data: XOR<Oauth2UserUpdateInput, Oauth2UserUncheckedUpdateInput>
-    /**
-     * Choose, which Oauth2User to update.
-     */
-    where: Oauth2UserWhereUniqueInput
-  }
-
-  /**
-   * Oauth2User updateMany
-   */
-  export type Oauth2UserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Oauth2Users.
-     */
-    data: XOR<Oauth2UserUpdateManyMutationInput, Oauth2UserUncheckedUpdateManyInput>
-    /**
-     * Filter which Oauth2Users to update
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * Limit how many Oauth2Users to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Oauth2User updateManyAndReturn
-   */
-  export type Oauth2UserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * The data used to update Oauth2Users.
-     */
-    data: XOR<Oauth2UserUpdateManyMutationInput, Oauth2UserUncheckedUpdateManyInput>
-    /**
-     * Filter which Oauth2Users to update
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * Limit how many Oauth2Users to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Oauth2User upsert
-   */
-  export type Oauth2UserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * The filter to search for the Oauth2User to update in case it exists.
-     */
-    where: Oauth2UserWhereUniqueInput
-    /**
-     * In case the Oauth2User found by the `where` argument doesn't exist, create a new Oauth2User with this data.
-     */
-    create: XOR<Oauth2UserCreateInput, Oauth2UserUncheckedCreateInput>
-    /**
-     * In case the Oauth2User was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<Oauth2UserUpdateInput, Oauth2UserUncheckedUpdateInput>
-  }
-
-  /**
-   * Oauth2User delete
-   */
-  export type Oauth2UserDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
-    /**
-     * Filter which Oauth2User to delete.
-     */
-    where: Oauth2UserWhereUniqueInput
-  }
-
-  /**
-   * Oauth2User deleteMany
-   */
-  export type Oauth2UserDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Oauth2Users to delete
-     */
-    where?: Oauth2UserWhereInput
-    /**
-     * Limit how many Oauth2Users to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Oauth2User without action
-   */
-  export type Oauth2UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Oauth2User
-     */
-    select?: Oauth2UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Oauth2User
-     */
-    omit?: Oauth2UserOmit<ExtArgs> | null
   }
 
 
@@ -6864,6 +5778,1092 @@ export namespace Prisma {
 
 
   /**
+   * Model Oauth2User
+   */
+
+  export type AggregateOauth2User = {
+    _count: Oauth2UserCountAggregateOutputType | null
+    _min: Oauth2UserMinAggregateOutputType | null
+    _max: Oauth2UserMaxAggregateOutputType | null
+  }
+
+  export type Oauth2UserMinAggregateOutputType = {
+    id: string | null
+    provider: $Enums.Provider | null
+    providerUserId: string | null
+    email: string | null
+    phone: string | null
+    firstname: string | null
+    lastname: string | null
+    fullname: string | null
+    avatarUrl: string | null
+    username: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type Oauth2UserMaxAggregateOutputType = {
+    id: string | null
+    provider: $Enums.Provider | null
+    providerUserId: string | null
+    email: string | null
+    phone: string | null
+    firstname: string | null
+    lastname: string | null
+    fullname: string | null
+    avatarUrl: string | null
+    username: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type Oauth2UserCountAggregateOutputType = {
+    id: number
+    provider: number
+    providerUserId: number
+    email: number
+    phone: number
+    firstname: number
+    lastname: number
+    fullname: number
+    avatarUrl: number
+    username: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type Oauth2UserMinAggregateInputType = {
+    id?: true
+    provider?: true
+    providerUserId?: true
+    email?: true
+    phone?: true
+    firstname?: true
+    lastname?: true
+    fullname?: true
+    avatarUrl?: true
+    username?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type Oauth2UserMaxAggregateInputType = {
+    id?: true
+    provider?: true
+    providerUserId?: true
+    email?: true
+    phone?: true
+    firstname?: true
+    lastname?: true
+    fullname?: true
+    avatarUrl?: true
+    username?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type Oauth2UserCountAggregateInputType = {
+    id?: true
+    provider?: true
+    providerUserId?: true
+    email?: true
+    phone?: true
+    firstname?: true
+    lastname?: true
+    fullname?: true
+    avatarUrl?: true
+    username?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type Oauth2UserAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Oauth2User to aggregate.
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Oauth2Users to fetch.
+     */
+    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: Oauth2UserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Oauth2Users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Oauth2Users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Oauth2Users
+    **/
+    _count?: true | Oauth2UserCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Oauth2UserMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Oauth2UserMaxAggregateInputType
+  }
+
+  export type GetOauth2UserAggregateType<T extends Oauth2UserAggregateArgs> = {
+        [P in keyof T & keyof AggregateOauth2User]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOauth2User[P]>
+      : GetScalarType<T[P], AggregateOauth2User[P]>
+  }
+
+
+
+
+  export type Oauth2UserGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: Oauth2UserWhereInput
+    orderBy?: Oauth2UserOrderByWithAggregationInput | Oauth2UserOrderByWithAggregationInput[]
+    by: Oauth2UserScalarFieldEnum[] | Oauth2UserScalarFieldEnum
+    having?: Oauth2UserScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Oauth2UserCountAggregateInputType | true
+    _min?: Oauth2UserMinAggregateInputType
+    _max?: Oauth2UserMaxAggregateInputType
+  }
+
+  export type Oauth2UserGroupByOutputType = {
+    id: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone: string | null
+    firstname: string | null
+    lastname: string | null
+    fullname: string | null
+    avatarUrl: string | null
+    username: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: Oauth2UserCountAggregateOutputType | null
+    _min: Oauth2UserMinAggregateOutputType | null
+    _max: Oauth2UserMaxAggregateOutputType | null
+  }
+
+  type GetOauth2UserGroupByPayload<T extends Oauth2UserGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Oauth2UserGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Oauth2UserGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Oauth2UserGroupByOutputType[P]>
+            : GetScalarType<T[P], Oauth2UserGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type Oauth2UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerUserId?: boolean
+    email?: boolean
+    phone?: boolean
+    firstname?: boolean
+    lastname?: boolean
+    fullname?: boolean
+    avatarUrl?: boolean
+    username?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["oauth2User"]>
+
+  export type Oauth2UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerUserId?: boolean
+    email?: boolean
+    phone?: boolean
+    firstname?: boolean
+    lastname?: boolean
+    fullname?: boolean
+    avatarUrl?: boolean
+    username?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["oauth2User"]>
+
+  export type Oauth2UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerUserId?: boolean
+    email?: boolean
+    phone?: boolean
+    firstname?: boolean
+    lastname?: boolean
+    fullname?: boolean
+    avatarUrl?: boolean
+    username?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["oauth2User"]>
+
+  export type Oauth2UserSelectScalar = {
+    id?: boolean
+    provider?: boolean
+    providerUserId?: boolean
+    email?: boolean
+    phone?: boolean
+    firstname?: boolean
+    lastname?: boolean
+    fullname?: boolean
+    avatarUrl?: boolean
+    username?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type Oauth2UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerUserId" | "email" | "phone" | "firstname" | "lastname" | "fullname" | "avatarUrl" | "username" | "createdAt" | "updatedAt", ExtArgs["result"]["oauth2User"]>
+
+  export type $Oauth2UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Oauth2User"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      provider: $Enums.Provider
+      providerUserId: string
+      email: string
+      phone: string | null
+      firstname: string | null
+      lastname: string | null
+      fullname: string | null
+      avatarUrl: string | null
+      username: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["oauth2User"]>
+    composites: {}
+  }
+
+  type Oauth2UserGetPayload<S extends boolean | null | undefined | Oauth2UserDefaultArgs> = $Result.GetResult<Prisma.$Oauth2UserPayload, S>
+
+  type Oauth2UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<Oauth2UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Oauth2UserCountAggregateInputType | true
+    }
+
+  export interface Oauth2UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Oauth2User'], meta: { name: 'Oauth2User' } }
+    /**
+     * Find zero or one Oauth2User that matches the filter.
+     * @param {Oauth2UserFindUniqueArgs} args - Arguments to find a Oauth2User
+     * @example
+     * // Get one Oauth2User
+     * const oauth2User = await prisma.oauth2User.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends Oauth2UserFindUniqueArgs>(args: SelectSubset<T, Oauth2UserFindUniqueArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Oauth2User that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {Oauth2UserFindUniqueOrThrowArgs} args - Arguments to find a Oauth2User
+     * @example
+     * // Get one Oauth2User
+     * const oauth2User = await prisma.oauth2User.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends Oauth2UserFindUniqueOrThrowArgs>(args: SelectSubset<T, Oauth2UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Oauth2User that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserFindFirstArgs} args - Arguments to find a Oauth2User
+     * @example
+     * // Get one Oauth2User
+     * const oauth2User = await prisma.oauth2User.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends Oauth2UserFindFirstArgs>(args?: SelectSubset<T, Oauth2UserFindFirstArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Oauth2User that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserFindFirstOrThrowArgs} args - Arguments to find a Oauth2User
+     * @example
+     * // Get one Oauth2User
+     * const oauth2User = await prisma.oauth2User.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends Oauth2UserFindFirstOrThrowArgs>(args?: SelectSubset<T, Oauth2UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Oauth2Users that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Oauth2Users
+     * const oauth2Users = await prisma.oauth2User.findMany()
+     * 
+     * // Get first 10 Oauth2Users
+     * const oauth2Users = await prisma.oauth2User.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const oauth2UserWithIdOnly = await prisma.oauth2User.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends Oauth2UserFindManyArgs>(args?: SelectSubset<T, Oauth2UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Oauth2User.
+     * @param {Oauth2UserCreateArgs} args - Arguments to create a Oauth2User.
+     * @example
+     * // Create one Oauth2User
+     * const Oauth2User = await prisma.oauth2User.create({
+     *   data: {
+     *     // ... data to create a Oauth2User
+     *   }
+     * })
+     * 
+     */
+    create<T extends Oauth2UserCreateArgs>(args: SelectSubset<T, Oauth2UserCreateArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Oauth2Users.
+     * @param {Oauth2UserCreateManyArgs} args - Arguments to create many Oauth2Users.
+     * @example
+     * // Create many Oauth2Users
+     * const oauth2User = await prisma.oauth2User.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends Oauth2UserCreateManyArgs>(args?: SelectSubset<T, Oauth2UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Oauth2Users and returns the data saved in the database.
+     * @param {Oauth2UserCreateManyAndReturnArgs} args - Arguments to create many Oauth2Users.
+     * @example
+     * // Create many Oauth2Users
+     * const oauth2User = await prisma.oauth2User.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Oauth2Users and only return the `id`
+     * const oauth2UserWithIdOnly = await prisma.oauth2User.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends Oauth2UserCreateManyAndReturnArgs>(args?: SelectSubset<T, Oauth2UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Oauth2User.
+     * @param {Oauth2UserDeleteArgs} args - Arguments to delete one Oauth2User.
+     * @example
+     * // Delete one Oauth2User
+     * const Oauth2User = await prisma.oauth2User.delete({
+     *   where: {
+     *     // ... filter to delete one Oauth2User
+     *   }
+     * })
+     * 
+     */
+    delete<T extends Oauth2UserDeleteArgs>(args: SelectSubset<T, Oauth2UserDeleteArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Oauth2User.
+     * @param {Oauth2UserUpdateArgs} args - Arguments to update one Oauth2User.
+     * @example
+     * // Update one Oauth2User
+     * const oauth2User = await prisma.oauth2User.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends Oauth2UserUpdateArgs>(args: SelectSubset<T, Oauth2UserUpdateArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Oauth2Users.
+     * @param {Oauth2UserDeleteManyArgs} args - Arguments to filter Oauth2Users to delete.
+     * @example
+     * // Delete a few Oauth2Users
+     * const { count } = await prisma.oauth2User.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends Oauth2UserDeleteManyArgs>(args?: SelectSubset<T, Oauth2UserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Oauth2Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Oauth2Users
+     * const oauth2User = await prisma.oauth2User.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends Oauth2UserUpdateManyArgs>(args: SelectSubset<T, Oauth2UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Oauth2Users and returns the data updated in the database.
+     * @param {Oauth2UserUpdateManyAndReturnArgs} args - Arguments to update many Oauth2Users.
+     * @example
+     * // Update many Oauth2Users
+     * const oauth2User = await prisma.oauth2User.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Oauth2Users and only return the `id`
+     * const oauth2UserWithIdOnly = await prisma.oauth2User.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends Oauth2UserUpdateManyAndReturnArgs>(args: SelectSubset<T, Oauth2UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Oauth2User.
+     * @param {Oauth2UserUpsertArgs} args - Arguments to update or create a Oauth2User.
+     * @example
+     * // Update or create a Oauth2User
+     * const oauth2User = await prisma.oauth2User.upsert({
+     *   create: {
+     *     // ... data to create a Oauth2User
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Oauth2User we want to update
+     *   }
+     * })
+     */
+    upsert<T extends Oauth2UserUpsertArgs>(args: SelectSubset<T, Oauth2UserUpsertArgs<ExtArgs>>): Prisma__Oauth2UserClient<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Oauth2Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserCountArgs} args - Arguments to filter Oauth2Users to count.
+     * @example
+     * // Count the number of Oauth2Users
+     * const count = await prisma.oauth2User.count({
+     *   where: {
+     *     // ... the filter for the Oauth2Users we want to count
+     *   }
+     * })
+    **/
+    count<T extends Oauth2UserCountArgs>(
+      args?: Subset<T, Oauth2UserCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Oauth2UserCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Oauth2User.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Oauth2UserAggregateArgs>(args: Subset<T, Oauth2UserAggregateArgs>): Prisma.PrismaPromise<GetOauth2UserAggregateType<T>>
+
+    /**
+     * Group by Oauth2User.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Oauth2UserGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends Oauth2UserGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: Oauth2UserGroupByArgs['orderBy'] }
+        : { orderBy?: Oauth2UserGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, Oauth2UserGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOauth2UserGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Oauth2User model
+   */
+  readonly fields: Oauth2UserFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Oauth2User.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__Oauth2UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Oauth2User model
+   */
+  interface Oauth2UserFieldRefs {
+    readonly id: FieldRef<"Oauth2User", 'String'>
+    readonly provider: FieldRef<"Oauth2User", 'Provider'>
+    readonly providerUserId: FieldRef<"Oauth2User", 'String'>
+    readonly email: FieldRef<"Oauth2User", 'String'>
+    readonly phone: FieldRef<"Oauth2User", 'String'>
+    readonly firstname: FieldRef<"Oauth2User", 'String'>
+    readonly lastname: FieldRef<"Oauth2User", 'String'>
+    readonly fullname: FieldRef<"Oauth2User", 'String'>
+    readonly avatarUrl: FieldRef<"Oauth2User", 'String'>
+    readonly username: FieldRef<"Oauth2User", 'String'>
+    readonly createdAt: FieldRef<"Oauth2User", 'DateTime'>
+    readonly updatedAt: FieldRef<"Oauth2User", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Oauth2User findUnique
+   */
+  export type Oauth2UserFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter, which Oauth2User to fetch.
+     */
+    where: Oauth2UserWhereUniqueInput
+  }
+
+  /**
+   * Oauth2User findUniqueOrThrow
+   */
+  export type Oauth2UserFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter, which Oauth2User to fetch.
+     */
+    where: Oauth2UserWhereUniqueInput
+  }
+
+  /**
+   * Oauth2User findFirst
+   */
+  export type Oauth2UserFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter, which Oauth2User to fetch.
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Oauth2Users to fetch.
+     */
+    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Oauth2Users.
+     */
+    cursor?: Oauth2UserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Oauth2Users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Oauth2Users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Oauth2Users.
+     */
+    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
+  }
+
+  /**
+   * Oauth2User findFirstOrThrow
+   */
+  export type Oauth2UserFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter, which Oauth2User to fetch.
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Oauth2Users to fetch.
+     */
+    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Oauth2Users.
+     */
+    cursor?: Oauth2UserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Oauth2Users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Oauth2Users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Oauth2Users.
+     */
+    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
+  }
+
+  /**
+   * Oauth2User findMany
+   */
+  export type Oauth2UserFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter, which Oauth2Users to fetch.
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Oauth2Users to fetch.
+     */
+    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Oauth2Users.
+     */
+    cursor?: Oauth2UserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Oauth2Users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Oauth2Users.
+     */
+    skip?: number
+    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
+  }
+
+  /**
+   * Oauth2User create
+   */
+  export type Oauth2UserCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Oauth2User.
+     */
+    data: XOR<Oauth2UserCreateInput, Oauth2UserUncheckedCreateInput>
+  }
+
+  /**
+   * Oauth2User createMany
+   */
+  export type Oauth2UserCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Oauth2Users.
+     */
+    data: Oauth2UserCreateManyInput | Oauth2UserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Oauth2User createManyAndReturn
+   */
+  export type Oauth2UserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * The data used to create many Oauth2Users.
+     */
+    data: Oauth2UserCreateManyInput | Oauth2UserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Oauth2User update
+   */
+  export type Oauth2UserUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Oauth2User.
+     */
+    data: XOR<Oauth2UserUpdateInput, Oauth2UserUncheckedUpdateInput>
+    /**
+     * Choose, which Oauth2User to update.
+     */
+    where: Oauth2UserWhereUniqueInput
+  }
+
+  /**
+   * Oauth2User updateMany
+   */
+  export type Oauth2UserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Oauth2Users.
+     */
+    data: XOR<Oauth2UserUpdateManyMutationInput, Oauth2UserUncheckedUpdateManyInput>
+    /**
+     * Filter which Oauth2Users to update
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * Limit how many Oauth2Users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Oauth2User updateManyAndReturn
+   */
+  export type Oauth2UserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * The data used to update Oauth2Users.
+     */
+    data: XOR<Oauth2UserUpdateManyMutationInput, Oauth2UserUncheckedUpdateManyInput>
+    /**
+     * Filter which Oauth2Users to update
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * Limit how many Oauth2Users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Oauth2User upsert
+   */
+  export type Oauth2UserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Oauth2User to update in case it exists.
+     */
+    where: Oauth2UserWhereUniqueInput
+    /**
+     * In case the Oauth2User found by the `where` argument doesn't exist, create a new Oauth2User with this data.
+     */
+    create: XOR<Oauth2UserCreateInput, Oauth2UserUncheckedCreateInput>
+    /**
+     * In case the Oauth2User was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<Oauth2UserUpdateInput, Oauth2UserUncheckedUpdateInput>
+  }
+
+  /**
+   * Oauth2User delete
+   */
+  export type Oauth2UserDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Filter which Oauth2User to delete.
+     */
+    where: Oauth2UserWhereUniqueInput
+  }
+
+  /**
+   * Oauth2User deleteMany
+   */
+  export type Oauth2UserDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Oauth2Users to delete
+     */
+    where?: Oauth2UserWhereInput
+    /**
+     * Limit how many Oauth2Users to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Oauth2User without action
+   */
+  export type Oauth2UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6901,24 +6901,6 @@ export namespace Prisma {
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
-  export const Oauth2UserScalarFieldEnum: {
-    id: 'id',
-    provider: 'provider',
-    providerUserId: 'providerUserId',
-    email: 'email',
-    phone: 'phone',
-    firstname: 'firstname',
-    lastname: 'lastname',
-    fullname: 'fullname',
-    avatarUrl: 'avatarUrl',
-    username: 'username',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type Oauth2UserScalarFieldEnum = (typeof Oauth2UserScalarFieldEnum)[keyof typeof Oauth2UserScalarFieldEnum]
-
-
   export const CodeScalarFieldEnum: {
     id: 'id',
     code: 'code',
@@ -6948,6 +6930,24 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const Oauth2UserScalarFieldEnum: {
+    id: 'id',
+    provider: 'provider',
+    providerUserId: 'providerUserId',
+    email: 'email',
+    phone: 'phone',
+    firstname: 'firstname',
+    lastname: 'lastname',
+    fullname: 'fullname',
+    avatarUrl: 'avatarUrl',
+    username: 'username',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type Oauth2UserScalarFieldEnum = (typeof Oauth2UserScalarFieldEnum)[keyof typeof Oauth2UserScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7008,20 +7008,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Provider'
-   */
-  export type EnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider'>
-    
-
-
-  /**
-   * Reference to a field of type 'Provider[]'
-   */
-  export type ListEnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider[]'>
-    
-
-
-  /**
    * Reference to a field of type 'CodeType'
    */
   export type EnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType'>
@@ -7039,6 +7025,20 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Provider'
+   */
+  export type EnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider'>
+    
+
+
+  /**
+   * Reference to a field of type 'Provider[]'
+   */
+  export type ListEnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider[]'>
     
 
 
@@ -7185,93 +7185,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
     userDeviceId?: UuidWithAggregatesFilter<"Session"> | string
     userId?: UuidWithAggregatesFilter<"Session"> | string
-  }
-
-  export type Oauth2UserWhereInput = {
-    AND?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
-    OR?: Oauth2UserWhereInput[]
-    NOT?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
-    id?: UuidFilter<"Oauth2User"> | string
-    provider?: EnumProviderFilter<"Oauth2User"> | $Enums.Provider
-    providerUserId?: StringFilter<"Oauth2User"> | string
-    email?: StringFilter<"Oauth2User"> | string
-    phone?: StringNullableFilter<"Oauth2User"> | string | null
-    firstname?: StringNullableFilter<"Oauth2User"> | string | null
-    lastname?: StringNullableFilter<"Oauth2User"> | string | null
-    fullname?: StringNullableFilter<"Oauth2User"> | string | null
-    avatarUrl?: StringNullableFilter<"Oauth2User"> | string | null
-    username?: StringNullableFilter<"Oauth2User"> | string | null
-    createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
-    updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
-  }
-
-  export type Oauth2UserOrderByWithRelationInput = {
-    id?: SortOrder
-    provider?: SortOrder
-    providerUserId?: SortOrder
-    email?: SortOrder
-    phone?: SortOrderInput | SortOrder
-    firstname?: SortOrderInput | SortOrder
-    lastname?: SortOrderInput | SortOrder
-    fullname?: SortOrderInput | SortOrder
-    avatarUrl?: SortOrderInput | SortOrder
-    username?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type Oauth2UserWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    email?: string
-    AND?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
-    OR?: Oauth2UserWhereInput[]
-    NOT?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
-    provider?: EnumProviderFilter<"Oauth2User"> | $Enums.Provider
-    providerUserId?: StringFilter<"Oauth2User"> | string
-    phone?: StringNullableFilter<"Oauth2User"> | string | null
-    firstname?: StringNullableFilter<"Oauth2User"> | string | null
-    lastname?: StringNullableFilter<"Oauth2User"> | string | null
-    fullname?: StringNullableFilter<"Oauth2User"> | string | null
-    avatarUrl?: StringNullableFilter<"Oauth2User"> | string | null
-    username?: StringNullableFilter<"Oauth2User"> | string | null
-    createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
-    updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
-  }, "id" | "email">
-
-  export type Oauth2UserOrderByWithAggregationInput = {
-    id?: SortOrder
-    provider?: SortOrder
-    providerUserId?: SortOrder
-    email?: SortOrder
-    phone?: SortOrderInput | SortOrder
-    firstname?: SortOrderInput | SortOrder
-    lastname?: SortOrderInput | SortOrder
-    fullname?: SortOrderInput | SortOrder
-    avatarUrl?: SortOrderInput | SortOrder
-    username?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: Oauth2UserCountOrderByAggregateInput
-    _max?: Oauth2UserMaxOrderByAggregateInput
-    _min?: Oauth2UserMinOrderByAggregateInput
-  }
-
-  export type Oauth2UserScalarWhereWithAggregatesInput = {
-    AND?: Oauth2UserScalarWhereWithAggregatesInput | Oauth2UserScalarWhereWithAggregatesInput[]
-    OR?: Oauth2UserScalarWhereWithAggregatesInput[]
-    NOT?: Oauth2UserScalarWhereWithAggregatesInput | Oauth2UserScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"Oauth2User"> | string
-    provider?: EnumProviderWithAggregatesFilter<"Oauth2User"> | $Enums.Provider
-    providerUserId?: StringWithAggregatesFilter<"Oauth2User"> | string
-    email?: StringWithAggregatesFilter<"Oauth2User"> | string
-    phone?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    firstname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    lastname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    fullname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    avatarUrl?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    username?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
   }
 
   export type CodeWhereInput = {
@@ -7436,6 +7349,93 @@ export namespace Prisma {
     picture?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
+  export type Oauth2UserWhereInput = {
+    AND?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
+    OR?: Oauth2UserWhereInput[]
+    NOT?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
+    id?: UuidFilter<"Oauth2User"> | string
+    provider?: EnumProviderFilter<"Oauth2User"> | $Enums.Provider
+    providerUserId?: StringFilter<"Oauth2User"> | string
+    email?: StringFilter<"Oauth2User"> | string
+    phone?: StringNullableFilter<"Oauth2User"> | string | null
+    firstname?: StringNullableFilter<"Oauth2User"> | string | null
+    lastname?: StringNullableFilter<"Oauth2User"> | string | null
+    fullname?: StringNullableFilter<"Oauth2User"> | string | null
+    avatarUrl?: StringNullableFilter<"Oauth2User"> | string | null
+    username?: StringNullableFilter<"Oauth2User"> | string | null
+    createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
+  }
+
+  export type Oauth2UserOrderByWithRelationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerUserId?: SortOrder
+    email?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    firstname?: SortOrderInput | SortOrder
+    lastname?: SortOrderInput | SortOrder
+    fullname?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
+    username?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type Oauth2UserWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    email?: string
+    AND?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
+    OR?: Oauth2UserWhereInput[]
+    NOT?: Oauth2UserWhereInput | Oauth2UserWhereInput[]
+    provider?: EnumProviderFilter<"Oauth2User"> | $Enums.Provider
+    providerUserId?: StringFilter<"Oauth2User"> | string
+    phone?: StringNullableFilter<"Oauth2User"> | string | null
+    firstname?: StringNullableFilter<"Oauth2User"> | string | null
+    lastname?: StringNullableFilter<"Oauth2User"> | string | null
+    fullname?: StringNullableFilter<"Oauth2User"> | string | null
+    avatarUrl?: StringNullableFilter<"Oauth2User"> | string | null
+    username?: StringNullableFilter<"Oauth2User"> | string | null
+    createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
+  }, "id" | "email">
+
+  export type Oauth2UserOrderByWithAggregationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerUserId?: SortOrder
+    email?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    firstname?: SortOrderInput | SortOrder
+    lastname?: SortOrderInput | SortOrder
+    fullname?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
+    username?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: Oauth2UserCountOrderByAggregateInput
+    _max?: Oauth2UserMaxOrderByAggregateInput
+    _min?: Oauth2UserMinOrderByAggregateInput
+  }
+
+  export type Oauth2UserScalarWhereWithAggregatesInput = {
+    AND?: Oauth2UserScalarWhereWithAggregatesInput | Oauth2UserScalarWhereWithAggregatesInput[]
+    OR?: Oauth2UserScalarWhereWithAggregatesInput[]
+    NOT?: Oauth2UserScalarWhereWithAggregatesInput | Oauth2UserScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Oauth2User"> | string
+    provider?: EnumProviderWithAggregatesFilter<"Oauth2User"> | $Enums.Provider
+    providerUserId?: StringWithAggregatesFilter<"Oauth2User"> | string
+    email?: StringWithAggregatesFilter<"Oauth2User"> | string
+    phone?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    firstname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    lastname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    fullname?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    avatarUrl?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    username?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
+  }
+
   export type UserDeviceCreateInput = {
     id?: string
     nameDevice: string
@@ -7561,111 +7561,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userDeviceId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type Oauth2UserCreateInput = {
-    id?: string
-    provider: $Enums.Provider
-    providerUserId: string
-    email: string
-    phone?: string | null
-    firstname?: string | null
-    lastname?: string | null
-    fullname?: string | null
-    avatarUrl?: string | null
-    username?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type Oauth2UserUncheckedCreateInput = {
-    id?: string
-    provider: $Enums.Provider
-    providerUserId: string
-    email: string
-    phone?: string | null
-    firstname?: string | null
-    lastname?: string | null
-    fullname?: string | null
-    avatarUrl?: string | null
-    username?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type Oauth2UserUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
-    providerUserId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    firstname?: NullableStringFieldUpdateOperationsInput | string | null
-    lastname?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type Oauth2UserUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
-    providerUserId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    firstname?: NullableStringFieldUpdateOperationsInput | string | null
-    lastname?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type Oauth2UserCreateManyInput = {
-    id?: string
-    provider: $Enums.Provider
-    providerUserId: string
-    email: string
-    phone?: string | null
-    firstname?: string | null
-    lastname?: string | null
-    fullname?: string | null
-    avatarUrl?: string | null
-    username?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type Oauth2UserUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
-    providerUserId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    firstname?: NullableStringFieldUpdateOperationsInput | string | null
-    lastname?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type Oauth2UserUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
-    providerUserId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    firstname?: NullableStringFieldUpdateOperationsInput | string | null
-    lastname?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CodeCreateInput = {
@@ -7852,6 +7747,111 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     picture?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type Oauth2UserCreateInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type Oauth2UserUncheckedCreateInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type Oauth2UserUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type Oauth2UserUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type Oauth2UserCreateManyInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type Oauth2UserUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type Oauth2UserUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -8056,68 +8056,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type EnumProviderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
-  }
-
-  export type Oauth2UserCountOrderByAggregateInput = {
-    id?: SortOrder
-    provider?: SortOrder
-    providerUserId?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    firstname?: SortOrder
-    lastname?: SortOrder
-    fullname?: SortOrder
-    avatarUrl?: SortOrder
-    username?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type Oauth2UserMaxOrderByAggregateInput = {
-    id?: SortOrder
-    provider?: SortOrder
-    providerUserId?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    firstname?: SortOrder
-    lastname?: SortOrder
-    fullname?: SortOrder
-    avatarUrl?: SortOrder
-    username?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type Oauth2UserMinOrderByAggregateInput = {
-    id?: SortOrder
-    provider?: SortOrder
-    providerUserId?: SortOrder
-    email?: SortOrder
-    phone?: SortOrder
-    firstname?: SortOrder
-    lastname?: SortOrder
-    fullname?: SortOrder
-    avatarUrl?: SortOrder
-    username?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type EnumProviderWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumProviderFilter<$PrismaModel>
-    _max?: NestedEnumProviderFilter<$PrismaModel>
-  }
-
   export type EnumCodeTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
@@ -8258,6 +8196,68 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type EnumProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
+  }
+
+  export type Oauth2UserCountOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerUserId?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
+    fullname?: SortOrder
+    avatarUrl?: SortOrder
+    username?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type Oauth2UserMaxOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerUserId?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
+    fullname?: SortOrder
+    avatarUrl?: SortOrder
+    username?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type Oauth2UserMinOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerUserId?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
+    fullname?: SortOrder
+    avatarUrl?: SortOrder
+    username?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProviderFilter<$PrismaModel>
+    _max?: NestedEnumProviderFilter<$PrismaModel>
+  }
+
   export type UserCreateNestedOneWithoutUserDeviceInput = {
     create?: XOR<UserCreateWithoutUserDeviceInput, UserUncheckedCreateWithoutUserDeviceInput>
     connectOrCreate?: UserCreateOrConnectWithoutUserDeviceInput
@@ -8342,10 +8342,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutSessionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
-  }
-
-  export type EnumProviderFieldUpdateOperationsInput = {
-    set?: $Enums.Provider
   }
 
   export type UserCreateNestedOneWithoutCodesInput = {
@@ -8496,6 +8492,10 @@ export namespace Prisma {
     deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
+  export type EnumProviderFieldUpdateOperationsInput = {
+    set?: $Enums.Provider
+  }
+
   export type NestedUuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -8630,23 +8630,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumProviderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
-  }
-
-  export type NestedEnumProviderWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
-    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
-    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumProviderFilter<$PrismaModel>
-    _max?: NestedEnumProviderFilter<$PrismaModel>
-  }
-
   export type NestedEnumCodeTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
@@ -8675,6 +8658,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderFilter<$PrismaModel> | $Enums.Provider
+  }
+
+  export type NestedEnumProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Provider | EnumProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Provider[] | ListEnumProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumProviderWithAggregatesFilter<$PrismaModel> | $Enums.Provider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProviderFilter<$PrismaModel>
+    _max?: NestedEnumProviderFilter<$PrismaModel>
   }
 
   export type UserCreateWithoutUserDeviceInput = {
