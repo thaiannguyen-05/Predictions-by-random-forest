@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { StockPredictionService } from './stock-prediction.service';
-
+import { Public } from 'src/common/decorator/public.decorator';
+@Public()
 @Controller('api/stock')
 export class StockController {
 	constructor(private readonly stockService: StockPredictionService) { }

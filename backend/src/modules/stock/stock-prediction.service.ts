@@ -10,7 +10,7 @@ interface MLServiceResponse {
 @Injectable()
 export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 	private readonly logger = new Logger(StockPredictionService.name);
-	private readonly ML_HOST = process.env.ML_SERVICE_HOST || 'localhost';
+	private readonly ML_HOST = process.env.ML_SERVICE_HOST || '127.0.0.1';
 	private readonly ML_PORT = parseInt(process.env.ML_SERVICE_PORT || '9999');
 	private readonly TIMEOUT = 30000; // 30 seconds
 
@@ -41,46 +41,43 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 			const client = new net.Socket();
 			let responseData = '';
 
-			// Set timeout
 			const timeout = setTimeout(() => {
 				client.destroy();
+				this.logger.error(`Request timed out for command: ${command}`);
 				reject(new Error('Request timeout'));
 			}, this.TIMEOUT);
 
-			// Connect to ML server
 			client.connect(this.ML_PORT, this.ML_HOST, () => {
-				this.logger.debug(`Connected to ML server for command: ${command}`);
-
-				// Send request
-				const request = JSON.stringify({
-					command,
-					...params
-				});
-
+				const request = JSON.stringify({ command, ...params });
+				this.logger.log(`Sending command: ${request}`);
 				client.write(request);
+				client.end();
 			});
 
-			// Receive data
 			client.on('data', (data) => {
 				responseData += data.toString();
+				this.logger.log(`Received data chunk for command: ${command}`);
 			});
 
-			// Connection closed - parse response
-			client.on('close', () => {
+			client.on('end', () => {
 				clearTimeout(timeout);
-
+				this.logger.log(`Connection ended for command: ${command}. Full response: ${responseData}`);
 				try {
 					const response = JSON.parse(responseData);
 					resolve(response);
 				} catch (error) {
+					this.logger.error(`Failed to parse ML response: ${error.message}. Raw response: ${responseData}`);
 					reject(new Error(`Failed to parse ML response: ${error.message}`));
 				}
 			});
 
-			// Handle errors
+			client.on('close', () => {
+				this.logger.log(`Connection closed for command: ${command}.`);
+			});
+
 			client.on('error', (error) => {
 				clearTimeout(timeout);
-				this.logger.error(`ML Service connection error: ${error.message}`);
+				this.logger.error(`ML Service connection error for command ${command}: ${error.message}`);
 				reject(error);
 			});
 		});
@@ -106,9 +103,12 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 	async getCurrentPrice(ticker: string): Promise<MLServiceResponse> {
 		try {
 			const response = await this.sendCommand('get_current_price', { ticker });
+			if (!response.success) {
+				this.logger.error(`ML service failed to get current price for ${ticker}: ${response.error}`);
+			}
 			return response;
 		} catch (error) {
-			this.logger.error(`Error getting current price for ${ticker}: ${error.message}`);
+			this.logger.error(`Error calling ML service for current price of ${ticker}: ${error.message}`);
 			return {
 				success: false,
 				error: error.message
@@ -121,7 +121,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 	 */
 	async getPredictionSingle(ticker: string): Promise<MLServiceResponse> {
 		try {
-			const response = await this.sendCommand('predict_single', { ticker });
+			const response = await this.sendCommand('predict', { ticker });
 			return response;
 		} catch (error) {
 			this.logger.error(`Error predicting for ${ticker}: ${error.message}`);

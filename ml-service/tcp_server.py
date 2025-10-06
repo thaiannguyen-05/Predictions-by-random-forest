@@ -26,9 +26,13 @@ class StockPredictionTCPServer:
 
     def get_prediction_instance(self, ticker: str):
         """Get or create prediction instance for a ticker"""
+        # Standardize ticker
+        if not ticker.upper().endswith(".VN"):
+            ticker = f"{ticker.upper()}.VN"
+
         if ticker not in self.prediction_instances:
-            csv_file = f"{ticker.replace('.', '_').lower()}.csv"
-            model_file = f"{ticker.replace('.', '_').lower()}_model.pkl"
+            csv_file = f"data/{ticker.replace('.', '_')}_stock_data.csv"
+            model_file = f"models/{ticker.replace('.', '_')}_model.pkl"
             self.prediction_instances[ticker] = RealTimePrediction(
                 ticker=ticker, csv_file=csv_file, model_file=model_file
             )
@@ -41,7 +45,12 @@ class StockPredictionTCPServer:
             if not ticker:
                 return {"success": False, "error": "Missing ticker parameter"}
 
-            predictor = self.get_prediction_instance(ticker)
+            # Standardize ticker
+            if not ticker.upper().endswith(".VN"):
+                ticker = f"{ticker.upper()}.VN"
+
+            # Create a temporary instance to get the price
+            predictor = RealTimePrediction(ticker=ticker)
             current_info = predictor.get_current_price()
 
             if current_info is None:
@@ -286,57 +295,56 @@ class StockPredictionTCPServer:
         logger.info(f"New connection from {client_address}")
 
         try:
-            while True:
-                # Receive data
-                data = client_socket.recv(4096).decode("utf-8")
-                if not data:
-                    break
+            # Receive data
+            data = client_socket.recv(4096).decode("utf-8")
+            if not data:
+                return
 
-                logger.info(f"Received from {client_address}: {data[:100]}...")
+            logger.info(f"Received from {client_address}: {data[:100]}...")
 
-                try:
-                    # Parse JSON request
-                    request = json.loads(data)
-                    command = request.get("command")
+            try:
+                # Parse JSON request
+                request = json.loads(data)
+                command = request.get("command")
 
-                    # Route to appropriate handler
-                    if command == "get_current_price":
-                        response = self.handle_get_current_price(request)
-                    elif command == "predict":
-                        response = self.handle_predict(request)
-                    elif command == "predict_multi_hours":
-                        response = self.handle_predict_multi_hours(request)
-                    elif command == "train":
-                        response = self.handle_train_model(request)
-                    elif command == "prediction_report":
-                        response = self.handle_prediction_report(request)
-                    elif command == "update_data":
-                        response = self.handle_update_data(request)
-                    elif command == "ping":
-                        response = {
-                            "success": True,
-                            "message": "pong",
-                            "timestamp": datetime.now().isoformat(),
-                        }
-                    else:
-                        response = {
-                            "success": False,
-                            "error": f"Unknown command: {command}",
-                        }
+                # Route to appropriate handler
+                if command == "get_current_price":
+                    response = self.handle_get_current_price(request)
+                elif command == "predict":
+                    response = self.handle_predict(request)
+                elif command == "predict_multi_hours":
+                    response = self.handle_predict_multi_hours(request)
+                elif command == "train":
+                    response = self.handle_train_model(request)
+                elif command == "prediction_report":
+                    response = self.handle_prediction_report(request)
+                elif command == "update_data":
+                    response = self.handle_update_data(request)
+                elif command == "ping":
+                    response = {
+                        "success": True,
+                        "message": "pong",
+                        "timestamp": datetime.now().isoformat(),
+                    }
+                else:
+                    response = {
+                        "success": False,
+                        "error": f"Unknown command: {command}",
+                    }
 
-                    # Send response
-                    response_json = json.dumps(
-                        response, ensure_ascii=False, default=str
-                    )
-                    client_socket.send(response_json.encode("utf-8"))
+                # Send response
+                response_json = json.dumps(
+                    response, ensure_ascii=False, default=str
+                )
+                client_socket.send(response_json.encode("utf-8"))
 
-                    logger.info(
-                        f"Sent to {client_address}: {command} -> {response.get('success', 'N/A')}"
-                    )
+                logger.info(
+                    f"Sent to {client_address}: {command} -> {response.get('success', 'N/A')}"
+                )
 
-                except json.JSONDecodeError:
-                    error_response = {"success": False, "error": "Invalid JSON format"}
-                    client_socket.send(json.dumps(error_response).encode("utf-8"))
+            except json.JSONDecodeError:
+                error_response = {"success": False, "error": "Invalid JSON format"}
+                client_socket.send(json.dumps(error_response).encode("utf-8"))
 
         except Exception as e:
             logger.error(f"Error handling client {client_address}: {e}")
@@ -389,16 +397,18 @@ class StockPredictionTCPServer:
 def signal_handler(signum, frame):
     """Handle shutdown signals"""
     logger.info("Received shutdown signal")
-    sys.exit(0)
+    if "server" in globals():
+        server.stop_server()
 
 
 if __name__ == "__main__":
+    # Create and start server
+    global server
+    server = StockPredictionTCPServer(host="0.0.0.0", port=9999)
+
     # Setup signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-
-    # Create and start server
-    server = StockPredictionTCPServer(host="0.0.0.0", port=9999)
 
     try:
         server.start_server()

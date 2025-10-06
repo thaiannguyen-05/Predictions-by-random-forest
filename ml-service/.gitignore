@@ -1,0 +1,6 @@
+tests/
+models/
+logs/
+.venv/
+.pytest_cache/
+_pycache_/
