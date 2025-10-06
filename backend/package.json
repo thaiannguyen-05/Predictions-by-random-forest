@@ -36,6 +36,7 @@
     "argon2": "^0.44.0",
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
+    "install": "^0.13.0",
     "nodemailer": "^7.0.6",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
@@ -92,9 +93,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "import": {
-      "schemas": "prisma/schema/*.prisma",
-      "output": "prisma/schema.generated.prisma"
-    }
+    "schema": "./prisma/schema"
   }
 }

@@ -138,21 +138,6 @@ exports.Prisma.SessionScalarFieldEnum = {
   userId: 'userId'
 };
 
-exports.Prisma.Oauth2UserScalarFieldEnum = {
-  id: 'id',
-  provider: 'provider',
-  providerUserId: 'providerUserId',
-  email: 'email',
-  phone: 'phone',
-  firstname: 'firstname',
-  lastname: 'lastname',
-  fullname: 'fullname',
-  avatarUrl: 'avatarUrl',
-  username: 'username',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.CodeScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -178,6 +163,21 @@ exports.Prisma.UserScalarFieldEnum = {
   picture: 'picture'
 };
 
+exports.Prisma.Oauth2UserScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerUserId: 'providerUserId',
+  email: 'email',
+  phone: 'phone',
+  firstname: 'firstname',
+  lastname: 'lastname',
+  fullname: 'fullname',
+  avatarUrl: 'avatarUrl',
+  username: 'username',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -192,11 +192,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.Provider = exports.$Enums.Provider = {
-  FACEBOOK: 'FACEBOOK',
-  GOOGLE: 'GOOGLE'
-};
-
 exports.CodeType = exports.$Enums.CodeType = {
   VERIFICATION: 'VERIFICATION',
   PASSWORD_RESET: 'PASSWORD_RESET',
@@ -204,12 +199,17 @@ exports.CodeType = exports.$Enums.CodeType = {
   PHONE_CHANGE: 'PHONE_CHANGE'
 };
 
+exports.Provider = exports.$Enums.Provider = {
+  FACEBOOK: 'FACEBOOK',
+  GOOGLE: 'GOOGLE'
+};
+
 exports.Prisma.ModelName = {
   UserDevice: 'UserDevice',
   Session: 'Session',
-  Oauth2User: 'Oauth2User',
   Code: 'Code',
-  User: 'User'
+  User: 'User',
+  Oauth2User: 'Oauth2User'
 };
 
 /**
