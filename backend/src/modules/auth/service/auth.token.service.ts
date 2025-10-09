@@ -8,6 +8,7 @@ import { hash, verify } from "argon2";
 import { Response } from "express";
 import { AUTH_CONSTANT } from "../auth.constants";
 import { EmailProducer } from "src/email/emai.producer";
+import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthTokenSerivec {
 
@@ -60,7 +61,8 @@ export class AuthTokenSerivec {
 			const newUserDevice = await this.prismaService.userDevice.create({
 				data: {
 					nameDevice: userDevice,
-					userId: user.id
+					userId: user.id,
+					deviceId: uuidv4(),
 				}
 			})
 
@@ -118,7 +120,6 @@ export class AuthTokenSerivec {
 				where: { id: sessionId },
 				include: {
 					user: true,
-					userDevice: true
 				}
 			})
 			if (!session) throw new UnauthorizedException("Invalid session")

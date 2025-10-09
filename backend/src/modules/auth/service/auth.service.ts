@@ -29,7 +29,7 @@ export class AuthService {
     private readonly tokenService: AuthTokenSerivec,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   // ===============================
   // REGISTER
@@ -50,6 +50,8 @@ export class AuthService {
         hashedPassword,
         ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
         dateOfBirth,
+        fullname: `${dto.firstName} ${dto.lastName}`,
+        state: 'pending',
       },
     });
 
@@ -92,10 +94,10 @@ export class AuthService {
       where: { OR: [{ email: dto.access }, { username: dto.access }], isActive: true },
     });
     if (!user) throw new NotFoundException('User not found');
-    
+
     // FIX 1: Handle nullable hashedPassword
     if (!user.hashedPassword) {
-        throw new ForbiddenException('Invalid login credentials or method.');
+      throw new ForbiddenException('Invalid login credentials or method.');
     }
 
     const valid = await verify(user.hashedPassword, dto.password);
@@ -141,7 +143,7 @@ export class AuthService {
 
     // FIX 2: Handle nullable hashedPassword
     if (!account.hashedPassword) {
-        throw new ForbiddenException('Account does not have a locally set password.');
+      throw new ForbiddenException('Account does not have a locally set password.');
     }
 
     const valid = await verify(account.hashedPassword, dto.password);
@@ -185,45 +187,94 @@ export class AuthService {
           picture: profile.picture || profile.photos?.[0]?.value || '',
           hashedPassword: '', // Set to empty string if nullable, or null if schema allows.
           dateOfBirth: new Date('1900-01-01'), // Placeholder date if required
+          fullname: `${profile.firstName || profile.name?.givenName || ''} ${profile.lastName || profile.name?.familyName || ''}`,
+          state: 'active',
         },
       });
     }
+
+    // 2️⃣ Tạo token
+    const accessToken = this.jwtService.sign(
+      { sub: user.id, email: user.email },
+      { expiresIn: '15m' },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      { sub: user.id, email: user.email },
+      { expiresIn: '7d' },
+    );
 
     const token = this.jwtService.sign(
       { sub: user.id, email: user.email },
       { secret: this.configService.getOrThrow<string>('JWT_SECRET'), expiresIn: '1d' },
     );
 
-    return { user, token };
+    return { user, token: {
+      accessToken, refreshToken, },
+     };
   }
-  
+
   // ===============================
   // VALIDATE
   // ===============================
   public async validate(accessToken: string): Promise<any> {
     try {
-        // 1. Verify the token using the secret key
-        const payload = this.jwtService.verify(accessToken, {
-            secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-        });
-        
-        // 2. Fetch the user from the database
-        const user = await this.prismaService.user.findUnique({
-            where: { id: payload.sub },
-            select: { id: true, email: true, username: true, isActive: true }, // Select necessary fields
-        });
+      // 1. Verify the token using the secret key
+      const payload = this.jwtService.verify(accessToken, {
+        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+      });
 
-        // 3. Return the user if found, otherwise return null/throw
-        if (!user || !user.isActive) {
-            throw new UnauthorizedException('Invalid or inactive user');
-        }
+      // 2. Fetch the user from the database
+      const user = await this.prismaService.user.findUnique({
+        where: { id: payload.sub },
+        select: { id: true, email: true, username: true, isActive: true }, // Select necessary fields
+      });
 
-        // The returned value is what NestJS Passport injects into the request object (req.user)
-        return user; 
-        
+      // 3. Return the user if found, otherwise return null/throw
+      if (!user || !user.isActive) {
+        throw new UnauthorizedException('Invalid or inactive user');
+      }
+
+      // The returned value is what NestJS Passport injects into the request object (req.user)
+      return user;
+
     } catch (error) {
-        // Handle common JWT errors (e.g., expiration, invalid signature)
-        throw new UnauthorizedException('Token validation failed');
+      // Handle common JWT errors (e.g., expiration, invalid signature)
+      throw new UnauthorizedException('Token validation failed');
     }
   }
+  // ===============================
+  // FETCH CURRENT USER
+  // ===============================
+  public async getMe(token: string) {
+    try {
+      if (!token) throw new BadRequestException('Token required');
+
+      const payload = this.jwtService.verify(token, {
+        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+      });
+
+      const user = await this.prismaService.user.findUnique({
+        where: { id: payload.sub },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+          fullname: true,
+          picture: true,
+          isActive: true,
+        },
+      });
+
+      if (!user) throw new UnauthorizedException('User not found');
+      if (!user.isActive) throw new UnauthorizedException('User inactive');
+
+      return user;
+    } catch (err) {
+      throw new UnauthorizedException('Token không hợp lệ');
+    }
+  }
+
 }

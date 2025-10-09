@@ -1,5 +1,6 @@
 model UserDevice {
   id         String   @id @default(uuid()) @map("device_id") @db.Uuid
+  deviceId   String   @unique
   nameDevice String   @map("device_name")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
@@ -7,8 +8,7 @@ model UserDevice {
   userId     String   @map("user_id") @db.Uuid
 
   //relation
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userSession Session?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([nameDevice, userId])
   @@index([userId])
@@ -17,21 +17,21 @@ model UserDevice {
 
 model Session {
   id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
+  userDeviceId       String
   hashedRefreshToken String?  @map("hashed_refresh_token")
+  userAgent          String?  @db.VarChar(1000)
   userIp             String   @map("user_ip")
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  // foreign keys
-  userDeviceId String     @unique @map("user_device_id") @db.Uuid
-  userId       String     @map("user_id") @db.Uuid
+  loginedAt  DateTime? @map("logined_at") @db.Timestamptz()
+  logoutedAt DateTime? @map("logouted_at") @db.Timestamptz()
+
   // relations
-  userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  user   User   @relation(name: "sessions", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, userDeviceId])
-  @@index([userId])
-  @@index([userDeviceId])
   @@map("sessions")
 }
 
@@ -53,9 +53,17 @@ model Code {
   @@map("codes")
 }
 
+enum AccountType {
+  EMAIL
+  OAUTH2
+
+  @@map("account_type")
+}
+
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "windows"]
 }
 
 datasource db {
@@ -64,24 +72,37 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid()) @map("user_id") @db.Uuid
-  email          String   @unique @map("email_address")
-  avtUrl         String?  @map("avt_url")
-  username       String   @unique @map("user_name")
-  firstName      String   @map("first_name")
-  lastName       String   @map("last_name")
-  hashedPassword String?  @map("hashed_password")
-  phoneNumber    String?  @map("phone_number")
-  dateOfBirth    DateTime @map("birth_or_date")
-  isActive       Boolean  @default(false) @map("is_active")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  id             String         @id @default(uuid()) @db.Uuid
+  fullname       String         @db.VarChar(50)
+  username       String         @unique @db.VarChar(250)
+  email          String         @unique @db.VarChar(255)
+  hashedPassword String?        @map("hashed_password") @db.VarChar(255)
+  accountType    AccountType    @default(EMAIL) @map("account_type")
+  avtUrl         String?        @map("avt_url") @db.VarChar(500)
+  address        String?        @db.VarChar(500)
+  city           String?        @db.VarChar(50)
+  state          String         @db.VarChar(50)
+  searchCount    Int            @default(0) @map("search_times")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz()
+  visible        UserVisibility @default(PUBLIC)
+  status         Status         @default(ACTIVE)
+  phone          String?        @db.VarChar(20)
+  numberIdentity String?
+  dateOfBirth    DateTime?
+  firstName      String?
+  lastName       String?
+  isActive       Boolean        @default(false)
+  isBanned       Boolean        @default(false) @map("is_banned")
+  isLocked       Boolean        @default(false) @map("is_locked")
+  isVerified     Boolean        @default(false) @map("is_verified")
+  lastActived    DateTime?      @map("last_actived") @db.Timestamptz()
   picture        String?
-
   // relations
-  userDevice UserDevice[]
-  sessions   Session[]
-  codes      Code[]
+  userDevice     UserDevice[]
+  sessions       Session[]      @relation("sessions")
+  Oauth2User     Oauth2User[]   @relation("oauth2")
+  codes          Code[]
 
   @@index([username])
   @@index([email])
@@ -103,6 +124,9 @@ model Oauth2User {
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
+  userId String @map("user_id") @db.Uuid
+  user   User   @relation(name: "oauth2", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   @@map("oauth2_user")
 }
 
@@ -116,4 +140,18 @@ enum CodeType {
   PASSWORD_RESET
   EMAIL_CHANGE
   PHONE_CHANGE
+}
+
+enum Status {
+  ACTIVE
+  SOLTDELETE
+  PENDING
+}
+
+enum UserVisibility {
+  PUBLIC
+  PRIVATE
+  CONTACT_ONLY
+
+  @@map("user_visibility")
 }

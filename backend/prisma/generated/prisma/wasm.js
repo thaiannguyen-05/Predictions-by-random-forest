@@ -94,6 +94,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserDeviceScalarFieldEnum = {
   id: 'id',
+  deviceId: 'deviceId',
   nameDevice: 'nameDevice',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -102,11 +103,14 @@ exports.Prisma.UserDeviceScalarFieldEnum = {
 
 exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
+  userDeviceId: 'userDeviceId',
   hashedRefreshToken: 'hashedRefreshToken',
+  userAgent: 'userAgent',
   userIp: 'userIp',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userDeviceId: 'userDeviceId',
+  loginedAt: 'loginedAt',
+  logoutedAt: 'logoutedAt',
   userId: 'userId'
 };
 
@@ -121,17 +125,30 @@ exports.Prisma.CodeScalarFieldEnum = {
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  avtUrl: 'avtUrl',
+  fullname: 'fullname',
   username: 'username',
-  firstName: 'firstName',
-  lastName: 'lastName',
+  email: 'email',
   hashedPassword: 'hashedPassword',
-  phoneNumber: 'phoneNumber',
-  dateOfBirth: 'dateOfBirth',
-  isActive: 'isActive',
+  accountType: 'accountType',
+  avtUrl: 'avtUrl',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  searchCount: 'searchCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  visible: 'visible',
+  status: 'status',
+  phone: 'phone',
+  numberIdentity: 'numberIdentity',
+  dateOfBirth: 'dateOfBirth',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  isActive: 'isActive',
+  isBanned: 'isBanned',
+  isLocked: 'isLocked',
+  isVerified: 'isVerified',
+  lastActived: 'lastActived',
   picture: 'picture'
 };
 
@@ -147,7 +164,8 @@ exports.Prisma.Oauth2UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl',
   username: 'username',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {
@@ -164,6 +182,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.AccountType = exports.$Enums.AccountType = {
+  EMAIL: 'EMAIL',
+  OAUTH2: 'OAUTH2'
+};
+
 exports.Provider = exports.$Enums.Provider = {
   FACEBOOK: 'FACEBOOK',
   GOOGLE: 'GOOGLE'
@@ -174,6 +197,18 @@ exports.CodeType = exports.$Enums.CodeType = {
   PASSWORD_RESET: 'PASSWORD_RESET',
   EMAIL_CHANGE: 'EMAIL_CHANGE',
   PHONE_CHANGE: 'PHONE_CHANGE'
+};
+
+exports.Status = exports.$Enums.Status = {
+  ACTIVE: 'ACTIVE',
+  SOLTDELETE: 'SOLTDELETE',
+  PENDING: 'PENDING'
+};
+
+exports.UserVisibility = exports.$Enums.UserVisibility = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE',
+  CONTACT_ONLY: 'CONTACT_ONLY'
 };
 
 exports.Prisma.ModelName = {
@@ -194,7 +229,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/andev/work_space/prediction-by-radom-forest/backend/prisma/generated/prisma",
+      "value": "D:\\Web_predictor\\Predictions-by-random-forest\\backend\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -203,16 +238,20 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/andev/work_space/prediction-by-radom-forest/backend/prisma/schema/schema.prisma",
+    "sourceFilePath": "D:\\Web_predictor\\Predictions-by-random-forest\\backend\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../schema",
@@ -222,6 +261,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -230,13 +270,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "model UserDevice {\n  id         String   @id @default(uuid()) @map(\"device_id\") @db.Uuid\n  nameDevice String   @map(\"device_name\")\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n  updatedAt  DateTime @updatedAt @map(\"updated_at\")\n  // foreign keys\n  userId     String   @map(\"user_id\") @db.Uuid\n\n  //relation\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userSession Session?\n\n  @@unique([nameDevice, userId])\n  @@index([userId])\n  @@map(\"user_devices\")\n}\n\nmodel Session {\n  id                 String   @id @default(uuid()) @map(\"session_id\") @db.Uuid\n  hashedRefreshToken String?  @map(\"hashed_refresh_token\")\n  userIp             String   @map(\"user_ip\")\n  createdAt          DateTime @default(now()) @map(\"created_at\")\n  updatedAt          DateTime @updatedAt @map(\"updated_at\")\n\n  // foreign keys\n  userDeviceId String     @unique @map(\"user_device_id\") @db.Uuid\n  userId       String     @map(\"user_id\") @db.Uuid\n  // relations\n  userDevice   UserDevice @relation(fields: [userDeviceId], references: [id], onDelete: Cascade)\n  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, userDeviceId])\n  @@index([userId])\n  @@index([userDeviceId])\n  @@map(\"sessions\")\n}\n\nmodel Code {\n  id        String   @id @default(uuid()) @map(\"code_id\") @db.Uuid\n  code      String   @db.VarChar(255)\n  type      CodeType @default(VERIFICATION) @map(\"code_type\")\n  createdAt DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  // foreign keys\n  userId String @map(\"user_id\") @db.Uuid\n\n  // relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([code, userId])\n  @@index([userId])\n  @@map(\"codes\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id             String   @id @default(uuid()) @map(\"user_id\") @db.Uuid\n  email          String   @unique @map(\"email_address\")\n  avtUrl         String?  @map(\"avt_url\")\n  username       String   @unique @map(\"user_name\")\n  firstName      String   @map(\"first_name\")\n  lastName       String   @map(\"last_name\")\n  hashedPassword String?  @map(\"hashed_password\")\n  phoneNumber    String?  @map(\"phone_number\")\n  dateOfBirth    DateTime @map(\"birth_or_date\")\n  isActive       Boolean  @default(false) @map(\"is_active\")\n  createdAt      DateTime @default(now()) @map(\"created_at\")\n  updatedAt      DateTime @updatedAt @map(\"updated_at\")\n  picture        String?\n\n  // relations\n  userDevice UserDevice[]\n  sessions   Session[]\n  codes      Code[]\n\n  @@index([username])\n  @@index([email])\n  @@index([createdAt])\n  @@map(\"users\") // Changed to plural form which is common in PostgreSQL\n}\n\nmodel Oauth2User {\n  id             String   @id @default(uuid()) @db.Uuid\n  provider       Provider\n  providerUserId String   @map(\"provider_user_id\") @db.VarChar(500)\n  email          String   @unique @db.VarChar(255)\n  phone          String?  @db.VarChar(20)\n  firstname      String?  @db.VarChar(50)\n  lastname       String?  @db.VarChar(50)\n  fullname       String?  @db.VarChar(50)\n  avatarUrl      String?  @map(\"avatar_url\") @db.VarChar(500)\n  username       String?  @db.VarChar(50)\n  createdAt      DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt      DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  @@map(\"oauth2_user\")\n}\n\nenum Provider {\n  FACEBOOK\n  GOOGLE\n}\n\nenum CodeType {\n  VERIFICATION\n  PASSWORD_RESET\n  EMAIL_CHANGE\n  PHONE_CHANGE\n}\n",
-  "inlineSchemaHash": "6122fd10a59c86fdd2f24516b9c0c63ed42dbc85f31d063d197f091978c759fa",
+  "inlineSchema": "model UserDevice {\n  id         String   @id @default(uuid()) @map(\"device_id\") @db.Uuid\n  deviceId   String   @unique\n  nameDevice String   @map(\"device_name\")\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n  updatedAt  DateTime @updatedAt @map(\"updated_at\")\n  // foreign keys\n  userId     String   @map(\"user_id\") @db.Uuid\n\n  //relation\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([nameDevice, userId])\n  @@index([userId])\n  @@map(\"user_devices\")\n}\n\nmodel Session {\n  id                 String   @id @default(uuid()) @map(\"session_id\") @db.Uuid\n  userDeviceId       String\n  hashedRefreshToken String?  @map(\"hashed_refresh_token\")\n  userAgent          String?  @db.VarChar(1000)\n  userIp             String   @map(\"user_ip\")\n  createdAt          DateTime @default(now()) @map(\"created_at\")\n  updatedAt          DateTime @updatedAt @map(\"updated_at\")\n\n  loginedAt  DateTime? @map(\"logined_at\") @db.Timestamptz()\n  logoutedAt DateTime? @map(\"logouted_at\") @db.Timestamptz()\n\n  // relations\n  userId String @db.Uuid\n  user   User   @relation(name: \"sessions\", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n\n  @@unique([userId, userDeviceId])\n  @@map(\"sessions\")\n}\n\nmodel Code {\n  id        String   @id @default(uuid()) @map(\"code_id\") @db.Uuid\n  code      String   @db.VarChar(255)\n  type      CodeType @default(VERIFICATION) @map(\"code_type\")\n  createdAt DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  // foreign keys\n  userId String @map(\"user_id\") @db.Uuid\n\n  // relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([code, userId])\n  @@index([userId])\n  @@map(\"codes\")\n}\n\nenum AccountType {\n  EMAIL\n  OAUTH2\n\n  @@map(\"account_type\")\n}\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"windows\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id             String         @id @default(uuid()) @db.Uuid\n  fullname       String         @db.VarChar(50)\n  username       String         @unique @db.VarChar(250)\n  email          String         @unique @db.VarChar(255)\n  hashedPassword String?        @map(\"hashed_password\") @db.VarChar(255)\n  accountType    AccountType    @default(EMAIL) @map(\"account_type\")\n  avtUrl         String?        @map(\"avt_url\") @db.VarChar(500)\n  address        String?        @db.VarChar(500)\n  city           String?        @db.VarChar(50)\n  state          String         @db.VarChar(50)\n  searchCount    Int            @default(0) @map(\"search_times\")\n  createdAt      DateTime       @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt      DateTime       @updatedAt @map(\"updated_at\") @db.Timestamptz()\n  visible        UserVisibility @default(PUBLIC)\n  status         Status         @default(ACTIVE)\n  phone          String?        @db.VarChar(20)\n  numberIdentity String?\n  dateOfBirth    DateTime?\n  firstName      String?\n  lastName       String?\n  isActive       Boolean        @default(false)\n  isBanned       Boolean        @default(false) @map(\"is_banned\")\n  isLocked       Boolean        @default(false) @map(\"is_locked\")\n  isVerified     Boolean        @default(false) @map(\"is_verified\")\n  lastActived    DateTime?      @map(\"last_actived\") @db.Timestamptz()\n  picture        String?\n  // relations\n  userDevice     UserDevice[]\n  sessions       Session[]      @relation(\"sessions\")\n  Oauth2User     Oauth2User[]   @relation(\"oauth2\")\n  codes          Code[]\n\n  @@index([username])\n  @@index([email])\n  @@index([createdAt])\n  @@map(\"users\") // Changed to plural form which is common in PostgreSQL\n}\n\nmodel Oauth2User {\n  id             String   @id @default(uuid()) @db.Uuid\n  provider       Provider\n  providerUserId String   @map(\"provider_user_id\") @db.VarChar(500)\n  email          String   @unique @db.VarChar(255)\n  phone          String?  @db.VarChar(20)\n  firstname      String?  @db.VarChar(50)\n  lastname       String?  @db.VarChar(50)\n  fullname       String?  @db.VarChar(50)\n  avatarUrl      String?  @map(\"avatar_url\") @db.VarChar(500)\n  username       String?  @db.VarChar(50)\n  createdAt      DateTime @default(now()) @map(\"created_at\") @db.Timestamptz()\n  updatedAt      DateTime @updatedAt @map(\"updated_at\") @db.Timestamptz()\n\n  userId String @map(\"user_id\") @db.Uuid\n  user   User   @relation(name: \"oauth2\", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)\n\n  @@map(\"oauth2_user\")\n}\n\nenum Provider {\n  FACEBOOK\n  GOOGLE\n}\n\nenum CodeType {\n  VERIFICATION\n  PASSWORD_RESET\n  EMAIL_CHANGE\n  PHONE_CHANGE\n}\n\nenum Status {\n  ACTIVE\n  SOLTDELETE\n  PENDING\n}\n\nenum UserVisibility {\n  PUBLIC\n  PRIVATE\n  CONTACT_ONLY\n\n  @@map(\"user_visibility\")\n}\n",
+  "inlineSchemaHash": "ca75c393d25605af699184db3da39cd07efb4a5c0d8b0d0cd9f169a5da38673c",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"UserDevice\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"device_id\"},{\"name\":\"nameDevice\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"device_name\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserDevice\"},{\"name\":\"userSession\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUserDevice\"}],\"dbName\":\"user_devices\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"session_id\"},{\"name\":\"hashedRefreshToken\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"hashed_refresh_token\"},{\"name\":\"userIp\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_ip\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userDeviceId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_device_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"userDevice\",\"kind\":\"object\",\"type\":\"UserDevice\",\"relationName\":\"SessionToUserDevice\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"sessions\"},\"Code\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"code_id\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"CodeType\",\"dbName\":\"code_type\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CodeToUser\"}],\"dbName\":\"codes\"},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"email_address\"},{\"name\":\"avtUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"avt_url\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_name\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"first_name\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"last_name\"},{\"name\":\"hashedPassword\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"hashed_password\"},{\"name\":\"phoneNumber\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"phone_number\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"birth_or_date\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"is_active\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"picture\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userDevice\",\"kind\":\"object\",\"type\":\"UserDevice\",\"relationName\":\"UserToUserDevice\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"codes\",\"kind\":\"object\",\"type\":\"Code\",\"relationName\":\"CodeToUser\"}],\"dbName\":\"users\"},\"Oauth2User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"Provider\"},{\"name\":\"providerUserId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"provider_user_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"avatar_url\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"oauth2_user\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"UserDevice\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"device_id\"},{\"name\":\"deviceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nameDevice\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"device_name\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserDevice\"}],\"dbName\":\"user_devices\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"session_id\"},{\"name\":\"userDeviceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hashedRefreshToken\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"hashed_refresh_token\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userIp\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_ip\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"loginedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"logined_at\"},{\"name\":\"logoutedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"logouted_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"sessions\"}],\"dbName\":\"sessions\"},\"Code\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"code_id\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"CodeType\",\"dbName\":\"code_type\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CodeToUser\"}],\"dbName\":\"codes\"},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hashedPassword\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"hashed_password\"},{\"name\":\"accountType\",\"kind\":\"enum\",\"type\":\"AccountType\",\"dbName\":\"account_type\"},{\"name\":\"avtUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"avt_url\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"searchCount\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"search_times\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"visible\",\"kind\":\"enum\",\"type\":\"UserVisibility\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"Status\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"numberIdentity\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isBanned\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"is_banned\"},{\"name\":\"isLocked\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"is_locked\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\",\"dbName\":\"is_verified\"},{\"name\":\"lastActived\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"last_actived\"},{\"name\":\"picture\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userDevice\",\"kind\":\"object\",\"type\":\"UserDevice\",\"relationName\":\"UserToUserDevice\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"sessions\"},{\"name\":\"Oauth2User\",\"kind\":\"object\",\"type\":\"Oauth2User\",\"relationName\":\"oauth2\"},{\"name\":\"codes\",\"kind\":\"object\",\"type\":\"Code\",\"relationName\":\"CodeToUser\"}],\"dbName\":\"users\"},\"Oauth2User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"Provider\"},{\"name\":\"providerUserId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"provider_user_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"avatar_url\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"oauth2\"}],\"dbName\":\"oauth2_user\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

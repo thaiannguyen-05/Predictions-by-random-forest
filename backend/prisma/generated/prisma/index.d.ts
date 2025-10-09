@@ -43,7 +43,15 @@ export type Oauth2User = $Result.DefaultSelection<Prisma.$Oauth2UserPayload>
  * Enums
  */
 export namespace $Enums {
-  export const Provider: {
+  export const AccountType: {
+  EMAIL: 'EMAIL',
+  OAUTH2: 'OAUTH2'
+};
+
+export type AccountType = (typeof AccountType)[keyof typeof AccountType]
+
+
+export const Provider: {
   FACEBOOK: 'FACEBOOK',
   GOOGLE: 'GOOGLE'
 };
@@ -60,7 +68,29 @@ export const CodeType: {
 
 export type CodeType = (typeof CodeType)[keyof typeof CodeType]
 
+
+export const Status: {
+  ACTIVE: 'ACTIVE',
+  SOLTDELETE: 'SOLTDELETE',
+  PENDING: 'PENDING'
+};
+
+export type Status = (typeof Status)[keyof typeof Status]
+
+
+export const UserVisibility: {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE',
+  CONTACT_ONLY: 'CONTACT_ONLY'
+};
+
+export type UserVisibility = (typeof UserVisibility)[keyof typeof UserVisibility]
+
 }
+
+export type AccountType = $Enums.AccountType
+
+export const AccountType: typeof $Enums.AccountType
 
 export type Provider = $Enums.Provider
 
@@ -69,6 +99,14 @@ export const Provider: typeof $Enums.Provider
 export type CodeType = $Enums.CodeType
 
 export const CodeType: typeof $Enums.CodeType
+
+export type Status = $Enums.Status
+
+export const Status: typeof $Enums.Status
+
+export type UserVisibility = $Enums.UserVisibility
+
+export const UserVisibility: typeof $Enums.UserVisibility
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1257,12 +1295,14 @@ export namespace Prisma {
   export type UserCountOutputType = {
     userDevice: number
     sessions: number
+    Oauth2User: number
     codes: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userDevice?: boolean | UserCountOutputTypeCountUserDeviceArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    Oauth2User?: boolean | UserCountOutputTypeCountOauth2UserArgs
     codes?: boolean | UserCountOutputTypeCountCodesArgs
   }
 
@@ -1294,6 +1334,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountOauth2UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: Oauth2UserWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CodeWhereInput
   }
@@ -1315,6 +1362,7 @@ export namespace Prisma {
 
   export type UserDeviceMinAggregateOutputType = {
     id: string | null
+    deviceId: string | null
     nameDevice: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1323,6 +1371,7 @@ export namespace Prisma {
 
   export type UserDeviceMaxAggregateOutputType = {
     id: string | null
+    deviceId: string | null
     nameDevice: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1331,6 +1380,7 @@ export namespace Prisma {
 
   export type UserDeviceCountAggregateOutputType = {
     id: number
+    deviceId: number
     nameDevice: number
     createdAt: number
     updatedAt: number
@@ -1341,6 +1391,7 @@ export namespace Prisma {
 
   export type UserDeviceMinAggregateInputType = {
     id?: true
+    deviceId?: true
     nameDevice?: true
     createdAt?: true
     updatedAt?: true
@@ -1349,6 +1400,7 @@ export namespace Prisma {
 
   export type UserDeviceMaxAggregateInputType = {
     id?: true
+    deviceId?: true
     nameDevice?: true
     createdAt?: true
     updatedAt?: true
@@ -1357,6 +1409,7 @@ export namespace Prisma {
 
   export type UserDeviceCountAggregateInputType = {
     id?: true
+    deviceId?: true
     nameDevice?: true
     createdAt?: true
     updatedAt?: true
@@ -1438,6 +1491,7 @@ export namespace Prisma {
 
   export type UserDeviceGroupByOutputType = {
     id: string
+    deviceId: string
     nameDevice: string
     createdAt: Date
     updatedAt: Date
@@ -1463,16 +1517,17 @@ export namespace Prisma {
 
   export type UserDeviceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    deviceId?: boolean
     nameDevice?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    userSession?: boolean | UserDevice$userSessionArgs<ExtArgs>
   }, ExtArgs["result"]["userDevice"]>
 
   export type UserDeviceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    deviceId?: boolean
     nameDevice?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1482,6 +1537,7 @@ export namespace Prisma {
 
   export type UserDeviceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    deviceId?: boolean
     nameDevice?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1491,16 +1547,16 @@ export namespace Prisma {
 
   export type UserDeviceSelectScalar = {
     id?: boolean
+    deviceId?: boolean
     nameDevice?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
   }
 
-  export type UserDeviceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nameDevice" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["userDevice"]>
+  export type UserDeviceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "deviceId" | "nameDevice" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["userDevice"]>
   export type UserDeviceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    userSession?: boolean | UserDevice$userSessionArgs<ExtArgs>
   }
   export type UserDeviceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -1513,10 +1569,10 @@ export namespace Prisma {
     name: "UserDevice"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      userSession: Prisma.$SessionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      deviceId: string
       nameDevice: string
       createdAt: Date
       updatedAt: Date
@@ -1916,7 +1972,6 @@ export namespace Prisma {
   export interface Prisma__UserDeviceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    userSession<T extends UserDevice$userSessionArgs<ExtArgs> = {}>(args?: Subset<T, UserDevice$userSessionArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1947,6 +2002,7 @@ export namespace Prisma {
    */
   interface UserDeviceFieldRefs {
     readonly id: FieldRef<"UserDevice", 'String'>
+    readonly deviceId: FieldRef<"UserDevice", 'String'>
     readonly nameDevice: FieldRef<"UserDevice", 'String'>
     readonly createdAt: FieldRef<"UserDevice", 'DateTime'>
     readonly updatedAt: FieldRef<"UserDevice", 'DateTime'>
@@ -2347,25 +2403,6 @@ export namespace Prisma {
   }
 
   /**
-   * UserDevice.userSession
-   */
-  export type UserDevice$userSessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-  }
-
-  /**
    * UserDevice without action
    */
   export type UserDeviceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2396,31 +2433,40 @@ export namespace Prisma {
 
   export type SessionMinAggregateOutputType = {
     id: string | null
+    userDeviceId: string | null
     hashedRefreshToken: string | null
+    userAgent: string | null
     userIp: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    userDeviceId: string | null
+    loginedAt: Date | null
+    logoutedAt: Date | null
     userId: string | null
   }
 
   export type SessionMaxAggregateOutputType = {
     id: string | null
+    userDeviceId: string | null
     hashedRefreshToken: string | null
+    userAgent: string | null
     userIp: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    userDeviceId: string | null
+    loginedAt: Date | null
+    logoutedAt: Date | null
     userId: string | null
   }
 
   export type SessionCountAggregateOutputType = {
     id: number
+    userDeviceId: number
     hashedRefreshToken: number
+    userAgent: number
     userIp: number
     createdAt: number
     updatedAt: number
-    userDeviceId: number
+    loginedAt: number
+    logoutedAt: number
     userId: number
     _all: number
   }
@@ -2428,31 +2474,40 @@ export namespace Prisma {
 
   export type SessionMinAggregateInputType = {
     id?: true
+    userDeviceId?: true
     hashedRefreshToken?: true
+    userAgent?: true
     userIp?: true
     createdAt?: true
     updatedAt?: true
-    userDeviceId?: true
+    loginedAt?: true
+    logoutedAt?: true
     userId?: true
   }
 
   export type SessionMaxAggregateInputType = {
     id?: true
+    userDeviceId?: true
     hashedRefreshToken?: true
+    userAgent?: true
     userIp?: true
     createdAt?: true
     updatedAt?: true
-    userDeviceId?: true
+    loginedAt?: true
+    logoutedAt?: true
     userId?: true
   }
 
   export type SessionCountAggregateInputType = {
     id?: true
+    userDeviceId?: true
     hashedRefreshToken?: true
+    userAgent?: true
     userIp?: true
     createdAt?: true
     updatedAt?: true
-    userDeviceId?: true
+    loginedAt?: true
+    logoutedAt?: true
     userId?: true
     _all?: true
   }
@@ -2531,11 +2586,14 @@ export namespace Prisma {
 
   export type SessionGroupByOutputType = {
     id: string
+    userDeviceId: string
     hashedRefreshToken: string | null
+    userAgent: string | null
     userIp: string
     createdAt: Date
     updatedAt: Date
-    userDeviceId: string
+    loginedAt: Date | null
+    logoutedAt: Date | null
     userId: string
     _count: SessionCountAggregateOutputType | null
     _min: SessionMinAggregateOutputType | null
@@ -2558,77 +2616,85 @@ export namespace Prisma {
 
   export type SessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userDeviceId?: boolean
     hashedRefreshToken?: boolean
+    userAgent?: boolean
     userIp?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userDeviceId?: boolean
+    loginedAt?: boolean
+    logoutedAt?: boolean
     userId?: boolean
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userDeviceId?: boolean
     hashedRefreshToken?: boolean
+    userAgent?: boolean
     userIp?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userDeviceId?: boolean
+    loginedAt?: boolean
+    logoutedAt?: boolean
     userId?: boolean
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userDeviceId?: boolean
     hashedRefreshToken?: boolean
+    userAgent?: boolean
     userIp?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userDeviceId?: boolean
+    loginedAt?: boolean
+    logoutedAt?: boolean
     userId?: boolean
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectScalar = {
     id?: boolean
+    userDeviceId?: boolean
     hashedRefreshToken?: boolean
+    userAgent?: boolean
     userIp?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userDeviceId?: boolean
+    loginedAt?: boolean
+    logoutedAt?: boolean
     userId?: boolean
   }
 
-  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hashedRefreshToken" | "userIp" | "createdAt" | "updatedAt" | "userDeviceId" | "userId", ExtArgs["result"]["session"]>
+  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userDeviceId" | "hashedRefreshToken" | "userAgent" | "userIp" | "createdAt" | "updatedAt" | "loginedAt" | "logoutedAt" | "userId", ExtArgs["result"]["session"]>
   export type SessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type SessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type SessionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userDevice?: boolean | UserDeviceDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $SessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Session"
     objects: {
-      userDevice: Prisma.$UserDevicePayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      userDeviceId: string
       hashedRefreshToken: string | null
+      userAgent: string | null
       userIp: string
       createdAt: Date
       updatedAt: Date
-      userDeviceId: string
+      loginedAt: Date | null
+      logoutedAt: Date | null
       userId: string
     }, ExtArgs["result"]["session"]>
     composites: {}
@@ -3024,7 +3090,6 @@ export namespace Prisma {
    */
   export interface Prisma__SessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    userDevice<T extends UserDeviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDeviceDefaultArgs<ExtArgs>>): Prisma__UserDeviceClient<$Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3056,11 +3121,14 @@ export namespace Prisma {
    */
   interface SessionFieldRefs {
     readonly id: FieldRef<"Session", 'String'>
+    readonly userDeviceId: FieldRef<"Session", 'String'>
     readonly hashedRefreshToken: FieldRef<"Session", 'String'>
+    readonly userAgent: FieldRef<"Session", 'String'>
     readonly userIp: FieldRef<"Session", 'String'>
     readonly createdAt: FieldRef<"Session", 'DateTime'>
     readonly updatedAt: FieldRef<"Session", 'DateTime'>
-    readonly userDeviceId: FieldRef<"Session", 'String'>
+    readonly loginedAt: FieldRef<"Session", 'DateTime'>
+    readonly logoutedAt: FieldRef<"Session", 'DateTime'>
     readonly userId: FieldRef<"Session", 'String'>
   }
     
@@ -4553,105 +4621,201 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
 
+  export type UserAvgAggregateOutputType = {
+    searchCount: number | null
+  }
+
+  export type UserSumAggregateOutputType = {
+    searchCount: number | null
+  }
+
   export type UserMinAggregateOutputType = {
     id: string | null
-    email: string | null
-    avtUrl: string | null
+    fullname: string | null
     username: string | null
-    firstName: string | null
-    lastName: string | null
+    email: string | null
     hashedPassword: string | null
-    phoneNumber: string | null
-    dateOfBirth: Date | null
-    isActive: boolean | null
+    accountType: $Enums.AccountType | null
+    avtUrl: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    visible: $Enums.UserVisibility | null
+    status: $Enums.Status | null
+    phone: string | null
+    numberIdentity: string | null
+    dateOfBirth: Date | null
+    firstName: string | null
+    lastName: string | null
+    isActive: boolean | null
+    isBanned: boolean | null
+    isLocked: boolean | null
+    isVerified: boolean | null
+    lastActived: Date | null
     picture: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    email: string | null
-    avtUrl: string | null
+    fullname: string | null
     username: string | null
-    firstName: string | null
-    lastName: string | null
+    email: string | null
     hashedPassword: string | null
-    phoneNumber: string | null
-    dateOfBirth: Date | null
-    isActive: boolean | null
+    accountType: $Enums.AccountType | null
+    avtUrl: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    visible: $Enums.UserVisibility | null
+    status: $Enums.Status | null
+    phone: string | null
+    numberIdentity: string | null
+    dateOfBirth: Date | null
+    firstName: string | null
+    lastName: string | null
+    isActive: boolean | null
+    isBanned: boolean | null
+    isLocked: boolean | null
+    isVerified: boolean | null
+    lastActived: Date | null
     picture: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    email: number
-    avtUrl: number
+    fullname: number
     username: number
-    firstName: number
-    lastName: number
+    email: number
     hashedPassword: number
-    phoneNumber: number
-    dateOfBirth: number
-    isActive: number
+    accountType: number
+    avtUrl: number
+    address: number
+    city: number
+    state: number
+    searchCount: number
     createdAt: number
     updatedAt: number
+    visible: number
+    status: number
+    phone: number
+    numberIdentity: number
+    dateOfBirth: number
+    firstName: number
+    lastName: number
+    isActive: number
+    isBanned: number
+    isLocked: number
+    isVerified: number
+    lastActived: number
     picture: number
     _all: number
   }
 
 
+  export type UserAvgAggregateInputType = {
+    searchCount?: true
+  }
+
+  export type UserSumAggregateInputType = {
+    searchCount?: true
+  }
+
   export type UserMinAggregateInputType = {
     id?: true
-    email?: true
-    avtUrl?: true
+    fullname?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    email?: true
     hashedPassword?: true
-    phoneNumber?: true
-    dateOfBirth?: true
-    isActive?: true
+    accountType?: true
+    avtUrl?: true
+    address?: true
+    city?: true
+    state?: true
+    searchCount?: true
     createdAt?: true
     updatedAt?: true
+    visible?: true
+    status?: true
+    phone?: true
+    numberIdentity?: true
+    dateOfBirth?: true
+    firstName?: true
+    lastName?: true
+    isActive?: true
+    isBanned?: true
+    isLocked?: true
+    isVerified?: true
+    lastActived?: true
     picture?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    email?: true
-    avtUrl?: true
+    fullname?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    email?: true
     hashedPassword?: true
-    phoneNumber?: true
-    dateOfBirth?: true
-    isActive?: true
+    accountType?: true
+    avtUrl?: true
+    address?: true
+    city?: true
+    state?: true
+    searchCount?: true
     createdAt?: true
     updatedAt?: true
+    visible?: true
+    status?: true
+    phone?: true
+    numberIdentity?: true
+    dateOfBirth?: true
+    firstName?: true
+    lastName?: true
+    isActive?: true
+    isBanned?: true
+    isLocked?: true
+    isVerified?: true
+    lastActived?: true
     picture?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    email?: true
-    avtUrl?: true
+    fullname?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    email?: true
     hashedPassword?: true
-    phoneNumber?: true
-    dateOfBirth?: true
-    isActive?: true
+    accountType?: true
+    avtUrl?: true
+    address?: true
+    city?: true
+    state?: true
+    searchCount?: true
     createdAt?: true
     updatedAt?: true
+    visible?: true
+    status?: true
+    phone?: true
+    numberIdentity?: true
+    dateOfBirth?: true
+    firstName?: true
+    lastName?: true
+    isActive?: true
+    isBanned?: true
+    isLocked?: true
+    isVerified?: true
+    lastActived?: true
     picture?: true
     _all?: true
   }
@@ -4694,6 +4858,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: UserAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -4724,25 +4900,42 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
+    _avg?: UserAvgAggregateInputType
+    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
 
   export type UserGroupByOutputType = {
     id: string
-    email: string
-    avtUrl: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword: string | null
-    phoneNumber: string | null
-    dateOfBirth: Date
-    isActive: boolean
+    accountType: $Enums.AccountType
+    avtUrl: string | null
+    address: string | null
+    city: string | null
+    state: string
+    searchCount: number
     createdAt: Date
     updatedAt: Date
+    visible: $Enums.UserVisibility
+    status: $Enums.Status
+    phone: string | null
+    numberIdentity: string | null
+    dateOfBirth: Date | null
+    firstName: string | null
+    lastName: string | null
+    isActive: boolean
+    isBanned: boolean
+    isLocked: boolean
+    isVerified: boolean
+    lastActived: Date | null
     picture: string | null
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -4763,76 +4956,130 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
-    avtUrl?: boolean
+    fullname?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    email?: boolean
     hashedPassword?: boolean
-    phoneNumber?: boolean
-    dateOfBirth?: boolean
-    isActive?: boolean
+    accountType?: boolean
+    avtUrl?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    visible?: boolean
+    status?: boolean
+    phone?: boolean
+    numberIdentity?: boolean
+    dateOfBirth?: boolean
+    firstName?: boolean
+    lastName?: boolean
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: boolean
     picture?: boolean
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     codes?: boolean | User$codesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
-    avtUrl?: boolean
+    fullname?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    email?: boolean
     hashedPassword?: boolean
-    phoneNumber?: boolean
-    dateOfBirth?: boolean
-    isActive?: boolean
+    accountType?: boolean
+    avtUrl?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    visible?: boolean
+    status?: boolean
+    phone?: boolean
+    numberIdentity?: boolean
+    dateOfBirth?: boolean
+    firstName?: boolean
+    lastName?: boolean
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: boolean
     picture?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    email?: boolean
-    avtUrl?: boolean
+    fullname?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    email?: boolean
     hashedPassword?: boolean
-    phoneNumber?: boolean
-    dateOfBirth?: boolean
-    isActive?: boolean
+    accountType?: boolean
+    avtUrl?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    visible?: boolean
+    status?: boolean
+    phone?: boolean
+    numberIdentity?: boolean
+    dateOfBirth?: boolean
+    firstName?: boolean
+    lastName?: boolean
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: boolean
     picture?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
-    email?: boolean
-    avtUrl?: boolean
+    fullname?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    email?: boolean
     hashedPassword?: boolean
-    phoneNumber?: boolean
-    dateOfBirth?: boolean
-    isActive?: boolean
+    accountType?: boolean
+    avtUrl?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    visible?: boolean
+    status?: boolean
+    phone?: boolean
+    numberIdentity?: boolean
+    dateOfBirth?: boolean
+    firstName?: boolean
+    lastName?: boolean
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: boolean
     picture?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "avtUrl" | "username" | "firstName" | "lastName" | "hashedPassword" | "phoneNumber" | "dateOfBirth" | "isActive" | "createdAt" | "updatedAt" | "picture", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "status" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "isVerified" | "lastActived" | "picture", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     codes?: boolean | User$codesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -4844,21 +5091,35 @@ export namespace Prisma {
     objects: {
       userDevice: Prisma.$UserDevicePayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
+      Oauth2User: Prisma.$Oauth2UserPayload<ExtArgs>[]
       codes: Prisma.$CodePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      email: string
-      avtUrl: string | null
+      fullname: string
       username: string
-      firstName: string
-      lastName: string
+      email: string
       hashedPassword: string | null
-      phoneNumber: string | null
-      dateOfBirth: Date
-      isActive: boolean
+      accountType: $Enums.AccountType
+      avtUrl: string | null
+      address: string | null
+      city: string | null
+      state: string
+      searchCount: number
       createdAt: Date
       updatedAt: Date
+      visible: $Enums.UserVisibility
+      status: $Enums.Status
+      phone: string | null
+      numberIdentity: string | null
+      dateOfBirth: Date | null
+      firstName: string | null
+      lastName: string | null
+      isActive: boolean
+      isBanned: boolean
+      isLocked: boolean
+      isVerified: boolean
+      lastActived: Date | null
       picture: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -5256,6 +5517,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     userDevice<T extends User$userDeviceArgs<ExtArgs> = {}>(args?: Subset<T, User$userDeviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    Oauth2User<T extends User$Oauth2UserArgs<ExtArgs> = {}>(args?: Subset<T, User$Oauth2UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     codes<T extends User$codesArgs<ExtArgs> = {}>(args?: Subset<T, User$codesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5287,17 +5549,30 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly email: FieldRef<"User", 'String'>
-    readonly avtUrl: FieldRef<"User", 'String'>
+    readonly fullname: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
-    readonly firstName: FieldRef<"User", 'String'>
-    readonly lastName: FieldRef<"User", 'String'>
+    readonly email: FieldRef<"User", 'String'>
     readonly hashedPassword: FieldRef<"User", 'String'>
-    readonly phoneNumber: FieldRef<"User", 'String'>
-    readonly dateOfBirth: FieldRef<"User", 'DateTime'>
-    readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly accountType: FieldRef<"User", 'AccountType'>
+    readonly avtUrl: FieldRef<"User", 'String'>
+    readonly address: FieldRef<"User", 'String'>
+    readonly city: FieldRef<"User", 'String'>
+    readonly state: FieldRef<"User", 'String'>
+    readonly searchCount: FieldRef<"User", 'Int'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly visible: FieldRef<"User", 'UserVisibility'>
+    readonly status: FieldRef<"User", 'Status'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly numberIdentity: FieldRef<"User", 'String'>
+    readonly dateOfBirth: FieldRef<"User", 'DateTime'>
+    readonly firstName: FieldRef<"User", 'String'>
+    readonly lastName: FieldRef<"User", 'String'>
+    readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly isBanned: FieldRef<"User", 'Boolean'>
+    readonly isLocked: FieldRef<"User", 'Boolean'>
+    readonly isVerified: FieldRef<"User", 'Boolean'>
+    readonly lastActived: FieldRef<"User", 'DateTime'>
     readonly picture: FieldRef<"User", 'String'>
   }
     
@@ -5735,6 +6010,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.Oauth2User
+   */
+  export type User$Oauth2UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Oauth2User
+     */
+    select?: Oauth2UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Oauth2User
+     */
+    omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
+    where?: Oauth2UserWhereInput
+    orderBy?: Oauth2UserOrderByWithRelationInput | Oauth2UserOrderByWithRelationInput[]
+    cursor?: Oauth2UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Oauth2UserScalarFieldEnum | Oauth2UserScalarFieldEnum[]
+  }
+
+  /**
    * User.codes
    */
   export type User$codesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5800,6 +6099,7 @@ export namespace Prisma {
     username: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    userId: string | null
   }
 
   export type Oauth2UserMaxAggregateOutputType = {
@@ -5815,6 +6115,7 @@ export namespace Prisma {
     username: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    userId: string | null
   }
 
   export type Oauth2UserCountAggregateOutputType = {
@@ -5830,6 +6131,7 @@ export namespace Prisma {
     username: number
     createdAt: number
     updatedAt: number
+    userId: number
     _all: number
   }
 
@@ -5847,6 +6149,7 @@ export namespace Prisma {
     username?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
   }
 
   export type Oauth2UserMaxAggregateInputType = {
@@ -5862,6 +6165,7 @@ export namespace Prisma {
     username?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
   }
 
   export type Oauth2UserCountAggregateInputType = {
@@ -5877,6 +6181,7 @@ export namespace Prisma {
     username?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
     _all?: true
   }
 
@@ -5965,6 +6270,7 @@ export namespace Prisma {
     username: string | null
     createdAt: Date
     updatedAt: Date
+    userId: string
     _count: Oauth2UserCountAggregateOutputType | null
     _min: Oauth2UserMinAggregateOutputType | null
     _max: Oauth2UserMaxAggregateOutputType | null
@@ -5997,6 +6303,8 @@ export namespace Prisma {
     username?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oauth2User"]>
 
   export type Oauth2UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6012,6 +6320,8 @@ export namespace Prisma {
     username?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oauth2User"]>
 
   export type Oauth2UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6027,6 +6337,8 @@ export namespace Prisma {
     username?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["oauth2User"]>
 
   export type Oauth2UserSelectScalar = {
@@ -6042,13 +6354,25 @@ export namespace Prisma {
     username?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
   }
 
-  export type Oauth2UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerUserId" | "email" | "phone" | "firstname" | "lastname" | "fullname" | "avatarUrl" | "username" | "createdAt" | "updatedAt", ExtArgs["result"]["oauth2User"]>
+  export type Oauth2UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerUserId" | "email" | "phone" | "firstname" | "lastname" | "fullname" | "avatarUrl" | "username" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["oauth2User"]>
+  export type Oauth2UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type Oauth2UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type Oauth2UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $Oauth2UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Oauth2User"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       provider: $Enums.Provider
@@ -6062,6 +6386,7 @@ export namespace Prisma {
       username: string | null
       createdAt: Date
       updatedAt: Date
+      userId: string
     }, ExtArgs["result"]["oauth2User"]>
     composites: {}
   }
@@ -6456,6 +6781,7 @@ export namespace Prisma {
    */
   export interface Prisma__Oauth2UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6497,6 +6823,7 @@ export namespace Prisma {
     readonly username: FieldRef<"Oauth2User", 'String'>
     readonly createdAt: FieldRef<"Oauth2User", 'DateTime'>
     readonly updatedAt: FieldRef<"Oauth2User", 'DateTime'>
+    readonly userId: FieldRef<"Oauth2User", 'String'>
   }
     
 
@@ -6513,6 +6840,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
     /**
      * Filter, which Oauth2User to fetch.
      */
@@ -6532,6 +6863,10 @@ export namespace Prisma {
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
+    /**
      * Filter, which Oauth2User to fetch.
      */
     where: Oauth2UserWhereUniqueInput
@@ -6549,6 +6884,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
     /**
      * Filter, which Oauth2User to fetch.
      */
@@ -6598,6 +6937,10 @@ export namespace Prisma {
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
+    /**
      * Filter, which Oauth2User to fetch.
      */
     where?: Oauth2UserWhereInput
@@ -6646,6 +6989,10 @@ export namespace Prisma {
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
+    /**
      * Filter, which Oauth2Users to fetch.
      */
     where?: Oauth2UserWhereInput
@@ -6689,6 +7036,10 @@ export namespace Prisma {
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
+    /**
      * The data needed to create a Oauth2User.
      */
     data: XOR<Oauth2UserCreateInput, Oauth2UserUncheckedCreateInput>
@@ -6722,6 +7073,10 @@ export namespace Prisma {
      */
     data: Oauth2UserCreateManyInput | Oauth2UserCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6736,6 +7091,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
     /**
      * The data needed to update a Oauth2User.
      */
@@ -6788,6 +7147,10 @@ export namespace Prisma {
      * Limit how many Oauth2Users to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6802,6 +7165,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
     /**
      * The filter to search for the Oauth2User to update in case it exists.
      */
@@ -6828,6 +7195,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
     /**
      * Filter which Oauth2User to delete.
      */
@@ -6860,6 +7231,10 @@ export namespace Prisma {
      * Omit specific fields from the Oauth2User
      */
     omit?: Oauth2UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Oauth2UserInclude<ExtArgs> | null
   }
 
 
@@ -6879,6 +7254,7 @@ export namespace Prisma {
 
   export const UserDeviceScalarFieldEnum: {
     id: 'id',
+    deviceId: 'deviceId',
     nameDevice: 'nameDevice',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -6890,11 +7266,14 @@ export namespace Prisma {
 
   export const SessionScalarFieldEnum: {
     id: 'id',
+    userDeviceId: 'userDeviceId',
     hashedRefreshToken: 'hashedRefreshToken',
+    userAgent: 'userAgent',
     userIp: 'userIp',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    userDeviceId: 'userDeviceId',
+    loginedAt: 'loginedAt',
+    logoutedAt: 'logoutedAt',
     userId: 'userId'
   };
 
@@ -6915,17 +7294,30 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    email: 'email',
-    avtUrl: 'avtUrl',
+    fullname: 'fullname',
     username: 'username',
-    firstName: 'firstName',
-    lastName: 'lastName',
+    email: 'email',
     hashedPassword: 'hashedPassword',
-    phoneNumber: 'phoneNumber',
-    dateOfBirth: 'dateOfBirth',
-    isActive: 'isActive',
+    accountType: 'accountType',
+    avtUrl: 'avtUrl',
+    address: 'address',
+    city: 'city',
+    state: 'state',
+    searchCount: 'searchCount',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    visible: 'visible',
+    status: 'status',
+    phone: 'phone',
+    numberIdentity: 'numberIdentity',
+    dateOfBirth: 'dateOfBirth',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    isActive: 'isActive',
+    isBanned: 'isBanned',
+    isLocked: 'isLocked',
+    isVerified: 'isVerified',
+    lastActived: 'lastActived',
     picture: 'picture'
   };
 
@@ -6944,7 +7336,8 @@ export namespace Prisma {
     avatarUrl: 'avatarUrl',
     username: 'username',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    userId: 'userId'
   };
 
   export type Oauth2UserScalarFieldEnum = (typeof Oauth2UserScalarFieldEnum)[keyof typeof Oauth2UserScalarFieldEnum]
@@ -7022,6 +7415,62 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AccountType'
+   */
+  export type EnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountType[]'
+   */
+  export type ListEnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'UserVisibility'
+   */
+  export type EnumUserVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserVisibility'>
+    
+
+
+  /**
+   * Reference to a field of type 'UserVisibility[]'
+   */
+  export type ListEnumUserVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserVisibility[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Status'
+   */
+  export type EnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status'>
+    
+
+
+  /**
+   * Reference to a field of type 'Status[]'
+   */
+  export type ListEnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -7043,16 +7492,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Float'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'Float[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -7064,26 +7513,27 @@ export namespace Prisma {
     OR?: UserDeviceWhereInput[]
     NOT?: UserDeviceWhereInput | UserDeviceWhereInput[]
     id?: UuidFilter<"UserDevice"> | string
+    deviceId?: StringFilter<"UserDevice"> | string
     nameDevice?: StringFilter<"UserDevice"> | string
     createdAt?: DateTimeFilter<"UserDevice"> | Date | string
     updatedAt?: DateTimeFilter<"UserDevice"> | Date | string
     userId?: UuidFilter<"UserDevice"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    userSession?: XOR<SessionNullableScalarRelationFilter, SessionWhereInput> | null
   }
 
   export type UserDeviceOrderByWithRelationInput = {
     id?: SortOrder
+    deviceId?: SortOrder
     nameDevice?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
     user?: UserOrderByWithRelationInput
-    userSession?: SessionOrderByWithRelationInput
   }
 
   export type UserDeviceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    deviceId?: string
     nameDevice_userId?: UserDeviceNameDeviceUserIdCompoundUniqueInput
     AND?: UserDeviceWhereInput | UserDeviceWhereInput[]
     OR?: UserDeviceWhereInput[]
@@ -7093,11 +7543,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserDevice"> | Date | string
     userId?: UuidFilter<"UserDevice"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    userSession?: XOR<SessionNullableScalarRelationFilter, SessionWhereInput> | null
-  }, "id" | "nameDevice_userId">
+  }, "id" | "deviceId" | "nameDevice_userId">
 
   export type UserDeviceOrderByWithAggregationInput = {
     id?: SortOrder
+    deviceId?: SortOrder
     nameDevice?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7112,6 +7562,7 @@ export namespace Prisma {
     OR?: UserDeviceScalarWhereWithAggregatesInput[]
     NOT?: UserDeviceScalarWhereWithAggregatesInput | UserDeviceScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"UserDevice"> | string
+    deviceId?: StringWithAggregatesFilter<"UserDevice"> | string
     nameDevice?: StringWithAggregatesFilter<"UserDevice"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserDevice"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserDevice"> | Date | string
@@ -7123,51 +7574,60 @@ export namespace Prisma {
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
     id?: UuidFilter<"Session"> | string
+    userDeviceId?: StringFilter<"Session"> | string
     hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
+    userAgent?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
-    userDeviceId?: UuidFilter<"Session"> | string
+    loginedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
+    logoutedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
     userId?: UuidFilter<"Session"> | string
-    userDevice?: XOR<UserDeviceScalarRelationFilter, UserDeviceWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type SessionOrderByWithRelationInput = {
     id?: SortOrder
+    userDeviceId?: SortOrder
     hashedRefreshToken?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userDeviceId?: SortOrder
+    loginedAt?: SortOrderInput | SortOrder
+    logoutedAt?: SortOrderInput | SortOrder
     userId?: SortOrder
-    userDevice?: UserDeviceOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
 
   export type SessionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    userDeviceId?: string
     userId_userDeviceId?: SessionUserIdUserDeviceIdCompoundUniqueInput
     AND?: SessionWhereInput | SessionWhereInput[]
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
+    userDeviceId?: StringFilter<"Session"> | string
     hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
+    userAgent?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
+    loginedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
+    logoutedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
     userId?: UuidFilter<"Session"> | string
-    userDevice?: XOR<UserDeviceScalarRelationFilter, UserDeviceWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "userDeviceId" | "userId_userDeviceId">
+  }, "id" | "userId_userDeviceId">
 
   export type SessionOrderByWithAggregationInput = {
     id?: SortOrder
+    userDeviceId?: SortOrder
     hashedRefreshToken?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userDeviceId?: SortOrder
+    loginedAt?: SortOrderInput | SortOrder
+    logoutedAt?: SortOrderInput | SortOrder
     userId?: SortOrder
     _count?: SessionCountOrderByAggregateInput
     _max?: SessionMaxOrderByAggregateInput
@@ -7179,11 +7639,14 @@ export namespace Prisma {
     OR?: SessionScalarWhereWithAggregatesInput[]
     NOT?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Session"> | string
+    userDeviceId?: StringWithAggregatesFilter<"Session"> | string
     hashedRefreshToken?: StringNullableWithAggregatesFilter<"Session"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"Session"> | string | null
     userIp?: StringWithAggregatesFilter<"Session"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
-    userDeviceId?: UuidWithAggregatesFilter<"Session"> | string
+    loginedAt?: DateTimeNullableWithAggregatesFilter<"Session"> | Date | string | null
+    logoutedAt?: DateTimeNullableWithAggregatesFilter<"Session"> | Date | string | null
     userId?: UuidWithAggregatesFilter<"Session"> | string
   }
 
@@ -7253,81 +7716,138 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
-    email?: StringFilter<"User"> | string
-    avtUrl?: StringNullableFilter<"User"> | string | null
+    fullname?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
-    firstName?: StringFilter<"User"> | string
-    lastName?: StringFilter<"User"> | string
+    email?: StringFilter<"User"> | string
     hashedPassword?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
-    dateOfBirth?: DateTimeFilter<"User"> | Date | string
-    isActive?: BoolFilter<"User"> | boolean
+    accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
+    avtUrl?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    state?: StringFilter<"User"> | string
+    searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    visible?: EnumUserVisibilityFilter<"User"> | $Enums.UserVisibility
+    status?: EnumStatusFilter<"User"> | $Enums.Status
+    phone?: StringNullableFilter<"User"> | string | null
+    numberIdentity?: StringNullableFilter<"User"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
+    firstName?: StringNullableFilter<"User"> | string | null
+    lastName?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
+    isBanned?: BoolFilter<"User"> | boolean
+    isLocked?: BoolFilter<"User"> | boolean
+    isVerified?: BoolFilter<"User"> | boolean
+    lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     userDevice?: UserDeviceListRelationFilter
     sessions?: SessionListRelationFilter
+    Oauth2User?: Oauth2UserListRelationFilter
     codes?: CodeListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    email?: SortOrder
-    avtUrl?: SortOrderInput | SortOrder
+    fullname?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    email?: SortOrder
     hashedPassword?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
-    dateOfBirth?: SortOrder
-    isActive?: SortOrder
+    accountType?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrder
+    searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    visible?: SortOrder
+    status?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    numberIdentity?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    firstName?: SortOrderInput | SortOrder
+    lastName?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    isBanned?: SortOrder
+    isLocked?: SortOrder
+    isVerified?: SortOrder
+    lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
     userDevice?: UserDeviceOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
+    Oauth2User?: Oauth2UserOrderByRelationAggregateInput
     codes?: CodeOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    email?: string
     username?: string
+    email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    avtUrl?: StringNullableFilter<"User"> | string | null
-    firstName?: StringFilter<"User"> | string
-    lastName?: StringFilter<"User"> | string
+    fullname?: StringFilter<"User"> | string
     hashedPassword?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
-    dateOfBirth?: DateTimeFilter<"User"> | Date | string
-    isActive?: BoolFilter<"User"> | boolean
+    accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
+    avtUrl?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    state?: StringFilter<"User"> | string
+    searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    visible?: EnumUserVisibilityFilter<"User"> | $Enums.UserVisibility
+    status?: EnumStatusFilter<"User"> | $Enums.Status
+    phone?: StringNullableFilter<"User"> | string | null
+    numberIdentity?: StringNullableFilter<"User"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
+    firstName?: StringNullableFilter<"User"> | string | null
+    lastName?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
+    isBanned?: BoolFilter<"User"> | boolean
+    isLocked?: BoolFilter<"User"> | boolean
+    isVerified?: BoolFilter<"User"> | boolean
+    lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     userDevice?: UserDeviceListRelationFilter
     sessions?: SessionListRelationFilter
+    Oauth2User?: Oauth2UserListRelationFilter
     codes?: CodeListRelationFilter
-  }, "id" | "email" | "username">
+  }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    email?: SortOrder
-    avtUrl?: SortOrderInput | SortOrder
+    fullname?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    email?: SortOrder
     hashedPassword?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
-    dateOfBirth?: SortOrder
-    isActive?: SortOrder
+    accountType?: SortOrder
+    avtUrl?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrder
+    searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    visible?: SortOrder
+    status?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    numberIdentity?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    firstName?: SortOrderInput | SortOrder
+    lastName?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    isBanned?: SortOrder
+    isLocked?: SortOrder
+    isVerified?: SortOrder
+    lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
+    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
+    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -7335,17 +7855,30 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
-    email?: StringWithAggregatesFilter<"User"> | string
-    avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    fullname?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
-    firstName?: StringWithAggregatesFilter<"User"> | string
-    lastName?: StringWithAggregatesFilter<"User"> | string
+    email?: StringWithAggregatesFilter<"User"> | string
     hashedPassword?: StringNullableWithAggregatesFilter<"User"> | string | null
-    phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
-    dateOfBirth?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    accountType?: EnumAccountTypeWithAggregatesFilter<"User"> | $Enums.AccountType
+    avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    address?: StringNullableWithAggregatesFilter<"User"> | string | null
+    city?: StringNullableWithAggregatesFilter<"User"> | string | null
+    state?: StringWithAggregatesFilter<"User"> | string
+    searchCount?: IntWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    visible?: EnumUserVisibilityWithAggregatesFilter<"User"> | $Enums.UserVisibility
+    status?: EnumStatusWithAggregatesFilter<"User"> | $Enums.Status
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    numberIdentity?: StringNullableWithAggregatesFilter<"User"> | string | null
+    dateOfBirth?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    isBanned?: BoolWithAggregatesFilter<"User"> | boolean
+    isLocked?: BoolWithAggregatesFilter<"User"> | boolean
+    isVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    lastActived?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     picture?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
@@ -7365,6 +7898,8 @@ export namespace Prisma {
     username?: StringNullableFilter<"Oauth2User"> | string | null
     createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
     updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    userId?: UuidFilter<"Oauth2User"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type Oauth2UserOrderByWithRelationInput = {
@@ -7380,6 +7915,8 @@ export namespace Prisma {
     username?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type Oauth2UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7398,6 +7935,8 @@ export namespace Prisma {
     username?: StringNullableFilter<"Oauth2User"> | string | null
     createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
     updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    userId?: UuidFilter<"Oauth2User"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "email">
 
   export type Oauth2UserOrderByWithAggregationInput = {
@@ -7413,6 +7952,7 @@ export namespace Prisma {
     username?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
     _count?: Oauth2UserCountOrderByAggregateInput
     _max?: Oauth2UserMaxOrderByAggregateInput
     _min?: Oauth2UserMinOrderByAggregateInput
@@ -7434,46 +7974,48 @@ export namespace Prisma {
     username?: StringNullableWithAggregatesFilter<"Oauth2User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Oauth2User"> | Date | string
+    userId?: UuidWithAggregatesFilter<"Oauth2User"> | string
   }
 
   export type UserDeviceCreateInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutUserDeviceInput
-    userSession?: SessionCreateNestedOneWithoutUserDeviceInput
   }
 
   export type UserDeviceUncheckedCreateInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
-    userSession?: SessionUncheckedCreateNestedOneWithoutUserDeviceInput
   }
 
   export type UserDeviceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUserDeviceNestedInput
-    userSession?: SessionUpdateOneWithoutUserDeviceNestedInput
   }
 
   export type UserDeviceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
-    userSession?: SessionUncheckedUpdateOneWithoutUserDeviceNestedInput
   }
 
   export type UserDeviceCreateManyInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7482,6 +8024,7 @@ export namespace Prisma {
 
   export type UserDeviceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7489,6 +8032,7 @@ export namespace Prisma {
 
   export type UserDeviceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7497,69 +8041,91 @@ export namespace Prisma {
 
   export type SessionCreateInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDevice: UserDeviceCreateNestedOneWithoutUserSessionInput
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
     user: UserCreateNestedOneWithoutSessionsInput
   }
 
   export type SessionUncheckedCreateInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDeviceId: string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
     userId: string
   }
 
   export type SessionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDevice?: UserDeviceUpdateOneRequiredWithoutUserSessionNestedInput
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     user?: UserUpdateOneRequiredWithoutSessionsNestedInput
   }
 
   export type SessionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type SessionCreateManyInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDeviceId: string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
     userId: string
   }
 
   export type SessionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SessionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -7627,125 +8193,220 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     codes?: CodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     codes?: CodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -7762,6 +8423,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutOauth2UserInput
   }
 
   export type Oauth2UserUncheckedCreateInput = {
@@ -7777,6 +8439,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: string
   }
 
   export type Oauth2UserUpdateInput = {
@@ -7792,6 +8455,7 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutOauth2UserNestedInput
   }
 
   export type Oauth2UserUncheckedUpdateInput = {
@@ -7807,6 +8471,7 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type Oauth2UserCreateManyInput = {
@@ -7822,6 +8487,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: string
   }
 
   export type Oauth2UserUpdateManyMutationInput = {
@@ -7852,6 +8518,7 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -7897,11 +8564,6 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type SessionNullableScalarRelationFilter = {
-    is?: SessionWhereInput | null
-    isNot?: SessionWhereInput | null
-  }
-
   export type UserDeviceNameDeviceUserIdCompoundUniqueInput = {
     nameDevice: string
     userId: string
@@ -7909,6 +8571,7 @@ export namespace Prisma {
 
   export type UserDeviceCountOrderByAggregateInput = {
     id?: SortOrder
+    deviceId?: SortOrder
     nameDevice?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7917,6 +8580,7 @@ export namespace Prisma {
 
   export type UserDeviceMaxOrderByAggregateInput = {
     id?: SortOrder
+    deviceId?: SortOrder
     nameDevice?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7925,6 +8589,7 @@ export namespace Prisma {
 
   export type UserDeviceMinOrderByAggregateInput = {
     id?: SortOrder
+    deviceId?: SortOrder
     nameDevice?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7993,9 +8658,15 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type UserDeviceScalarRelationFilter = {
-    is?: UserDeviceWhereInput
-    isNot?: UserDeviceWhereInput
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type SortOrderInput = {
@@ -8010,31 +8681,40 @@ export namespace Prisma {
 
   export type SessionCountOrderByAggregateInput = {
     id?: SortOrder
+    userDeviceId?: SortOrder
     hashedRefreshToken?: SortOrder
+    userAgent?: SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userDeviceId?: SortOrder
+    loginedAt?: SortOrder
+    logoutedAt?: SortOrder
     userId?: SortOrder
   }
 
   export type SessionMaxOrderByAggregateInput = {
     id?: SortOrder
+    userDeviceId?: SortOrder
     hashedRefreshToken?: SortOrder
+    userAgent?: SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userDeviceId?: SortOrder
+    loginedAt?: SortOrder
+    logoutedAt?: SortOrder
     userId?: SortOrder
   }
 
   export type SessionMinOrderByAggregateInput = {
     id?: SortOrder
+    userDeviceId?: SortOrder
     hashedRefreshToken?: SortOrder
+    userAgent?: SortOrder
     userIp?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userDeviceId?: SortOrder
+    loginedAt?: SortOrder
+    logoutedAt?: SortOrder
     userId?: SortOrder
   }
 
@@ -8054,6 +8734,20 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumCodeTypeFilter<$PrismaModel = never> = {
@@ -8105,6 +8799,38 @@ export namespace Prisma {
     _max?: NestedEnumCodeTypeFilter<$PrismaModel>
   }
 
+  export type EnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type EnumUserVisibilityFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserVisibility | EnumUserVisibilityFieldRefInput<$PrismaModel>
+    in?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserVisibilityFilter<$PrismaModel> | $Enums.UserVisibility
+  }
+
+  export type EnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -8122,6 +8848,12 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
+  export type Oauth2UserListRelationFilter = {
+    every?: Oauth2UserWhereInput
+    some?: Oauth2UserWhereInput
+    none?: Oauth2UserWhereInput
+  }
+
   export type CodeListRelationFilter = {
     every?: CodeWhereInput
     some?: CodeWhereInput
@@ -8136,56 +8868,153 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type Oauth2UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type CodeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
-    avtUrl?: SortOrder
+    fullname?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    email?: SortOrder
     hashedPassword?: SortOrder
-    phoneNumber?: SortOrder
-    dateOfBirth?: SortOrder
-    isActive?: SortOrder
+    accountType?: SortOrder
+    avtUrl?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    visible?: SortOrder
+    status?: SortOrder
+    phone?: SortOrder
+    numberIdentity?: SortOrder
+    dateOfBirth?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
+    isActive?: SortOrder
+    isBanned?: SortOrder
+    isLocked?: SortOrder
+    isVerified?: SortOrder
+    lastActived?: SortOrder
     picture?: SortOrder
+  }
+
+  export type UserAvgOrderByAggregateInput = {
+    searchCount?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
-    avtUrl?: SortOrder
+    fullname?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    email?: SortOrder
     hashedPassword?: SortOrder
-    phoneNumber?: SortOrder
-    dateOfBirth?: SortOrder
-    isActive?: SortOrder
+    accountType?: SortOrder
+    avtUrl?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    visible?: SortOrder
+    status?: SortOrder
+    phone?: SortOrder
+    numberIdentity?: SortOrder
+    dateOfBirth?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
+    isActive?: SortOrder
+    isBanned?: SortOrder
+    isLocked?: SortOrder
+    isVerified?: SortOrder
+    lastActived?: SortOrder
     picture?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    email?: SortOrder
-    avtUrl?: SortOrder
+    fullname?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    email?: SortOrder
     hashedPassword?: SortOrder
-    phoneNumber?: SortOrder
-    dateOfBirth?: SortOrder
-    isActive?: SortOrder
+    accountType?: SortOrder
+    avtUrl?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    visible?: SortOrder
+    status?: SortOrder
+    phone?: SortOrder
+    numberIdentity?: SortOrder
+    dateOfBirth?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
+    isActive?: SortOrder
+    isBanned?: SortOrder
+    isLocked?: SortOrder
+    isVerified?: SortOrder
+    lastActived?: SortOrder
     picture?: SortOrder
+  }
+
+  export type UserSumOrderByAggregateInput = {
+    searchCount?: SortOrder
+  }
+
+  export type EnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumUserVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserVisibility | EnumUserVisibilityFieldRefInput<$PrismaModel>
+    in?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.UserVisibility
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserVisibilityFilter<$PrismaModel>
+    _max?: NestedEnumUserVisibilityFilter<$PrismaModel>
+  }
+
+  export type EnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -8216,6 +9045,7 @@ export namespace Prisma {
     username?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type Oauth2UserMaxOrderByAggregateInput = {
@@ -8231,6 +9061,7 @@ export namespace Prisma {
     username?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type Oauth2UserMinOrderByAggregateInput = {
@@ -8246,6 +9077,7 @@ export namespace Prisma {
     username?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type EnumProviderWithAggregatesFilter<$PrismaModel = never> = {
@@ -8264,18 +9096,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type SessionCreateNestedOneWithoutUserDeviceInput = {
-    create?: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
-    connectOrCreate?: SessionCreateOrConnectWithoutUserDeviceInput
-    connect?: SessionWhereUniqueInput
-  }
-
-  export type SessionUncheckedCreateNestedOneWithoutUserDeviceInput = {
-    create?: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
-    connectOrCreate?: SessionCreateOrConnectWithoutUserDeviceInput
-    connect?: SessionWhereUniqueInput
-  }
-
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -8292,32 +9112,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserDeviceInput, UserUpdateWithoutUserDeviceInput>, UserUncheckedUpdateWithoutUserDeviceInput>
   }
 
-  export type SessionUpdateOneWithoutUserDeviceNestedInput = {
-    create?: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
-    connectOrCreate?: SessionCreateOrConnectWithoutUserDeviceInput
-    upsert?: SessionUpsertWithoutUserDeviceInput
-    disconnect?: SessionWhereInput | boolean
-    delete?: SessionWhereInput | boolean
-    connect?: SessionWhereUniqueInput
-    update?: XOR<XOR<SessionUpdateToOneWithWhereWithoutUserDeviceInput, SessionUpdateWithoutUserDeviceInput>, SessionUncheckedUpdateWithoutUserDeviceInput>
-  }
-
-  export type SessionUncheckedUpdateOneWithoutUserDeviceNestedInput = {
-    create?: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
-    connectOrCreate?: SessionCreateOrConnectWithoutUserDeviceInput
-    upsert?: SessionUpsertWithoutUserDeviceInput
-    disconnect?: SessionWhereInput | boolean
-    delete?: SessionWhereInput | boolean
-    connect?: SessionWhereUniqueInput
-    update?: XOR<XOR<SessionUpdateToOneWithWhereWithoutUserDeviceInput, SessionUpdateWithoutUserDeviceInput>, SessionUncheckedUpdateWithoutUserDeviceInput>
-  }
-
-  export type UserDeviceCreateNestedOneWithoutUserSessionInput = {
-    create?: XOR<UserDeviceCreateWithoutUserSessionInput, UserDeviceUncheckedCreateWithoutUserSessionInput>
-    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserSessionInput
-    connect?: UserDeviceWhereUniqueInput
-  }
-
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -8328,12 +9122,8 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type UserDeviceUpdateOneRequiredWithoutUserSessionNestedInput = {
-    create?: XOR<UserDeviceCreateWithoutUserSessionInput, UserDeviceUncheckedCreateWithoutUserSessionInput>
-    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserSessionInput
-    upsert?: UserDeviceUpsertWithoutUserSessionInput
-    connect?: UserDeviceWhereUniqueInput
-    update?: XOR<XOR<UserDeviceUpdateToOneWithWhereWithoutUserSessionInput, UserDeviceUpdateWithoutUserSessionInput>, UserDeviceUncheckedUpdateWithoutUserSessionInput>
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
@@ -8376,6 +9166,13 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
+  export type Oauth2UserCreateNestedManyWithoutUserInput = {
+    create?: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput> | Oauth2UserCreateWithoutUserInput[] | Oauth2UserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: Oauth2UserCreateOrConnectWithoutUserInput | Oauth2UserCreateOrConnectWithoutUserInput[]
+    createMany?: Oauth2UserCreateManyUserInputEnvelope
+    connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+  }
+
   export type CodeCreateNestedManyWithoutUserInput = {
     create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
@@ -8397,11 +9194,38 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
+  export type Oauth2UserUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput> | Oauth2UserCreateWithoutUserInput[] | Oauth2UserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: Oauth2UserCreateOrConnectWithoutUserInput | Oauth2UserCreateOrConnectWithoutUserInput[]
+    createMany?: Oauth2UserCreateManyUserInputEnvelope
+    connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+  }
+
   export type CodeUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
     createMany?: CodeCreateManyUserInputEnvelope
     connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+  }
+
+  export type EnumAccountTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AccountType
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EnumUserVisibilityFieldUpdateOperationsInput = {
+    set?: $Enums.UserVisibility
+  }
+
+  export type EnumStatusFieldUpdateOperationsInput = {
+    set?: $Enums.Status
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -8434,6 +9258,20 @@ export namespace Prisma {
     update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type Oauth2UserUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput> | Oauth2UserCreateWithoutUserInput[] | Oauth2UserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: Oauth2UserCreateOrConnectWithoutUserInput | Oauth2UserCreateOrConnectWithoutUserInput[]
+    upsert?: Oauth2UserUpsertWithWhereUniqueWithoutUserInput | Oauth2UserUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: Oauth2UserCreateManyUserInputEnvelope
+    set?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    disconnect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    delete?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    update?: Oauth2UserUpdateWithWhereUniqueWithoutUserInput | Oauth2UserUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: Oauth2UserUpdateManyWithWhereWithoutUserInput | Oauth2UserUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
   }
 
   export type CodeUpdateManyWithoutUserNestedInput = {
@@ -8478,6 +9316,20 @@ export namespace Prisma {
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
+  export type Oauth2UserUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput> | Oauth2UserCreateWithoutUserInput[] | Oauth2UserUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: Oauth2UserCreateOrConnectWithoutUserInput | Oauth2UserCreateOrConnectWithoutUserInput[]
+    upsert?: Oauth2UserUpsertWithWhereUniqueWithoutUserInput | Oauth2UserUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: Oauth2UserCreateManyUserInputEnvelope
+    set?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    disconnect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    delete?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
+    update?: Oauth2UserUpdateWithWhereUniqueWithoutUserInput | Oauth2UserUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: Oauth2UserUpdateManyWithWhereWithoutUserInput | Oauth2UserUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
+  }
+
   export type CodeUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
@@ -8492,8 +9344,22 @@ export namespace Prisma {
     deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutOauth2UserInput = {
+    create?: XOR<UserCreateWithoutOauth2UserInput, UserUncheckedCreateWithoutOauth2UserInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOauth2UserInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type EnumProviderFieldUpdateOperationsInput = {
     set?: $Enums.Provider
+  }
+
+  export type UserUpdateOneRequiredWithoutOauth2UserNestedInput = {
+    create?: XOR<UserCreateWithoutOauth2UserInput, UserUncheckedCreateWithoutOauth2UserInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOauth2UserInput
+    upsert?: UserUpsertWithoutOauth2UserInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOauth2UserInput, UserUpdateWithoutOauth2UserInput>, UserUncheckedUpdateWithoutOauth2UserInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -8602,6 +9468,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -8630,6 +9507,20 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumCodeTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
@@ -8647,9 +9538,87 @@ export namespace Prisma {
     _max?: NestedEnumCodeTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
+  export type NestedEnumUserVisibilityFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserVisibility | EnumUserVisibilityFieldRefInput<$PrismaModel>
+    in?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserVisibilityFilter<$PrismaModel> | $Enums.UserVisibility
+  }
+
+  export type NestedEnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumUserVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserVisibility | EnumUserVisibilityFieldRefInput<$PrismaModel>
+    in?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserVisibility[] | ListEnumUserVisibilityFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.UserVisibility
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserVisibilityFilter<$PrismaModel>
+    _max?: NestedEnumUserVisibilityFilter<$PrismaModel>
+  }
+
+  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -8679,66 +9648,71 @@ export namespace Prisma {
 
   export type UserCreateWithoutUserDeviceInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     codes?: CodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserDeviceInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserDeviceInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutUserDeviceInput, UserUncheckedCreateWithoutUserDeviceInput>
-  }
-
-  export type SessionCreateWithoutUserDeviceInput = {
-    id?: string
-    hashedRefreshToken?: string | null
-    userIp: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutSessionsInput
-  }
-
-  export type SessionUncheckedCreateWithoutUserDeviceInput = {
-    id?: string
-    hashedRefreshToken?: string | null
-    userIp: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-  }
-
-  export type SessionCreateOrConnectWithoutUserDeviceInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
   }
 
   export type UserUpsertWithoutUserDeviceInput = {
@@ -8754,156 +9728,135 @@ export namespace Prisma {
 
   export type UserUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     codes?: CodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type SessionUpsertWithoutUserDeviceInput = {
-    update: XOR<SessionUpdateWithoutUserDeviceInput, SessionUncheckedUpdateWithoutUserDeviceInput>
-    create: XOR<SessionCreateWithoutUserDeviceInput, SessionUncheckedCreateWithoutUserDeviceInput>
-    where?: SessionWhereInput
-  }
-
-  export type SessionUpdateToOneWithWhereWithoutUserDeviceInput = {
-    where?: SessionWhereInput
-    data: XOR<SessionUpdateWithoutUserDeviceInput, SessionUncheckedUpdateWithoutUserDeviceInput>
-  }
-
-  export type SessionUpdateWithoutUserDeviceInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
-    userIp?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutSessionsNestedInput
-  }
-
-  export type SessionUncheckedUpdateWithoutUserDeviceInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
-    userIp?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UserDeviceCreateWithoutUserSessionInput = {
-    id?: string
-    nameDevice: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutUserDeviceInput
-  }
-
-  export type UserDeviceUncheckedCreateWithoutUserSessionInput = {
-    id?: string
-    nameDevice: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-  }
-
-  export type UserDeviceCreateOrConnectWithoutUserSessionInput = {
-    where: UserDeviceWhereUniqueInput
-    create: XOR<UserDeviceCreateWithoutUserSessionInput, UserDeviceUncheckedCreateWithoutUserSessionInput>
   }
 
   export type UserCreateWithoutSessionsInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     codes?: CodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
-  }
-
-  export type UserDeviceUpsertWithoutUserSessionInput = {
-    update: XOR<UserDeviceUpdateWithoutUserSessionInput, UserDeviceUncheckedUpdateWithoutUserSessionInput>
-    create: XOR<UserDeviceCreateWithoutUserSessionInput, UserDeviceUncheckedCreateWithoutUserSessionInput>
-    where?: UserDeviceWhereInput
-  }
-
-  export type UserDeviceUpdateToOneWithWhereWithoutUserSessionInput = {
-    where?: UserDeviceWhereInput
-    data: XOR<UserDeviceUpdateWithoutUserSessionInput, UserDeviceUncheckedUpdateWithoutUserSessionInput>
-  }
-
-  export type UserDeviceUpdateWithoutUserSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nameDevice?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutUserDeviceNestedInput
-  }
-
-  export type UserDeviceUncheckedUpdateWithoutUserSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nameDevice?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUpsertWithoutSessionsInput = {
@@ -8919,74 +9872,130 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     codes?: CodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCodesInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCodesInput = {
     id?: string
-    email: string
-    avtUrl?: string | null
+    fullname: string
     username: string
-    firstName: string
-    lastName: string
+    email: string
     hashedPassword?: string | null
-    phoneNumber?: string | null
-    dateOfBirth: Date | string
-    isActive?: boolean
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
     picture?: string | null
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCodesInput = {
@@ -9007,54 +10016,82 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCodesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
     hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
-    isActive?: BoolFieldUpdateOperationsInput | boolean
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserDeviceCreateWithoutUserInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userSession?: SessionCreateNestedOneWithoutUserDeviceInput
   }
 
   export type UserDeviceUncheckedCreateWithoutUserInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userSession?: SessionUncheckedCreateNestedOneWithoutUserDeviceInput
   }
 
   export type UserDeviceCreateOrConnectWithoutUserInput = {
@@ -9069,20 +10106,26 @@ export namespace Prisma {
 
   export type SessionCreateWithoutUserInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDevice: UserDeviceCreateNestedOneWithoutUserSessionInput
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
   }
 
   export type SessionUncheckedCreateWithoutUserInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDeviceId: string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
   }
 
   export type SessionCreateOrConnectWithoutUserInput = {
@@ -9092,6 +10135,46 @@ export namespace Prisma {
 
   export type SessionCreateManyUserInputEnvelope = {
     data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type Oauth2UserCreateWithoutUserInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type Oauth2UserUncheckedCreateWithoutUserInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type Oauth2UserCreateOrConnectWithoutUserInput = {
+    where: Oauth2UserWhereUniqueInput
+    create: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput>
+  }
+
+  export type Oauth2UserCreateManyUserInputEnvelope = {
+    data: Oauth2UserCreateManyUserInput | Oauth2UserCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -9142,6 +10225,7 @@ export namespace Prisma {
     OR?: UserDeviceScalarWhereInput[]
     NOT?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
     id?: UuidFilter<"UserDevice"> | string
+    deviceId?: StringFilter<"UserDevice"> | string
     nameDevice?: StringFilter<"UserDevice"> | string
     createdAt?: DateTimeFilter<"UserDevice"> | Date | string
     updatedAt?: DateTimeFilter<"UserDevice"> | Date | string
@@ -9169,12 +10253,50 @@ export namespace Prisma {
     OR?: SessionScalarWhereInput[]
     NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
     id?: UuidFilter<"Session"> | string
+    userDeviceId?: StringFilter<"Session"> | string
     hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
+    userAgent?: StringNullableFilter<"Session"> | string | null
     userIp?: StringFilter<"Session"> | string
     createdAt?: DateTimeFilter<"Session"> | Date | string
     updatedAt?: DateTimeFilter<"Session"> | Date | string
-    userDeviceId?: UuidFilter<"Session"> | string
+    loginedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
+    logoutedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
     userId?: UuidFilter<"Session"> | string
+  }
+
+  export type Oauth2UserUpsertWithWhereUniqueWithoutUserInput = {
+    where: Oauth2UserWhereUniqueInput
+    update: XOR<Oauth2UserUpdateWithoutUserInput, Oauth2UserUncheckedUpdateWithoutUserInput>
+    create: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput>
+  }
+
+  export type Oauth2UserUpdateWithWhereUniqueWithoutUserInput = {
+    where: Oauth2UserWhereUniqueInput
+    data: XOR<Oauth2UserUpdateWithoutUserInput, Oauth2UserUncheckedUpdateWithoutUserInput>
+  }
+
+  export type Oauth2UserUpdateManyWithWhereWithoutUserInput = {
+    where: Oauth2UserScalarWhereInput
+    data: XOR<Oauth2UserUpdateManyMutationInput, Oauth2UserUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type Oauth2UserScalarWhereInput = {
+    AND?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
+    OR?: Oauth2UserScalarWhereInput[]
+    NOT?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
+    id?: UuidFilter<"Oauth2User"> | string
+    provider?: EnumProviderFilter<"Oauth2User"> | $Enums.Provider
+    providerUserId?: StringFilter<"Oauth2User"> | string
+    email?: StringFilter<"Oauth2User"> | string
+    phone?: StringNullableFilter<"Oauth2User"> | string | null
+    firstname?: StringNullableFilter<"Oauth2User"> | string | null
+    lastname?: StringNullableFilter<"Oauth2User"> | string | null
+    fullname?: StringNullableFilter<"Oauth2User"> | string | null
+    avatarUrl?: StringNullableFilter<"Oauth2User"> | string | null
+    username?: StringNullableFilter<"Oauth2User"> | string | null
+    createdAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    updatedAt?: DateTimeFilter<"Oauth2User"> | Date | string
+    userId?: UuidFilter<"Oauth2User"> | string
   }
 
   export type CodeUpsertWithWhereUniqueWithoutUserInput = {
@@ -9205,8 +10327,153 @@ export namespace Prisma {
     userId?: UuidFilter<"Code"> | string
   }
 
+  export type UserCreateWithoutOauth2UserInput = {
+    id?: string
+    fullname: string
+    username: string
+    email: string
+    hashedPassword?: string | null
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
+    picture?: string | null
+    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    codes?: CodeCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutOauth2UserInput = {
+    id?: string
+    fullname: string
+    username: string
+    email: string
+    hashedPassword?: string | null
+    accountType?: $Enums.AccountType
+    avtUrl?: string | null
+    address?: string | null
+    city?: string | null
+    state: string
+    searchCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    visible?: $Enums.UserVisibility
+    status?: $Enums.Status
+    phone?: string | null
+    numberIdentity?: string | null
+    dateOfBirth?: Date | string | null
+    firstName?: string | null
+    lastName?: string | null
+    isActive?: boolean
+    isBanned?: boolean
+    isLocked?: boolean
+    isVerified?: boolean
+    lastActived?: Date | string | null
+    picture?: string | null
+    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutOauth2UserInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOauth2UserInput, UserUncheckedCreateWithoutOauth2UserInput>
+  }
+
+  export type UserUpsertWithoutOauth2UserInput = {
+    update: XOR<UserUpdateWithoutOauth2UserInput, UserUncheckedUpdateWithoutOauth2UserInput>
+    create: XOR<UserCreateWithoutOauth2UserInput, UserUncheckedCreateWithoutOauth2UserInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOauth2UserInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOauth2UserInput, UserUncheckedUpdateWithoutOauth2UserInput>
+  }
+
+  export type UserUpdateWithoutOauth2UserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    picture?: NullableStringFieldUpdateOperationsInput | string | null
+    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    codes?: CodeUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOauth2UserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: StringFieldUpdateOperationsInput | string
+    searchCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBanned?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    picture?: NullableStringFieldUpdateOperationsInput | string | null
+    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserDeviceCreateManyUserInput = {
     id?: string
+    deviceId: string
     nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9214,11 +10481,29 @@ export namespace Prisma {
 
   export type SessionCreateManyUserInput = {
     id?: string
+    userDeviceId: string
     hashedRefreshToken?: string | null
+    userAgent?: string | null
     userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    userDeviceId: string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
+  }
+
+  export type Oauth2UserCreateManyUserInput = {
+    id?: string
+    provider: $Enums.Provider
+    providerUserId: string
+    email: string
+    phone?: string | null
+    firstname?: string | null
+    lastname?: string | null
+    fullname?: string | null
+    avatarUrl?: string | null
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CodeCreateManyUserInput = {
@@ -9231,22 +10516,23 @@ export namespace Prisma {
 
   export type UserDeviceUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userSession?: SessionUpdateOneWithoutUserDeviceNestedInput
   }
 
   export type UserDeviceUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userSession?: SessionUncheckedUpdateOneWithoutUserDeviceNestedInput
   }
 
   export type UserDeviceUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
     nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9254,29 +10540,83 @@ export namespace Prisma {
 
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDevice?: UserDeviceUpdateOneRequiredWithoutUserSessionNestedInput
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SessionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
     hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userIp?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type Oauth2UserUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type Oauth2UserUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type Oauth2UserUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumProviderFieldUpdateOperationsInput | $Enums.Provider
+    providerUserId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    firstname?: NullableStringFieldUpdateOperationsInput | string | null
+    lastname?: NullableStringFieldUpdateOperationsInput | string | null
+    fullname?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CodeUpdateWithoutUserInput = {

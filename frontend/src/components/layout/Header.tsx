@@ -1,25 +1,62 @@
-// frontend/src/components/layout/Header.tsx
-'use client'; 
+'use client';
 
-import React, { useEffect, useState } from 'react'; // Import useState và useEffect
-import UserDropdown from '../common/UserDropdown'; 
-import Link from 'next/link'; // Import Link từ Next.js để điều hướng
+import React, { useEffect, useState } from 'react';
+import UserDropdown from '../common/UserDropdown';
+import Link from 'next/link';
+
+interface UserData {
+  name: string;
+  email: string;
+  // Thêm các trường khác nếu cần
+}
 
 const Header: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<any>(null); // State để lưu thông tin người dùng
+  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
 
   useEffect(() => {
-    // Trong thực tế, bạn sẽ kiểm tra accessToken trong localStorage/cookies
-    // và fetch thông tin người dùng từ Backend nếu token còn hợp lệ.
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      // Giả lập đã đăng nhập
-      setCurrentUser({ name: 'Nguyễn Văn A', email: 'vana@invest.com' });
-      // TODO: Call API Backend để xác thực token và lấy thông tin user thật
-    } else {
-      setCurrentUser(null);
+    async function fetchUser() {
+      const token = localStorage.getItem('accessToken') ?? '';
+      if (!token) {
+        setCurrentUser(null);
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:4000/auth/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('accessToken'); 
+          setCurrentUser(null);
+          return;
+        }
+
+        if (!res.ok) {
+          // Token invalid hoặc user không tồn tại
+          setCurrentUser(null);
+          return;
+        }
+
+        const data = await res.json();
+
+        setCurrentUser({
+          ...data.user,
+          name: data.user.name || '', // đảm bảo name luôn là string
+        });
+      } catch (err) {
+        console.error('Lỗi fetch user:', err);
+        setCurrentUser(null);
+      }
     }
-  }, []); // Chỉ chạy một lần khi component mount
+
+    fetchUser();
+  }, []);
 
   return (
     <header className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
@@ -38,9 +75,12 @@ const Header: React.FC = () => {
         {currentUser ? (
           <UserDropdown user={currentUser} />
         ) : (
-          <Link href="/login" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition duration-200">
+          <Link
+            href="/auth/login"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition duration-200"
+          >
             Đăng nhập
-          </Link> // Dùng Link để điều hướng đến trang đăng nhập
+          </Link>
         )}
       </div>
     </header>

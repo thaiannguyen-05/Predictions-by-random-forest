@@ -16,16 +16,31 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Hàm xử lý đăng xuất (sẽ gọi API tới NestJS)
-  const handleLogout = () => {
-    // Logic gọi API Đăng xuất
-    console.log("Đăng xuất...");
-    setIsOpen(false);
+  const handleLogout = async () => {
+    try {
+      // Gọi API logout
+      await fetch('http://localhost:4000/auth/logout', {
+        method: 'PATCH', // đúng method của bạn
+        credentials: 'include', // gửi cookie nếu cần
+      });
+
+      // Xóa token khỏi localStorage
+      localStorage.removeItem('accessToken');
+
+      // Đóng dropdown
+      setIsOpen(false);
+
+      // Chuyển hướng về login
+      window.location.href = '/auth/login';
+    } catch (err) {
+      console.error('Lỗi đăng xuất:', err);
+    }
   };
 
   return (
     <div className="relative">
       {/* Nút click để mở dropdown */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-700 transition duration-150 focus:outline-none"
       >
@@ -42,18 +57,18 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
             <p className="font-semibold">{user.name}</p>
             <p className="text-sm text-gray-400">{user.email}</p>
           </div>
-          
+
           <div className="py-1">
             {/* Thông tin tài khoản */}
-            <a 
-              href="/profile" 
+            <a
+              href="/profile"
               className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               <User size={18} className="mr-3 text-blue-400" />
               Thông tin Tài khoản
             </a>
-            
+
             {/* Nút Đăng xuất */}
             <button
               onClick={handleLogout}
