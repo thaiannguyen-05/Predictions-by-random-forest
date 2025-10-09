@@ -5,8 +5,6 @@ import ChatbotIcon from '@/components/layout/ChatbotIcon';
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
-      <TickerBar />
       {children}
       <ChatbotIcon />
     </>

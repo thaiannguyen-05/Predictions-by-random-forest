@@ -1,4 +1,4 @@
-import { Body, Controller, Get, UseGuards, Patch, Post, Put, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, UseGuards, Patch, Post, Put, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
 import { AuthService } from './service/auth.service';
@@ -10,6 +10,8 @@ import { Cookies } from 'src/common/decorator/cookie.decoratore';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { Public } from 'src/common/decorator/public.decorator';
 import { JwtService } from '@nestjs/jwt';
+import { PassportStrategy } from '@nestjs/passport';
+
 
 @Controller('auth')
 export class AuthController {
@@ -58,12 +60,25 @@ export class AuthController {
 		// Passport sẽ tự redirect sang Google
 	}
 
+	@Public()
 	@Get('google/callback')
 	@UseGuards(AuthGuard('google'))
 	async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-		const userProfile = req.user as any;
-		const { user, token } = await this.authService.socialLogin(req.user);
-		res.redirect(`http://localhost:3000/auth/success?token=${token}`);
+		try {
+			console.log('✅ Google callback user:', req.user);
+			const userProfile = req.user as any;
+			const { user, token } = await this.authService.socialLogin(userProfile);
+
+			// ⚠ Nếu token là string => sửa logic ở đây
+			res
+				.cookie('access_token', token.accessToken ?? token, { httpOnly: true, sameSite: 'lax' })
+				.cookie('refresh_token', token.refreshToken ?? '', { httpOnly: true, sameSite: 'lax' });
+
+			res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
+		} catch (err) {
+			console.error('❌ Google callback error:', err);
+			res.status(500).json({ message: err.message, stack: err.stack });
+		}
 	}
 
 	@Public()
@@ -72,12 +87,21 @@ export class AuthController {
 	async facebookAuth() { }
 
 
+	@Public()
 	@Get('facebook/callback')
 	@UseGuards(AuthGuard('facebook'))
 	async facebookAuthRedirect(@Req() req: Request, @Res() res: Response) {
 		const userProfile = req.user as any;
 		const { user, token } = await this.authService.socialLogin(req.user);
-		res.redirect(`http://localhost:3000/auth/success?token=${token}`);
+		res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
 	}
 
+	@Get('me')
+	async getMe(@Req() req: Request) {
+		const token = req.headers.authorization?.split(' ')[1];
+		if (!token) throw new UnauthorizedException('Token is required');
+
+		const user = await this.authService.validate(token);
+		return { loggedIn: true, user };
+	}
 }

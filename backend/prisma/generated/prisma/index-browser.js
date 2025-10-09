@@ -122,6 +122,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserDeviceScalarFieldEnum = {
   id: 'id',
+  deviceId: 'deviceId',
   nameDevice: 'nameDevice',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -130,11 +131,14 @@ exports.Prisma.UserDeviceScalarFieldEnum = {
 
 exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
+  userDeviceId: 'userDeviceId',
   hashedRefreshToken: 'hashedRefreshToken',
+  userAgent: 'userAgent',
   userIp: 'userIp',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userDeviceId: 'userDeviceId',
+  loginedAt: 'loginedAt',
+  logoutedAt: 'logoutedAt',
   userId: 'userId'
 };
 
@@ -149,17 +153,30 @@ exports.Prisma.CodeScalarFieldEnum = {
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  avtUrl: 'avtUrl',
+  fullname: 'fullname',
   username: 'username',
-  firstName: 'firstName',
-  lastName: 'lastName',
+  email: 'email',
   hashedPassword: 'hashedPassword',
-  phoneNumber: 'phoneNumber',
-  dateOfBirth: 'dateOfBirth',
-  isActive: 'isActive',
+  accountType: 'accountType',
+  avtUrl: 'avtUrl',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  searchCount: 'searchCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  visible: 'visible',
+  status: 'status',
+  phone: 'phone',
+  numberIdentity: 'numberIdentity',
+  dateOfBirth: 'dateOfBirth',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  isActive: 'isActive',
+  isBanned: 'isBanned',
+  isLocked: 'isLocked',
+  isVerified: 'isVerified',
+  lastActived: 'lastActived',
   picture: 'picture'
 };
 
@@ -175,7 +192,8 @@ exports.Prisma.Oauth2UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl',
   username: 'username',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {
@@ -197,6 +215,23 @@ exports.CodeType = exports.$Enums.CodeType = {
   PASSWORD_RESET: 'PASSWORD_RESET',
   EMAIL_CHANGE: 'EMAIL_CHANGE',
   PHONE_CHANGE: 'PHONE_CHANGE'
+};
+
+exports.AccountType = exports.$Enums.AccountType = {
+  EMAIL: 'EMAIL',
+  OAUTH2: 'OAUTH2'
+};
+
+exports.UserVisibility = exports.$Enums.UserVisibility = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE',
+  CONTACT_ONLY: 'CONTACT_ONLY'
+};
+
+exports.Status = exports.$Enums.Status = {
+  ACTIVE: 'ACTIVE',
+  SOLTDELETE: 'SOLTDELETE',
+  PENDING: 'PENDING'
 };
 
 exports.Provider = exports.$Enums.Provider = {
