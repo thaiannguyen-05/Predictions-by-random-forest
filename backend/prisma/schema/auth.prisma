@@ -4,11 +4,8 @@ model UserDevice {
   nameDevice String   @map("device_name")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
-  // foreign keys
   userId     String   @map("user_id") @db.Uuid
-
-  //relation
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([nameDevice, userId])
   @@index([userId])
@@ -16,20 +13,17 @@ model UserDevice {
 }
 
 model Session {
-  id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
+  id                 String    @id @default(uuid()) @map("session_id") @db.Uuid
   userDeviceId       String
-  hashedRefreshToken String?  @map("hashed_refresh_token")
-  userAgent          String?  @db.VarChar(1000)
-  userIp             String   @map("user_ip")
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
-
-  loginedAt  DateTime? @map("logined_at") @db.Timestamptz()
-  logoutedAt DateTime? @map("logouted_at") @db.Timestamptz()
-
-  // relations
-  userId String @db.Uuid
-  user   User   @relation(name: "sessions", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashedRefreshToken String?   @map("hashed_refresh_token")
+  userAgent          String?   @db.VarChar(1000)
+  userIp             String    @map("user_ip")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  loginedAt          DateTime? @map("logined_at") @db.Timestamptz(6)
+  logoutedAt         DateTime? @map("logouted_at") @db.Timestamptz(6)
+  userId             String    @db.Uuid
+  user               User      @relation("sessions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, userDeviceId])
   @@map("sessions")
@@ -39,14 +33,10 @@ model Code {
   id        String   @id @default(uuid()) @map("code_id") @db.Uuid
   code      String   @db.VarChar(255)
   type      CodeType @default(VERIFICATION) @map("code_type")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
-
-  // foreign keys
-  userId String @map("user_id") @db.Uuid
-
-  // relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([code, userId])
   @@index([userId])
@@ -56,6 +46,8 @@ model Code {
 enum AccountType {
   EMAIL
   OAUTH2
-
+  FACEBOOK
+  LOCAL
+  SOCIAL
   @@map("account_type")
 }

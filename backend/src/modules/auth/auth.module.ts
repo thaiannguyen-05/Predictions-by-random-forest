@@ -10,10 +10,14 @@ import { CookieStrategy } from '../../common/strategy/auth-cookie.strategy';
 import { GoogleStrategy } from '../../common/strategy/google.strategy';
 import { FacebookStrategy } from '../../common/strategy/facebook.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { SessionSerializer } from '../../common/strategy/session.serializer'; // THÊM DÒNG NÀY
 
 @Module({
   imports: [
-    PassportModule.register({ session: false }),
+    PassportModule.register({ 
+      session: true, // ĐÃ CÓ
+      defaultStrategy: 'jwt'
+    }),
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -24,7 +28,15 @@ import { PassportModule } from '@nestjs/passport';
       })
     })
   ],
-  providers: [AuthService, AuthOtherService, AuthTokenSerivec, CookieStrategy, GoogleStrategy, FacebookStrategy],
+  providers: [
+    AuthService, 
+    AuthOtherService, 
+    AuthTokenSerivec, 
+    CookieStrategy, 
+    GoogleStrategy, 
+    FacebookStrategy,
+    SessionSerializer // THÊM DÒNG NÀY
+  ],
   controllers: [AuthController],
   exports: [AuthService]
 })

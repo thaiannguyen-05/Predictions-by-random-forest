@@ -1,84 +1,83 @@
 model User {
-    id             String          @id @default(uuid()) @db.Uuid
-    fullname       String          @db.VarChar(50)
-    username       String          @unique @db.VarChar(250)
-    email          String          @unique @db.VarChar(255)
-    hashedPassword String?         @map("hashed_password") @db.VarChar(255)
-    accountType    AccountType     @default(EMAIL) @map("account_type")
-    avtUrl         String?         @map("avt_url") @db.VarChar(500)
-    address        String?         @db.VarChar(500)
-    city           String?         @db.VarChar(50)
-    state          String          @db.VarChar(50)
-    searchCount    Int             @default(0) @map("search_times")
-    createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz()
-    updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz()
-    visible        UserVisibility  @default(PUBLIC)
-    status         Status          @default(ACTIVE)
-    phone          String?         @db.VarChar(20)
-    numberIdentity String?         
-    dateOfBirth    DateTime?
-    firstName      String?
-    lastName       String?
-    isActive       Boolean         @default(false)
-    isBanned       Boolean         @default(false) @map("is_banned")
-    isLocked       Boolean         @default(false) @map("is_locked")
-    isVerified     Boolean         @default(false) @map("is_verified") 
-    lastActived    DateTime?       @map("last_actived") @db.Timestamptz()
-    picture        String?
-    // relations
-    userDevice UserDevice[]
-    sessions   Session[] @relation("sessions")
-    Oauth2User Oauth2User[] @relation("oauth2")
-    codes      Code[]
+  id             String         @id @default(uuid()) @db.Uuid
+  fullname       String         @db.VarChar(50)
+  username       String         @unique @db.VarChar(250)
+  email          String         @unique @db.VarChar(255)
+  hashedPassword String?        @map("hashed_password") @db.VarChar(255)
+  accountType    AccountType    @default(EMAIL) @map("account_type")
+  avtUrl         String?        @map("avt_url") @db.VarChar(500)
+  address        String?        @db.VarChar(500)
+  city           String?        @db.VarChar(50)
+  state          String         @db.VarChar(50)
+  searchCount    Int            @default(0) @map("search_times")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  visible        UserVisibility @default(PUBLIC)
+  status         Status         @default(ACTIVE)
+  phone          String?        @db.VarChar(20)
+  numberIdentity String?
+  dateOfBirth    DateTime?
+  firstName      String?
+  lastName       String?
+  isActive       Boolean        @default(false)
+  isBanned       Boolean        @default(false) @map("is_banned")
+  isLocked       Boolean        @default(false) @map("is_locked")
+  isVerified     Boolean        @default(false) @map("is_verified")
+  lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
+  picture        String?
+  provider       String?
+  codes          Code[]
+  Oauth2User     Oauth2User[]   @relation("oauth2")
+  sessions       Session[]      @relation("sessions")
+  userDevice     UserDevice[]
 
-    @@index([username])
-    @@index([email])
-    @@index([createdAt])
-    @@map("users") // Changed to plural form which is common in PostgreSQL
+  @@index([username])
+  @@index([email])
+  @@index([createdAt])
+  @@map("users")
 }
 
 model Oauth2User {
-    id             String   @id @default(uuid()) @db.Uuid
-    provider       Provider
-    providerUserId String   @map("provider_user_id") @db.VarChar(500)
-    email          String   @unique @db.VarChar(255)
-    phone          String?  @db.VarChar(20)
-    firstname      String?  @db.VarChar(50)
-    lastname       String?  @db.VarChar(50)
-    fullname       String?  @db.VarChar(50)
-    avatarUrl      String?  @map("avatar_url") @db.VarChar(500)
-    username       String?  @db.VarChar(50)
-    createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
-    updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  id             String   @id @default(uuid()) @db.Uuid
+  provider       Provider
+  providerUserId String   @map("provider_user_id") @db.VarChar(500)
+  email          String   @unique @db.VarChar(255)
+  phone          String?  @db.VarChar(20)
+  firstname      String?  @db.VarChar(50)
+  lastname       String?  @db.VarChar(50)
+  fullname       String?  @db.VarChar(50)
+  avatarUrl      String?  @map("avatar_url") @db.VarChar(500)
+  username       String?  @db.VarChar(50)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId         String   @map("user_id") @db.Uuid
+  user           User     @relation("oauth2", fields: [userId], references: [id], onDelete: Cascade)
 
-    userId String @map("user_id") @db.Uuid
-    user   User   @relation(name: "oauth2", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-    @@map("oauth2_user")
+  @@map("oauth2_user")
 }
 
 enum Provider {
-    FACEBOOK
-    GOOGLE
+  FACEBOOK
+  GOOGLE
 }
 
 enum CodeType {
-    VERIFICATION
-    PASSWORD_RESET
-    EMAIL_CHANGE
-    PHONE_CHANGE
+  VERIFICATION
+  PASSWORD_RESET
+  EMAIL_CHANGE
+  PHONE_CHANGE
 }
 
 enum Status {
-    ACTIVE 
-    SOLTDELETE
-    PENDING
+  ACTIVE
+  SOLTDELETE
+  PENDING
 }
 
 enum UserVisibility {
-    PUBLIC 
-    PRIVATE
-    CONTACT_ONLY
+  PUBLIC
+  PRIVATE
+  CONTACT_ONLY
 
-    @@map("user_visibility")
+  @@map("user_visibility")
 }

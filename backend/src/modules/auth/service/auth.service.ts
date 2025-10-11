@@ -19,6 +19,7 @@ import { AuthOtherService } from './auth.other.service';
 import { AuthTokenSerivec } from './auth.token.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { useStyleRegistry } from 'styled-jsx';
 
 @Injectable()
 export class AuthService {
@@ -167,33 +168,148 @@ export class AuthService {
   }
 
   // ===============================
-  // SOCIAL LOGIN
+  // SOCIAL LOGIN (Facebook / Google / etc.)
   // ===============================
   public async socialLogin(profile: any) {
-    const email = profile.email;
-    if (!email) throw new BadRequestException('Email not provided by social provider');
+    console.log('=== SOCIAL LOGIN START ===');
+    console.log('INCOMING PROFILE:', profile);
 
-    let user = await this.prismaService.user.findUnique({ where: { email } });
+    const provider = profile.provider || (profile.id && profile.id.length < 20 ? 'facebook' : 'google');
+
+    // KHÔNG SET accountType TRỰC TIẾP - ĐỂ PRISMA TỰ ĐỘNG HOẶC DÙNG DEFAULT
+    let email = '';
+    if (provider === 'facebook') {
+      email = profile.email ? `${profile.email.split('@')[0]}.fb@${profile.email.split('@')[1]}` : `fb_${profile.id}@facebook.com`;
+      console.log('🔒 Facebook using separate email:', email);
+    } else {
+      email = profile.email || profile.emails?.[0]?.value || `${profile.id}@google.com`;
+    }
+
+    console.log('🔍 Processing:', {
+      originalEmail: profile.email,
+      finalEmail: email,
+      provider
+    });
+
+    // XỬ LÝ TÊN - GIỮ NGUYÊN TỪ PROVIDER
+    let firstName = profile.firstName || profile.name?.givenName || '';
+    let lastName = profile.lastName || profile.name?.familyName || '';
+    let fullName = profile.displayName || profile.name || profile.fullName || '';
+
+    if (!fullName) fullName = provider === 'facebook' ? 'Facebook User' : 'Google User';
+    if (!firstName) firstName = fullName.split(' ')[0] || (provider === 'facebook' ? 'Facebook' : 'Google');
+    if (!lastName) lastName = fullName.split(' ').slice(1).join(' ') || 'User';
+
+    // XỬ LÝ AVATAR
+    let picture = profile.picture || profile.photos?.[0]?.value || '';
+
+    if (provider === 'facebook' && profile.id && profile.accessToken) {
+      picture = `https://graph.facebook.com/${profile.id}/picture?width=400&height=400&access_token=${profile.accessToken}`;
+    }
+
+    console.log('🎯 Final data:', {
+      provider,
+      email,
+      fullName,
+      hasPicture: !!picture
+    });
+
+    // TÌM HOẶC TẠO USER
+    let user = await this.prismaService.user.findUnique({
+      where: { email }
+    });
+
     if (!user) {
-      // FIX 3: Add dateOfBirth (required field) with a placeholder value.
-      // NOTE: You MUST run 'npx prisma generate' after adding 'picture' and if you make 'dateOfBirth' nullable.
+      // TẠO USERNAME DUY NHẤT
+      const baseUsername = provider === 'facebook' ? `fb_${profile.id}` : `gg_${profile.id}`;
+      let username = baseUsername;
+      let counter = 1;
+
+      while (true) {
+        const existingUser = await this.prismaService.user.findUnique({
+          where: { username }
+        });
+        if (!existingUser) break;
+        username = `${baseUsername}_${counter}`;
+        counter++;
+        if (counter > 10) break;
+      }
+
+      console.log('🆕 Creating user with username:', username);
+
+      // TẠO USER - KHÔNG SET accountType, ĐỂ DEFAULT VALUE TRONG SCHEMA HOẠT ĐỘNG
       user = await this.prismaService.user.create({
         data: {
           email,
-          firstName: profile.firstName || profile.name?.givenName || '',
-          lastName: profile.lastName || profile.name?.familyName || '',
-          username: profile.username || email.split('@')[0],
+          firstName,
+          lastName,
+          username,
+          fullname: fullName,
+          avtUrl: picture,
+          picture: picture,
+          hashedPassword: '',
+          dateOfBirth: new Date('1900-01-01'),
           isActive: true,
-          picture: profile.picture || profile.photos?.[0]?.value || '',
-          hashedPassword: '', // Set to empty string if nullable, or null if schema allows.
-          dateOfBirth: new Date('1900-01-01'), // Placeholder date if required
-          fullname: `${profile.firstName || profile.name?.givenName || ''} ${profile.lastName || profile.name?.familyName || ''}`,
           state: 'active',
+          provider: provider,
+          // KHÔNG SET accountType - để schema tự động dùng default value
         },
       });
+      console.log('✅ NEW USER CREATED for', provider);
+    } else {
+      console.log('🔄 UPDATING existing user:', user.id);
+
+      const updates: any = {};
+
+      // CHỈ CẬP NHẬT NẾU CÙNG PROVIDER
+      if (user.provider === provider) {
+        // Cập nhật avatar
+        if (picture) {
+          updates.picture = picture;
+          updates.avtUrl = picture;
+        }
+
+        // Cập nhật tên nếu cần
+        const currentName = user.fullname || '';
+        const isDefaultName = currentName.includes('User') || currentName === '' || currentName.includes('@');
+
+        if (isDefaultName && fullName) {
+          updates.fullname = fullName;
+          updates.firstName = firstName;
+          updates.lastName = lastName;
+        }
+      } else {
+        console.log('⚠️ Skipping update - user has different provider');
+      }
+
+      console.log('📝 Updates to apply:', updates);
+
+      if (Object.keys(updates).length > 0) {
+        user = await this.prismaService.user.update({
+          where: { id: user.id },
+          data: updates,
+        });
+        console.log('✅ USER UPDATED');
+      } else {
+        console.log('ℹ️ NO UPDATES NEEDED');
+      }
     }
 
-    // 2️⃣ Tạo token
+    // FACEBOOK TRẢ VỀ EMAIL ẢO
+    let displayEmail = user.email;
+    if (provider === 'facebook') {
+      displayEmail = `user_${profile.id}@facebook.com`;
+    }
+
+    console.log('🎯 FINAL USER:', {
+      id: user.id,
+      name: user.fullname,
+      email: displayEmail,
+      provider: user.provider,
+      accountType: user.accountType, // Log để xem giá trị thực tế
+      avatar: user.picture ? '✅ Has avatar' : '❌ No avatar'
+    });
+
     const accessToken = this.jwtService.sign(
       { sub: user.id, email: user.email },
       { expiresIn: '15m' },
@@ -204,14 +320,19 @@ export class AuthService {
       { expiresIn: '7d' },
     );
 
-    const token = this.jwtService.sign(
-      { sub: user.id, email: user.email },
-      { secret: this.configService.getOrThrow<string>('JWT_SECRET'), expiresIn: '1d' },
-    );
-
-    return { user, token: {
-      accessToken, refreshToken, },
-     };
+    return {
+      user: {
+        id: user.id,
+        name: user.fullname || fullName,
+        email: displayEmail,
+        avatar: user.picture || picture,
+        provider: user.provider || provider,
+      },
+      token: {
+        accessToken,
+        refreshToken,
+      },
+    };
   }
 
   // ===============================
@@ -247,34 +368,66 @@ export class AuthService {
   // FETCH CURRENT USER
   // ===============================
   public async getMe(token: string) {
-    try {
-      if (!token) throw new BadRequestException('Token required');
+    const payload = this.jwtService.verify(token, {
+      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+    });
 
-      const payload = this.jwtService.verify(token, {
-        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-      });
+    const user = await this.prismaService.user.findUnique({
+      where: { id: payload.sub },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        fullname: true,
+        picture: true,
+        avtUrl: true,
+        isActive: true,
+        provider: true,
+      },
+    });
 
-      const user = await this.prismaService.user.findUnique({
-        where: { id: payload.sub },
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          firstName: true,
-          lastName: true,
-          fullname: true,
-          picture: true,
-          isActive: true,
-        },
-      });
+    if (!user) throw new UnauthorizedException('User not found');
+    if (!user.isActive) throw new UnauthorizedException('User inactive');
 
-      if (!user) throw new UnauthorizedException('User not found');
-      if (!user.isActive) throw new UnauthorizedException('User inactive');
+    const name = user.fullname ||
+      `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+      user.username ||
+      user.email;
 
-      return user;
-    } catch (err) {
-      throw new UnauthorizedException('Token không hợp lệ');
+    const avatar = user.picture || user.avtUrl || undefined;
+
+    // SỬA QUAN TRỌNG: CHỈ ẨN EMAIL NẾU THẬT SỰ LÀ FACEBOOK USER
+    let displayEmail = user.email;
+
+    // Chỉ ẩn email nếu:
+    // 1. Provider là facebook VÀ 
+    // 2. Email có chứa ".fb@" hoặc "@facebook.com"
+    if (user.provider === 'facebook' &&
+      (user.email.includes('.fb@') || user.email.includes('@facebook.com'))) {
+      // Tạo email ảo từ username
+      displayEmail = `${user.username || user.id}@facebook.com`;
     }
-  }
+    // Các trường hợp khác (Google, local) hiển thị email thật
 
+    console.log('getMe - Final user data:', {
+      id: user.id,
+      name,
+      originalEmail: user.email,
+      displayEmail,
+      provider: user.provider,
+      avatar: avatar ? '✅ Has avatar' : '❌ No avatar'
+    });
+
+    return {
+      id: user.id,
+      email: displayEmail,
+      username: user.username,
+      name,
+      avatar,
+      isActive: user.isActive,
+      provider: user.provider
+    };
+  }
 }

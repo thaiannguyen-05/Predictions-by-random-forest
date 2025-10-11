@@ -177,7 +177,8 @@ exports.Prisma.UserScalarFieldEnum = {
   isLocked: 'isLocked',
   isVerified: 'isVerified',
   lastActived: 'lastActived',
-  picture: 'picture'
+  picture: 'picture',
+  provider: 'provider'
 };
 
 exports.Prisma.Oauth2UserScalarFieldEnum = {
@@ -219,7 +220,10 @@ exports.CodeType = exports.$Enums.CodeType = {
 
 exports.AccountType = exports.$Enums.AccountType = {
   EMAIL: 'EMAIL',
-  OAUTH2: 'OAUTH2'
+  OAUTH2: 'OAUTH2',
+  FACEBOOK: 'FACEBOOK',
+  LOCAL: 'LOCAL',
+  SOCIAL: 'SOCIAL'
 };
 
 exports.UserVisibility = exports.$Enums.UserVisibility = {

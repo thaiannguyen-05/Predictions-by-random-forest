@@ -4,11 +4,8 @@ model UserDevice {
   nameDevice String   @map("device_name")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
-  // foreign keys
   userId     String   @map("user_id") @db.Uuid
-
-  //relation
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([nameDevice, userId])
   @@index([userId])
@@ -16,20 +13,17 @@ model UserDevice {
 }
 
 model Session {
-  id                 String   @id @default(uuid()) @map("session_id") @db.Uuid
+  id                 String    @id @default(uuid()) @map("session_id") @db.Uuid
   userDeviceId       String
-  hashedRefreshToken String?  @map("hashed_refresh_token")
-  userAgent          String?  @db.VarChar(1000)
-  userIp             String   @map("user_ip")
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
-
-  loginedAt  DateTime? @map("logined_at") @db.Timestamptz()
-  logoutedAt DateTime? @map("logouted_at") @db.Timestamptz()
-
-  // relations
-  userId String @db.Uuid
-  user   User   @relation(name: "sessions", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashedRefreshToken String?   @map("hashed_refresh_token")
+  userAgent          String?   @db.VarChar(1000)
+  userIp             String    @map("user_ip")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  loginedAt          DateTime? @map("logined_at") @db.Timestamptz(6)
+  logoutedAt         DateTime? @map("logouted_at") @db.Timestamptz(6)
+  userId             String    @db.Uuid
+  user               User      @relation("sessions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, userDeviceId])
   @@map("sessions")
@@ -39,14 +33,10 @@ model Code {
   id        String   @id @default(uuid()) @map("code_id") @db.Uuid
   code      String   @db.VarChar(255)
   type      CodeType @default(VERIFICATION) @map("code_type")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
-
-  // foreign keys
-  userId String @map("user_id") @db.Uuid
-
-  // relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([code, userId])
   @@index([userId])
@@ -56,6 +46,9 @@ model Code {
 enum AccountType {
   EMAIL
   OAUTH2
+  FACEBOOK
+  LOCAL
+  SOCIAL
 
   @@map("account_type")
 }
@@ -83,8 +76,8 @@ model User {
   city           String?        @db.VarChar(50)
   state          String         @db.VarChar(50)
   searchCount    Int            @default(0) @map("search_times")
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   visible        UserVisibility @default(PUBLIC)
   status         Status         @default(ACTIVE)
   phone          String?        @db.VarChar(20)
@@ -96,18 +89,18 @@ model User {
   isBanned       Boolean        @default(false) @map("is_banned")
   isLocked       Boolean        @default(false) @map("is_locked")
   isVerified     Boolean        @default(false) @map("is_verified")
-  lastActived    DateTime?      @map("last_actived") @db.Timestamptz()
+  lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
   picture        String?
-  // relations
-  userDevice     UserDevice[]
-  sessions       Session[]      @relation("sessions")
-  Oauth2User     Oauth2User[]   @relation("oauth2")
+  provider       String?
   codes          Code[]
+  Oauth2User     Oauth2User[]   @relation("oauth2")
+  sessions       Session[]      @relation("sessions")
+  userDevice     UserDevice[]
 
   @@index([username])
   @@index([email])
   @@index([createdAt])
-  @@map("users") // Changed to plural form which is common in PostgreSQL
+  @@map("users")
 }
 
 model Oauth2User {
@@ -121,11 +114,10 @@ model Oauth2User {
   fullname       String?  @db.VarChar(50)
   avatarUrl      String?  @map("avatar_url") @db.VarChar(500)
   username       String?  @db.VarChar(50)
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
-
-  userId String @map("user_id") @db.Uuid
-  user   User   @relation(name: "oauth2", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId         String   @map("user_id") @db.Uuid
+  user           User     @relation("oauth2", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("oauth2_user")
 }

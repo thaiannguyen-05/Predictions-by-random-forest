@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface UserData {
   name: string;
   email: string;
-  // Thêm các trường khác nếu cần
+  avatar?: string;
 }
 
 const Header: React.FC = () => {
@@ -25,29 +25,40 @@ const Header: React.FC = () => {
         const res = await fetch('http://localhost:4000/auth/me', {
           method: 'GET',
           headers: {
-            'Content-Type' : 'application/json',
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
           credentials: 'include',
+          cache: 'no-cache' // THÊM DÒNG NÀY: tránh cache
         });
 
         if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('accessToken'); 
-          setCurrentUser(null);
-          return;
-        }
+          localStorage.removeItem('accessToken');
+          setCurrentUser(null);
+          return;
+        }
 
         if (!res.ok) {
-          // Token invalid hoặc user không tồn tại
           setCurrentUser(null);
           return;
         }
 
         const data = await res.json();
+        console.log('User data from /auth/me:', data.user);
+
+        // Xử lý avatar URL - THÊM TIMESTAMP để tránh cache
+        let avatarUrl = data.user.avatar;
+        if (avatarUrl && avatarUrl.startsWith('http')) {
+          // Thêm timestamp để tránh browser cache
+          avatarUrl += (avatarUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+        }
+
+        console.log('Final avatar URL with cache busting:', avatarUrl);
 
         setCurrentUser({
-          ...data.user,
-          name: data.user.name || '', // đảm bảo name luôn là string
+          name: data.user.name || data.user.username || data.user.email,
+          email: data.user.email,
+          avatar: avatarUrl,
         });
       } catch (err) {
         console.error('Lỗi fetch user:', err);
