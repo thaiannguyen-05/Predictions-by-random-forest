@@ -45,7 +45,10 @@ export type Oauth2User = $Result.DefaultSelection<Prisma.$Oauth2UserPayload>
 export namespace $Enums {
   export const AccountType: {
   EMAIL: 'EMAIL',
-  OAUTH2: 'OAUTH2'
+  OAUTH2: 'OAUTH2',
+  FACEBOOK: 'FACEBOOK',
+  LOCAL: 'LOCAL',
+  SOCIAL: 'SOCIAL'
 };
 
 export type AccountType = (typeof AccountType)[keyof typeof AccountType]
@@ -1293,17 +1296,17 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    userDevice: number
-    sessions: number
-    Oauth2User: number
     codes: number
+    Oauth2User: number
+    sessions: number
+    userDevice: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userDevice?: boolean | UserCountOutputTypeCountUserDeviceArgs
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
-    Oauth2User?: boolean | UserCountOutputTypeCountOauth2UserArgs
     codes?: boolean | UserCountOutputTypeCountCodesArgs
+    Oauth2User?: boolean | UserCountOutputTypeCountOauth2UserArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    userDevice?: boolean | UserCountOutputTypeCountUserDeviceArgs
   }
 
   // Custom InputTypes
@@ -1320,15 +1323,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountUserDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserDeviceWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionWhereInput
+  export type UserCountOutputTypeCountCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CodeWhereInput
   }
 
   /**
@@ -1341,8 +1337,15 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CodeWhereInput
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountUserDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserDeviceWhereInput
   }
 
 
@@ -4662,6 +4665,7 @@ export namespace Prisma {
     isVerified: boolean | null
     lastActived: Date | null
     picture: string | null
+    provider: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -4691,6 +4695,7 @@ export namespace Prisma {
     isVerified: boolean | null
     lastActived: Date | null
     picture: string | null
+    provider: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -4720,6 +4725,7 @@ export namespace Prisma {
     isVerified: number
     lastActived: number
     picture: number
+    provider: number
     _all: number
   }
 
@@ -4759,6 +4765,7 @@ export namespace Prisma {
     isVerified?: true
     lastActived?: true
     picture?: true
+    provider?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -4788,6 +4795,7 @@ export namespace Prisma {
     isVerified?: true
     lastActived?: true
     picture?: true
+    provider?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -4817,6 +4825,7 @@ export namespace Prisma {
     isVerified?: true
     lastActived?: true
     picture?: true
+    provider?: true
     _all?: true
   }
 
@@ -4933,6 +4942,7 @@ export namespace Prisma {
     isVerified: boolean
     lastActived: Date | null
     picture: string | null
+    provider: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -4981,10 +4991,11 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
-    userDevice?: boolean | User$userDeviceArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
-    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
+    provider?: boolean
     codes?: boolean | User$codesArgs<ExtArgs>
+    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5015,6 +5026,7 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
+    provider?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5044,6 +5056,7 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
+    provider?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -5073,14 +5086,15 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
+    provider?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "status" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "isVerified" | "lastActived" | "picture", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "status" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "isVerified" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userDevice?: boolean | User$userDeviceArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
-    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     codes?: boolean | User$codesArgs<ExtArgs>
+    Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    userDevice?: boolean | User$userDeviceArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5089,10 +5103,10 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      userDevice: Prisma.$UserDevicePayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
-      Oauth2User: Prisma.$Oauth2UserPayload<ExtArgs>[]
       codes: Prisma.$CodePayload<ExtArgs>[]
+      Oauth2User: Prisma.$Oauth2UserPayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
+      userDevice: Prisma.$UserDevicePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5121,6 +5135,7 @@ export namespace Prisma {
       isVerified: boolean
       lastActived: Date | null
       picture: string | null
+      provider: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -5515,10 +5530,10 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    userDevice<T extends User$userDeviceArgs<ExtArgs> = {}>(args?: Subset<T, User$userDeviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    Oauth2User<T extends User$Oauth2UserArgs<ExtArgs> = {}>(args?: Subset<T, User$Oauth2UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     codes<T extends User$codesArgs<ExtArgs> = {}>(args?: Subset<T, User$codesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    Oauth2User<T extends User$Oauth2UserArgs<ExtArgs> = {}>(args?: Subset<T, User$Oauth2UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userDevice<T extends User$userDeviceArgs<ExtArgs> = {}>(args?: Subset<T, User$userDeviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5574,6 +5589,7 @@ export namespace Prisma {
     readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly lastActived: FieldRef<"User", 'DateTime'>
     readonly picture: FieldRef<"User", 'String'>
+    readonly provider: FieldRef<"User", 'String'>
   }
     
 
@@ -5962,51 +5978,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.userDevice
+   * User.codes
    */
-  export type User$userDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$codesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the UserDevice
+     * Select specific fields to fetch from the Code
      */
-    select?: UserDeviceSelect<ExtArgs> | null
+    select?: CodeSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the UserDevice
+     * Omit specific fields from the Code
      */
-    omit?: UserDeviceOmit<ExtArgs> | null
+    omit?: CodeOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserDeviceInclude<ExtArgs> | null
-    where?: UserDeviceWhereInput
-    orderBy?: UserDeviceOrderByWithRelationInput | UserDeviceOrderByWithRelationInput[]
-    cursor?: UserDeviceWhereUniqueInput
+    include?: CodeInclude<ExtArgs> | null
+    where?: CodeWhereInput
+    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
+    cursor?: CodeWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: UserDeviceScalarFieldEnum | UserDeviceScalarFieldEnum[]
-  }
-
-  /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
-    cursor?: SessionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
   }
 
   /**
@@ -6034,27 +6026,51 @@ export namespace Prisma {
   }
 
   /**
-   * User.codes
+   * User.sessions
    */
-  export type User$codesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Code
+     * Select specific fields to fetch from the Session
      */
-    select?: CodeSelect<ExtArgs> | null
+    select?: SessionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Code
+     * Omit specific fields from the Session
      */
-    omit?: CodeOmit<ExtArgs> | null
+    omit?: SessionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CodeInclude<ExtArgs> | null
-    where?: CodeWhereInput
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    cursor?: CodeWhereUniqueInput
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.userDevice
+   */
+  export type User$userDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserDevice
+     */
+    select?: UserDeviceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserDevice
+     */
+    omit?: UserDeviceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserDeviceInclude<ExtArgs> | null
+    where?: UserDeviceWhereInput
+    orderBy?: UserDeviceOrderByWithRelationInput | UserDeviceOrderByWithRelationInput[]
+    cursor?: UserDeviceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserDeviceScalarFieldEnum | UserDeviceScalarFieldEnum[]
   }
 
   /**
@@ -7318,7 +7334,8 @@ export namespace Prisma {
     isLocked: 'isLocked',
     isVerified: 'isVerified',
     lastActived: 'lastActived',
-    picture: 'picture'
+    picture: 'picture',
+    provider: 'provider'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -7741,10 +7758,11 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
-    userDevice?: UserDeviceListRelationFilter
-    sessions?: SessionListRelationFilter
-    Oauth2User?: Oauth2UserListRelationFilter
+    provider?: StringNullableFilter<"User"> | string | null
     codes?: CodeListRelationFilter
+    Oauth2User?: Oauth2UserListRelationFilter
+    sessions?: SessionListRelationFilter
+    userDevice?: UserDeviceListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7774,10 +7792,11 @@ export namespace Prisma {
     isVerified?: SortOrder
     lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
-    userDevice?: UserDeviceOrderByRelationAggregateInput
-    sessions?: SessionOrderByRelationAggregateInput
-    Oauth2User?: Oauth2UserOrderByRelationAggregateInput
+    provider?: SortOrderInput | SortOrder
     codes?: CodeOrderByRelationAggregateInput
+    Oauth2User?: Oauth2UserOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
+    userDevice?: UserDeviceOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7810,10 +7829,11 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
-    userDevice?: UserDeviceListRelationFilter
-    sessions?: SessionListRelationFilter
-    Oauth2User?: Oauth2UserListRelationFilter
+    provider?: StringNullableFilter<"User"> | string | null
     codes?: CodeListRelationFilter
+    Oauth2User?: Oauth2UserListRelationFilter
+    sessions?: SessionListRelationFilter
+    userDevice?: UserDeviceListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -7843,6 +7863,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
+    provider?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -7880,6 +7901,7 @@ export namespace Prisma {
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     lastActived?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     picture?: StringNullableWithAggregatesFilter<"User"> | string | null
+    provider?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type Oauth2UserWhereInput = {
@@ -8218,10 +8240,11 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8251,10 +8274,11 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -8284,10 +8308,11 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8317,10 +8342,11 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8350,6 +8376,7 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
+    provider?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -8379,6 +8406,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -8408,6 +8436,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type Oauth2UserCreateInput = {
@@ -8836,16 +8865,10 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type UserDeviceListRelationFilter = {
-    every?: UserDeviceWhereInput
-    some?: UserDeviceWhereInput
-    none?: UserDeviceWhereInput
-  }
-
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
+  export type CodeListRelationFilter = {
+    every?: CodeWhereInput
+    some?: CodeWhereInput
+    none?: CodeWhereInput
   }
 
   export type Oauth2UserListRelationFilter = {
@@ -8854,17 +8877,19 @@ export namespace Prisma {
     none?: Oauth2UserWhereInput
   }
 
-  export type CodeListRelationFilter = {
-    every?: CodeWhereInput
-    some?: CodeWhereInput
-    none?: CodeWhereInput
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
   }
 
-  export type UserDeviceOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type UserDeviceListRelationFilter = {
+    every?: UserDeviceWhereInput
+    some?: UserDeviceWhereInput
+    none?: UserDeviceWhereInput
   }
 
-  export type SessionOrderByRelationAggregateInput = {
+  export type CodeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8872,7 +8897,11 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type CodeOrderByRelationAggregateInput = {
+  export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserDeviceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8903,6 +8932,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
+    provider?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -8936,6 +8966,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
+    provider?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -8965,6 +8996,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
+    provider?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -9152,18 +9184,11 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCodesInput, UserUpdateWithoutCodesInput>, UserUncheckedUpdateWithoutCodesInput>
   }
 
-  export type UserDeviceCreateNestedManyWithoutUserInput = {
-    create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
-    createMany?: UserDeviceCreateManyUserInputEnvelope
-    connect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
-  }
-
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  export type CodeCreateNestedManyWithoutUserInput = {
+    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
+    createMany?: CodeCreateManyUserInputEnvelope
+    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
   }
 
   export type Oauth2UserCreateNestedManyWithoutUserInput = {
@@ -9173,25 +9198,25 @@ export namespace Prisma {
     connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
   }
 
-  export type CodeCreateNestedManyWithoutUserInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
-  export type UserDeviceUncheckedCreateNestedManyWithoutUserInput = {
+  export type UserDeviceCreateNestedManyWithoutUserInput = {
     create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
     createMany?: UserDeviceCreateManyUserInputEnvelope
     connect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
   }
 
-  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  export type CodeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
+    createMany?: CodeCreateManyUserInputEnvelope
+    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
   }
 
   export type Oauth2UserUncheckedCreateNestedManyWithoutUserInput = {
@@ -9201,11 +9226,18 @@ export namespace Prisma {
     connect?: Oauth2UserWhereUniqueInput | Oauth2UserWhereUniqueInput[]
   }
 
-  export type CodeUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type UserDeviceUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
+    createMany?: UserDeviceCreateManyUserInputEnvelope
+    connect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
   }
 
   export type EnumAccountTypeFieldUpdateOperationsInput = {
@@ -9232,32 +9264,18 @@ export namespace Prisma {
     set?: boolean
   }
 
-  export type UserDeviceUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
-    upsert?: UserDeviceUpsertWithWhereUniqueWithoutUserInput | UserDeviceUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UserDeviceCreateManyUserInputEnvelope
-    set?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
-    disconnect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
-    delete?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
-    connect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
-    update?: UserDeviceUpdateWithWhereUniqueWithoutUserInput | UserDeviceUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UserDeviceUpdateManyWithWhereWithoutUserInput | UserDeviceUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
-  }
-
-  export type SessionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  export type CodeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
+    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CodeCreateManyUserInputEnvelope
+    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
   export type Oauth2UserUpdateManyWithoutUserNestedInput = {
@@ -9274,21 +9292,21 @@ export namespace Prisma {
     deleteMany?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
   }
 
-  export type CodeUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
-  export type UserDeviceUncheckedUpdateManyWithoutUserNestedInput = {
+  export type UserDeviceUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
     upsert?: UserDeviceUpsertWithWhereUniqueWithoutUserInput | UserDeviceUpsertWithWhereUniqueWithoutUserInput[]
@@ -9302,18 +9320,18 @@ export namespace Prisma {
     deleteMany?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
   }
 
-  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  export type CodeUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
+    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CodeCreateManyUserInputEnvelope
+    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
+    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
   export type Oauth2UserUncheckedUpdateManyWithoutUserNestedInput = {
@@ -9330,18 +9348,32 @@ export namespace Prisma {
     deleteMany?: Oauth2UserScalarWhereInput | Oauth2UserScalarWhereInput[]
   }
 
-  export type CodeUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type UserDeviceUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput> | UserDeviceCreateWithoutUserInput[] | UserDeviceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserDeviceCreateOrConnectWithoutUserInput | UserDeviceCreateOrConnectWithoutUserInput[]
+    upsert?: UserDeviceUpsertWithWhereUniqueWithoutUserInput | UserDeviceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserDeviceCreateManyUserInputEnvelope
+    set?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
+    disconnect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
+    delete?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
+    connect?: UserDeviceWhereUniqueInput | UserDeviceWhereUniqueInput[]
+    update?: UserDeviceUpdateWithWhereUniqueWithoutUserInput | UserDeviceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserDeviceUpdateManyWithWhereWithoutUserInput | UserDeviceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutOauth2UserInput = {
@@ -9673,9 +9705,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserDeviceInput = {
@@ -9705,9 +9738,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserDeviceInput = {
@@ -9753,9 +9787,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserDeviceInput = {
@@ -9785,9 +9820,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -9817,9 +9853,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -9849,9 +9886,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
-    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
+    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -9897,9 +9935,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -9929,9 +9968,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
-    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
+    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCodesInput = {
@@ -9961,9 +10001,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
+    provider?: string | null
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCodesInput = {
@@ -9993,9 +10034,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    provider?: string | null
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCodesInput = {
@@ -10041,9 +10083,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCodesInput = {
@@ -10073,68 +10116,35 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserDeviceCreateWithoutUserInput = {
+  export type CodeCreateWithoutUserInput = {
     id?: string
-    deviceId: string
-    nameDevice: string
+    code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type UserDeviceUncheckedCreateWithoutUserInput = {
+  export type CodeUncheckedCreateWithoutUserInput = {
     id?: string
-    deviceId: string
-    nameDevice: string
+    code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type UserDeviceCreateOrConnectWithoutUserInput = {
-    where: UserDeviceWhereUniqueInput
-    create: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput>
+  export type CodeCreateOrConnectWithoutUserInput = {
+    where: CodeWhereUniqueInput
+    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
   }
 
-  export type UserDeviceCreateManyUserInputEnvelope = {
-    data: UserDeviceCreateManyUserInput | UserDeviceCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type SessionCreateWithoutUserInput = {
-    id?: string
-    userDeviceId: string
-    hashedRefreshToken?: string | null
-    userAgent?: string | null
-    userIp: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    loginedAt?: Date | string | null
-    logoutedAt?: Date | string | null
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id?: string
-    userDeviceId: string
-    hashedRefreshToken?: string | null
-    userAgent?: string | null
-    userIp: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    loginedAt?: Date | string | null
-    logoutedAt?: Date | string | null
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+  export type CodeCreateManyUserInputEnvelope = {
+    data: CodeCreateManyUserInput | CodeCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -10178,90 +10188,92 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CodeCreateWithoutUserInput = {
+  export type SessionCreateWithoutUserInput = {
     id?: string
-    code: string
-    type?: $Enums.CodeType
+    userDeviceId: string
+    hashedRefreshToken?: string | null
+    userAgent?: string | null
+    userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
   }
 
-  export type CodeUncheckedCreateWithoutUserInput = {
+  export type SessionUncheckedCreateWithoutUserInput = {
     id?: string
-    code: string
-    type?: $Enums.CodeType
+    userDeviceId: string
+    hashedRefreshToken?: string | null
+    userAgent?: string | null
+    userIp: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
   }
 
-  export type CodeCreateOrConnectWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
-  }
-
-  export type CodeCreateManyUserInputEnvelope = {
-    data: CodeCreateManyUserInput | CodeCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UserDeviceUpsertWithWhereUniqueWithoutUserInput = {
-    where: UserDeviceWhereUniqueInput
-    update: XOR<UserDeviceUpdateWithoutUserInput, UserDeviceUncheckedUpdateWithoutUserInput>
-    create: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput>
-  }
-
-  export type UserDeviceUpdateWithWhereUniqueWithoutUserInput = {
-    where: UserDeviceWhereUniqueInput
-    data: XOR<UserDeviceUpdateWithoutUserInput, UserDeviceUncheckedUpdateWithoutUserInput>
-  }
-
-  export type UserDeviceUpdateManyWithWhereWithoutUserInput = {
-    where: UserDeviceScalarWhereInput
-    data: XOR<UserDeviceUpdateManyMutationInput, UserDeviceUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type UserDeviceScalarWhereInput = {
-    AND?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
-    OR?: UserDeviceScalarWhereInput[]
-    NOT?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
-    id?: UuidFilter<"UserDevice"> | string
-    deviceId?: StringFilter<"UserDevice"> | string
-    nameDevice?: StringFilter<"UserDevice"> | string
-    createdAt?: DateTimeFilter<"UserDevice"> | Date | string
-    updatedAt?: DateTimeFilter<"UserDevice"> | Date | string
-    userId?: UuidFilter<"UserDevice"> | string
-  }
-
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+  export type SessionCreateOrConnectWithoutUserInput = {
     where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
     create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
   }
 
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  export type UserDeviceCreateWithoutUserInput = {
+    id?: string
+    deviceId: string
+    nameDevice: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: UuidFilter<"Session"> | string
-    userDeviceId?: StringFilter<"Session"> | string
-    hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
-    userAgent?: StringNullableFilter<"Session"> | string | null
-    userIp?: StringFilter<"Session"> | string
-    createdAt?: DateTimeFilter<"Session"> | Date | string
-    updatedAt?: DateTimeFilter<"Session"> | Date | string
-    loginedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
-    logoutedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
-    userId?: UuidFilter<"Session"> | string
+  export type UserDeviceUncheckedCreateWithoutUserInput = {
+    id?: string
+    deviceId: string
+    nameDevice: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserDeviceCreateOrConnectWithoutUserInput = {
+    where: UserDeviceWhereUniqueInput
+    create: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserDeviceCreateManyUserInputEnvelope = {
+    data: UserDeviceCreateManyUserInput | UserDeviceCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CodeUpsertWithWhereUniqueWithoutUserInput = {
+    where: CodeWhereUniqueInput
+    update: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
+    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
+  }
+
+  export type CodeUpdateWithWhereUniqueWithoutUserInput = {
+    where: CodeWhereUniqueInput
+    data: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CodeUpdateManyWithWhereWithoutUserInput = {
+    where: CodeScalarWhereInput
+    data: XOR<CodeUpdateManyMutationInput, CodeUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CodeScalarWhereInput = {
+    AND?: CodeScalarWhereInput | CodeScalarWhereInput[]
+    OR?: CodeScalarWhereInput[]
+    NOT?: CodeScalarWhereInput | CodeScalarWhereInput[]
+    id?: UuidFilter<"Code"> | string
+    code?: StringFilter<"Code"> | string
+    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
+    createdAt?: DateTimeFilter<"Code"> | Date | string
+    updatedAt?: DateTimeFilter<"Code"> | Date | string
+    userId?: UuidFilter<"Code"> | string
   }
 
   export type Oauth2UserUpsertWithWhereUniqueWithoutUserInput = {
@@ -10299,32 +10311,64 @@ export namespace Prisma {
     userId?: UuidFilter<"Oauth2User"> | string
   }
 
-  export type CodeUpsertWithWhereUniqueWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    update: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
-    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
   }
 
-  export type CodeUpdateWithWhereUniqueWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    data: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
   }
 
-  export type CodeUpdateManyWithWhereWithoutUserInput = {
-    where: CodeScalarWhereInput
-    data: XOR<CodeUpdateManyMutationInput, CodeUncheckedUpdateManyWithoutUserInput>
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type CodeScalarWhereInput = {
-    AND?: CodeScalarWhereInput | CodeScalarWhereInput[]
-    OR?: CodeScalarWhereInput[]
-    NOT?: CodeScalarWhereInput | CodeScalarWhereInput[]
-    id?: UuidFilter<"Code"> | string
-    code?: StringFilter<"Code"> | string
-    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
-    createdAt?: DateTimeFilter<"Code"> | Date | string
-    updatedAt?: DateTimeFilter<"Code"> | Date | string
-    userId?: UuidFilter<"Code"> | string
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: UuidFilter<"Session"> | string
+    userDeviceId?: StringFilter<"Session"> | string
+    hashedRefreshToken?: StringNullableFilter<"Session"> | string | null
+    userAgent?: StringNullableFilter<"Session"> | string | null
+    userIp?: StringFilter<"Session"> | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
+    updatedAt?: DateTimeFilter<"Session"> | Date | string
+    loginedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
+    logoutedAt?: DateTimeNullableFilter<"Session"> | Date | string | null
+    userId?: UuidFilter<"Session"> | string
+  }
+
+  export type UserDeviceUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserDeviceWhereUniqueInput
+    update: XOR<UserDeviceUpdateWithoutUserInput, UserDeviceUncheckedUpdateWithoutUserInput>
+    create: XOR<UserDeviceCreateWithoutUserInput, UserDeviceUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserDeviceUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserDeviceWhereUniqueInput
+    data: XOR<UserDeviceUpdateWithoutUserInput, UserDeviceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserDeviceUpdateManyWithWhereWithoutUserInput = {
+    where: UserDeviceScalarWhereInput
+    data: XOR<UserDeviceUpdateManyMutationInput, UserDeviceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserDeviceScalarWhereInput = {
+    AND?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
+    OR?: UserDeviceScalarWhereInput[]
+    NOT?: UserDeviceScalarWhereInput | UserDeviceScalarWhereInput[]
+    id?: UuidFilter<"UserDevice"> | string
+    deviceId?: StringFilter<"UserDevice"> | string
+    nameDevice?: StringFilter<"UserDevice"> | string
+    createdAt?: DateTimeFilter<"UserDevice"> | Date | string
+    updatedAt?: DateTimeFilter<"UserDevice"> | Date | string
+    userId?: UuidFilter<"UserDevice"> | string
   }
 
   export type UserCreateWithoutOauth2UserInput = {
@@ -10354,9 +10398,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOauth2UserInput = {
@@ -10386,9 +10431,10 @@ export namespace Prisma {
     isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
-    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    provider?: string | null
     codes?: CodeUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOauth2UserInput = {
@@ -10434,9 +10480,10 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOauth2UserInput = {
@@ -10466,29 +10513,18 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
-    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    provider?: NullableStringFieldUpdateOperationsInput | string | null
     codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserDeviceCreateManyUserInput = {
+  export type CodeCreateManyUserInput = {
     id?: string
-    deviceId: string
-    nameDevice: string
+    code: string
+    type?: $Enums.CodeType
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type SessionCreateManyUserInput = {
-    id?: string
-    userDeviceId: string
-    hashedRefreshToken?: string | null
-    userAgent?: string | null
-    userIp: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    loginedAt?: Date | string | null
-    logoutedAt?: Date | string | null
   }
 
   export type Oauth2UserCreateManyUserInput = {
@@ -10506,72 +10542,48 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type CodeCreateManyUserInput = {
+  export type SessionCreateManyUserInput = {
     id?: string
-    code: string
-    type?: $Enums.CodeType
+    userDeviceId: string
+    hashedRefreshToken?: string | null
+    userAgent?: string | null
+    userIp: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    loginedAt?: Date | string | null
+    logoutedAt?: Date | string | null
+  }
+
+  export type UserDeviceCreateManyUserInput = {
+    id?: string
+    deviceId: string
+    nameDevice: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type UserDeviceUpdateWithoutUserInput = {
+  export type CodeUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    deviceId?: StringFieldUpdateOperationsInput | string
-    nameDevice?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserDeviceUncheckedUpdateWithoutUserInput = {
+  export type CodeUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    deviceId?: StringFieldUpdateOperationsInput | string
-    nameDevice?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserDeviceUncheckedUpdateManyWithoutUserInput = {
+  export type CodeUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    deviceId?: StringFieldUpdateOperationsInput | string
-    nameDevice?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
-    userIp?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
-    userIp?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userDeviceId?: StringFieldUpdateOperationsInput | string
-    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
-    userIp?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type Oauth2UserUpdateWithoutUserInput = {
@@ -10619,26 +10631,62 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CodeUpdateWithoutUserInput = {
+  export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
+    userDeviceId?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    userIp?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    userIp?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userDeviceId?: StringFieldUpdateOperationsInput | string
+    hashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    userIp?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    loginedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    logoutedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type UserDeviceUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceId?: StringFieldUpdateOperationsInput | string
+    nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CodeUncheckedUpdateWithoutUserInput = {
+  export type UserDeviceUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
+    deviceId?: StringFieldUpdateOperationsInput | string
+    nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CodeUncheckedUpdateManyWithoutUserInput = {
+  export type UserDeviceUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
+    deviceId?: StringFieldUpdateOperationsInput | string
+    nameDevice?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

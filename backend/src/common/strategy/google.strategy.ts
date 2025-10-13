@@ -15,21 +15,38 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         });
     }
 
+    // google.strategy.ts
     async validate(
         accessToken: string,
         refreshToken: string,
         profile: any,
         done: VerifyCallback,
     ): Promise<any> {
-        const { name, emails, photos } = profile;
+        const { name, emails, photos, id, displayName } = profile;
+
+        let picture = '';
+        if (photos && photos[0] && photos[0].value) {
+            picture = photos[0].value;
+            if (picture.includes('googleusercontent.com') && picture.includes('=s96-c')) {
+                picture = picture.replace('=s96-c', '=s400-c');
+            }
+        }
+
         const user = {
+            id,
             email: emails?.[0]?.value,
             firstName: name?.givenName,
             lastName: name?.familyName,
-            picture: photos?.[0]?.value,
+            displayName: displayName, // THÊM DÒNG NÀY
+            fullName: displayName || `${name?.givenName || ''} ${name?.familyName || ''}`.trim(), // THÊM DÒNG NÀY
+            picture: picture,
+            provider: 'google',
             accessToken,
-            refreshToken,   
+            refreshToken,
         };
+
+        console.log('Google profile with full name:', user);
+
         done(null, user);
     }
 }

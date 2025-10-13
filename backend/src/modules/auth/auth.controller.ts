@@ -220,9 +220,53 @@ export class AuthController {
 	})
 	@ApiExcludeEndpoint()
 	async facebookAuthRedirect(@Req() req: Request, @Res() res: Response) {
-		const userProfile = req.user as any;
-		const { user, token } = await this.authService.socialLogin(req.user);
-		res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
+		try {
+			console.log('✅ Facebook callback reached');
+			console.log('Full req.user:', req.user);
+			console.log('req.user type:', typeof req.user);
+			console.log('req.user keys:', req.user ? Object.keys(req.user) : 'No user');
+
+			if (!req.user) {
+				throw new Error('No user data from Facebook');
+			}
+
+			const profile = req.user as any;
+
+			// DEBUG CHI TIẾT
+			console.log('=== FACEBOOK CALLBACK - PROFILE ANALYSIS ===');
+			console.log('Profile provider:', profile.provider);
+			console.log('Profile firstName:', profile.firstName);
+			console.log('Profile lastName:', profile.lastName);
+			console.log('Profile displayName:', profile.displayName);
+			console.log('Profile picture:', profile.picture);
+			console.log('All profile keys:', Object.keys(profile));
+			console.log('============================================');
+
+			const { user, token } = await this.authService.socialLogin(profile);
+
+			console.log('Social login result user:', user);
+
+			// Set cookies
+			res
+				.cookie('access_token', token.accessToken, {
+					httpOnly: true,
+					sameSite: 'lax',
+				})
+				.cookie('refresh_token', token.refreshToken, {
+					httpOnly: true,
+					sameSite: 'lax',
+				});
+
+			// Redirect về frontend
+			res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
+
+		} catch (err) {
+			console.error('❌ Facebook callback error:', err);
+			console.error('Error stack:', err.stack);
+
+			// Redirect về trang lỗi
+			res.redirect(`http://localhost:3000/auth/error?message=${encodeURIComponent(err.message)}`);
+		}
 	}
 
 	@Get('me')
@@ -257,7 +301,19 @@ export class AuthController {
 		const token = req.headers.authorization?.split(' ')[1];
 		if (!token) throw new UnauthorizedException('Token is required');
 
-		const user = await this.authService.validate(token);
-		return { loggedIn: true, user };
+		const user = await this.authService.getMe(token);
+
+		return {
+			loggedIn: true,
+			user: {
+				id: user.id,
+				email: user.email,
+				username: user.username,
+				name: user.name,
+				avatar: user.avatar,
+				provider: user.provider,
+				isActive: user.isActive
+			}
+		};
 	}
 }
