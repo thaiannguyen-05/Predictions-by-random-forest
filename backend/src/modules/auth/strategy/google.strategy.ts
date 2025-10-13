@@ -1,8 +1,20 @@
-// src/common/strategy/google.strategy.ts (Mã đã sửa cuối cùng)
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
+
+interface GoogleUser {
+    id: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    displayName?: string;
+    fullName?: string;
+    picture: string;
+    provider: string;
+    accessToken: string;
+    refreshToken: string;
+}
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -15,13 +27,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         });
     }
 
-    // google.strategy.ts
     async validate(
         accessToken: string,
         refreshToken: string,
-        profile: any,
+        profile: Profile,
         done: VerifyCallback,
-    ): Promise<any> {
+    ): Promise<void> {
         const { name, emails, photos, id, displayName } = profile;
 
         let picture = '';
@@ -32,7 +43,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             }
         }
 
-        const user = {
+        const user: GoogleUser = {
             id,
             email: emails?.[0]?.value,
             firstName: name?.givenName,

@@ -2,7 +2,21 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy, Profile } from 'passport-facebook';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from '../../modules/auth/service/auth.service'; // THÊM DÒNG NÀY
+import { AuthService } from '../service/auth.service';
+import { VerifyCallback } from 'passport-google-oauth20';
+
+interface FacebookUser {
+    id: string;
+    email: string;
+    name: string;
+    displayName: string;
+    firstName: string;
+    lastName: string;
+    middleName: string;
+    picture: string;
+    provider: string;
+    accessToken: string;
+}
 
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
@@ -34,14 +48,14 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
         accessToken: string,
         refreshToken: string,
         profile: Profile,
-        done: (err: any, user?: any) => void,
-    ): Promise<any> {
+        done: VerifyCallback,
+    ): Promise<void> {
         const { id, displayName, emails, photos, name } = profile;
 
         console.log('=== FACEBOOK STRATEGY ===');
 
         // QUAN TRỌNG: ĐẢM BẢO CÓ ACCESS TOKEN CHO AVATAR
-        const user = {
+        const user: FacebookUser = {
             id,
             email: emails?.[0]?.value || `${id}@facebook.com`,
             name: displayName,
@@ -54,7 +68,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
             accessToken: accessToken, // QUAN TRỌNG: TRUYỀN ACCESS TOKEN
         };
 
-        console.log('✅ Facebook user with access token');
         done(null, user);
     }
 }

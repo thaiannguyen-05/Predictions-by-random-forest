@@ -1,67 +1,40 @@
-import { Controller, Post, Body, Put, Req } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Put, Req } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from "./user.service";
-import express from 'express'
+import type { Request } from 'express'
 import { ChangeDetailDto } from "./dto/change-detail.dto";
-import { LoginUserDto } from "./dto/login-user.dto";
-import type { CreateUserDto } from "./dto/create-user.dto";
-
-@ApiTags('auth')
-@Controller('auth')
+@ApiTags('User')
+@Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) { }
 
-	@Post('register')
+	@Put("change-detail-user")
+	@ApiBearerAuth('JWT-auth')
 	@ApiOperation({
-		summary: 'Register a new user',
-		description: 'Create a new user account with email and password'
+		summary: 'Update user profile details',
+		description: 'Update authenticated user profile information including username, names, phone, date of birth, and avatar'
 	})
-	@ApiBody({ type: CreateUserDto, description: 'User registration data' })
-	@ApiResponse({
-		status: 201,
-		description: 'User registered successfully',
-		schema: {
-			type: 'object',
-			properties: {
-				message: { type: 'string', example: 'User registered successfully' },
-				user: {
-					type: 'object',
-					properties: {
-						id: { type: 'string' },
-						email: { type: 'string' },
-						createdAt: { type: 'string', format: 'date-time' }
-					}
-				}
-			}
-		}
+	@ApiBody({ 
+		type: ChangeDetailDto, 
+		description: 'User profile update data' 
 	})
-	@ApiResponse({
-		status: 400,
-		description: 'Bad request - validation error or user already exists'
-	})
-	async register(@Body() dto: CreateUserDto) {
-		return this.userService.register(dto);
-	}
-
-	@Post('login')
-	@ApiOperation({
-		summary: 'User login',
-		description: 'Authenticate user with email and password'
-	})
-	@ApiBody({ type: LoginUserDto, description: 'User login credentials' })
 	@ApiResponse({
 		status: 200,
-		description: 'Login successful',
+		description: 'User profile updated successfully',
 		schema: {
 			type: 'object',
 			properties: {
-				message: { type: 'string', example: 'Login successful' },
-				token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
-				user: {
+				status: { type: 'boolean', example: true },
+				data: {
 					type: 'object',
 					properties: {
 						id: { type: 'string' },
-						email: { type: 'string' }
+						username: { type: 'string' },
+						firstName: { type: 'string' },
+						lastName: { type: 'string' },
+						phoneNumber: { type: 'string', nullable: true },
+						dateOfBirth: { type: 'string', format: 'date-time', nullable: true },
+						avtUrl: { type: 'string', nullable: true }
 					}
 				}
 			}
@@ -69,9 +42,17 @@ export class UserController {
 	})
 	@ApiResponse({
 		status: 401,
-		description: 'Unauthorized - invalid credentials'
+		description: 'Unauthorized - invalid or missing token'
 	})
-	async login(@Body() dto: LoginUserDto) {
-		return this.userService.login(dto);
+	@ApiResponse({
+		status: 404,
+		description: 'User not found or not active'
+	})
+	@ApiResponse({
+		status: 400,
+		description: 'Bad request - validation error'
+	})
+	async changeDetalUser(@Req() req: Request, @Body() dto: ChangeDetailDto) {
+		return this.userService.changeDetail(req, dto)
 	}
 }

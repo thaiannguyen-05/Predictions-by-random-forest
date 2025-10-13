@@ -6,15 +6,15 @@ import { AuthOtherService } from './service/auth.other.service';
 import { AuthTokenSerivec } from './service/auth.token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CookieStrategy } from '../../common/strategy/auth-cookie.strategy';
-import { GoogleStrategy } from '../../common/strategy/google.strategy';
-import { FacebookStrategy } from '../../common/strategy/facebook.strategy';
+import { CookieStrategy } from './strategy/auth-cookie.strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
+import { FacebookStrategy } from './strategy/facebook.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { SessionSerializer } from '../../common/strategy/session.serializer'; // THÊM DÒNG NÀY
+import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒNG NÀY
 
 @Module({
   imports: [
-    PassportModule.register({ 
+    PassportModule.register({
       session: true, // ĐÃ CÓ
       defaultStrategy: 'jwt'
     }),
@@ -29,11 +29,11 @@ import { SessionSerializer } from '../../common/strategy/session.serializer'; //
     })
   ],
   providers: [
-    AuthService, 
-    AuthOtherService, 
-    AuthTokenSerivec, 
-    CookieStrategy, 
-    GoogleStrategy, 
+    AuthService,
+    AuthOtherService,
+    AuthTokenSerivec,
+    CookieStrategy,
+    GoogleStrategy,
     FacebookStrategy,
     SessionSerializer // THÊM DÒNG NÀY
   ],

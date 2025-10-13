@@ -4,7 +4,26 @@ import * as net from 'net';
 interface MLServiceResponse {
 	success: boolean;
 	error?: string;
-	[key: string]: any;
+	data?: unknown;
+	message?: string;
+	ticker?: string;
+	current_price?: number;
+	current_time?: string;
+	close?: number;
+	date?: string;
+	prediction?: {
+		current_price?: number;
+		[key: string]: unknown;
+	};
+	predictions?: unknown[];
+	timestamp?: string;
+	metrics?: {
+		features_count?: number;
+		[key: string]: unknown;
+	};
+	trained_models?: number;
+	updated_tickers?: number;
+	[key: string]: unknown;
 }
 
 @Injectable()
@@ -36,7 +55,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 	/**
 	 * Send command to ML TCP server and get response
 	 */
-	private async sendCommand(command: string, params: any = {}): Promise<MLServiceResponse> {
+	private async sendCommand(command: string, params: Record<string, unknown> = {}): Promise<MLServiceResponse> {
 		return new Promise((resolve, reject) => {
 			const client = new net.Socket();
 			let responseData = '';

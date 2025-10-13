@@ -5,9 +5,10 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { DateUtils } from "src/common/utils/string-to-date.utils";
 import { LoginUserDto } from "./dto/login-user.dto";
 import type { CreateUserDto } from "./dto/create-user.dto";
+import type { User } from "@prisma/client";
 @Injectable()
 export class UserService {
-	private users: any[] = [];
+	private users: User[] = [];
 	constructor(
 		private readonly prismaService: PrismaService
 	) { }
@@ -55,26 +56,11 @@ export class UserService {
 
 		// Remove hashedPassword before returning
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { hashedPassword, ...userWithoutPassword } = newUser as any;
+		const { hashedPassword, ...userWithoutPassword } = newUser;
 		return {
 			status: true,
 			data: userWithoutPassword
 		}
-	}
-	async register(dto: CreateUserDto) {
-		// Thêm logic register
-		const user = { id: Date.now(), ...dto };
-		this.users.push(user);
-		return user;
-	}
-
-	async login(dto: LoginUserDto) {
-		// Thêm logic login
-		const user = this.users.find(u => u.email === dto.email && u.password === dto.password);
-		if (!user) {
-			throw new Error('Invalid credentials');
-		}
-		return user;
 	}
 
 }

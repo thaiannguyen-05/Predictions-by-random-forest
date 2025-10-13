@@ -26,10 +26,12 @@ model User {
   lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
   picture        String?
   provider       String?
-  codes          Code[]
-  Oauth2User     Oauth2User[]   @relation("oauth2")
-  sessions       Session[]      @relation("sessions")
-  userDevice     UserDevice[]
+
+  //  relations
+  codes      Code[]
+  Oauth2User Oauth2User[] @relation("oauth2")
+  sessions   Session[]    @relation("sessions")
+  userDevice UserDevice[]
 
   @@index([username])
   @@index([email])
@@ -59,6 +61,8 @@ model Oauth2User {
 enum Provider {
   FACEBOOK
   GOOGLE
+
+  @@map("provider")
 }
 
 enum CodeType {
@@ -66,12 +70,16 @@ enum CodeType {
   PASSWORD_RESET
   EMAIL_CHANGE
   PHONE_CHANGE
+
+  @@map("code_type")
 }
 
 enum Status {
   ACTIVE
   SOLTDELETE
   PENDING
+
+  @@map("status")
 }
 
 enum UserVisibility {

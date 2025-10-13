@@ -1,9 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 
+interface SerializedUser {
+  id: string;
+  email?: string;
+  provider?: string;
+  firstName?: string;
+  lastName?: string;
+  [key: string]: unknown;
+}
+
+type SerializationDone = (err: Error | null, data?: unknown) => void;
+
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  serializeUser(user: any, done: Function) {
+  serializeUser(user: SerializedUser, done: SerializationDone) {
     console.log('🔐 Serializing user:', {
       id: user.id,
       email: user.email,
@@ -14,7 +25,7 @@ export class SessionSerializer extends PassportSerializer {
     done(null, user);
   }
 
-  deserializeUser(payload: any, done: Function) {
+  deserializeUser(payload: SerializedUser, done: SerializationDone) {
     console.log('🔓 Deserializing user:', {
       id: payload?.id,
       email: payload?.email, 

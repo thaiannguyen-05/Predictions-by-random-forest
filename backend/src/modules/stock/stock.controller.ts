@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { StockPredictionService } from './stock-prediction.service';
 import { Public } from 'src/common/decorator/public.decorator';
-@ApiTags('stock')
+@ApiTags('Stock')
 @Public()
 @Controller('api/stock')
 export class StockController {
@@ -85,10 +85,10 @@ export class StockController {
 		}
 
 		return {
-			ticker: (result as any).ticker,
-			price: (result as any).price,
-			time: (result as any).time,
-			timestamp: (result as any).timestamp
+			ticker: result.ticker || ticker,
+			price: result.close || 0,
+			time: result.date || new Date().toISOString(),
+			timestamp: Date.now()
 		};
 	}
 
@@ -142,11 +142,11 @@ export class StockController {
 		}
 
 		return {
-			ticker: (result as any).ticker,
-			current_price: (result as any).current_price,
-			current_time: (result as any).current_time,
-			predictions: (result as any).predictions,
-			timestamp: (result as any).timestamp
+			ticker: result.ticker || ticker,
+			current_price: result.current_price || 0,
+			current_time: result.current_time || new Date().toISOString(),
+			predictions: result.predictions || [],
+			timestamp: result.timestamp || Date.now()
 		};
 	}
 
@@ -202,9 +202,9 @@ export class StockController {
 
 		return {
 			ticker: ticker,
-			current_price: priceResult.success ? (priceResult as any).price : (predictionResult as any).current_price,
-			current_time: priceResult.success ? (priceResult as any).time : (predictionResult as any).current_time,
-			predictions: predictionResult.success ? (predictionResult as any).predictions : [],
+			current_price: priceResult.success ? priceResult.close : predictionResult.current_price,
+			current_time: priceResult.success ? priceResult.date : predictionResult.current_time,
+			predictions: predictionResult.success ? predictionResult.predictions : [],
 			price_success: priceResult.success,
 			prediction_success: predictionResult.success,
 			errors: {
@@ -268,10 +268,10 @@ export class StockController {
 		}
 
 		return {
-			message: (result as any).message,
-			ticker: (result as any).ticker,
-			features_count: (result as any).features_count,
-			timestamp: (result as any).timestamp
+			message: result.message || 'Training completed',
+			ticker: body.ticker,
+			features_count: result.features_count || 0,
+			timestamp: Date.now()
 		};
 	}
 }

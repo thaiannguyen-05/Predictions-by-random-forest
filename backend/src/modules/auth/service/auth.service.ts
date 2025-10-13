@@ -19,7 +19,35 @@ import { AuthOtherService } from './auth.other.service';
 import { AuthTokenSerivec } from './auth.token.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { useStyleRegistry } from 'styled-jsx';
+import type { User } from '@prisma/client';
+
+interface SocialProfile {
+  id: string;
+  provider?: string;
+  email?: string;
+  emails?: Array<{ value: string }>;
+  firstName?: string;
+  lastName?: string;
+  name?: {
+    givenName?: string;
+    familyName?: string;
+  };
+  displayName?: string;
+  fullName?: string;
+  picture?: string;
+  photos?: Array<{ value: string }>;
+  accessToken?: string;
+  [key: string]: unknown;
+}
+
+interface UserUpdates {
+  picture?: string;
+  avtUrl?: string;
+  fullname?: string;
+  firstName?: string;
+  lastName?: string;
+  [key: string]: unknown;
+}
 
 @Injectable()
 export class AuthService {
@@ -170,7 +198,7 @@ export class AuthService {
   // ===============================
   // SOCIAL LOGIN (Facebook / Google / etc.)
   // ===============================
-  public async socialLogin(profile: any) {
+  public async socialLogin(profile: SocialProfile) {
     console.log('=== SOCIAL LOGIN START ===');
     console.log('INCOMING PROFILE:', profile);
 
@@ -196,23 +224,12 @@ export class AuthService {
     let lastName = profile.lastName || profile.name?.familyName || '';
     let fullName = profile.displayName || profile.name || profile.fullName || '';
 
-    if (!fullName) fullName = provider === 'facebook' ? 'Facebook User' : 'Google User';
-    if (!firstName) firstName = fullName.split(' ')[0] || (provider === 'facebook' ? 'Facebook' : 'Google');
-    if (!lastName) lastName = fullName.split(' ').slice(1).join(' ') || 'User';
-
     // XỬ LÝ AVATAR
     let picture = profile.picture || profile.photos?.[0]?.value || '';
 
     if (provider === 'facebook' && profile.id && profile.accessToken) {
       picture = `https://graph.facebook.com/${profile.id}/picture?width=400&height=400&access_token=${profile.accessToken}`;
     }
-
-    console.log('🎯 Final data:', {
-      provider,
-      email,
-      fullName,
-      hasPicture: !!picture
-    });
 
     // TÌM HOẶC TẠO USER
     let user = await this.prismaService.user.findUnique({
@@ -244,7 +261,7 @@ export class AuthService {
           firstName,
           lastName,
           username,
-          fullname: fullName,
+          fullname: fullName.toString(),
           avtUrl: picture,
           picture: picture,
           hashedPassword: '',
@@ -259,7 +276,7 @@ export class AuthService {
     } else {
       console.log('🔄 UPDATING existing user:', user.id);
 
-      const updates: any = {};
+      const updates: UserUpdates = {};
 
       // CHỈ CẬP NHẬT NẾU CÙNG PROVIDER
       if (user.provider === provider) {
@@ -274,7 +291,7 @@ export class AuthService {
         const isDefaultName = currentName.includes('User') || currentName === '' || currentName.includes('@');
 
         if (isDefaultName && fullName) {
-          updates.fullname = fullName;
+          updates.fullname = fullName.toString();
           updates.firstName = firstName;
           updates.lastName = lastName;
         }
@@ -338,7 +355,7 @@ export class AuthService {
   // ===============================
   // VALIDATE
   // ===============================
-  public async validate(accessToken: string): Promise<any> {
+  public async validate(accessToken: string) {
     try {
       // 1. Verify the token using the secret key
       const payload = this.jwtService.verify(accessToken, {
@@ -348,7 +365,7 @@ export class AuthService {
       // 2. Fetch the user from the database
       const user = await this.prismaService.user.findUnique({
         where: { id: payload.sub },
-        select: { id: true, email: true, username: true, isActive: true }, // Select necessary fields
+        omit: { hashedPassword: false }
       });
 
       // 3. Return the user if found, otherwise return null/throw

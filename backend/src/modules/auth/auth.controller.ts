@@ -14,7 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 	constructor(

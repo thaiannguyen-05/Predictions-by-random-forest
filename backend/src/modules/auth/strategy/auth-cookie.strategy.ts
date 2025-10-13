@@ -3,6 +3,9 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { Strategy } from "passport-custom";
 import { AuthService } from "src/modules/auth/service/auth.service";
+import type { User } from "@prisma/client";
+
+type UserWithoutPassword = Omit<User, 'hashedPassword'>;
 @Injectable()
 export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
     constructor(
@@ -11,7 +14,7 @@ export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
         super()
     }
 
-    async validate(req: Request): Promise<any> {
+    async validate(req: Request) {
         // get access token from req
         const accessToken = req.cookies?.access_token
 
@@ -21,10 +24,8 @@ export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
         const user = await this.authService.validate(accessToken);
         if (!user) throw new UnauthorizedException("User not found");
         // Remove hashedPassword if present
-        // (user may be a Prisma User, not UserWithoutPassword)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { hashedPassword, ...userWithoutPassword } = user as any;
+        const { hashedPassword, ...userWithoutPassword } = user;
         return userWithoutPassword;
     }
-
 }
