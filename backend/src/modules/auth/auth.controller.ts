@@ -1,17 +1,17 @@
-import { Body, Controller, Get, UseGuards, Patch, Post, Put, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
-import { AuthService } from './service/auth.service';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { VerifyAccount } from './dto/verify-account.dto';
-import { LoginDto } from './dto/login.dto';
-import express from 'express'
-import { Cookies } from 'src/common/decorator/cookie.decoratore';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { Public } from 'src/common/decorator/public.decorator';
+import { Body, Controller, Get, Patch, Post, Put, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PassportStrategy } from '@nestjs/passport';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import type { Request, Response } from 'express';
+import express from 'express';
+import { Cookies } from 'src/common/decorator/cookie.decoratore';
+import { Public } from 'src/common/decorator/public.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { LoginDto } from './dto/login.dto';
+import { VerifyAccount } from './dto/verify-account.dto';
+import { OAuth2Mapper } from './mappers/oauth2.mapper';
+import { AuthService } from './service/auth.service';
 
 
 @ApiTags('Auth')
@@ -170,9 +170,7 @@ export class AuthController {
 		description: 'Initiate Google OAuth authentication flow'
 	})
 	@ApiExcludeEndpoint()
-	async googleAuth() {
-		// Passport sẽ tự redirect sang Google
-	}
+	async googleAuth() { }
 
 	@Public()
 	@Get('google/callback')
@@ -182,22 +180,8 @@ export class AuthController {
 		description: 'Handle Google OAuth callback and create user session'
 	})
 	@ApiExcludeEndpoint()
-	async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-		try {
-			console.log('✅ Google callback user:', req.user);
-			const userProfile = req.user as any;
-			const { user, token } = await this.authService.socialLogin(userProfile);
-
-			// ⚠ Nếu token là string => sửa logic ở đây
-			res
-				.cookie('access_token', token.accessToken ?? token, { httpOnly: true, sameSite: 'lax' })
-				.cookie('refresh_token', token.refreshToken ?? '', { httpOnly: true, sameSite: 'lax' });
-
-			res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
-		} catch (err) {
-			console.error('❌ Google callback error:', err);
-			res.status(500).json({ message: err.message, stack: err.stack });
-		}
+	async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+		return this.authService.oauth2Login(OAuth2Mapper.mapGoogleUser(req.user as any), res)
 	}
 
 	@Public()
@@ -219,54 +203,8 @@ export class AuthController {
 		description: 'Handle Facebook OAuth callback and create user session'
 	})
 	@ApiExcludeEndpoint()
-	async facebookAuthRedirect(@Req() req: Request, @Res() res: Response) {
-		try {
-			console.log('✅ Facebook callback reached');
-			console.log('Full req.user:', req.user);
-			console.log('req.user type:', typeof req.user);
-			console.log('req.user keys:', req.user ? Object.keys(req.user) : 'No user');
-
-			if (!req.user) {
-				throw new Error('No user data from Facebook');
-			}
-
-			const profile = req.user as any;
-
-			// DEBUG CHI TIẾT
-			console.log('=== FACEBOOK CALLBACK - PROFILE ANALYSIS ===');
-			console.log('Profile provider:', profile.provider);
-			console.log('Profile firstName:', profile.firstName);
-			console.log('Profile lastName:', profile.lastName);
-			console.log('Profile displayName:', profile.displayName);
-			console.log('Profile picture:', profile.picture);
-			console.log('All profile keys:', Object.keys(profile));
-			console.log('============================================');
-
-			const { user, token } = await this.authService.socialLogin(profile);
-
-			console.log('Social login result user:', user);
-
-			// Set cookies
-			res
-				.cookie('access_token', token.accessToken, {
-					httpOnly: true,
-					sameSite: 'lax',
-				})
-				.cookie('refresh_token', token.refreshToken, {
-					httpOnly: true,
-					sameSite: 'lax',
-				});
-
-			// Redirect về frontend
-			res.redirect(`http://localhost:3000/auth/success?token=${token.accessToken}`);
-
-		} catch (err) {
-			console.error('❌ Facebook callback error:', err);
-			console.error('Error stack:', err.stack);
-
-			// Redirect về trang lỗi
-			res.redirect(`http://localhost:3000/auth/error?message=${encodeURIComponent(err.message)}`);
-		}
+	async facebookAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+		return this.authService.oauth2Login(OAuth2Mapper.mapFacebookUser(req.user as any), res)
 	}
 
 	@Get('me')
