@@ -1,3 +1,4 @@
+import { GoogleOAuth2User } from "../auth.interface";
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
@@ -43,17 +44,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             }
         }
 
-        const user: GoogleUser = {
-            id,
-            email: emails?.[0]?.value,
-            firstName: name?.givenName,
-            lastName: name?.familyName,
-            displayName: displayName, // THÊM DÒNG NÀY
-            fullName: displayName || `${name?.givenName || ''} ${name?.familyName || ''}`.trim(), // THÊM DÒNG NÀY
-            picture: picture,
-            provider: 'google',
+        const user: GoogleOAuth2User = {
+            providerUserId: id,
+            email: emails?.[0]?.value ?? "",
+            firstname: name?.givenName,
+            username: emails?.[0]?.value?.split("@")[0],
+            lastname: name?.familyName,
+            fullname: displayName || `${name?.givenName || ''} ${name?.familyName || ''}`.trim(), // THÊM DÒNG NÀY
+            avatarUrl: picture,
+            provider: 'GOOGLE',
             accessToken,
-            refreshToken,
         };
 
         console.log('Google profile with full name:', user);
