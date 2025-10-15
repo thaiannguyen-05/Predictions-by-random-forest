@@ -20,7 +20,7 @@ export class AuthTokenSerivec {
 	) { }
 
 	// generate tokens
-	async generateTokens(user: User) {
+	async generateTokens(user: { id: string, email: string, createdAt: Date }) {
 		// payload
 		const payload: Payload = {
 			sub: user.id,
@@ -44,7 +44,7 @@ export class AuthTokenSerivec {
 	}
 
 	// create session
-	async storeSession(user: User, userIp: string, userDevice: string, hashedRefreshToken: string) {
+	async storeSession(user: { id: string, email: string, username: string }, userIp: string, userDevice: string, hashedRefreshToken: string) {
 		// check sesison
 		const device = await this.prismaService.userDevice.findUnique({
 			where: { nameDevice_userId: { nameDevice: userDevice, userId: user.id } }
@@ -89,11 +89,13 @@ export class AuthTokenSerivec {
 	}
 
 	// create session
-	async createSession(user: User, ip: string, userAgent: string, res: Response) {
+	async createSession(user: { id: string, email: string, username: string, createdAt: Date }, ip: string, userAgent: string, res: Response) {
 		const tokens = await this.generateTokens(user)
 		const hashedRefreshToken = await hash(tokens.refreshToken)
 		const session = await this.storeSession(user, ip, userAgent, hashedRefreshToken)
 
+		console.log('hera')
+				
 		// set config 
 		res
 			.cookie('session_id', session.id, {

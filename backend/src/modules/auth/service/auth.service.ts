@@ -20,6 +20,9 @@ import { AuthTokenSerivec } from './auth.token.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import type { User } from '@prisma/client';
+import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
+import { Provider } from 'prisma/generated/prisma';
+import { randomUUID } from 'crypto';
 
 interface SocialProfile {
   id: string;
@@ -118,11 +121,22 @@ export class AuthService {
   // ===============================
   // LOGIN
   // ===============================
-  public async login(dto: LoginDto, res: Response) {
+  public async login(dto: LoginDto, res: Response) { 
     const user = await this.prismaService.user.findFirst({
-      where: { OR: [{ email: dto.access }, { username: dto.access }], isActive: true },
-    });
-    if (!user) throw new NotFoundException('User not found');
+      where: {
+        AND: [
+          {
+            OR: [{ email: dto.access }, { username: dto.access }]
+          },
+          { isActive: true }
+        ]
+      },
+      omit: { hashedPassword: false }
+    })
+
+    console.log(user?.hashedPassword)
+
+    if (!user) throw new NotFoundException('User not found')
 
     // FIX 1: Handle nullable hashedPassword
     if (!user.hashedPassword) {
@@ -195,161 +209,145 @@ export class AuthService {
     return await this.tokenService.refreshToken(sid as string, refreshToken, hardware.ip, hardware.userAgent, res);
   }
 
-  // ===============================
-  // SOCIAL LOGIN (Facebook / Google / etc.)
-  // ===============================
-  public async socialLogin(profile: SocialProfile) {
-    console.log('=== SOCIAL LOGIN START ===');
-    console.log('INCOMING PROFILE:', profile);
+  async validateOauth2({
+    providerUserId, email, fullname, firstname, lastname, avatarUrl, username, provider }: {
+      providerUserId: string;
+      email: string;
+      fullname: string;
+      firstname?: string;
+      lastname?: string;
+      avatarUrl?: string;
+      username?: string;
+      provider: Provider;
+    }) {
 
-    const provider = profile.provider || (profile.id && profile.id.length < 20 ? 'facebook' : 'google');
-
-    // KHÔNG SET accountType TRỰC TIẾP - ĐỂ PRISMA TỰ ĐỘNG HOẶC DÙNG DEFAULT
-    let email = '';
-    if (provider === 'facebook') {
-      email = profile.email ? `${profile.email.split('@')[0]}.fb@${profile.email.split('@')[1]}` : `fb_${profile.id}@facebook.com`;
-      console.log('🔒 Facebook using separate email:', email);
-    } else {
-      email = profile.email || profile.emails?.[0]?.value || `${profile.id}@google.com`;
-    }
-
-    console.log('🔍 Processing:', {
-      originalEmail: profile.email,
-      finalEmail: email,
-      provider
-    });
-
-    // XỬ LÝ TÊN - GIỮ NGUYÊN TỪ PROVIDER
-    let firstName = profile.firstName || profile.name?.givenName || '';
-    let lastName = profile.lastName || profile.name?.familyName || '';
-    let fullName = profile.displayName || profile.name || profile.fullName || '';
-
-    // XỬ LÝ AVATAR
-    let picture = profile.picture || profile.photos?.[0]?.value || '';
-
-    if (provider === 'facebook' && profile.id && profile.accessToken) {
-      picture = `https://graph.facebook.com/${profile.id}/picture?width=400&height=400&access_token=${profile.accessToken}`;
-    }
-
-    // TÌM HOẶC TẠO USER
+    // check user exitsing 
     let user = await this.prismaService.user.findUnique({
       where: { email }
-    });
+    })
 
+    let userOauth2
+
+    // check if user doesnt exitsing 
     if (!user) {
-      // TẠO USERNAME DUY NHẤT
-      const baseUsername = provider === 'facebook' ? `fb_${profile.id}` : `gg_${profile.id}`;
-      let username = baseUsername;
-      let counter = 1;
+      const newUserId = randomUUID()
+      const [user, userOauth2] = await this.prismaService.$transaction([
+        this.prismaService.user.create({
+          data: {
+            id: newUserId,
+            fullname,
+            username: username ?? `user_${newUserId}`,
+            email,
+            accountType: 'OAUTH2',
+            isVerified: true,
+            hashedPassword: null,
+            avtUrl: avatarUrl,
+            state: 'active',
+          }
+        }),
+        this.prismaService.oauth2User.create({
+          data: {
+            provider,
+            providerUserId,
+            email,
+            firstname,
+            lastname,
+            fullname,
+            avatarUrl,
+            username,
+            userId: newUserId
+          }
+        })
+      ])
 
-      while (true) {
-        const existingUser = await this.prismaService.user.findUnique({
-          where: { username }
-        });
-        if (!existingUser) break;
-        username = `${baseUsername}_${counter}`;
-        counter++;
-        if (counter > 10) break;
+      return user
+    }
+
+    const oauth2User = await this.prismaService.oauth2User.findFirst({
+      where: {
+        email,
+        providerUserId,
+        userId: user?.id
       }
+    })
 
-      console.log('🆕 Creating user with username:', username);
-
-      // TẠO USER - KHÔNG SET accountType, ĐỂ DEFAULT VALUE TRONG SCHEMA HOẠT ĐỘNG
-      user = await this.prismaService.user.create({
+    if (!oauth2User && user) {
+      userOauth2 = await this.prismaService.oauth2User.create({
         data: {
+          provider,
+          providerUserId,
           email,
-          firstName,
-          lastName,
+          fullname,
+          firstname,
+          lastname,
+          avatarUrl,
           username,
-          fullname: fullName.toString(),
-          avtUrl: picture,
-          picture: picture,
-          hashedPassword: '',
-          dateOfBirth: new Date('1900-01-01'),
-          isActive: true,
-          state: 'active',
-          provider: provider,
-          // KHÔNG SET accountType - để schema tự động dùng default value
-        },
+          userId: user?.id
+        }
       });
-      console.log('✅ NEW USER CREATED for', provider);
-    } else {
-      console.log('🔄 UPDATING existing user:', user.id);
-
-      const updates: UserUpdates = {};
-
-      // CHỈ CẬP NHẬT NẾU CÙNG PROVIDER
-      if (user.provider === provider) {
-        // Cập nhật avatar
-        if (picture) {
-          updates.picture = picture;
-          updates.avtUrl = picture;
+    } else if (oauth2User && user) {
+      // Update existing OAuth2 user data
+      userOauth2 = await this.prismaService.oauth2User.update({
+        where: { id: user?.id },
+        data: {
+          providerUserId,
+          fullname,
+          firstname,
+          lastname,
+          avatarUrl,
+          username
         }
-
-        // Cập nhật tên nếu cần
-        const currentName = user.fullname || '';
-        const isDefaultName = currentName.includes('User') || currentName === '' || currentName.includes('@');
-
-        if (isDefaultName && fullName) {
-          updates.fullname = fullName.toString();
-          updates.firstName = firstName;
-          updates.lastName = lastName;
-        }
-      } else {
-        console.log('⚠️ Skipping update - user has different provider');
-      }
-
-      console.log('📝 Updates to apply:', updates);
-
-      if (Object.keys(updates).length > 0) {
-        user = await this.prismaService.user.update({
-          where: { id: user.id },
-          data: updates,
-        });
-        console.log('✅ USER UPDATED');
-      } else {
-        console.log('ℹ️ NO UPDATES NEEDED');
-      }
+      });
     }
 
-    // FACEBOOK TRẢ VỀ EMAIL ẢO
-    let displayEmail = user.email;
-    if (provider === 'facebook') {
-      displayEmail = `user_${profile.id}@facebook.com`;
+    return user
+  }
+
+
+  async oauth2Login(user: FacebookOAuth2User | GoogleOAuth2User, res: Response) {
+    const provider = user.provider
+    const {
+      providerUserId,
+      email,
+      fullname,
+      firstname,
+      lastname,
+      avatarUrl,
+      username
+    } = user;
+
+    const validateUser = await this.validateOauth2({
+      providerUserId,
+      email,
+      fullname,
+      firstname,
+      lastname,
+      avatarUrl,
+      username,
+      provider
+    })
+
+    const userOauth2 = {
+      id: validateUser
     }
 
-    console.log('🎯 FINAL USER:', {
-      id: user.id,
-      name: user.fullname,
-      email: displayEmail,
-      provider: user.provider,
-      accountType: user.accountType, // Log để xem giá trị thực tế
-      avatar: user.picture ? '✅ Has avatar' : '❌ No avatar'
-    });
+    // get hardware
+    const hardware = await this.authOtherService.getClientInfo(res.req as Request)
 
-    const accessToken = this.jwtService.sign(
-      { sub: user.id, email: user.email },
-      { expiresIn: '15m' },
-    );
+    const oauth2User = {
+      id: validateUser.id,
+      email: validateUser.email,
+      username: validateUser.username,
+      createdAt: new Date()
+    }
 
-    const refreshToken = this.jwtService.sign(
-      { sub: user.id, email: user.email },
-      { expiresIn: '7d' },
-    );
+    const { session, tokens } = await this.tokenService.createSession(
+      oauth2User,
+      hardware.ip,
+      hardware.userAgent,
+      res)
 
-    return {
-      user: {
-        id: user.id,
-        name: user.fullname || fullName,
-        email: displayEmail,
-        avatar: user.picture || picture,
-        provider: user.provider || provider,
-      },
-      token: {
-        accessToken,
-        refreshToken,
-      },
-    };
+    return { data: oauth2User, session: { id: session.id, userAgent: hardware.userAgent, userIp: session.userIp, loginedAt: session.createdAt }, tokens };
   }
 
   // ===============================

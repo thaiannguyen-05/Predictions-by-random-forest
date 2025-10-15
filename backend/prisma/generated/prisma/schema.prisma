@@ -4,8 +4,12 @@ model UserDevice {
   nameDevice String   @map("device_name")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
-  userId     String   @map("user_id") @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // foreign key
+  userId String @map("user_id") @db.Uuid
+
+  // relaions
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([nameDevice, userId])
   @@index([userId])
@@ -22,8 +26,12 @@ model Session {
   updatedAt          DateTime  @updatedAt @map("updated_at")
   loginedAt          DateTime? @map("logined_at") @db.Timestamptz(6)
   logoutedAt         DateTime? @map("logouted_at") @db.Timestamptz(6)
-  userId             String    @db.Uuid
-  user               User      @relation("sessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  // forreign keys
+  userId String @db.Uuid
+
+  // relaions
+  user User @relation("sessions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, userDeviceId])
   @@map("sessions")
@@ -35,8 +43,12 @@ model Code {
   type      CodeType @default(VERIFICATION) @map("code_type")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  userId    String   @map("user_id") @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // foregin key
+  userId String @map("user_id") @db.Uuid
+
+  // relaions
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([code, userId])
   @@index([userId])
@@ -92,10 +104,12 @@ model User {
   lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
   picture        String?
   provider       String?
-  codes          Code[]
-  Oauth2User     Oauth2User[]   @relation("oauth2")
-  sessions       Session[]      @relation("sessions")
-  userDevice     UserDevice[]
+
+  //  relations
+  codes      Code[]
+  Oauth2User Oauth2User[] @relation("oauth2")
+  sessions   Session[]    @relation("sessions")
+  userDevice UserDevice[]
 
   @@index([username])
   @@index([email])
@@ -125,6 +139,8 @@ model Oauth2User {
 enum Provider {
   FACEBOOK
   GOOGLE
+
+  @@map("provider")
 }
 
 enum CodeType {
@@ -132,12 +148,16 @@ enum CodeType {
   PASSWORD_RESET
   EMAIL_CHANGE
   PHONE_CHANGE
+
+  @@map("code_type")
 }
 
 enum Status {
   ACTIVE
   SOLTDELETE
   PENDING
+
+  @@map("status")
 }
 
 enum UserVisibility {

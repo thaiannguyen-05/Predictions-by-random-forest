@@ -1,9 +1,10 @@
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { Strategy, Profile } from 'passport-facebook';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from '../service/auth.service';
+import { PassportStrategy } from '@nestjs/passport';
+import { Profile, Strategy } from 'passport-facebook';
 import { VerifyCallback } from 'passport-google-oauth20';
+import { AuthService } from '../service/auth.service';
+import { FacebookOAuth2User } from '../auth.interface';
 
 interface FacebookUser {
     id: string;
@@ -22,12 +23,11 @@ interface FacebookUser {
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     constructor(
         private readonly configService: ConfigService,
-        private readonly authService: AuthService, // THÊM DÒNG NÀY
     ) {
         super({
             clientID: configService.getOrThrow<string>('FACEBOOK_APP_ID'),
             clientSecret: configService.getOrThrow<string>('FACEBOOK_APP_SECRET'),
-            callbackURL: configService.get<string>(
+            callbackURL: configService.getOrThrow<string>(
                 'FACEBOOK_CALLBACK_URL',
                 'http://localhost:4000/auth/facebook/callback',
             ),
@@ -38,8 +38,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
                 'name',
                 'picture.type(large)',
             ],
-            scope: ['email', 'public_profile'],
-            passReqToCallback: false,
+            scope: ['email', 'public_profile']
         });
     }
 
@@ -47,27 +46,22 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     async validate(
         accessToken: string,
         refreshToken: string,
-        profile: Profile,
-        done: VerifyCallback,
-    ): Promise<void> {
+        profile: Profile
+    ): Promise<FacebookOAuth2User> {
         const { id, displayName, emails, photos, name } = profile;
 
-        console.log('=== FACEBOOK STRATEGY ===');
+        const user: FacebookOAuth2User = {
+            providerUserId: id,
+            email: emails?.[0]?.value || '',
+            fullname: displayName || `${name?.givenName || ''} ${name?.familyName || ''}`.trim(),
+            firstname: name?.givenName,
+            lastname: name?.familyName,
+            avatarUrl: photos?.[0]?.value,
+            username: displayName || `${name?.givenName || ''}_${name?.familyName || ''}`.replace(' ', '_'),
+            provider: 'FACEBOOK',
+            accessToken
+        }
 
-        // QUAN TRỌNG: ĐẢM BẢO CÓ ACCESS TOKEN CHO AVATAR
-        const user: FacebookUser = {
-            id,
-            email: emails?.[0]?.value || `${id}@facebook.com`,
-            name: displayName,
-            displayName: displayName,
-            firstName: name?.givenName || '',
-            lastName: name?.familyName || '',
-            middleName: name?.middleName || '',
-            picture: '', // ĐỂ TRỐNG, SẼ TẠO TRONG SOCIAL LOGIN
-            provider: 'facebook',
-            accessToken: accessToken, // QUAN TRỌNG: TRUYỀN ACCESS TOKEN
-        };
-
-        done(null, user);
+        return user
     }
 }
