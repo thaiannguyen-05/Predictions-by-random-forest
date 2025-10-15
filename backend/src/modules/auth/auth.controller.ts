@@ -10,8 +10,8 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyAccount } from './dto/verify-account.dto';
-import { OAuth2Mapper } from './mappers/oauth2.mapper';
 import { AuthService } from './service/auth.service';
+import { FacebookOAuth2User, GoogleOAuth2User } from "./auth.interface";
 
 
 @ApiTags('Auth')
@@ -181,7 +181,7 @@ export class AuthController {
 	})
 	@ApiExcludeEndpoint()
 	async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-		return this.authService.oauth2Login(OAuth2Mapper.mapGoogleUser(req.user as any), res)
+		return this.authService.oauth2Login(req.user as any as GoogleOAuth2User, res)
 	}
 
 	@Public()
@@ -204,7 +204,7 @@ export class AuthController {
 	})
 	@ApiExcludeEndpoint()
 	async facebookAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-		return this.authService.oauth2Login(OAuth2Mapper.mapFacebookUser(req.user as any), res)
+		return this.authService.oauth2Login(req.user as any as FacebookOAuth2User, res)
 	}
 
 	@Get('me')

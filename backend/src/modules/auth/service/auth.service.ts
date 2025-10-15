@@ -316,6 +316,8 @@ export class AuthService {
       username
     } = user;
 
+    console.log(user)
+
     const validateUser = await this.validateOauth2({
       providerUserId,
       email,
