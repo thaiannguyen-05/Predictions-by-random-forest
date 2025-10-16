@@ -6,23 +6,22 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
+import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
+import { Provider } from 'prisma/generated/prisma';
 import { DateUtils } from 'src/common/utils/string-to-date.utils';
 import { EmailProducer } from 'src/email/emai.producer';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
 import { AuthTokenSerivec } from './auth.token.service';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import type { User } from '@prisma/client';
-import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
-import { Provider } from 'prisma/generated/prisma';
-import { randomUUID } from 'crypto';
 
 interface SocialProfile {
   id: string;
@@ -239,7 +238,7 @@ export class AuthService {
             username: username ?? `user_${newUserId}`,
             email,
             accountType: 'OAUTH2',
-            isVerified: true,
+            isActive: true,
             hashedPassword: null,
             avtUrl: avatarUrl,
             state: 'active',

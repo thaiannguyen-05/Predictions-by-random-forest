@@ -4653,7 +4653,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     visible: $Enums.UserVisibility | null
-    status: $Enums.Status | null
     phone: string | null
     numberIdentity: string | null
     dateOfBirth: Date | null
@@ -4662,7 +4661,6 @@ export namespace Prisma {
     isActive: boolean | null
     isBanned: boolean | null
     isLocked: boolean | null
-    isVerified: boolean | null
     lastActived: Date | null
     picture: string | null
     provider: string | null
@@ -4683,7 +4681,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     visible: $Enums.UserVisibility | null
-    status: $Enums.Status | null
     phone: string | null
     numberIdentity: string | null
     dateOfBirth: Date | null
@@ -4692,7 +4689,6 @@ export namespace Prisma {
     isActive: boolean | null
     isBanned: boolean | null
     isLocked: boolean | null
-    isVerified: boolean | null
     lastActived: Date | null
     picture: string | null
     provider: string | null
@@ -4713,7 +4709,6 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     visible: number
-    status: number
     phone: number
     numberIdentity: number
     dateOfBirth: number
@@ -4722,7 +4717,6 @@ export namespace Prisma {
     isActive: number
     isBanned: number
     isLocked: number
-    isVerified: number
     lastActived: number
     picture: number
     provider: number
@@ -4753,7 +4747,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     visible?: true
-    status?: true
     phone?: true
     numberIdentity?: true
     dateOfBirth?: true
@@ -4762,7 +4755,6 @@ export namespace Prisma {
     isActive?: true
     isBanned?: true
     isLocked?: true
-    isVerified?: true
     lastActived?: true
     picture?: true
     provider?: true
@@ -4783,7 +4775,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     visible?: true
-    status?: true
     phone?: true
     numberIdentity?: true
     dateOfBirth?: true
@@ -4792,7 +4783,6 @@ export namespace Prisma {
     isActive?: true
     isBanned?: true
     isLocked?: true
-    isVerified?: true
     lastActived?: true
     picture?: true
     provider?: true
@@ -4813,7 +4803,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     visible?: true
-    status?: true
     phone?: true
     numberIdentity?: true
     dateOfBirth?: true
@@ -4822,7 +4811,6 @@ export namespace Prisma {
     isActive?: true
     isBanned?: true
     isLocked?: true
-    isVerified?: true
     lastActived?: true
     picture?: true
     provider?: true
@@ -4930,7 +4918,6 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     visible: $Enums.UserVisibility
-    status: $Enums.Status
     phone: string | null
     numberIdentity: string | null
     dateOfBirth: Date | null
@@ -4939,7 +4926,6 @@ export namespace Prisma {
     isActive: boolean
     isBanned: boolean
     isLocked: boolean
-    isVerified: boolean
     lastActived: Date | null
     picture: string | null
     provider: string | null
@@ -4979,7 +4965,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     visible?: boolean
-    status?: boolean
     phone?: boolean
     numberIdentity?: boolean
     dateOfBirth?: boolean
@@ -4988,7 +4973,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
     provider?: boolean
@@ -5014,7 +4998,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     visible?: boolean
-    status?: boolean
     phone?: boolean
     numberIdentity?: boolean
     dateOfBirth?: boolean
@@ -5023,7 +5006,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
     provider?: boolean
@@ -5044,7 +5026,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     visible?: boolean
-    status?: boolean
     phone?: boolean
     numberIdentity?: boolean
     dateOfBirth?: boolean
@@ -5053,7 +5034,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
     provider?: boolean
@@ -5074,7 +5054,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     visible?: boolean
-    status?: boolean
     phone?: boolean
     numberIdentity?: boolean
     dateOfBirth?: boolean
@@ -5083,13 +5062,12 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: boolean
     picture?: boolean
     provider?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "status" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "isVerified" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     codes?: boolean | User$codesArgs<ExtArgs>
     Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
@@ -5123,7 +5101,6 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       visible: $Enums.UserVisibility
-      status: $Enums.Status
       phone: string | null
       numberIdentity: string | null
       dateOfBirth: Date | null
@@ -5132,7 +5109,6 @@ export namespace Prisma {
       isActive: boolean
       isBanned: boolean
       isLocked: boolean
-      isVerified: boolean
       lastActived: Date | null
       picture: string | null
       provider: string | null
@@ -5577,7 +5553,6 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly visible: FieldRef<"User", 'UserVisibility'>
-    readonly status: FieldRef<"User", 'Status'>
     readonly phone: FieldRef<"User", 'String'>
     readonly numberIdentity: FieldRef<"User", 'String'>
     readonly dateOfBirth: FieldRef<"User", 'DateTime'>
@@ -5586,7 +5561,6 @@ export namespace Prisma {
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly isBanned: FieldRef<"User", 'Boolean'>
     readonly isLocked: FieldRef<"User", 'Boolean'>
-    readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly lastActived: FieldRef<"User", 'DateTime'>
     readonly picture: FieldRef<"User", 'String'>
     readonly provider: FieldRef<"User", 'String'>
@@ -7323,7 +7297,6 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     visible: 'visible',
-    status: 'status',
     phone: 'phone',
     numberIdentity: 'numberIdentity',
     dateOfBirth: 'dateOfBirth',
@@ -7332,7 +7305,6 @@ export namespace Prisma {
     isActive: 'isActive',
     isBanned: 'isBanned',
     isLocked: 'isLocked',
-    isVerified: 'isVerified',
     lastActived: 'lastActived',
     picture: 'picture',
     provider: 'provider'
@@ -7470,20 +7442,6 @@ export namespace Prisma {
    * Reference to a field of type 'UserVisibility[]'
    */
   export type ListEnumUserVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserVisibility[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Status'
-   */
-  export type EnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status'>
-    
-
-
-  /**
-   * Reference to a field of type 'Status[]'
-   */
-  export type ListEnumStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Status[]'>
     
 
 
@@ -7746,7 +7704,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     visible?: EnumUserVisibilityFilter<"User"> | $Enums.UserVisibility
-    status?: EnumStatusFilter<"User"> | $Enums.Status
     phone?: StringNullableFilter<"User"> | string | null
     numberIdentity?: StringNullableFilter<"User"> | string | null
     dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -7755,7 +7712,6 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     isBanned?: BoolFilter<"User"> | boolean
     isLocked?: BoolFilter<"User"> | boolean
-    isVerified?: BoolFilter<"User"> | boolean
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     provider?: StringNullableFilter<"User"> | string | null
@@ -7780,7 +7736,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     visible?: SortOrder
-    status?: SortOrder
     phone?: SortOrderInput | SortOrder
     numberIdentity?: SortOrderInput | SortOrder
     dateOfBirth?: SortOrderInput | SortOrder
@@ -7789,7 +7744,6 @@ export namespace Prisma {
     isActive?: SortOrder
     isBanned?: SortOrder
     isLocked?: SortOrder
-    isVerified?: SortOrder
     lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
     provider?: SortOrderInput | SortOrder
@@ -7817,7 +7771,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     visible?: EnumUserVisibilityFilter<"User"> | $Enums.UserVisibility
-    status?: EnumStatusFilter<"User"> | $Enums.Status
     phone?: StringNullableFilter<"User"> | string | null
     numberIdentity?: StringNullableFilter<"User"> | string | null
     dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -7826,7 +7779,6 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     isBanned?: BoolFilter<"User"> | boolean
     isLocked?: BoolFilter<"User"> | boolean
-    isVerified?: BoolFilter<"User"> | boolean
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     provider?: StringNullableFilter<"User"> | string | null
@@ -7851,7 +7803,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     visible?: SortOrder
-    status?: SortOrder
     phone?: SortOrderInput | SortOrder
     numberIdentity?: SortOrderInput | SortOrder
     dateOfBirth?: SortOrderInput | SortOrder
@@ -7860,7 +7811,6 @@ export namespace Prisma {
     isActive?: SortOrder
     isBanned?: SortOrder
     isLocked?: SortOrder
-    isVerified?: SortOrder
     lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
     provider?: SortOrderInput | SortOrder
@@ -7889,7 +7839,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     visible?: EnumUserVisibilityWithAggregatesFilter<"User"> | $Enums.UserVisibility
-    status?: EnumStatusWithAggregatesFilter<"User"> | $Enums.Status
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     numberIdentity?: StringNullableWithAggregatesFilter<"User"> | string | null
     dateOfBirth?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -7898,7 +7847,6 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     isBanned?: BoolWithAggregatesFilter<"User"> | boolean
     isLocked?: BoolWithAggregatesFilter<"User"> | boolean
-    isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     lastActived?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     picture?: StringNullableWithAggregatesFilter<"User"> | string | null
     provider?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -8228,7 +8176,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -8237,7 +8184,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -8262,7 +8208,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -8271,7 +8216,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -8296,7 +8240,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -8305,7 +8248,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8330,7 +8272,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -8339,7 +8280,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8364,7 +8304,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -8373,7 +8312,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -8394,7 +8332,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -8403,7 +8340,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8424,7 +8360,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -8433,7 +8368,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8853,13 +8787,6 @@ export namespace Prisma {
     not?: NestedEnumUserVisibilityFilter<$PrismaModel> | $Enums.UserVisibility
   }
 
-  export type EnumStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -8920,7 +8847,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     visible?: SortOrder
-    status?: SortOrder
     phone?: SortOrder
     numberIdentity?: SortOrder
     dateOfBirth?: SortOrder
@@ -8929,7 +8855,6 @@ export namespace Prisma {
     isActive?: SortOrder
     isBanned?: SortOrder
     isLocked?: SortOrder
-    isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
     provider?: SortOrder
@@ -8954,7 +8879,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     visible?: SortOrder
-    status?: SortOrder
     phone?: SortOrder
     numberIdentity?: SortOrder
     dateOfBirth?: SortOrder
@@ -8963,7 +8887,6 @@ export namespace Prisma {
     isActive?: SortOrder
     isBanned?: SortOrder
     isLocked?: SortOrder
-    isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
     provider?: SortOrder
@@ -8984,7 +8907,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     visible?: SortOrder
-    status?: SortOrder
     phone?: SortOrder
     numberIdentity?: SortOrder
     dateOfBirth?: SortOrder
@@ -8993,7 +8915,6 @@ export namespace Prisma {
     isActive?: SortOrder
     isBanned?: SortOrder
     isLocked?: SortOrder
-    isVerified?: SortOrder
     lastActived?: SortOrder
     picture?: SortOrder
     provider?: SortOrder
@@ -9037,16 +8958,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumUserVisibilityFilter<$PrismaModel>
     _max?: NestedEnumUserVisibilityFilter<$PrismaModel>
-  }
-
-  export type EnumStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusFilter<$PrismaModel>
-    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -9254,10 +9165,6 @@ export namespace Prisma {
 
   export type EnumUserVisibilityFieldUpdateOperationsInput = {
     set?: $Enums.UserVisibility
-  }
-
-  export type EnumStatusFieldUpdateOperationsInput = {
-    set?: $Enums.Status
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -9584,13 +9491,6 @@ export namespace Prisma {
     not?: NestedEnumUserVisibilityFilter<$PrismaModel> | $Enums.UserVisibility
   }
 
-  export type NestedEnumStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -9643,16 +9543,6 @@ export namespace Prisma {
     _max?: NestedEnumUserVisibilityFilter<$PrismaModel>
   }
 
-  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusFilter<$PrismaModel>
-    _max?: NestedEnumStatusFilter<$PrismaModel>
-  }
-
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -9693,7 +9583,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -9702,7 +9591,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -9726,7 +9614,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -9735,7 +9622,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -9775,7 +9661,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9784,7 +9669,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9808,7 +9692,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9817,7 +9700,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9841,7 +9723,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -9850,7 +9731,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -9874,7 +9754,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -9883,7 +9762,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -9923,7 +9801,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9932,7 +9809,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9956,7 +9832,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9965,7 +9840,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9989,7 +9863,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -9998,7 +9871,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -10022,7 +9894,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -10031,7 +9902,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -10071,7 +9941,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10080,7 +9949,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10104,7 +9972,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10113,7 +9980,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10386,7 +10252,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -10395,7 +10260,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -10419,7 +10283,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visible?: $Enums.UserVisibility
-    status?: $Enums.Status
     phone?: string | null
     numberIdentity?: string | null
     dateOfBirth?: Date | string | null
@@ -10428,7 +10291,6 @@ export namespace Prisma {
     isActive?: boolean
     isBanned?: boolean
     isLocked?: boolean
-    isVerified?: boolean
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
@@ -10468,7 +10330,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10477,7 +10338,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10501,7 +10361,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10510,7 +10369,6 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isBanned?: BoolFieldUpdateOperationsInput | boolean
     isLocked?: BoolFieldUpdateOperationsInput | boolean
-    isVerified?: BoolFieldUpdateOperationsInput | boolean
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null

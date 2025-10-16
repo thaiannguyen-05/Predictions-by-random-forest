@@ -13,7 +13,6 @@ model User {
   createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   visible        UserVisibility @default(PUBLIC)
-  status         Status         @default(ACTIVE)
   phone          String?        @db.VarChar(20)
   numberIdentity String?
   dateOfBirth    DateTime?
@@ -22,7 +21,6 @@ model User {
   isActive       Boolean        @default(false)
   isBanned       Boolean        @default(false) @map("is_banned")
   isLocked       Boolean        @default(false) @map("is_locked")
-  isVerified     Boolean        @default(false) @map("is_verified")
   lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
   picture        String?
   provider       String?

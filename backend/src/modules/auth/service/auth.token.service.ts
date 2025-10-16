@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { User } from "prisma/generated/prisma";
-import { PrismaService } from "src/prisma/prisma.service";
-import { Payload } from "../auth.interface";
-import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import { hash, verify } from "argon2";
 import { Response } from "express";
-import { AUTH_CONSTANT } from "../auth.constants";
 import { EmailProducer } from "src/email/emai.producer";
+import { PrismaService } from "src/prisma/prisma.service";
 import { v4 as uuidv4 } from 'uuid';
+import { AUTH_CONSTANT } from "../auth.constants";
+import { Payload } from "../auth.interface";
 @Injectable()
 export class AuthTokenSerivec {
 
