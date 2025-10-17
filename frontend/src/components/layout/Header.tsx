@@ -1,73 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import UserDropdown from '../common/UserDropdown';
 import Link from 'next/link';
-
-interface UserData {
-  name: string;
-  email: string;
-  avatar?: string;
-}
+import { useAuth } from '@/context/AuthContext';
 
 const Header: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    async function fetchUser() {
-      const token = localStorage.getItem('accessToken') ?? '';
-      if (!token) {
-        setCurrentUser(null);
-        return;
-      }
-
-      try {
-        const res = await fetch('http://localhost:4000/auth/me', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          credentials: 'include',
-          cache: 'no-cache' // THÊM DÒNG NÀY: tránh cache
-        });
-
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('accessToken');
-          setCurrentUser(null);
-          return;
-        }
-
-        if (!res.ok) {
-          setCurrentUser(null);
-          return;
-        }
-
-        const data = await res.json();
-        console.log('User data from /auth/me:', data.user);
-
-        // Xử lý avatar URL - THÊM TIMESTAMP để tránh cache
-        let avatarUrl = data.user.avatar;
-        if (avatarUrl && avatarUrl.startsWith('http')) {
-          // Thêm timestamp để tránh browser cache
-          avatarUrl += (avatarUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-        }
-
-        console.log('Final avatar URL with cache busting:', avatarUrl);
-
-        setCurrentUser({
-          name: data.user.name || data.user.username || data.user.email,
-          email: data.user.email,
-          avatar: avatarUrl,
-        });
-      } catch (err) {
-        console.error('Lỗi fetch user:', err);
-        setCurrentUser(null);
-      }
-    }
-
-    fetchUser();
-  }, []);
+  const { user: currentUser, loading } = useAuth();
 
   return (
     <header className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">

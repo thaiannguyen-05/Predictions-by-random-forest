@@ -1,8 +1,8 @@
-// app/layout.tsx
 import './globals.css';
 import MainLayout from '@/app/main-layout';
 import Header from '@/components/layout/Header';
 import TickerBar from '@/components/layout/TickerBar';
+import Providers from './providers';
 
 export const metadata = {
   title: 'StockTrack - Phân tích & Dự đoán Chứng khoán',
@@ -17,9 +17,11 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body>
-        <Header />
-        <TickerBar />  
-        {children}
+        <Providers>
+          <Header />
+          <TickerBar />  
+          {children}
+        </Providers>
       </body>
     </html>
   );

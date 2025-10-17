@@ -25,3 +25,45 @@ body {
 .animate-ticker:hover {
   animation-play-state: paused;
 }
+
+@keyframes spin-glow {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 0 0 10px #3b82f6, 0 0 20px #22d3ee, 0 0 30px #3b82f6;
+  }
+  50% {
+    transform: rotate(180deg);
+    box-shadow: 0 0 20px #22d3ee, 0 0 40px #3b82f6, 0 0 60px #22d3ee;
+  }
+  100% {
+    transform: rotate(360deg);
+    box-shadow: 0 0 10px #3b82f6, 0 0 20px #22d3ee, 0 0 30px #3b82f6;
+  }
+}
+
+.animate-spin-glow {
+  animation: spin-glow 1.2s linear infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}

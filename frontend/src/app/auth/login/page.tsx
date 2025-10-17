@@ -29,8 +29,13 @@ const LoginPage: React.FC = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Đăng nhập thất bại');
 
+      // ✅ Lưu accessToken
       localStorage.setItem('accessToken', data.accessToken);
-      alert('Đăng nhập thành công!');
+
+      // Gửi sự kiện để Header biết có token mới
+      window.dispatchEvent(new Event('storage'));
+
+      // ✅ Redirect về trang chủ
       router.push('/');
     } catch (err: any) {
       setError(err.message);

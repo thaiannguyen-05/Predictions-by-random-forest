@@ -1,30 +1,39 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
-export default function AuthSuccessPage() {
+export default function AuthSuccess() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    async function handleAuth() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
 
-    if (token) {
-      // Lưu token vào localStorage
-      localStorage.setItem("accessToken", token);
+      if (token) {
+        console.log("✅ Token saved from URL");
+        localStorage.setItem('accessToken', token);
+        
+        // Refresh the user data
+        await refreshUser();
 
-      // Chuyển về trang chủ
-      router.push("/");
-    } else {
-      // Nếu không có token thì quay về trang đăng nhập
-      router.push("/login");
+        // Redirect sau khi login thành công
+        router.push('/');
+      } else {
+        console.error("❌ No token found in URL");
+        router.push('/auth/login');
+      }
     }
-  }, [router]);
+
+    handleAuth();
+  }, [router, refreshUser]);
 
   return (
-    <div className="h-screen flex items-center justify-center text-white bg-gray-900">
-      Đang đăng nhập...
+    <div className="flex items-center justify-center h-screen bg-black text-white">
+      <div className="text-xl animate-pulse">🔐 Initializing authentication...</div>
     </div>
   );
 }
