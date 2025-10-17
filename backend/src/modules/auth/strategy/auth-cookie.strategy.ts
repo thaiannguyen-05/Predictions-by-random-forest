@@ -2,8 +2,8 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { Strategy } from "passport-custom";
+import { User } from "prisma/generated/prisma";
 import { AuthService } from "src/modules/auth/service/auth.service";
-import type { User } from "@prisma/client";
 
 type UserWithoutPassword = Omit<User, 'hashedPassword'>;
 @Injectable()
