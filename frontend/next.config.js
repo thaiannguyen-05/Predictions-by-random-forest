@@ -2,6 +2,16 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/a/**',
+      },
+    ],
+  },
   // Bắt buộc để Next.js không cố gắng tìm các trang này
   async rewrites() {
     return [

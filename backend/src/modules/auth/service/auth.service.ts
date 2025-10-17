@@ -287,7 +287,8 @@ export class AuthService {
     } else if (oauth2User && user) {
       // Update existing OAuth2 user data
       userOauth2 = await this.prismaService.oauth2User.update({
-        where: { id: user?.id },
+        where: { id: oauth2User?.id ?? '' },
+        // where: { id: user?.id },
         data: {
           providerUserId,
           fullname,
@@ -433,7 +434,7 @@ export class AuthService {
       originalEmail: user.email,
       displayEmail,
       provider: user.provider,
-      avatar: avatar ? '✅ Has avatar' : '❌ No avatar'
+      avatar: avatar 
     });
 
     return {

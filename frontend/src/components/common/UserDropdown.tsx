@@ -1,95 +1,103 @@
 'use client';
 
-import React, { useState } from 'react';
-import { User, LogOut } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { LogOut, Settings, User } from 'lucide-react';
 
 interface UserData {
   name: string;
-  email: string;
+  email?: string;
   avatar?: string;
 }
 
-interface UserDropdownProps {
+interface Props {
   user: UserData;
 }
 
-const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const UserDropdown: React.FC<Props> = ({ user }) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
 
+  // Đóng menu khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Gọi API logout
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:4000/auth/logout', {
+      const response = await fetch('http://localhost:4000/auth/logout', {
         method: 'PATCH',
         credentials: 'include',
       });
 
-      localStorage.removeItem('accessToken');
-      setIsOpen(false);
-      window.location.href = '/auth/login';
-    } catch (err) {
-      console.error('Lỗi đăng xuất:', err);
+      if (!response.ok) throw new Error(`Logout failed: ${response.status}`);
+
+      const result = await response.json();
+      if (result.status) {
+        window.location.href = '/auth/login';
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Đăng xuất thất bại. Vui lòng thử lại.');
     }
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-700 transition duration-150 focus:outline-none"
+    <div className="relative" ref={menuRef}>
+      {/* Avatar + Tên */}
+      <div
+        onClick={() => setOpen(!open)}
+        className="flex items-center space-x-3 cursor-pointer hover:opacity-90 transition"
       >
-        <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-blue-500">
-          {user.avatar ? (
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Khi avatar load lỗi, ẩn img và hiển thị chữ cái
-                console.log('Avatar load failed, showing fallback initial');
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          ) : null}
+        <img
+          src={!imageError ? (user.avatar || '/default-avatar.png') : '/default-avatar.png'}
+          alt={user.name}
+          className="w-10 h-10 rounded-full border-2 border-blue-500 object-cover"
+          onError={() => setImageError(true)}
+          referrerPolicy="no-referrer"
+        />
+        <span className="text-white font-medium">{user.name}</span>
+      </div>
 
-          {/* Hiển thị chữ cái khi không có avatar hoặc avatar load lỗi */}
-          {(!user.avatar || user.avatar === '') && (
-            <span className="text-sm font-semibold text-white">
-              {user.name[0].toUpperCase()}
-            </span>
-          )}
-        </div>
-        <span className="hidden sm:block text-sm font-medium">{user.name}</span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-gray-800 rounded-md shadow-xl z-50 border border-gray-700">
-          <div className="p-4 border-b border-gray-700">
+      {/* Dropdown Menu */}
+      {open && (
+        <div className="absolute right-0 mt-3 w-52 bg-gray-800 text-white rounded-xl shadow-lg border border-gray-700 overflow-hidden animate-fade-in z-50">
+          <div className="px-4 py-3 border-b border-gray-700">
             <p className="font-semibold">{user.name}</p>
-            <p className="text-sm text-gray-400">{user.email}</p>
+            {user.email && (
+              <p className="text-sm text-gray-400 truncate">{user.email}</p>
+            )}
           </div>
 
-          <div className="py-1">
-            <a
-              href="/profile"
-              className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <User size={18} className="mr-3 text-blue-400" />
-              Thông tin Tài khoản
-            </a>
+          <button
+            className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-700 transition"
+            onClick={() => alert('Trang cá nhân đang phát triển')}
+          >
+            <User size={16} /> Trang cá nhân
+          </button>
 
-            <button
-              onClick={handleLogout}
-              className="w-full text-left flex items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-700 transition-colors"
-            >
-              <LogOut size={18} className="mr-3 text-red-400" />
-              Đăng xuất
-            </button>
-          </div>
+          <button
+            className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-700 transition"
+            onClick={() => alert('Cài đặt đang phát triển')}
+          >
+            <Settings size={16} /> Cài đặt
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-4 py-2 hover:bg-red-600 text-red-400 hover:text-white transition"
+          >
+            <LogOut size={16} /> Đăng xuất
+          </button>
         </div>
       )}
-
-      {isOpen && <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>}
     </div>
   );
 };

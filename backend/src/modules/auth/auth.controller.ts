@@ -181,7 +181,15 @@ export class AuthController {
 	})
 	@ApiExcludeEndpoint()
 	async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-		return this.authService.oauth2Login(req.user as any as GoogleOAuth2User, res)
+		// Ép kiểu đúng cách: trung gian qua unknown để tránh cảnh báo TS
+		const result = await this.authService.oauth2Login(req.user as unknown as GoogleOAuth2User, res);
+
+		// Lấy token từ trường tokens
+		const accessToken = result.tokens.accessToken;
+
+		// Redirect về FE với token
+		return res.redirect(`http://localhost:3000/auth/success?token=${accessToken}`);
+		// return this.authService.oauth2Login(req.user as any as GoogleOAuth2User, res)
 	}
 
 	@Public()
