@@ -9,12 +9,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD, Reflector } from '@nestjs/core';
 import { CookieGuard } from './modules/auth/guard/cookie.guard';
 import { UserModule } from './modules/user/user.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    StockModule, PrismaModule, EmailModule, AuthModule, UserModule
+    ScheduleModule.forRoot(),
+    StockModule, PrismaModule, EmailModule, AuthModule, UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppService,
