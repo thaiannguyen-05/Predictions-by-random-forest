@@ -151,6 +151,33 @@ exports.Prisma.CodeScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.MessageScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  typeMessage: 'typeMessage',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
+  roomId: 'roomId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RoomScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  customerId: 'customerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MemberInRoomScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  roomId: 'roomId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   fullname: 'fullname',
@@ -216,6 +243,13 @@ exports.CodeType = exports.$Enums.CodeType = {
   PHONE_CHANGE: 'PHONE_CHANGE'
 };
 
+exports.TypeMessage = exports.$Enums.TypeMessage = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  FILE: 'FILE',
+  VOICE: 'VOICE'
+};
+
 exports.AccountType = exports.$Enums.AccountType = {
   EMAIL: 'EMAIL',
   OAUTH2: 'OAUTH2',
@@ -239,6 +273,9 @@ exports.Prisma.ModelName = {
   UserDevice: 'UserDevice',
   Session: 'Session',
   Code: 'Code',
+  Message: 'Message',
+  Room: 'Room',
+  MemberInRoom: 'MemberInRoom',
   User: 'User',
   Oauth2User: 'Oauth2User'
 };

@@ -1,0 +1,25 @@
+model Message {
+    id          String      @id @default(uuid()) @db.Uuid
+    content     String      @db.Text
+    typeMessage TypeMessage @default(TEXT)
+
+    // foreign keys
+    senderId   String  @db.Uuid
+    receiverId String? @db.Uuid
+    roomId     String  @db.Uuid
+
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+    // relations
+    sender   User  @relation(name: "sender-message", fields: [senderId], references: [id], onDelete: Cascade)
+    receiver User? @relation(name: "receiv-message", fields: [receiverId], references: [id], onDelete: Cascade)
+    room     Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum TypeMessage {
+    TEXT
+    IMAGE
+    FILE
+    VOICE
+}

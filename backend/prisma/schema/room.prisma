@@ -1,0 +1,29 @@
+model Room {
+    id String @id @default(uuid()) @db.Uuid
+
+    // foreign keys 
+    clientId   String? @db.Uuid
+    customerId String  @db.Uuid
+
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+    // relations
+    messages Message[]
+    members  MemberInRoom[]
+}
+
+model MemberInRoom {
+    id String @id @default(uuid()) @db.Uuid
+
+    // foreign key
+    userId String @db.Uuid
+    roomId String @db.Uuid
+
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+    // relations
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}

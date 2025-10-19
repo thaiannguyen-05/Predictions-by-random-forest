@@ -1,9 +1,9 @@
 model UserDevice {
   id         String   @id @default(uuid()) @map("device_id") @db.Uuid
-  deviceId   String   @unique
-  nameDevice String   @map("device_name")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  deviceId   String   @unique @db.VarChar(255)
+  nameDevice String   @map("device_name") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // foreign key
   userId String @map("user_id") @db.Uuid
@@ -18,12 +18,12 @@ model UserDevice {
 
 model Session {
   id                 String    @id @default(uuid()) @map("session_id") @db.Uuid
-  userDeviceId       String
-  hashedRefreshToken String?   @map("hashed_refresh_token")
+  userDeviceId       String    @db.Uuid
+  hashedRefreshToken String?   @map("hashed_refresh_token") @db.VarChar(255)
   userAgent          String?   @db.VarChar(1000)
-  userIp             String    @map("user_ip")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
+  userIp             String    @map("user_ip") @db.VarChar(45)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   loginedAt          DateTime? @map("logined_at") @db.Timestamptz(6)
   logoutedAt         DateTime? @map("logouted_at") @db.Timestamptz(6)
 

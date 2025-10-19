@@ -1,9 +1,9 @@
 model UserDevice {
   id         String   @id @default(uuid()) @map("device_id") @db.Uuid
-  deviceId   String   @unique
-  nameDevice String   @map("device_name")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  deviceId   String   @unique @db.VarChar(255)
+  nameDevice String   @map("device_name") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // foreign key
   userId String @map("user_id") @db.Uuid
@@ -18,12 +18,12 @@ model UserDevice {
 
 model Session {
   id                 String    @id @default(uuid()) @map("session_id") @db.Uuid
-  userDeviceId       String
-  hashedRefreshToken String?   @map("hashed_refresh_token")
+  userDeviceId       String    @db.Uuid
+  hashedRefreshToken String?   @map("hashed_refresh_token") @db.VarChar(255)
   userAgent          String?   @db.VarChar(1000)
-  userIp             String    @map("user_ip")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
+  userIp             String    @map("user_ip") @db.VarChar(45)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   loginedAt          DateTime? @map("logined_at") @db.Timestamptz(6)
   logoutedAt         DateTime? @map("logouted_at") @db.Timestamptz(6)
 
@@ -65,6 +65,62 @@ enum AccountType {
   @@map("account_type")
 }
 
+model Message {
+  id          String      @id @default(uuid()) @db.Uuid
+  content     String      @db.Text
+  typeMessage TypeMessage @default(TEXT)
+
+  // foreign keys
+  senderId   String  @db.Uuid
+  receiverId String? @db.Uuid
+  roomId     String  @db.Uuid
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  // relations
+  sender   User  @relation(name: "sender-message", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User? @relation(name: "receiv-message", fields: [receiverId], references: [id], onDelete: Cascade)
+  room     Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum TypeMessage {
+  TEXT
+  IMAGE
+  FILE
+  VOICE
+}
+
+model Room {
+  id String @id @default(uuid()) @db.Uuid
+
+  // foreign keys 
+  clientId   String? @db.Uuid
+  customerId String  @db.Uuid
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  // relations
+  messages Message[]
+  members  MemberInRoom[]
+}
+
+model MemberInRoom {
+  id String @id @default(uuid()) @db.Uuid
+
+  // foreign key
+  userId String @db.Uuid
+  roomId String @db.Uuid
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  // relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/prisma"
@@ -92,22 +148,25 @@ model User {
   updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   visible        UserVisibility @default(PUBLIC)
   phone          String?        @db.VarChar(20)
-  numberIdentity String?
-  dateOfBirth    DateTime?
-  firstName      String?
-  lastName       String?
+  numberIdentity String?        @db.VarChar(20)
+  dateOfBirth    DateTime?      @db.Timestamptz(6)
+  firstName      String?        @db.VarChar(50)
+  lastName       String?        @db.VarChar(50)
   isActive       Boolean        @default(false)
   isBanned       Boolean        @default(false) @map("is_banned")
   isLocked       Boolean        @default(false) @map("is_locked")
   lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
-  picture        String?
-  provider       String?
+  picture        String?        @db.VarChar(1000)
+  provider       String?        @db.VarChar(50)
 
   //  relations
-  codes      Code[]
-  Oauth2User Oauth2User[] @relation("oauth2")
-  sessions   Session[]    @relation("sessions")
-  userDevice UserDevice[]
+  codes          Code[]
+  Oauth2User     Oauth2User[]   @relation("oauth2")
+  sessions       Session[]      @relation("sessions")
+  userDevice     UserDevice[]
+  senderMessage  Message[]      @relation("sender-message")
+  receiveMessage Message[]      @relation("receiv-message")
+  memberInRoom   MemberInRoom[]
 
   @@index([username])
   @@index([email])

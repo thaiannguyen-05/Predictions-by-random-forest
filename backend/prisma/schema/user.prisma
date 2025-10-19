@@ -14,22 +14,25 @@ model User {
   updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   visible        UserVisibility @default(PUBLIC)
   phone          String?        @db.VarChar(20)
-  numberIdentity String?
-  dateOfBirth    DateTime?
-  firstName      String?
-  lastName       String?
+  numberIdentity String?        @db.VarChar(20)
+  dateOfBirth    DateTime?      @db.Timestamptz(6)
+  firstName      String?        @db.VarChar(50)
+  lastName       String?        @db.VarChar(50)
   isActive       Boolean        @default(false)
   isBanned       Boolean        @default(false) @map("is_banned")
   isLocked       Boolean        @default(false) @map("is_locked")
   lastActived    DateTime?      @map("last_actived") @db.Timestamptz(6)
-  picture        String?
-  provider       String?
+  picture        String?        @db.VarChar(1000)
+  provider       String?        @db.VarChar(50)
 
   //  relations
-  codes      Code[]
-  Oauth2User Oauth2User[] @relation("oauth2")
-  sessions   Session[]    @relation("sessions")
-  userDevice UserDevice[]
+  codes          Code[]
+  Oauth2User     Oauth2User[]   @relation("oauth2")
+  sessions       Session[]      @relation("sessions")
+  userDevice     UserDevice[]
+  senderMessage  Message[]      @relation("sender-message")
+  receiveMessage Message[]      @relation("receiv-message")
+  memberInRoom   MemberInRoom[]
 
   @@index([username])
   @@index([email])
