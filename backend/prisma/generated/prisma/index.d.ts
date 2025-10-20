@@ -11503,6 +11503,7 @@ export namespace Prisma {
 
   export type MessageWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    senderId_id?: MessageSenderIdIdCompoundUniqueInput
     AND?: MessageWhereInput | MessageWhereInput[]
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
@@ -11516,7 +11517,7 @@ export namespace Prisma {
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
     receiver?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     room?: XOR<RoomScalarRelationFilter, RoomWhereInput>
-  }, "id">
+  }, "id" | "senderId_id">
 
   export type MessageOrderByWithAggregationInput = {
     id?: SortOrder
@@ -12978,6 +12979,11 @@ export namespace Prisma {
   export type RoomScalarRelationFilter = {
     is?: RoomWhereInput
     isNot?: RoomWhereInput
+  }
+
+  export type MessageSenderIdIdCompoundUniqueInput = {
+    senderId: string
+    id: string
   }
 
   export type MessageCountOrderByAggregateInput = {
