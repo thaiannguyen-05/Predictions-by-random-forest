@@ -10,13 +10,15 @@ import { APP_GUARD, Reflector } from '@nestjs/core';
 import { CookieGuard } from './modules/auth/guard/cookie.guard';
 import { UserModule } from './modules/user/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RedisModule } from './modules/redis/redis.module';
+import { SupportChatModule } from './modules/support-chat/support-chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
     ScheduleModule.forRoot(),
-    StockModule, PrismaModule, EmailModule, AuthModule, UserModule,
+    StockModule, PrismaModule, EmailModule, AuthModule, UserModule, RedisModule, SupportChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppService,

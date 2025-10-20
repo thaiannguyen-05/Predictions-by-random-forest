@@ -42,10 +42,10 @@ async function bootstrap() {
   app.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }))
   app.getHttpAdapter().getInstance().set('trust proxy', 1)
   app.useGlobalPipes(new ValidationPipe());
-  
+
   app.enableCors({
     origin: 'http://localhost:3000', // frontend URL
-    credentials: true, 
+    credentials: true,
   });
 
   app.connectMicroservice<MicroserviceOptions>({
@@ -58,7 +58,7 @@ async function bootstrap() {
       },
     }
   })
-  
+
   await app.startAllMicroservices()
   await app.listen(process.env.PORT ?? 4000);
 }
