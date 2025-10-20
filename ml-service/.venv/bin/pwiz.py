@@ -1,4 +1,4 @@
-#!/home/andev/work_space/prediction-by-radom-forest/ml-service/.venv/bin/python3
+#!/home/andev/work_space/Predictions-by-random-forest/ml-service/.venv/bin/python3
 
 import datetime
 import os

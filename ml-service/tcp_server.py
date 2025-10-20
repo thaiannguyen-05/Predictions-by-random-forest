@@ -314,7 +314,7 @@ class StockPredictionTCPServer:
                     response = self.handle_predict(request)
                 elif command == "predict_multi_hours":
                     response = self.handle_predict_multi_hours(request)
-                elif command == "train":
+                elif command == "train" or command == "train_single":
                     response = self.handle_train_model(request)
                 elif command == "prediction_report":
                     response = self.handle_prediction_report(request)

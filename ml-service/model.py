@@ -1,3 +1,5 @@
+import os
+import pickle
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
@@ -66,3 +68,52 @@ def select_features(df, predictors, threshold=0.01):
     # Giữ feature quan trọng hơn threshold
     selected = feat_importances[feat_importances > threshold].index.tolist()
     return selected, feat_importances
+
+
+# ========================
+# Train models cho tất cả tickers
+# ========================
+def train_all_models() -> None:
+    """Train models cho tất cả tickers và lưu vào file .pkl"""
+    from data_loader import TICKERS, load_data
+    from features import add_features
+    
+    os.makedirs("models", exist_ok=True)
+    
+    for ticker in TICKERS:
+        try:
+            csv_file = f"data/{ticker.replace('.', '_')}_stock_data.csv"
+            model_file = f"models/{ticker.replace('.', '_')}_model.pkl"
+            
+            print(f"\nĐang train model cho {ticker}...")
+            
+            # Load data
+            df = load_data(ticker, csv_file)
+            
+            # Add features
+            df, predictors = add_features(df)
+            
+            # Select important features
+            selected_predictors, feat_importances = select_features(
+                df, predictors, threshold=0.01
+            )
+            
+            # Train model
+            model = create_model()
+            model.fit(df[selected_predictors], df["Target"])
+            
+            # Save model
+            model_data = {
+                "model": model,
+                "selected_predictors": selected_predictors,
+                "ticker": ticker,
+            }
+            
+            with open(model_file, "wb") as f:
+                pickle.dump(model_data, f)
+            
+            print(f"  ✓ Đã train với {len(selected_predictors)} features")
+            print(f"  ✓ Đã lưu vào {model_file}")
+            
+        except Exception as e:
+            print(f"  ✗ Lỗi khi train {ticker}: {e}")
