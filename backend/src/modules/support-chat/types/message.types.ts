@@ -1,6 +1,6 @@
 export enum TypeMessage {
-	TEXT = 'text',
-	IMAGE = 'image',
-	FILE = 'file',
-	VOICE = 'voice'
+	TEXT = 'TEXT',
+	IMAGE = 'IMAGE',
+	FILE = 'FILE',
+	VOICE = 'VOICE'
 }
