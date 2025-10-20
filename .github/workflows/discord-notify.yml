@@ -1,0 +1,32 @@
+name: Notify Discord on Repo Activity
+
+on:
+  push:
+    branches: ["*"]       # tất cả branch
+  pull_request:
+    types: [opened, closed, reopened, merged]
+  issues:
+    types: [opened, closed, reopened]
+  release:
+    types: [published]
+  workflow_dispatch:       # cho phép trigger thủ công
+  create:                  # khi tạo branch hoặc tag
+  delete:                  # khi xóa branch hoặc tag
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Notification
+        uses: Ilshidur/action-discord@master
+        with:
+          args: |
+            🔔 **Hoạt động mới trên GitHub Repo**  
+            🧩 **Repository:** ${{ github.repository }}  
+            👤 **Actor:** ${{ github.actor }}  
+            🧠 **Event:** ${{ github.event_name }}  
+            💬 **Message:** ${{ github.event.head_commit.message || github.event.pull_request.title || github.event.issue.title || 'N/A' }}  
+            🌿 **Branch:** ${{ github.ref_name }}  
+            🔗 [Xem chi tiết](https://github.com/${{ github.repository }})
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
