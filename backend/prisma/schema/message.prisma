@@ -15,6 +15,9 @@ model Message {
     sender   User  @relation(name: "sender-message", fields: [senderId], references: [id], onDelete: Cascade)
     receiver User? @relation(name: "receiv-message", fields: [receiverId], references: [id], onDelete: Cascade)
     room     Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+    @@index([senderId, id])
+    @@unique([senderId, id])
 }
 
 enum TypeMessage {
