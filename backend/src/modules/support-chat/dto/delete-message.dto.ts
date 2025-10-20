@@ -1,4 +1,11 @@
+import { IsString, IsNotEmpty } from 'class-validator'
+
 export class DeleteMessageDto {
-		senderId: string
+	@IsString()
+	@IsNotEmpty()
+	senderId: string
+
+	@IsString()
+	@IsNotEmpty()
 	messageId: string
 }
