@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { MessageQueue } from '../../interfaces/support-chat.interface';
+import { MessageQueue } from '../../../interfaces/support-chat.interface';
 
 const MAX_INSERT = 1000;
 const FLUSH_INTERVAL_MS = 5000;
@@ -12,7 +12,7 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
   private isFlushing = false;
   private flushTimer: NodeJS.Timeout;
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   onModuleInit() {
     // Định kỳ flush để tránh message bị kẹt
@@ -29,7 +29,7 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
 
   // ✅ Thêm message an toàn
   async insertMessageInQueue(message: MessageQueue) {
-    console.debug({message: `Adding ${message} in queue`})
+    console.debug({ message: `Adding ${message} in queue` })
     this.messageQueue.push(message);
 
     if (this.messageQueue.length >= MAX_INSERT) {

@@ -6116,7 +6116,7 @@ export namespace Prisma {
 
   export type RoomMinAggregateOutputType = {
     id: string | null
-    clientId: string | null
+    employeeId: string | null
     customerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6124,7 +6124,7 @@ export namespace Prisma {
 
   export type RoomMaxAggregateOutputType = {
     id: string | null
-    clientId: string | null
+    employeeId: string | null
     customerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6132,7 +6132,7 @@ export namespace Prisma {
 
   export type RoomCountAggregateOutputType = {
     id: number
-    clientId: number
+    employeeId: number
     customerId: number
     createdAt: number
     updatedAt: number
@@ -6142,7 +6142,7 @@ export namespace Prisma {
 
   export type RoomMinAggregateInputType = {
     id?: true
-    clientId?: true
+    employeeId?: true
     customerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6150,7 +6150,7 @@ export namespace Prisma {
 
   export type RoomMaxAggregateInputType = {
     id?: true
-    clientId?: true
+    employeeId?: true
     customerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6158,7 +6158,7 @@ export namespace Prisma {
 
   export type RoomCountAggregateInputType = {
     id?: true
-    clientId?: true
+    employeeId?: true
     customerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6239,7 +6239,7 @@ export namespace Prisma {
 
   export type RoomGroupByOutputType = {
     id: string
-    clientId: string | null
+    employeeId: string | null
     customerId: string
     createdAt: Date
     updatedAt: Date
@@ -6264,7 +6264,7 @@ export namespace Prisma {
 
   export type RoomSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    clientId?: boolean
+    employeeId?: boolean
     customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6275,7 +6275,7 @@ export namespace Prisma {
 
   export type RoomSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    clientId?: boolean
+    employeeId?: boolean
     customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6283,7 +6283,7 @@ export namespace Prisma {
 
   export type RoomSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    clientId?: boolean
+    employeeId?: boolean
     customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6291,13 +6291,13 @@ export namespace Prisma {
 
   export type RoomSelectScalar = {
     id?: boolean
-    clientId?: boolean
+    employeeId?: boolean
     customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type RoomOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "customerId" | "createdAt" | "updatedAt", ExtArgs["result"]["room"]>
+  export type RoomOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "customerId" | "createdAt" | "updatedAt", ExtArgs["result"]["room"]>
   export type RoomInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | Room$messagesArgs<ExtArgs>
     members?: boolean | Room$membersArgs<ExtArgs>
@@ -6314,7 +6314,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      clientId: string | null
+      employeeId: string | null
       customerId: string
       createdAt: Date
       updatedAt: Date
@@ -6744,7 +6744,7 @@ export namespace Prisma {
    */
   interface RoomFieldRefs {
     readonly id: FieldRef<"Room", 'String'>
-    readonly clientId: FieldRef<"Room", 'String'>
+    readonly employeeId: FieldRef<"Room", 'String'>
     readonly customerId: FieldRef<"Room", 'String'>
     readonly createdAt: FieldRef<"Room", 'DateTime'>
     readonly updatedAt: FieldRef<"Room", 'DateTime'>
@@ -11032,7 +11032,7 @@ export namespace Prisma {
 
   export const RoomScalarFieldEnum: {
     id: 'id',
-    clientId: 'clientId',
+    employeeId: 'employeeId',
     customerId: 'customerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -11552,7 +11552,7 @@ export namespace Prisma {
     OR?: RoomWhereInput[]
     NOT?: RoomWhereInput | RoomWhereInput[]
     id?: UuidFilter<"Room"> | string
-    clientId?: UuidNullableFilter<"Room"> | string | null
+    employeeId?: UuidNullableFilter<"Room"> | string | null
     customerId?: UuidFilter<"Room"> | string
     createdAt?: DateTimeFilter<"Room"> | Date | string
     updatedAt?: DateTimeFilter<"Room"> | Date | string
@@ -11562,7 +11562,7 @@ export namespace Prisma {
 
   export type RoomOrderByWithRelationInput = {
     id?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    employeeId?: SortOrderInput | SortOrder
     customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11572,20 +11572,21 @@ export namespace Prisma {
 
   export type RoomWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    employeeId_customerId?: RoomEmployeeIdCustomerIdCompoundUniqueInput
     AND?: RoomWhereInput | RoomWhereInput[]
     OR?: RoomWhereInput[]
     NOT?: RoomWhereInput | RoomWhereInput[]
-    clientId?: UuidNullableFilter<"Room"> | string | null
+    employeeId?: UuidNullableFilter<"Room"> | string | null
     customerId?: UuidFilter<"Room"> | string
     createdAt?: DateTimeFilter<"Room"> | Date | string
     updatedAt?: DateTimeFilter<"Room"> | Date | string
     messages?: MessageListRelationFilter
     members?: MemberInRoomListRelationFilter
-  }, "id">
+  }, "id" | "employeeId_customerId">
 
   export type RoomOrderByWithAggregationInput = {
     id?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    employeeId?: SortOrderInput | SortOrder
     customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11599,7 +11600,7 @@ export namespace Prisma {
     OR?: RoomScalarWhereWithAggregatesInput[]
     NOT?: RoomScalarWhereWithAggregatesInput | RoomScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Room"> | string
-    clientId?: UuidNullableWithAggregatesFilter<"Room"> | string | null
+    employeeId?: UuidNullableWithAggregatesFilter<"Room"> | string | null
     customerId?: UuidWithAggregatesFilter<"Room"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Room"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Room"> | Date | string
@@ -12223,7 +12224,7 @@ export namespace Prisma {
 
   export type RoomCreateInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12233,7 +12234,7 @@ export namespace Prisma {
 
   export type RoomUncheckedCreateInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12243,7 +12244,7 @@ export namespace Prisma {
 
   export type RoomUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12253,7 +12254,7 @@ export namespace Prisma {
 
   export type RoomUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12263,7 +12264,7 @@ export namespace Prisma {
 
   export type RoomCreateManyInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12271,7 +12272,7 @@ export namespace Prisma {
 
   export type RoomUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12279,7 +12280,7 @@ export namespace Prisma {
 
   export type RoomUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13064,9 +13065,14 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type RoomEmployeeIdCustomerIdCompoundUniqueInput = {
+    employeeId: string
+    customerId: string
+  }
+
   export type RoomCountOrderByAggregateInput = {
     id?: SortOrder
-    clientId?: SortOrder
+    employeeId?: SortOrder
     customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13074,7 +13080,7 @@ export namespace Prisma {
 
   export type RoomMaxOrderByAggregateInput = {
     id?: SortOrder
-    clientId?: SortOrder
+    employeeId?: SortOrder
     customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13082,7 +13088,7 @@ export namespace Prisma {
 
   export type RoomMinOrderByAggregateInput = {
     id?: SortOrder
-    clientId?: SortOrder
+    employeeId?: SortOrder
     customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14850,7 +14856,7 @@ export namespace Prisma {
 
   export type RoomCreateWithoutMessagesInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14859,7 +14865,7 @@ export namespace Prisma {
 
   export type RoomUncheckedCreateWithoutMessagesInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15042,7 +15048,7 @@ export namespace Prisma {
 
   export type RoomUpdateWithoutMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15051,7 +15057,7 @@ export namespace Prisma {
 
   export type RoomUncheckedUpdateWithoutMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15244,7 +15250,7 @@ export namespace Prisma {
 
   export type RoomCreateWithoutMembersInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15253,7 +15259,7 @@ export namespace Prisma {
 
   export type RoomUncheckedCreateWithoutMembersInput = {
     id?: string
-    clientId?: string | null
+    employeeId?: string | null
     customerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15357,7 +15363,7 @@ export namespace Prisma {
 
   export type RoomUpdateWithoutMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15366,7 +15372,7 @@ export namespace Prisma {
 
   export type RoomUncheckedUpdateWithoutMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

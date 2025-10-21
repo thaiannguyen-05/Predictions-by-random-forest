@@ -1,9 +1,14 @@
 import { ChatSession, GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "src/prisma/prisma.service";
 import { v4 as uuidv4 } from 'uuid'
 import { ResponseMessageDto } from "./dto/response-message.dto";
+import { MessageQueue } from "./interfaces/support-chat.interface";
+import { randomUUID } from "crypto";
+import { MessageService } from "./service/message/message.service";
+import { RoomService } from "./service/room/room.service";
+import { CreateRoomDto } from "./dto/create-room.dto";
 @Injectable()
 export class SupportChatService {
 	private readonly googleAi: GoogleGenerativeAI
@@ -14,6 +19,8 @@ export class SupportChatService {
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly prismaService: PrismaService,
+		private readonly messageService: MessageService,
+		private readonly roomService: RoomService
 	) {
 		const geminiApikey = configService.getOrThrow<string>('GENEMI_API_KEY')
 		const geminiVersion = configService.getOrThrow<string>('GENEMI_MODEL')
@@ -32,7 +39,7 @@ export class SupportChatService {
 	}
 
 
-	private getChatSession(sessionId: string) {
+	private async getChatSession(sessionId: string, customerId: string, employeeId?: string) {
 		try {
 			let sessionIdToUse = sessionId || uuidv4()
 
@@ -47,6 +54,15 @@ export class SupportChatService {
 					}
 				})
 				this.chatSessions[sessionIdToUse] = result
+
+				// create room
+				const room: CreateRoomDto = {
+					...(employeeId && { employeeId }),
+					customerId,
+					sessionId
+				}
+
+				await this.roomService.createRoom(room)
 			} else {
 				this.logger.log(`Using existing chat session: ${sessionIdToUse}`)
 			}
@@ -118,8 +134,36 @@ export class SupportChatService {
 	}
 
 	async generateResponse(data: ResponseMessageDto) {
+		if (!data.prompt || data.prompt.trim().length === 0) {
+			throw new BadRequestException("Prompt cannot be empty")
+		}
 
-		
+		const { sessionId, chat } = await this.getChatSession(data.sessionId, data.userId, data?.employeeId)
+		this.logger.log(`Sending prompt to Gemini AI for session: ${sessionId}`)
+
+		const result = await chat.sendMessage(data.prompt)
+		const response = await result.response.text()
+
+		const messageQueue: MessageQueue = {
+			content: data.prompt,
+			roomId: data.sessionId,
+			senderId: randomUUID() + 'chat-bot-response'
+		}
+
+		// saving message
+		await this.messageService.createMessage(messageQueue)
+
+		if (!response) {
+			throw new InternalServerErrorException('Empty response from Gemini AI')
+		}
+
+		this.logger.log(`Received response from Gemini AI for session: ${sessionId}`)
+
+		return {
+			result: response,
+			sessionId,
+		}
+
 	}
 
 }

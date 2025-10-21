@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateMessageDto } from "../dto/create-message.dto";
-import { MessageQueue } from "../interfaces/support-chat.interface";
+import { CreateMessageDto } from "../../dto/create-message.dto";
+import { MessageQueue } from "../../interfaces/support-chat.interface";
 import { MessageProducer } from "./queue_service/message.producer";
-import { UpdateMessageDto } from "../dto/update-message.dto";
-import { DeleteMessageDto } from "../dto/delete-message.dto";
+import { UpdateMessageDto } from "../../dto/update-message.dto";
+import { DeleteMessageDto } from "../../dto/delete-message.dto";
 
 @Injectable()
 export class MessageService {

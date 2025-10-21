@@ -1,0 +1,34 @@
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+import { CreateRoomDto } from "../../dto/create-room.dto";
+
+@Injectable()
+export class RoomService {
+	constructor(
+		private readonly prismaService: PrismaService
+	) { }
+
+	// create room 
+	async createRoom(dto: CreateRoomDto) {
+		// check available room
+		let room = await this.prismaService.room.findUnique({
+			where: { id: dto.sessionId }
+		})
+
+		if (room) {
+			console.log(`Room is available`)
+			return room
+		}
+
+		// create new room
+		room = await this.prismaService.room.create({
+			data: {
+				id: dto.sessionId,
+				...(dto.customerId && { clientId: dto.customerId }),
+				customerId: dto.customerId
+			}
+		})
+
+		return room
+	}
+}
