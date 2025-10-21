@@ -164,7 +164,7 @@ exports.Prisma.MessageScalarFieldEnum = {
 
 exports.Prisma.RoomScalarFieldEnum = {
   id: 'id',
-  clientId: 'clientId',
+  employeeId: 'employeeId',
   customerId: 'customerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

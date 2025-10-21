@@ -1,13 +1,14 @@
 import { Module } from "@nestjs/common";
 import { SupportChatService } from "./support-chat.service";
 import { ClientsModule, Transport } from "@nestjs/microservices";
-import { MessageService } from "./service/message.service";
-import { MessageProducer } from "./service/queue_service/message.producer";
-import { MessageConsumer } from "./service/queue_service/message.consumer";
-import { BatchInsertService } from "./service/queue_service/batchInsert.service";
-import { RedisService } from "./service/redis.service";
+import { MessageService } from "./service/message/message.service";
+import { MessageProducer } from "./service/message/queue_service/message.producer";
+import { MessageConsumer } from "./service/message/queue_service/message.consumer";
+import { BatchInsertService } from "./service/message/queue_service/batchInsert.service";
+import { RedisService } from "./service/message/redis.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { TestController } from "./service/test.controller";
+import { TestController } from "./service/message/test.controller";
+import { RoomService } from "./service/room/room.service";
 
 @Module({
 	imports: [
@@ -31,7 +32,8 @@ import { TestController } from "./service/test.controller";
 		MessageProducer,
 		BatchInsertService,
 		RedisService,
-		PrismaService
+		PrismaService,
+		RoomService
 	],
 	controllers: [MessageConsumer, TestController],
 	exports: [MessageService, RedisService]

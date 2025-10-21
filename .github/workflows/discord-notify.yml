@@ -1,32 +1,96 @@
-name: Notify Discord on Repo Activity
+name: 🚨 Notify Discord on Repo Activity
 
 on:
   push:
-    branches: ["*"]       # tất cả branch
+    branches: ["*"]                 # mọi branch
   pull_request:
-    types: [opened, closed, reopened, merged]
+    types: [opened, closed, reopened]   # merge sẽ nằm trong closed
   issues:
     types: [opened, closed, reopened]
   release:
     types: [published]
-  workflow_dispatch:       # cho phép trigger thủ công
-  create:                  # khi tạo branch hoặc tag
-  delete:                  # khi xóa branch hoặc tag
+  create:
+  delete:
+  workflow_dispatch:
 
 jobs:
   notify:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Send Discord Notification
+      - name: 🧾 Build Discord message
+        id: build_message
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          ACTOR="${{ github.actor }}"
+          REPO="${{ github.repository }}"
+          REF="${{ github.ref_name }}"
+          MESSAGE=""
+          URL="https://github.com/${REPO}"
+
+          case "$EVENT_NAME" in
+            push)
+              COMMIT_MSG="${{ github.event.head_commit.message }}"
+              MESSAGE="🚀 **Push mới lên GitHub**
+              👤 *${ACTOR}* vừa push lên **${REF}**
+              💬 Commit: ${COMMIT_MSG}"
+              ;;
+            pull_request)
+              PR_TITLE="${{ github.event.pull_request.title }}"
+              PR_URL="${{ github.event.pull_request.html_url }}"
+              ACTION="${{ github.event.action }}"
+              MERGED="${{ github.event.pull_request.merged }}"
+              if [ "$ACTION" = "closed" ] && [ "$MERGED" = "true" ]; then
+                MESSAGE="✅ **Pull Request merged!**
+                👤 *${ACTOR}* đã merge PR: **${PR_TITLE}**
+                🔗 [Xem PR](${PR_URL})"
+              else
+                MESSAGE="🔀 **Pull Request ${ACTION}!**
+                👤 *${ACTOR}* ${ACTION} PR: **${PR_TITLE}**
+                🔗 [Xem PR](${PR_URL})"
+              fi
+              ;;
+            issues)
+              ISSUE_TITLE="${{ github.event.issue.title }}"
+              ISSUE_URL="${{ github.event.issue.html_url }}"
+              ACTION="${{ github.event.action }}"
+              MESSAGE="📝 **Issue ${ACTION}!**
+              👤 *${ACTOR}* ${ACTION} issue: **${ISSUE_TITLE}**
+              🔗 [Xem issue](${ISSUE_URL})"
+              ;;
+            release)
+              RELEASE_NAME="${{ github.event.release.name }}"
+              RELEASE_URL="${{ github.event.release.html_url }}"
+              MESSAGE="🏁 **Release mới được publish!**
+              👤 *${ACTOR}*
+              🏷️ Release: **${RELEASE_NAME}**
+              🔗 [Xem release](${RELEASE_URL})"
+              ;;
+            create)
+              REF_TYPE="${{ github.event.ref_type }}"
+              REF_NAME="${{ github.event.ref }}"
+              MESSAGE="🌿 **Tạo mới ${REF_TYPE}:**
+              👤 *${ACTOR}* vừa tạo **${REF_NAME}**"
+              ;;
+            delete)
+              REF_TYPE="${{ github.event.ref_type }}"
+              REF_NAME="${{ github.event.ref }}"
+              MESSAGE="🔥 **Xóa ${REF_TYPE}:**
+              👤 *${ACTOR}* vừa xóa **${REF_NAME}**"
+              ;;
+            *)
+              MESSAGE="⚡ **Sự kiện:** ${EVENT_NAME}
+              👤 *${ACTOR}* hoạt động trong repo *${REPO}*"
+              ;;
+          esac
+
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 📢 Gửi thông báo lên Discord
         uses: Ilshidur/action-discord@master
         with:
-          args: |
-            🔔 **Hoạt động mới trên GitHub Repo**  
-            🧩 **Repository:** ${{ github.repository }}  
-            👤 **Actor:** ${{ github.actor }}  
-            🧠 **Event:** ${{ github.event_name }}  
-            💬 **Message:** ${{ github.event.head_commit.message || github.event.pull_request.title || github.event.issue.title || 'N/A' }}  
-            🌿 **Branch:** ${{ github.ref_name }}  
-            🔗 [Xem chi tiết](https://github.com/${{ github.repository }})
+          args: ${{ steps.build_message.outputs.message }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

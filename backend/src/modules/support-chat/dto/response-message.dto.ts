@@ -18,7 +18,7 @@ export class ResponseMessageDto {
 	})
 	@IsOptional()
 	@IsString()
-	sessionId?: string
+	sessionId: string
 
 	@ApiProperty({
 		description: 'User ID for personalization',
@@ -27,5 +27,7 @@ export class ResponseMessageDto {
 	})
 	@IsOptional()
 	@IsString()
-	userId?: string
+	userId: string
+
+	employeeId?: string
 }

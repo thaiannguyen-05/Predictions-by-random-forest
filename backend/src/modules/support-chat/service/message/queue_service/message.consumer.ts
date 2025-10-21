@@ -1,6 +1,6 @@
 import { Controller, Logger } from "@nestjs/common";
 import { EventPattern, Payload } from "@nestjs/microservices";
-import type { MessageQueue } from "../../interfaces/support-chat.interface";
+import type { MessageQueue } from "../../../interfaces/support-chat.interface";
 import { BatchInsertService } from "./batchInsert.service";
 import { RedisService } from "../redis.service";
 

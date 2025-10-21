@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { MessageQueue } from '../interfaces/support-chat.interface';
+import { MessageQueue } from '../../interfaces/support-chat.interface';
 
 const REDIS_MESSAGE_TTL = 86400; // 24 hours
 const REDIS_ROOM_PREFIX = 'room:messages:';
@@ -39,7 +39,7 @@ export class RedisService implements OnModuleInit {
     try {
       const key = `${REDIS_ROOM_PREFIX}${message.roomId}`;
       const timestamp = Date.now();
-      
+
       // Lưu message dạng JSON với score là timestamp
       await this.redisClient.zadd(
         key,
@@ -63,7 +63,7 @@ export class RedisService implements OnModuleInit {
   async getRecentMessages(roomId: string, limit = 50): Promise<MessageQueue[]> {
     try {
       const key = `${REDIS_ROOM_PREFIX}${roomId}`;
-      
+
       // Lấy messages mới nhất (ZREVRANGE: từ cao xuống thấp)
       const messages = await this.redisClient.zrevrange(key, 0, limit - 1);
 

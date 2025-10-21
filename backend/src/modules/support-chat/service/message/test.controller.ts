@@ -1,13 +1,13 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { MessageService } from "./message.service";
-import { CreateMessageDto } from "../dto/create-message.dto";
+import { CreateMessageDto } from "../../dto/create-message.dto";
 import { Public } from "src/common/decorator/public.decorator";
 
-@Controller('test') 
+@Controller('test')
 export class TestController {
 	constructor(
 		private readonly messageService: MessageService
-	) {}
+	) { }
 
 
 	@Public()
