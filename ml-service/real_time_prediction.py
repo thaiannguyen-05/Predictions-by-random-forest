@@ -25,7 +25,8 @@ class RealTimePrediction:
             ticker_obj = yf.Ticker(self.ticker)
             current_data = ticker_obj.history(period="1d", interval="1m")
             if not current_data.empty:
-                current_price = current_data["Close"][-1]
+                # Use iloc for proper indexing
+                current_price = float(current_data["Close"].iloc[-1])
                 current_time = current_data.index[-1]
                 return {
                     "price": current_price,

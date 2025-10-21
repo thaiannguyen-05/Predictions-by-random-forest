@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/andev/work_space/prediction-by-radom-forest/ml-service/.venv
+set -gx VIRTUAL_ENV /home/andev/work_space/Predictions-by-random-forest/ml-service/.venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

@@ -23,6 +23,8 @@
     "prisma:migrate": "npm run prisma:merge && prisma migrate dev --schema=prisma/schema.generated.prisma"
   },
   "dependencies": {
+    "@google/gemini-cli": "^0.9.0",
+    "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",

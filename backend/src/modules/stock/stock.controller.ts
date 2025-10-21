@@ -14,7 +14,7 @@ export class StockController {
 		description: 'Check the connection status to the machine learning prediction service'
 	})
 	@ApiResponse({
-		status: 200,
+		status: 200,	
 		description: 'ML service is connected and operational',
 		schema: {
 			type: 'object',
@@ -84,12 +84,12 @@ export class StockController {
 			);
 		}
 
-		return {
-			ticker: result.ticker || ticker,
-			price: result.close || 0,
-			time: result.date || new Date().toISOString(),
-			timestamp: Date.now()
-		};
+	return {
+		ticker: result.ticker || ticker,
+		price: result.price || 0,
+		time: result.time || new Date().toISOString(),
+		timestamp: Date.now()
+	};
 	}
 
 	@Get('predictions/:ticker')
@@ -200,10 +200,10 @@ export class StockController {
 			this.stockService.getPredictionsMultiHours(ticker)
 		]);
 
-		return {
-			ticker: ticker,
-			current_price: priceResult.success ? priceResult.close : predictionResult.current_price,
-			current_time: priceResult.success ? priceResult.date : predictionResult.current_time,
+	return {
+		ticker: ticker,
+		current_price: priceResult.success ? priceResult.price : predictionResult.current_price,
+		current_time: priceResult.success ? priceResult.time : predictionResult.current_time,
 			predictions: predictionResult.success ? predictionResult.predictions : [],
 			price_success: priceResult.success,
 			prediction_success: predictionResult.success,

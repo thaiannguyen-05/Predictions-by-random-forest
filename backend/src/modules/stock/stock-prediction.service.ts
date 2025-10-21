@@ -9,8 +9,8 @@ interface MLServiceResponse {
 	ticker?: string;
 	current_price?: number;
 	current_time?: string;
-	close?: number;
-	date?: string;
+	price?: number;
+	time?: string;
 	prediction?: {
 		current_price?: number;
 		[key: string]: unknown;
@@ -170,8 +170,8 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 			return {
 				success: true,
 				ticker: ticker,
-				current_price: currentPrice.success ? currentPrice.close : prediction.prediction?.current_price,
-				current_time: currentPrice.success ? currentPrice.date : new Date().toISOString(),
+				current_price: currentPrice.success ? currentPrice.price : prediction.prediction?.current_price,
+				current_time: currentPrice.success ? currentPrice.time : new Date().toISOString(),
 				predictions: prediction.prediction ? [prediction.prediction] : [],
 				timestamp: new Date().toISOString()
 			};
