@@ -35,8 +35,8 @@ const LoginPage: React.FC = () => {
       // Gửi sự kiện để Header biết có token mới
       window.dispatchEvent(new Event('storage'));
 
-      // ✅ Redirect về trang chủ
-      router.push('/');
+      // ✅ Redirect về dashboard
+      router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);
     } finally {

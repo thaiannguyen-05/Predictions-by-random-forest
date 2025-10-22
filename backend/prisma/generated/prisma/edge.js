@@ -268,7 +268,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/generated/prisma",
+      "value": "D:\\Predictions-by-random-forest\\backend\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -277,7 +277,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       },
       {
@@ -286,7 +286,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/schema/schema.prisma",
+    "sourceFilePath": "D:\\Predictions-by-random-forest\\backend\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

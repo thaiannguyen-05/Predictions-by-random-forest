@@ -30,12 +30,14 @@ export class AuthTokenSerivec {
 		// generate accessToken and refreshToken
 		const [accessToken, refreshToken] = await Promise.all([
 			this.jwtService.signAsync(payload, {
-				secret: this.configService.getOrThrow<string>("JWT_SECRET"),
-				expiresIn: this.configService.getOrThrow<string>("TIME_LIFE_ACCESS_TOKEN")
+			secret: this.configService.getOrThrow<string>("JWT_SECRET"),
+			// Cast to satisfy stricter JwtSignOptions (number | StringValue)
+			expiresIn: this.configService.getOrThrow<string>("TIME_LIFE_ACCESS_TOKEN") as unknown as number
 			}),
 			this.jwtService.signAsync(payload, {
-				secret: this.configService.getOrThrow<string>("JWT_SECRET"),
-				expiresIn: this.configService.getOrThrow<string>("TIME_LIFE_REFRESH_TOKEN")
+			secret: this.configService.getOrThrow<string>("JWT_SECRET"),
+			// Cast to satisfy stricter JwtSignOptions (number | StringValue)
+			expiresIn: this.configService.getOrThrow<string>("TIME_LIFE_REFRESH_TOKEN") as unknown as number
 			})
 		])
 

@@ -44,22 +44,26 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: 'http://localhost:3000', // frontend URL
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
     credentials: true,
   });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://localhost:5672'],
-      queue: 'email_queue',
-      queueOptions: {
-        durable: false,
-      },
-    }
-  })
+  if (process.env.ENABLE_MICROSERVICES === 'true') {
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://localhost:5672'],
+        queue: 'email_queue',
+        queueOptions: {
+          durable: false,
+        },
+      }
+    });
 
-  await app.startAllMicroservices()
-  await app.listen(process.env.PORT ?? 4000);
+    await app.startAllMicroservices();
+  }
+  const port = Number(process.env.PORT ?? 4000);
+  const host = process.env.HOST ?? '0.0.0.0';
+  await app.listen(port, host);
 }
 bootstrap();
