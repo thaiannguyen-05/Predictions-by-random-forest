@@ -133,8 +133,7 @@ export class AuthService {
       omit: { hashedPassword: false }
     })
 
-    console.log(user?.hashedPassword)
-
+    
     if (!user) throw new NotFoundException('User not found')
 
     // FIX 1: Handle nullable hashedPassword
@@ -242,6 +241,8 @@ export class AuthService {
             hashedPassword: null,
             avtUrl: avatarUrl,
             state: 'active',
+            // Lưu provider dạng lowercase để FE xử lý điều kiện (facebook/google)
+            provider: (provider as unknown as string).toLowerCase(),
           }
         }),
         this.prismaService.oauth2User.create({
@@ -262,16 +263,12 @@ export class AuthService {
       return user
     }
 
-    const oauth2User = await this.prismaService.oauth2User.findFirst({
-      where: {
-        email,
-        providerUserId,
-        userId: user?.id
-      }
-    })
+    // Ensure a single oauth2 record per email using the unique constraint on `email`.
+    // This prevents duplicate entries when the same email logs in via different providers (e.g., Google then Facebook).
+    const oauth2ByEmail = await this.prismaService.oauth2User.findUnique({ where: { email } });
 
-    if (!oauth2User && user) {
-      userOauth2 = await this.prismaService.oauth2User.create({
+    if (!oauth2ByEmail) {
+      await this.prismaService.oauth2User.create({
         data: {
           provider,
           providerUserId,
@@ -281,24 +278,35 @@ export class AuthService {
           lastname,
           avatarUrl,
           username,
-          userId: user?.id
-        }
+          userId: user.id,
+        },
       });
-    } else if (oauth2User && user) {
-      // Update existing OAuth2 user data
-      userOauth2 = await this.prismaService.oauth2User.update({
-        where: { id: oauth2User?.id ?? '' },
-        // where: { id: user?.id },
+    } else {
+      await this.prismaService.oauth2User.update({
+        where: { email },
         data: {
+          provider,
           providerUserId,
           fullname,
           firstname,
           lastname,
           avatarUrl,
-          username
-        }
+          username,
+          userId: user.id,
+        },
       });
     }
+
+    // Đồng bộ provider trên bảng User để phản ánh nhà cung cấp hiện tại
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: {
+        provider: (provider as unknown as string).toLowerCase(),
+        ...(avatarUrl ? { avtUrl: avatarUrl } : {}),
+        accountType: 'OAUTH2',
+        isActive: true,
+      },
+    });
 
     return user
   }
@@ -316,8 +324,7 @@ export class AuthService {
       username
     } = user;
 
-    console.log(user)
-
+    
     const validateUser = await this.validateOauth2({
       providerUserId,
       email,
@@ -408,43 +415,44 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');
 
-    const name = user.fullname ||
+    // Mặc định tên/ảnh từ bảng users
+    let name = user.fullname ||
       `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
       user.username ||
       user.email;
+    let avatar = user.picture || user.avtUrl || undefined;
 
-    const avatar = user.picture || user.avtUrl || undefined;
+    // Với tài khoản Facebook: dùng tên Facebook, ẩn email và trả về link trang cá nhân
+    let emailToReturn: string | undefined = user.email;
+    let profileUrl: string | undefined;
 
-    // SỬA QUAN TRỌNG: CHỈ ẨN EMAIL NẾU THẬT SỰ LÀ FACEBOOK USER
-    let displayEmail = user.email;
+    if (user.provider === 'facebook') {
+      // Lấy dữ liệu từ oauth2_user để có providerUserId, fullname, avatarUrl
+      const fbOauth = await this.prismaService.oauth2User.findFirst({
+        where: { userId: user.id, provider: 'FACEBOOK' },
+        select: { providerUserId: true, fullname: true, username: true, avatarUrl: true },
+      });
 
-    // Chỉ ẩn email nếu:
-    // 1. Provider là facebook VÀ 
-    // 2. Email có chứa ".fb@" hoặc "@facebook.com"
-    if (user.provider === 'facebook' &&
-      (user.email.includes('.fb@') || user.email.includes('@facebook.com'))) {
-      // Tạo email ảo từ username
-      displayEmail = `${user.username || user.id}@facebook.com`;
+      if (fbOauth) {
+        name = fbOauth.fullname || fbOauth.username || name;
+        profileUrl = `https://facebook.com/${fbOauth.providerUserId}`;
+        // Ưu tiên avatar từ oauth2 nếu user chưa có
+        if (!avatar) avatar = fbOauth.avatarUrl || avatar;
+      }
+
+      // Ẩn email cho tài khoản Facebook
+      emailToReturn = undefined;
     }
-    // Các trường hợp khác (Google, local) hiển thị email thật
-
-    console.log('getMe - Final user data:', {
-      id: user.id,
-      name,
-      originalEmail: user.email,
-      displayEmail,
-      provider: user.provider,
-      avatar: avatar 
-    });
 
     return {
       id: user.id,
-      email: displayEmail,
+      email: emailToReturn,
       username: user.username,
       name,
       avatar,
       isActive: user.isActive,
-      provider: user.provider
+      provider: user.provider,
+      profileUrl,
     };
   }
 }
