@@ -3,7 +3,7 @@ import { AuthService } from './service/auth.service';
 import { AuthController } from './auth.controller';
 import { EmailModule } from '../../email/email.module';
 import { AuthOtherService } from './service/auth.other.service';
-import { AuthTokenSerivec } from './service/auth.token.service';
+import { AuthTokenService } from './service/auth.token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CookieStrategy } from './strategy/auth-cookie.strategy';
@@ -16,28 +16,28 @@ import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒN
   imports: [
     PassportModule.register({
       session: true, // ĐÃ CÓ
-      defaultStrategy: 'jwt'
+      defaultStrategy: 'jwt',
     }),
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>("JWT_SECRET"),
-        signOptions: { expiresIn: '1d' }
-      })
-    })
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
   ],
   providers: [
     AuthService,
     AuthOtherService,
-    AuthTokenSerivec,
+    AuthTokenService,
     CookieStrategy,
     GoogleStrategy,
     FacebookStrategy,
-    SessionSerializer // THÊM DÒNG NÀY
+    SessionSerializer, // THÊM DÒNG NÀY
   ],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

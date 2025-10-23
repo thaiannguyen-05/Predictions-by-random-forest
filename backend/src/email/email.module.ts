@@ -20,8 +20,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  providers: [EmailService, EmailProducer],
-  controllers: [EmailConsumer],
-  exports: [EmailService, EmailProducer]
+  providers: [EmailService, EmailProducer, EmailConsumer],
+  exports: [EmailService, EmailProducer],
 })
-export class EmailModule { }
+export class EmailModule {}

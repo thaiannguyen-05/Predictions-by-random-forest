@@ -21,7 +21,7 @@ import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
-import { AuthTokenSerivec } from './auth.token.service';
+import { AuthTokenService } from './auth.token.service';
 
 interface SocialProfile {
   id: string;
@@ -57,16 +57,18 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly emailProducer: EmailProducer,
     private readonly authOtherService: AuthOtherService,
-    private readonly tokenService: AuthTokenSerivec,
+    private readonly tokenService: AuthTokenService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   // ===============================
   // REGISTER
   // ===============================
   public async register(dto: CreateAccountDto) {
-    const account = await this.prismaService.user.findUnique({ where: { email: dto.email } });
+    const account = await this.prismaService.user.findUnique({
+      where: { email: dto.email },
+    });
     if (account) throw new ConflictException('Account is available');
 
     const hashedPassword = await hash(dto.password);
@@ -87,7 +89,9 @@ export class AuthService {
     });
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    await this.prismaService.code.create({ data: { code, userId: newAccount.id } });
+    await this.prismaService.code.create({
+      data: { code, userId: newAccount.id },
+    });
     await this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
 
     return { status: true, data: newAccount };
@@ -102,7 +106,8 @@ export class AuthService {
       select: { id: true, isActive: true, codes: true },
     });
     if (!account) throw new NotFoundException('Account not found');
-    if (account.isActive) throw new ConflictException('Account is already active');
+    if (account.isActive)
+      throw new ConflictException('Account is already active');
 
     const code = await this.prismaService.code.findUnique({
       where: { code_userId: { code: dto.code, userId: account.id } },
@@ -110,7 +115,10 @@ export class AuthService {
     if (!code) throw new BadRequestException('Code is not existed or expired');
 
     await this.prismaService.$transaction([
-      this.prismaService.user.update({ where: { id: account.id }, data: { isActive: true } }),
+      this.prismaService.user.update({
+        where: { id: account.id },
+        data: { isActive: true },
+      }),
       this.prismaService.code.delete({ where: { id: code.id } }),
     ]);
 
@@ -120,21 +128,22 @@ export class AuthService {
   // ===============================
   // LOGIN
   // ===============================
-  public async login(dto: LoginDto, res: Response) { 
+  public async login(dto: LoginDto, res: Response) {
     const user = await this.prismaService.user.findFirst({
       where: {
         AND: [
           {
-            OR: [{ email: dto.access }, { username: dto.access }]
+            OR: [{ email: dto.access }, { username: dto.access }],
           },
-          { isActive: true }
-        ]
+          { isActive: true },
+        ],
       },
-      omit: { hashedPassword: false }
-    })
+      omit: { hashedPassword: false },
+    });
 
-    
-    if (!user) throw new NotFoundException('User not found')
+    console.log(user?.hashedPassword);
+
+    if (!user) throw new NotFoundException('User not found');
 
     // FIX 1: Handle nullable hashedPassword
     if (!user.hashedPassword) {
@@ -145,7 +154,9 @@ export class AuthService {
     if (!valid) throw new ForbiddenException('Password is not correct');
 
     const { hashedPassword, ...userWithoutPassword } = user;
-    const hardware = await this.authOtherService.getClientInfo(res.req as Request);
+    const hardware = await this.authOtherService.getClientInfo(
+      res.req as Request,
+    );
     const { session, tokens } = await this.tokenService.createSession(
       user,
       hardware.ip,
@@ -153,18 +164,34 @@ export class AuthService {
       res,
     );
 
-    return { data: userWithoutPassword, session: { id: session.id, userAgent: hardware.userAgent, userIp: session.userIp, loginedAt: session.createdAt }, tokens };
+    return {
+      data: userWithoutPassword,
+      session: {
+        id: session.id,
+        userAgent: hardware.userAgent,
+        userIp: session.userIp,
+        loginedAt: session.createdAt,
+      },
+      tokens,
+    };
   }
 
   // ===============================
   // LOGOUT
   // ===============================
   public async logout(res: Response, sessionId?: string) {
-    const sid = sessionId || (res.req.cookies?.session_id as string | undefined);
+    const sid =
+      sessionId || (res.req.cookies?.session_id as string | undefined);
     if (!sid) throw new BadRequestException('Session id required');
 
-    await this.prismaService.session.update({ where: { id: sid }, data: { hashedRefreshToken: null } });
-    res.clearCookie('access_token', { path: '/' }).clearCookie('refresh_token', { path: '/' }).clearCookie('session_id', { path: '/' });
+    await this.prismaService.session.update({
+      where: { id: sid },
+      data: { hashedRefreshToken: null },
+    });
+    res
+      .clearCookie('access_token', { path: '/' })
+      .clearCookie('refresh_token', { path: '/' })
+      .clearCookie('session_id', { path: '/' });
 
     return { status: true };
   }
@@ -177,23 +204,35 @@ export class AuthService {
     if (!requestId) throw new UnauthorizedException('Unauthorized');
 
     const account = await this.prismaService.user.findFirst({
-      where: { OR: [{ email: dto.accessor }, { username: dto.accessor }], isActive: true },
+      where: {
+        OR: [{ email: dto.accessor }, { username: dto.accessor }],
+        isActive: true,
+      },
     });
     if (!account) throw new NotFoundException('User not found');
-    if (account.id !== requestId) throw new BadRequestException('You are not author');
+    if (account.id !== requestId)
+      throw new BadRequestException('You are not author');
 
     // FIX 2: Handle nullable hashedPassword
     if (!account.hashedPassword) {
-      throw new ForbiddenException('Account does not have a locally set password.');
+      throw new ForbiddenException(
+        'Account does not have a locally set password.',
+      );
     }
 
     const valid = await verify(account.hashedPassword, dto.password);
     if (!valid) throw new ForbiddenException('Password is not correct');
 
     const newHashedPassword = await hash(dto.newPassword);
-    await this.prismaService.user.update({ where: { id: account.id }, data: { hashedPassword: newHashedPassword } });
+    await this.prismaService.user.update({
+      where: { id: account.id },
+      data: { hashedPassword: newHashedPassword },
+    });
 
-    await this.emailProducer.sendNotifiCaitonChangePassword({ to: account.email, username: account.username });
+    await this.emailProducer.sendNotifiCaitonChangePassword({
+      to: account.email,
+      username: account.username,
+    });
 
     return { status: true };
   }
@@ -201,34 +240,54 @@ export class AuthService {
   // ===============================
   // REFRESH TOKEN
   // ===============================
-  public async refreshToken(sessionId: string | undefined, refreshToken: string, res: Response) {
-    const sid = sessionId || (res.req.cookies?.session_id as string | undefined);
-    const hardware = await this.authOtherService.getClientInfo(res.req as Request);
-    return await this.tokenService.refreshToken(sid as string, refreshToken, hardware.ip, hardware.userAgent, res);
+  public async refreshToken(
+    sessionId: string | undefined,
+    refreshToken: string,
+    res: Response,
+  ) {
+    const sid =
+      sessionId || (res.req.cookies?.session_id as string | undefined);
+    const hardware = await this.authOtherService.getClientInfo(
+      res.req as Request,
+    );
+    return await this.tokenService.refreshToken(
+      sid as string,
+      refreshToken,
+      hardware.ip,
+      hardware.userAgent,
+      res,
+    );
   }
 
   async validateOauth2({
-    providerUserId, email, fullname, firstname, lastname, avatarUrl, username, provider }: {
-      providerUserId: string;
-      email: string;
-      fullname: string;
-      firstname?: string;
-      lastname?: string;
-      avatarUrl?: string;
-      username?: string;
-      provider: Provider;
-    }) {
-
-    // check user exitsing 
+    providerUserId,
+    email,
+    fullname,
+    firstname,
+    lastname,
+    avatarUrl,
+    username,
+    provider,
+  }: {
+    providerUserId: string;
+    email: string;
+    fullname: string;
+    firstname?: string;
+    lastname?: string;
+    avatarUrl?: string;
+    username?: string;
+    provider: Provider;
+  }) {
+    // check user exitsing
     let user = await this.prismaService.user.findUnique({
-      where: { email }
-    })
+      where: { email },
+    });
 
-    let userOauth2
+    let userOauth2;
 
-    // check if user doesnt exitsing 
+    // check if user doesnt exitsing
     if (!user) {
-      const newUserId = randomUUID()
+      const newUserId = randomUUID();
       const [user, userOauth2] = await this.prismaService.$transaction([
         this.prismaService.user.create({
           data: {
@@ -241,9 +300,7 @@ export class AuthService {
             hashedPassword: null,
             avtUrl: avatarUrl,
             state: 'active',
-            // Lưu provider dạng lowercase để FE xử lý điều kiện (facebook/google)
-            provider: (provider as unknown as string).toLowerCase(),
-          }
+          },
         }),
         this.prismaService.oauth2User.create({
           data: {
@@ -255,20 +312,24 @@ export class AuthService {
             fullname,
             avatarUrl,
             username,
-            userId: newUserId
-          }
-        })
-      ])
+            userId: newUserId,
+          },
+        }),
+      ]);
 
-      return user
+      return user;
     }
 
-    // Ensure a single oauth2 record per email using the unique constraint on `email`.
-    // This prevents duplicate entries when the same email logs in via different providers (e.g., Google then Facebook).
-    const oauth2ByEmail = await this.prismaService.oauth2User.findUnique({ where: { email } });
+    const oauth2User = await this.prismaService.oauth2User.findFirst({
+      where: {
+        email,
+        providerUserId,
+        userId: user?.id,
+      },
+    });
 
-    if (!oauth2ByEmail) {
-      await this.prismaService.oauth2User.create({
+    if (!oauth2User && user) {
+      userOauth2 = await this.prismaService.oauth2User.create({
         data: {
           provider,
           providerUserId,
@@ -278,42 +339,33 @@ export class AuthService {
           lastname,
           avatarUrl,
           username,
-          userId: user.id,
+          userId: user?.id,
         },
       });
-    } else {
-      await this.prismaService.oauth2User.update({
-        where: { email },
+    } else if (oauth2User && user) {
+      // Update existing OAuth2 user data
+      userOauth2 = await this.prismaService.oauth2User.update({
+        where: { id: oauth2User?.id ?? '' },
+        // where: { id: user?.id },
         data: {
-          provider,
           providerUserId,
           fullname,
           firstname,
           lastname,
           avatarUrl,
           username,
-          userId: user.id,
         },
       });
     }
 
-    // Đồng bộ provider trên bảng User để phản ánh nhà cung cấp hiện tại
-    await this.prismaService.user.update({
-      where: { id: user.id },
-      data: {
-        provider: (provider as unknown as string).toLowerCase(),
-        ...(avatarUrl ? { avtUrl: avatarUrl } : {}),
-        accountType: 'OAUTH2',
-        isActive: true,
-      },
-    });
-
-    return user
+    return user;
   }
 
-
-  async oauth2Login(user: FacebookOAuth2User | GoogleOAuth2User, res: Response) {
-    const provider = user.provider
+  async oauth2Login(
+    user: FacebookOAuth2User | GoogleOAuth2User,
+    res: Response,
+  ) {
+    const provider = user.provider;
     const {
       providerUserId,
       email,
@@ -321,10 +373,11 @@ export class AuthService {
       firstname,
       lastname,
       avatarUrl,
-      username
+      username,
     } = user;
 
-    
+    console.log(user);
+
     const validateUser = await this.validateOauth2({
       providerUserId,
       email,
@@ -333,30 +386,42 @@ export class AuthService {
       lastname,
       avatarUrl,
       username,
-      provider
-    })
+      provider,
+    });
 
     const userOauth2 = {
-      id: validateUser
-    }
+      id: validateUser,
+    };
 
     // get hardware
-    const hardware = await this.authOtherService.getClientInfo(res.req as Request)
+    const hardware = await this.authOtherService.getClientInfo(
+      res.req as Request,
+    );
 
     const oauth2User = {
       id: validateUser.id,
       email: validateUser.email,
       username: validateUser.username,
-      createdAt: new Date()
-    }
+      createdAt: new Date(),
+    };
 
     const { session, tokens } = await this.tokenService.createSession(
       oauth2User,
       hardware.ip,
       hardware.userAgent,
-      res)
+      res,
+    );
 
-    return { data: oauth2User, session: { id: session.id, userAgent: hardware.userAgent, userIp: session.userIp, loginedAt: session.createdAt }, tokens };
+    return {
+      data: oauth2User,
+      session: {
+        id: session.id,
+        userAgent: hardware.userAgent,
+        userIp: session.userIp,
+        loginedAt: session.createdAt,
+      },
+      tokens,
+    };
   }
 
   // ===============================
@@ -372,7 +437,7 @@ export class AuthService {
       // 2. Fetch the user from the database
       const user = await this.prismaService.user.findUnique({
         where: { id: payload.sub },
-        omit: { hashedPassword: false }
+        omit: { hashedPassword: false },
       });
 
       // 3. Return the user if found, otherwise return null/throw
@@ -382,7 +447,6 @@ export class AuthService {
 
       // The returned value is what NestJS Passport injects into the request object (req.user)
       return user;
-
     } catch (error) {
       // Handle common JWT errors (e.g., expiration, invalid signature)
       throw new UnauthorizedException('Token validation failed');
@@ -415,44 +479,46 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');
 
-    // Mặc định tên/ảnh từ bảng users
-    let name = user.fullname ||
+    const name =
+      user.fullname ||
       `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
       user.username ||
       user.email;
-    let avatar = user.picture || user.avtUrl || undefined;
 
-    // Với tài khoản Facebook: dùng tên Facebook, ẩn email và trả về link trang cá nhân
-    let emailToReturn: string | undefined = user.email;
-    let profileUrl: string | undefined;
+    const avatar = user.picture || user.avtUrl || undefined;
 
-    if (user.provider === 'facebook') {
-      // Lấy dữ liệu từ oauth2_user để có providerUserId, fullname, avatarUrl
-      const fbOauth = await this.prismaService.oauth2User.findFirst({
-        where: { userId: user.id, provider: 'FACEBOOK' },
-        select: { providerUserId: true, fullname: true, username: true, avatarUrl: true },
-      });
+    // SỬA QUAN TRỌNG: CHỈ ẨN EMAIL NẾU THẬT SỰ LÀ FACEBOOK USER
+    let displayEmail = user.email;
 
-      if (fbOauth) {
-        name = fbOauth.fullname || fbOauth.username || name;
-        profileUrl = `https://facebook.com/${fbOauth.providerUserId}`;
-        // Ưu tiên avatar từ oauth2 nếu user chưa có
-        if (!avatar) avatar = fbOauth.avatarUrl || avatar;
-      }
-
-      // Ẩn email cho tài khoản Facebook
-      emailToReturn = undefined;
+    // Chỉ ẩn email nếu:
+    // 1. Provider là facebook VÀ
+    // 2. Email có chứa ".fb@" hoặc "@facebook.com"
+    if (
+      user.provider === 'facebook' &&
+      (user.email.includes('.fb@') || user.email.includes('@facebook.com'))
+    ) {
+      // Tạo email ảo từ username
+      displayEmail = `${user.username || user.id}@facebook.com`;
     }
+    // Các trường hợp khác (Google, local) hiển thị email thật
+
+    console.log('getMe - Final user data:', {
+      id: user.id,
+      name,
+      originalEmail: user.email,
+      displayEmail,
+      provider: user.provider,
+      avatar: avatar,
+    });
 
     return {
       id: user.id,
-      email: emailToReturn,
+      email: displayEmail,
       username: user.username,
       name,
       avatar,
       isActive: user.isActive,
       provider: user.provider,
-      profileUrl,
     };
   }
 }
