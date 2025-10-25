@@ -15,7 +15,9 @@ async function bootstrap() {
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Stock Prediction API')
-    .setDescription('Stock price prediction platform API documentation using Random Forest ML model')
+    .setDescription(
+      'Stock price prediction platform API documentation using Random Forest ML model',
+    )
     .setVersion('1.0')
     .addTag('Auth', 'Authentication endpoints')
     .addTag('User', 'User management endpoints')
@@ -38,9 +40,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.use(helmet());
-  app.use('/upload', express.static(join(__dirname, '..', 'upload')))
-  app.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }))
-  app.getHttpAdapter().getInstance().set('trust proxy', 1)
+  app.use('/upload', express.static(join(__dirname, '..', 'upload')));
+  app.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
@@ -59,7 +61,7 @@ async function bootstrap() {
         queueOptions: {
           durable: false,
         },
-      }
+      },
     });
 
     await app.startAllMicroservices();

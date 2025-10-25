@@ -93,13 +93,15 @@ const LoginPage: React.FC = () => {
           );
         }
 
-        // ✅ Kiểm tra và lưu token
+        // Kiểm tra và lưu token
         if (!data.tokens?.accessToken) {
           throw new Error("Không nhận được accessToken từ server");
         }
 
         // Lưu token vào localStorage
         localStorage.setItem("accessToken", data.tokens.accessToken);
+
+        window.dispatchEvent(new Event("user-logged-in"));
 
         // Lưu thông tin user
         if (data.data) {
@@ -118,6 +120,7 @@ const LoginPage: React.FC = () => {
 
         // ✅ Redirect về dashboard
         router.push("/dashboard");
+        router.refresh();
       } else {
         // Xử lý response không phải JSON
         const textResponse = await response.text();

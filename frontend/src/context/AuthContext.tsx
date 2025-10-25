@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface UserData {
   name: string;
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (!token) {
       setUser(null);
       setLoading(false);
@@ -29,19 +29,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const res = await fetch('http://localhost:4000/auth/me', {
-        method: 'GET',
+      const res = await fetch("http://localhost:4000/auth/me", {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        credentials: 'include',
-        cache: 'no-cache',
+        credentials: "include",
+        cache: "no-cache",
       });
 
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('accessToken');
+          localStorage.removeItem("accessToken");
         }
         setUser(null);
         setLoading(false);
@@ -50,9 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await res.json();
       let avatarUrl = data.user.avatar;
-      
-      if (!avatarUrl || avatarUrl === '') {
-        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}&background=random`;
+
+      if (!avatarUrl || avatarUrl === "") {
+        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          data.user.name || data.user.username || data.user.email
+        )}&background=random`;
       }
 
       setUser({
@@ -61,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         avatar: avatarUrl,
       });
     } catch (err) {
-      console.error('Error fetching user:', err);
+      console.error("Error fetching user:", err);
       setUser(null);
     } finally {
       setLoading(false);
@@ -70,6 +72,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     fetchUser();
+
+    const handleAuthChange = () => {
+      fetchUser();
+    };
+
+    window.addEventListener("user-logged-in", handleAuthChange);
+    window.addEventListener("user-logged-out", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("user-logged-in", handleAuthChange);
+      window.removeEventListener("user-logged-out", handleAuthChange);
+    };
   }, []);
 
   const refreshUser = async () => {
@@ -87,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
