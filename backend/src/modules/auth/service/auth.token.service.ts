@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AUTH_CONSTANT } from '../auth.constants';
 import { Payload } from '../auth.interface';
 @Injectable()
-export class AuthTokenSerivec {
+export class AuthTokenService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,

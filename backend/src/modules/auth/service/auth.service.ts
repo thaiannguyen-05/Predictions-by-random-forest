@@ -21,35 +21,7 @@ import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
-import { AuthTokenSerivec } from './auth.token.service';
-
-interface SocialProfile {
-  id: string;
-  provider?: string;
-  email?: string;
-  emails?: Array<{ value: string }>;
-  firstName?: string;
-  lastName?: string;
-  name?: {
-    givenName?: string;
-    familyName?: string;
-  };
-  displayName?: string;
-  fullName?: string;
-  picture?: string;
-  photos?: Array<{ value: string }>;
-  accessToken?: string;
-  [key: string]: unknown;
-}
-
-interface UserUpdates {
-  picture?: string;
-  avtUrl?: string;
-  fullname?: string;
-  firstName?: string;
-  lastName?: string;
-  [key: string]: unknown;
-}
+import { AuthTokenService } from './auth.token.service';
 
 @Injectable()
 export class AuthService {
@@ -57,7 +29,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly emailProducer: EmailProducer,
     private readonly authOtherService: AuthOtherService,
-    private readonly tokenService: AuthTokenSerivec,
+    private readonly tokenService: AuthTokenService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
