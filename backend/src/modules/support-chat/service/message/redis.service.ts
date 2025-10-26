@@ -44,7 +44,7 @@ export class RedisService implements OnModuleInit {
       await this.redisClient.zadd(
         key,
         timestamp,
-        JSON.stringify({ ...message, timestamp })
+        JSON.stringify({ ...message, timestamp }),
       );
 
       // Set TTL cho key

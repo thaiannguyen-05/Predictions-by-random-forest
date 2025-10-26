@@ -1,5 +1,5 @@
 export class ChangePasswordDto {
-	accessor: string
-	password: string
-	newPassword: string
+  accessor: string;
+  password: string;
+  newPassword: string;
 }

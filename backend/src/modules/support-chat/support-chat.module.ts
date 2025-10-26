@@ -1,43 +1,41 @@
-import { Module } from "@nestjs/common";
-import { SupportChatService } from "./support-chat.service";
-import { ClientsModule, Transport } from "@nestjs/microservices";
-import { MessageService } from "./service/message/message.service";
-import { MessageProducer } from "./service/message/queue_service/message.producer";
-import { MessageConsumer } from "./service/message/queue_service/message.consumer";
-import { BatchInsertService } from "./service/message/queue_service/batchInsert.service";
-import { RedisService } from "./service/message/redis.service";
-import { PrismaService } from "src/prisma/prisma.service";
-import { TestController } from "./service/message/test.controller";
-import { RoomService } from "./service/room/room.service";
+import { Module } from '@nestjs/common';
+import { SupportChatService } from './support-chat.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { MessageService } from './service/message/message.service';
+import { MessageProducer } from './service/message/queue_service/message.producer';
+import { MessageConsumer } from './service/message/queue_service/message.consumer';
+import { BatchInsertService } from './service/message/queue_service/batchInsert.service';
+import { RedisService } from './service/message/redis.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { TestController } from './service/message/test.controller';
+import { RoomService } from './service/room/room.service';
 
 @Module({
-	imports: [
-		ClientsModule.register([
-			{
-				name: 'MESSAGE_QUEUE',
-				transport: Transport.RMQ,
-				options: {
-					urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
-					queue: 'message_queue',
-					queueOptions: {
-						durable: true,
-					},
-				}
-			}
-		])
-	],
-	providers: [
-		SupportChatService,
-		MessageService,
-		MessageProducer,
-		BatchInsertService,
-		RedisService,
-		PrismaService,
-		RoomService
-	],
-	controllers: [MessageConsumer, TestController],
-	exports: [MessageService, RedisService]
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MESSAGE_QUEUE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
+          queue: 'message_queue',
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
+  ],
+  providers: [
+    SupportChatService,
+    MessageService,
+    MessageProducer,
+    BatchInsertService,
+    RedisService,
+    PrismaService,
+    RoomService,
+  ],
+  controllers: [MessageConsumer, TestController],
+  exports: [MessageService, RedisService],
 })
-export class SupportChatModule {
-
-}
+export class SupportChatModule {}

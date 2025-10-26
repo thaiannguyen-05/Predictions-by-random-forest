@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
-	access: string
+  access: string;
 
-	@ApiProperty({
-		description: 'User password',
-		example: 'StrongPass123!',
-		format: 'password'
-	})
-	password: string
+  @ApiProperty({
+    description: 'User password',
+    example: 'StrongPass123!',
+    format: 'password',
+  })
+  password: string;
 }

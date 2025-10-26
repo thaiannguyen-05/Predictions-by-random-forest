@@ -21,7 +21,7 @@ import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
-import { AuthTokenService } from './auth.token.service';
+import { AuthTokenSerivec } from './auth.token.service';
 
 interface SocialProfile {
   id: string;
@@ -57,7 +57,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly emailProducer: EmailProducer,
     private readonly authOtherService: AuthOtherService,
-    private readonly tokenService: AuthTokenService,
+    private readonly tokenService: AuthTokenSerivec,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -279,7 +279,7 @@ export class AuthService {
     provider: Provider;
   }) {
     // check user exitsing
-    let user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: { email },
     });
 

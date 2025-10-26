@@ -253,14 +253,9 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // Đồng bộ với luồng Google: tạo session, lấy accessToken và redirect về FE
-    const result = await this.authService.oauth2Login(
-      req.user as unknown as FacebookOAuth2User,
+    return this.authService.oauth2Login(
+      req.user as any as FacebookOAuth2User,
       res,
-    );
-    const accessToken = result.tokens.accessToken;
-    return res.redirect(
-      `http://localhost:3000/auth/success?token=${accessToken}`,
     );
   }
 

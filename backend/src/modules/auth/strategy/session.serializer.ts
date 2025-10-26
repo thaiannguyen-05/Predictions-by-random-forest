@@ -20,7 +20,7 @@ export class SessionSerializer extends PassportSerializer {
       email: user.email,
       provider: user.provider,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
     });
     done(null, user);
   }
@@ -28,10 +28,10 @@ export class SessionSerializer extends PassportSerializer {
   deserializeUser(payload: SerializedUser, done: SerializationDone) {
     console.log('🔓 Deserializing user:', {
       id: payload?.id,
-      email: payload?.email, 
+      email: payload?.email,
       provider: payload?.provider,
       firstName: payload?.firstName,
-      lastName: payload?.lastName
+      lastName: payload?.lastName,
     });
     done(null, payload);
   }
