@@ -16,17 +16,17 @@ import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒN
   imports: [
     PassportModule.register({
       session: true, // ĐÃ CÓ
-      defaultStrategy: 'jwt'
+      defaultStrategy: 'jwt',
     }),
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>("JWT_SECRET"),
-        signOptions: { expiresIn: '1d' }
-      })
-    })
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
   ],
   providers: [
     AuthService,
@@ -35,9 +35,9 @@ import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒN
     CookieStrategy,
     GoogleStrategy,
     FacebookStrategy,
-    SessionSerializer // THÊM DÒNG NÀY
+    SessionSerializer, // THÊM DÒNG NÀY
   ],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

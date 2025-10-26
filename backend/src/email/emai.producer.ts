@@ -1,21 +1,19 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class EmailProducer {
-	constructor(
-		@Inject('EMAIL_SERVICE') private readonly client: ClientProxy
-	) { }
+  constructor(@Inject('EMAIL_SERVICE') private readonly client: ClientProxy) {}
 
-	async sendVerifyCodeRegister(data: { to: string, code: string }) {
-		await this.client.emit('send-code-register', data)
-	}
+  async sendVerifyCodeRegister(data: { to: string; code: string }) {
+    await this.client.emit('send-code-register', data);
+  }
 
-	async sendDetectOtherDevice(data: { to: string, username: string }) {
-		await this.client.emit('send-detect-other-device', data)
-	}
+  async sendDetectOtherDevice(data: { to: string; username: string }) {
+    await this.client.emit('send-detect-other-device', data);
+  }
 
-	async sendNotifiCaitonChangePassword(data: { to: string, username: string }) {
-		await this.client.emit('send-notification-password', data)
-	}
+  async sendNotifiCaitonChangePassword(data: { to: string; username: string }) {
+    await this.client.emit('send-notification-password', data);
+  }
 }

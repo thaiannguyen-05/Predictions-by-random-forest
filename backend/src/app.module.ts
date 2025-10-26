@@ -15,13 +15,21 @@ import { SupportChatModule } from './modules/support-chat/support-chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    StockModule, PrismaModule, EmailModule, AuthModule, UserModule, RedisModule, SupportChatModule,
+    StockModule,
+    PrismaModule,
+    EmailModule,
+    AuthModule,
+    UserModule,
+    RedisModule,
+    SupportChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AppService,
+  providers: [
+    AppService,
+    AppService,
     {
       provide: APP_GUARD,
       inject: [Reflector],
@@ -29,4 +37,4 @@ import { SupportChatModule } from './modules/support-chat/support-chat.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

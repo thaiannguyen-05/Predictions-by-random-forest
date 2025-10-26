@@ -8,17 +8,17 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get welcome message',
-    description: 'Returns a simple welcome message from the application' 
+    description: 'Returns a simple welcome message from the application',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Welcome message retrieved successfully',
     schema: {
       type: 'string',
-      example: 'Hello World!'
-    }
+      example: 'Hello World!',
+    },
   })
   getHello(): string {
     return this.appService.getHello();

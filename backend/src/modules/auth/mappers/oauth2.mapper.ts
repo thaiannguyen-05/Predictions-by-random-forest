@@ -41,7 +41,9 @@ export class OAuth2Mapper {
     };
   }
 
-  static mapFacebookUser(strategyUser: FacebookStrategyUser): FacebookOAuth2User {
+  static mapFacebookUser(
+    strategyUser: FacebookStrategyUser,
+  ): FacebookOAuth2User {
     return {
       providerUserId: strategyUser.id,
       email: strategyUser.email ?? '',
