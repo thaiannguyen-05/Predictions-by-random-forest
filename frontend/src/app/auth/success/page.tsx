@@ -21,7 +21,7 @@ export default function AuthSuccess() {
         await refreshUser();
 
         // Redirect sau khi login thành công
-        router.push('/');
+        router.push('/dashboard');
       } else {
         console.error("❌ No token found in URL");
         router.push('/auth/login');

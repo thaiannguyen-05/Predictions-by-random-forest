@@ -3,7 +3,7 @@ import { AuthService } from './service/auth.service';
 import { AuthController } from './auth.controller';
 import { EmailModule } from '../../email/email.module';
 import { AuthOtherService } from './service/auth.other.service';
-import { AuthTokenSerivec } from './service/auth.token.service';
+import { AuthTokenService } from './service/auth.token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CookieStrategy } from './strategy/auth-cookie.strategy';
@@ -31,7 +31,7 @@ import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒN
   providers: [
     AuthService,
     AuthOtherService,
-    AuthTokenSerivec,
+    AuthTokenService,
     CookieStrategy,
     GoogleStrategy,
     FacebookStrategy,
