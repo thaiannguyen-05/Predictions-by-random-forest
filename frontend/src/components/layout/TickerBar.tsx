@@ -1,75 +1,124 @@
-'use client';
+// components/layout/TickerBar.tsx
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react'; // Sử dụng icon từ lucide-react (hoặc react-icons)
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import RealTimeClock from "@/components/common/RealTimeClock";
+import { TRAINED_STOCKS, STOCK_DETAILS } from "../constants/TrainedStock";
 
-// Định nghĩa kiểu dữ liệu cho cổ phiếu
-interface StockData {
+interface StockTicker {
   symbol: string;
   price: number;
+  change: number;
   changePercent: number;
+  hasModel: boolean;
 }
 
-const DUMMY_STOCKS: StockData[] = [
-  { symbol: 'VNINDEX', price: 1250.35, changePercent: 0.85 },
-  { symbol: 'HNX', price: 245.10, changePercent: -1.20 },
-  { symbol: 'HOSE', price: 1250.35, changePercent: 0.85 },
-  { symbol: 'ACB', price: 28.50, changePercent: 1.55 },
-  { symbol: 'FPT', price: 135.20, changePercent: -0.45 },
-  { symbol: 'VNM', price: 72.80, changePercent: 2.10 },
-  // ... Cổ phiếu khác
-];
+export default function TickerBar() {
+  const router = useRouter();
+  const [tickers, setTickers] = useState<StockTicker[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-const TickerBar: React.FC = () => {
-  // Thay thế bằng logic kết nối WebSocket (hoặc Polling) tới NestJS Backend
-  const [stocks, setStocks] = useState<StockData[]>(DUMMY_STOCKS);
+  useEffect(() => {
+    const fetchTickerData = async () => {
+      try {
+        // Sử dụng giá thực tế từ STOCK_DETAILS và thêm biến động nhỏ
+        const realisticTickers: StockTicker[] = TRAINED_STOCKS.map((symbol) => {
+          const stockInfo = STOCK_DETAILS[symbol];
+          if (!stockInfo) {
+            // Fallback nếu không có thông tin
+            const basePrice = 40000;
+            const changePercent = (Math.random() - 0.5) * 4; // Biến động ±2%
+            const change = (basePrice * changePercent) / 100;
 
-  // useEffect(() => {
-  //   // Logic kết nối WebSocket tới ws://localhost:3000/realtime-stocks
-  //   // lắng nghe sự kiện và cập nhật setStocks
-  // }, []);
+            return {
+              symbol,
+              price: basePrice,
+              change,
+              changePercent,
+              hasModel: true,
+            };
+          }
+
+          // Tạo biến động thực tế quanh giá hiện tại (±1-2%)
+          const changePercent = (Math.random() - 0.5) * 4;
+          const change = (stockInfo.currentPrice * changePercent) / 100;
+          const currentPrice = stockInfo.currentPrice + change;
+
+          return {
+            symbol,
+            price: currentPrice,
+            change,
+            changePercent,
+            hasModel: true,
+          };
+        });
+
+        setTickers(realisticTickers);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching ticker data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchTickerData();
+    // Cập nhật mỗi 10 giây để có cảm giác real-time
+    const interval = setInterval(fetchTickerData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleStockClick = (symbol: string) => {
+    router.push(`/stocks/${symbol}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-900 border-b border-gray-700 py-2 overflow-hidden">
+        <div className="flex justify-between items-center px-4">
+          <div className="animate-pulse text-gray-500">
+            Đang tải dữ liệu {TRAINED_STOCKS.length} cổ phiếu...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    // Sử dụng Tailwind CSS cho phong cách tối giản, nền tối
-    <div className="bg-gray-800 text-white py-2 overflow-hidden shadow-lg border-b border-gray-700">
-      {/* Sử dụng CSS animation cho hiệu ứng chạy ngang (marquee) 
-        Hoặc dùng thư viện như react-fast-marquee
-      */}
-      <div className="flex w-[200%] animate-ticker whitespace-nowrap">
-        {/* Lặp lại danh sách để tạo hiệu ứng cuộn liền mạch */}
-        {[...stocks, ...stocks].map((stock, index) => {
-          const isPositive = stock.changePercent > 0;
-          const colorClass = isPositive ? 'text-green-400' : 'text-red-500';
-          const Icon = isPositive ? ChevronUp : ChevronDown;
+    <div className="bg-gray-900 border-b border-gray-700 py-2 shadow-xl overflow-hidden">
+      <div className="animate-ticker whitespace-nowrap">
+        {tickers.map((stock) => (
+          <button
+            key={stock.symbol}
+            onClick={() => handleStockClick(stock.symbol)}
+            className="inline-flex items-center mx-6 px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer group relative"
+          >
+            {/* Indicator cho cổ phiếu đã train */}
+            {stock.hasModel && (
+              <div
+                className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full"
+                title="Đã train model AI"
+              />
+            )}
 
-          return (
-            <div key={index} className="flex items-center mx-4 px-3 py-1 hover:bg-gray-700 transition-colors cursor-pointer rounded-sm">
-              <span className="font-bold text-sm mr-2">{stock.symbol}</span>
-              <span className="text-sm mr-2">{stock.price.toFixed(2)}</span>
-              <div className={`flex items-center text-xs font-semibold ${colorClass}`}>
-                <Icon size={12} className="mr-0.5" />
-                <span>{stock.changePercent.toFixed(2)}%</span>
-              </div>
-            </div>
-          );
-        })}
+            <span className="font-bold text-white mr-2 group-hover:text-blue-400 transition-colors">
+              {stock.symbol}
+            </span>
+            <span className="text-white font-medium mr-2">
+              {stock.price.toLocaleString("vi-VN")}₫
+            </span>
+            <span
+              className={`text-sm font-semibold ${
+                stock.change >= 0 ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              {stock.change >= 0 ? "+" : ""}
+              {stock.change.toFixed(0)}({stock.change >= 0 ? "+" : ""}
+              {stock.changePercent.toFixed(2)}%)
+            </span>
+          </button>
+        ))}
       </div>
-
-      {/* Tailwind CSS keyframe cho hiệu ứng marquee (cần thêm vào tailwind.config.js) */}
-      <style jsx global>{`
-        @keyframes ticker {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); } /* Dịch chuyển 50% để lặp lại */
-        }
-        .animate-ticker {
-          animation: ticker 25s linear infinite;
-        }
-        .animate-ticker:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
-};
-
-export default TickerBar;
+}

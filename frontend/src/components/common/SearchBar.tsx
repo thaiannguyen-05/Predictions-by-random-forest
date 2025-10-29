@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Search, Loader2 } from "lucide-react";
 
 // Giả định kiểu dữ liệu trả về từ API Backend
 interface StockSuggestion {
@@ -13,27 +13,28 @@ interface StockSuggestion {
 const fetchSuggestions = async (query: string): Promise<StockSuggestion[]> => {
   if (query.length < 2) return [];
   console.log(`Searching for: ${query}...`);
-  
+
   // TẠI ĐÂY: Sẽ gọi API tới Backend NestJS (e.g., /api/stocks/search?q=...)
-  await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 300)); // Simulate API delay
 
   // Dữ liệu giả lập
   const allStocks: StockSuggestion[] = [
-    { symbol: 'FPT', companyName: 'Công ty Cổ phần FPT' },
-    { symbol: 'VND', companyName: 'Chứng khoán VNDIRECT' },
-    { symbol: 'VNM', companyName: 'Vinamilk' },
-    { symbol: 'VIC', companyName: 'Tập đoàn Vingroup' },
-    { symbol: 'VCB', companyName: 'Vietcombank' },
+    { symbol: "FPT", companyName: "Công ty Cổ phần FPT" },
+    { symbol: "VND", companyName: "Chứng khoán VNDIRECT" },
+    { symbol: "VNM", companyName: "Vinamilk" },
+    { symbol: "VIC", companyName: "Tập đoàn Vingroup" },
+    { symbol: "VCB", companyName: "Vietcombank" },
   ];
 
-  return allStocks.filter(stock => 
-    stock.symbol.toLowerCase().includes(query.toLowerCase()) || 
-    stock.companyName.toLowerCase().includes(query.toLowerCase())
+  return allStocks.filter(
+    (stock) =>
+      stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
+      stock.companyName.toLowerCase().includes(query.toLowerCase())
   );
 };
 
 const SearchBar: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState<StockSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -49,7 +50,7 @@ const SearchBar: React.FC = () => {
       const results = await fetchSuggestions(query);
       setSuggestions(results);
     } catch (error) {
-      console.error('Lỗi tìm kiếm:', error);
+      console.error("Lỗi tìm kiếm:", error);
       setSuggestions([]);
     } finally {
       setIsLoading(false);
@@ -64,7 +65,6 @@ const SearchBar: React.FC = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, searchStocks]);
-
 
   const handleSelectSuggestion = (symbol: string) => {
     setSearchTerm(symbol);
@@ -91,7 +91,10 @@ const SearchBar: React.FC = () => {
           onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay để click vào gợi ý
         />
         {isLoading && (
-          <Loader2 size={20} className="text-blue-400 mr-4 animate-spin absolute right-0" />
+          <Loader2
+            size={20}
+            className="text-blue-400 mr-4 animate-spin absolute right-0"
+          />
         )}
       </div>
 

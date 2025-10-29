@@ -1,79 +1,84 @@
-'use client';
+// components/sections/Recommendations.tsx
+"use client";
 
-import React from 'react';
-import { Zap, TrendingUp, TrendingDown, Plus } from 'lucide-react';
+import React from "react";
+import { useRouter } from "next/navigation";
+import { TrendingUp, Star } from "lucide-react";
+import { TRAINED_STOCKS, STOCK_DETAILS } from "../constants/TrainedStock";
 
-// Kiểu dữ liệu cho cổ phiếu đề xuất
-interface RecommendedStock {
-  symbol: string;
-  reason: string;
-  targetPrice: number;
-  currentPrice: number;
-  isBullish: boolean; // Tăng hay Giảm
-}
+export default function Recommendations() {
+  const router = useRouter();
 
-const DUMMY_RECS: RecommendedStock[] = [
-  {
-    symbol: 'HPG',
-    reason: 'Kỳ vọng tăng trưởng lợi nhuận quý 3 sau khi mở lại lò cao.',
-    targetPrice: 32.50,
-    currentPrice: 31.80,
-    isBullish: true,
-  },
-  {
-    symbol: 'SSI',
-    reason: 'Dự báo hưởng lợi lớn từ hệ thống KRX và thanh khoản thị trường tăng.',
-    targetPrice: 38.00,
-    currentPrice: 36.50,
-    isBullish: true,
-  },
-];
+  // Lấy ngẫu nhiên 5 cổ phiếu từ danh sách đã train để recommend
+  const recommendedStocks = TRAINED_STOCKS.sort(() => Math.random() - 0.5)
+    .slice(0, 5)
+    .map((symbol) => {
+      const stockInfo = STOCK_DETAILS[symbol];
+      const basePrice = 30000 + Math.random() * 70000;
+      const changePercent = (Math.random() - 0.3) * 10; // Thiên về tăng giá
 
-const Recommendations: React.FC = () => {
+      return {
+        symbol,
+        name: stockInfo?.name || `Công ty ${symbol}`,
+        price: basePrice,
+        changePercent,
+        sector: stockInfo?.sector || "Chưa phân loại",
+      };
+    });
+
+  const handleStockClick = (symbol: string) => {
+    router.push(`/stocks/${symbol}`);
+  };
+
   return (
-    <div className="bg-gray-800 p-5 rounded-xl shadow-2xl border border-gray-700">
-      <h2 className="flex items-center text-xl font-bold text-green-400 mb-4 border-b border-gray-700 pb-3">
-        <Zap size={22} className="mr-2" />
-        Đề xuất Trong ngày
-      </h2>
-      
-      <div className="space-y-4">
-        {DUMMY_RECS.map((stock) => {
-          const Icon = stock.isBullish ? TrendingUp : TrendingDown;
-          const colorClass = stock.isBullish ? 'text-green-400' : 'text-red-500';
-          
+    <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
+      <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center">
+        <TrendingUp className="mr-2" size={20} />
+        Cổ phiếu đề xuất
+      </h3>
+
+      <div className="space-y-3">
+        {recommendedStocks.map((stock) => {
+          const isPositive = stock.changePercent >= 0;
+
           return (
-            <div 
-              key={stock.symbol} 
-              className="p-3 bg-gray-900 rounded-lg border border-gray-700 hover:border-blue-500 transition-all duration-200"
+            <div
+              key={stock.symbol}
+              onClick={() => handleStockClick(stock.symbol)}
+              className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer group"
             >
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center space-x-2">
-                    <span className={`font-extrabold text-lg ${colorClass}`}>{stock.symbol}</span>
-                    <Icon size={18} className={colorClass} />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white group-hover:text-blue-400 transition-colors">
+                    {stock.symbol}
+                  </span>
+                  <span className="text-white font-medium">
+                    {stock.price.toLocaleString("vi-VN")}₫
+                  </span>
                 </div>
-                <button 
-                    className="p-1 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors"
-                    title="Thêm vào danh sách theo dõi"
-                >
-                    <Plus size={16} className="text-white" />
-                </button>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs text-gray-400">{stock.sector}</span>
+                  <span
+                    className={`text-sm font-semibold ${
+                      isPositive ? "text-green-400" : "text-red-400"
+                    }`}
+                  >
+                    {isPositive ? "+" : ""}
+                    {stock.changePercent.toFixed(2)}%
+                  </span>
+                </div>
               </div>
-              
-              <p className="text-xs text-gray-400 line-clamp-2 italic mb-2">
-                "{stock.reason}"
-              </p>
-              
-              <div className="text-xs space-y-1">
-                <p className="text-gray-300">Giá hiện tại: <span className="font-bold">{stock.currentPrice.toFixed(2)}</span></p>
-                <p className="text-green-400 font-semibold">Mục tiêu: {stock.targetPrice.toFixed(2)}</p>
+              <div className="ml-2">
+                <Star size={16} className="text-yellow-400" />
               </div>
             </div>
           );
         })}
       </div>
+
+      <div className="mt-4 text-xs text-gray-500 text-center">
+        💡 Đề xuất từ 38 cổ phiếu đã train model AI
+      </div>
     </div>
   );
-};
-
-export default Recommendations;
+}

@@ -1,20 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
-import MainLayout from '../main-layout';
-import SearchBar from '@/components/common/SearchBar';
-import Recommendations from '@/components/sections/Recommendations';
-import Watchlist from '@/components/sections/Watchlist';
-import NewsFeed from '@/components/sections/NewsFeed';
-import AboutUs from '@/components/sections/AboutUs';
-import { TrendingUp, LineChart, Wallet, Bell } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-
+import React from "react";
+import MainLayout from "../main-layout";
+import SearchBar from "@/components/common/SearchBar";
+import Recommendations from "@/components/sections/Recommendations";
+import Watchlist from "@/components/sections/Watchlist";
+import NewsFeed from "@/components/sections/NewsFeed";
+import AboutUs from "@/components/sections/AboutUs";
+import { TrendingUp, LineChart, Wallet, Bell } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import RealTimeClock from "@/components/common/RealTimeClock";
 export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
     <MainLayout>
+      <RealTimeClock />
       <div className="min-h-screen">
         <SearchBar />
 
