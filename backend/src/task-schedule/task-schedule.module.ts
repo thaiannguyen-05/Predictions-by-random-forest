@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { StockModule } from 'src/modules/stock/stock.module';
 import { TaskScheduleService } from './task-schedule.service';
+import { StockModule } from '../modules/stock/stock.module';
 
 @Module({
   imports: [StockModule],

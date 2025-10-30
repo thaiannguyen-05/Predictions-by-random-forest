@@ -6,9 +6,9 @@ import { MessageProducer } from './service/message/queue_service/message.produce
 import { MessageConsumer } from './service/message/queue_service/message.consumer';
 import { BatchInsertService } from './service/message/queue_service/batchInsert.service';
 import { RedisService } from './service/message/redis.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { TestController } from './service/message/test.controller';
 import { RoomService } from './service/room/room.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Module({
   imports: [

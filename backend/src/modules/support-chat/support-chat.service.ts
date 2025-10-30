@@ -11,7 +11,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ResponseMessageDto } from './dto/response-message.dto';
 import { MessageQueue } from './interfaces/support-chat.interface';
@@ -19,6 +18,7 @@ import { randomUUID } from 'crypto';
 import { MessageService } from './service/message/message.service';
 import { RoomService } from './service/room/room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 @Injectable()
 export class SupportChatService {
   private readonly googleAi: GoogleGenerativeAI;
@@ -164,7 +164,7 @@ export class SupportChatService {
     this.logger.log(`Sending prompt to Gemini AI for session: ${sessionId}`);
 
     const result = await chat.sendMessage(data.prompt);
-    const response = await result.response.text();
+    const response = result.response.text();
 
     const messageQueue: MessageQueue = {
       content: data.prompt,

@@ -4,8 +4,8 @@ import {
   OnModuleInit,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { MessageQueue } from '../../../interfaces/support-chat.interface';
+import { PrismaService } from '../../../../../prisma/prisma.service';
 
 const MAX_INSERT = 1000;
 const FLUSH_INTERVAL_MS = 5000;
