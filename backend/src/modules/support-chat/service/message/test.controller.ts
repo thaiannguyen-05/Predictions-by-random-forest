@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from '../../dto/create-message.dto';
-import { Public } from 'src/common/decorator/public.decorator';
+import { Public } from '../../../../common/decorator/public.decorator';
 
 @Controller('test')
 export class TestController {

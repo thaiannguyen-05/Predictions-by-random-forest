@@ -11,10 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import { Provider } from 'prisma/generated/prisma';
-import { DateUtils } from 'src/common/utils/string-to-date.utils';
-import { EmailProducer } from 'src/email/emai.producer';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
@@ -22,6 +18,10 @@ import { LoginDto } from '../dto/login.dto';
 import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
 import { AuthTokenService } from './auth.token.service';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { EmailProducer } from '../../../email/emai.producer';
+import { DateUtils } from '../../../common/utils/string-to-date.utils';
+import { Provider } from '../../../../prisma/generated/prisma';
 
 @Injectable()
 export class AuthService {

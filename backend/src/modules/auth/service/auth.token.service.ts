@@ -7,11 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { Response } from 'express';
-import { EmailProducer } from 'src/email/emai.producer';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { AUTH_CONSTANT } from '../auth.constants';
 import { Payload } from '../auth.interface';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { EmailProducer } from '../../../email/emai.producer';
 @Injectable()
 export class AuthTokenService {
   constructor(
