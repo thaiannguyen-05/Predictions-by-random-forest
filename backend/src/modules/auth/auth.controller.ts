@@ -22,14 +22,14 @@ import {
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import express from 'express';
-import { Cookies } from 'src/common/decorator/cookie.decoratore';
-import { Public } from 'src/common/decorator/public.decorator';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyAccount } from './dto/verify-account.dto';
 import { AuthService } from './service/auth.service';
 import { FacebookOAuth2User, GoogleOAuth2User } from './auth.interface';
+import { Public } from '../../common/decorator/public.decorator';
+import { Cookies } from '../../common/decorator/cookie.decoratore';
 
 @ApiTags('Auth')
 @Controller('auth')

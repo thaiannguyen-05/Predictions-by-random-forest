@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 
-interface GoogleUser {
+interface _GoogleUser {
   id: string;
   email?: string;
   firstName?: string;

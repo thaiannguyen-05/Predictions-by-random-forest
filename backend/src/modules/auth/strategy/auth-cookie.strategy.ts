@@ -5,7 +5,7 @@ import { Strategy } from 'passport-custom';
 import { User } from 'prisma/generated/prisma';
 import { AuthService } from 'src/modules/auth/service/auth.service';
 
-type UserWithoutPassword = Omit<User, 'hashedPassword'>;
+type _UserWithoutPassword = Omit<User, 'hashedPassword'>;
 @Injectable()
 export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
   constructor(private readonly authService: AuthService) {

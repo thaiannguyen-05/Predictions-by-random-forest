@@ -125,7 +125,7 @@ export class AuthService {
     const valid = await verify(user.hashedPassword, dto.password);
     if (!valid) throw new ForbiddenException('Password is not correct');
 
-    const { hashedPassword, ...userWithoutPassword } = user;
+    const { hashedPassword: _hashedPassword, ...userWithoutPassword } = user;
     const hardware = await this.authOtherService.getClientInfo(
       res.req as Request,
     );
@@ -255,12 +255,12 @@ export class AuthService {
       where: { email },
     });
 
-    let userOauth2;
+    let _userOauth2;
 
     // check if user doesnt exitsing
     if (!user) {
       const newUserId = randomUUID();
-      const [user, userOauth2] = await this.prismaService.$transaction([
+      const [user, _userOauth2] = await this.prismaService.$transaction([
         this.prismaService.user.create({
           data: {
             id: newUserId,
@@ -301,7 +301,7 @@ export class AuthService {
     });
 
     if (!oauth2User && user) {
-      userOauth2 = await this.prismaService.oauth2User.create({
+      _userOauth2 = await this.prismaService.oauth2User.create({
         data: {
           provider,
           providerUserId,
@@ -316,7 +316,7 @@ export class AuthService {
       });
     } else if (oauth2User && user) {
       // Update existing OAuth2 user data
-      userOauth2 = await this.prismaService.oauth2User.update({
+      _userOauth2 = await this.prismaService.oauth2User.update({
         where: { id: oauth2User?.id ?? '' },
         // where: { id: user?.id },
         data: {
@@ -361,7 +361,7 @@ export class AuthService {
       provider,
     });
 
-    const userOauth2 = {
+    const _userOauth2 = {
       id: validateUser,
     };
 
@@ -419,7 +419,7 @@ export class AuthService {
 
       // The returned value is what NestJS Passport injects into the request object (req.user)
       return user;
-    } catch (error) {
+    } catch (_error) {
       // Handle common JWT errors (e.g., expiration, invalid signature)
       throw new UnauthorizedException('Token validation failed');
     }

@@ -176,7 +176,7 @@ export class AuthTokenService {
         payload = await this.jwtService.verifyAsync(refreshToken, {
           secret: this.configService.getOrThrow<string>('JWT_SECRET'),
         });
-      } catch (error) {
+      } catch (_error) {
         // delete expired/invalid session
         await this.prismaService.session.delete({ where: { id: sessionId } });
         throw new UnauthorizedException('Refresh token expired or invalid');

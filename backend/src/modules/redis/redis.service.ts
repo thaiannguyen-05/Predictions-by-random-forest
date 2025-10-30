@@ -10,7 +10,7 @@ export class RedisService {
     const value = await this.redis.get(key);
     try {
       return value ? (JSON.parse(value) as T) : null;
-    } catch (error) {
+    } catch (_error) {
       return value as T;
     }
   }

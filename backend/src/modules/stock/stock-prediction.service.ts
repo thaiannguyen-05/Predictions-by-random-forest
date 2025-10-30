@@ -48,7 +48,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       } else {
         this.logger.warn('⚠️ ML Service connection failed on startup');
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.error('❌ Failed to connect to ML Service on startup');
     }
   }
@@ -94,7 +94,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         try {
           const response = JSON.parse(responseData);
           resolve(response);
-        } catch (error) {
+        } catch (_error) {
           this.logger.error(
             `Failed to parse ML response: ${error.message}. Raw response: ${responseData}`,
           );
@@ -122,7 +122,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   async ping(): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand('ping');
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: error.message,
@@ -142,7 +142,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         );
       }
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(
         `Error calling ML service for current price of ${ticker}: ${error.message}`,
       );
@@ -160,7 +160,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     try {
       const response = await this.sendCommand('predict', { ticker });
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error predicting for ${ticker}: ${error.message}`);
       return {
         success: false,
@@ -197,7 +197,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         predictions: prediction.prediction ? [prediction.prediction] : [],
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(
         `Error getting predictions for ${ticker}: ${error.message}`,
       );
@@ -215,7 +215,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     try {
       const response = await this.sendCommand('predict_all', { top_n: topN });
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error predicting all tickers: ${error.message}`);
       return {
         success: false,
@@ -251,7 +251,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
           : response.error,
         features_count: response.metrics?.features_count || 0,
       };
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error training model for ${ticker}: ${error.message}`);
       return {
         success: false,
@@ -281,7 +281,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error training all models: ${error.message}`);
       return {
         success: false,
@@ -311,7 +311,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error updating data: ${error.message}`);
       return {
         success: false,
@@ -326,7 +326,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   async getTickerList(): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand('get_ticker_list');
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error getting ticker list: ${error.message}`);
       return {
         success: false,
@@ -341,7 +341,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   async getModelStatus(tickers?: string[]): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand('get_model_status', { tickers });
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error getting model status: ${error.message}`);
       return {
         success: false,
@@ -369,7 +369,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.logger.error(`Error running full pipeline: ${error.message}`);
       return {
         success: false,

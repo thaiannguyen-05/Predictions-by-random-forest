@@ -53,7 +53,7 @@ export class StockController {
         );
       }
       return { status: 'ok', ml_service: 'connected' };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         { message: 'ML service connection failed' },
         HttpStatus.SERVICE_UNAVAILABLE,
