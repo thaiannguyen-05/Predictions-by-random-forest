@@ -71,6 +71,37 @@ class StockPredictionTCPServer:
             logger.error(f"Error getting current price: {e}")
             return {"success": False, "error": str(e)}
 
+    def handle_get_financial_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handler cho lệnh lấy dữ liệu tài chính"""
+        try:
+            ticker = data.get("ticker")
+            if not ticker:
+                return {"success": False, "error": "Missing ticker parameter"}
+
+            # Standardize ticker
+            if not ticker.upper().endswith(".VN"):
+                ticker = f"{ticker.upper()}.VN"
+
+            # Create a temporary instance to get financial data
+            predictor = RealTimePrediction(ticker=ticker)
+            financial_data = predictor.get_financial_data()
+
+            if financial_data is None:
+                return {
+                    "success": False,
+                    "error": f"Cannot get financial data for {ticker}",
+                }
+
+            return {
+                "success": True,
+                "data": financial_data,
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        except Exception as e:
+            logger.error(f"Error getting financial data: {e}")
+            return {"success": False, "error": str(e)}
+
     def handle_predict(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handler cho lệnh dự đoán"""
         try:
@@ -310,6 +341,8 @@ class StockPredictionTCPServer:
                 # Route to appropriate handler
                 if command == "get_current_price":
                     response = self.handle_get_current_price(request)
+                elif command == "get_financial_data":
+                    response = self.handle_get_financial_data(request)
                 elif command == "predict":
                     response = self.handle_predict(request)
                 elif command == "predict_multi_hours":

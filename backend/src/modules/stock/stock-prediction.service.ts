@@ -154,6 +154,29 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Get financial data for a ticker
+   */
+  async getFinancialData(ticker: string): Promise<MLServiceResponse> {
+    try {
+      const response = await this.sendCommand('get_financial_data', { ticker });
+      if (!response.success) {
+        this.logger.error(
+          `ML service failed to get financial data for ${ticker}: ${response.error}`,
+        );
+      }
+      return response;
+    } catch (error) {
+      this.logger.error(
+        `Error calling ML service for financial data of ${ticker}: ${error.message}`,
+      );
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
    * Get predictions for a single ticker
    */
   async getPredictionSingle(ticker: string): Promise<MLServiceResponse> {
