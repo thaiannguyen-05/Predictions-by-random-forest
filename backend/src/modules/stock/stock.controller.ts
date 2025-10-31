@@ -109,6 +109,70 @@ export class StockController {
     };
   }
 
+  @Get('financial/:ticker')
+  @ApiOperation({
+    summary: 'Get financial data for stock',
+    description:
+      'Retrieve comprehensive financial information including open, high, low, volume, market cap, P/E ratio, EPS, and beta',
+  })
+  @ApiParam({
+    name: 'ticker',
+    description: 'Stock ticker symbol',
+    type: 'string',
+    example: 'FPT',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Financial data retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        ticker: { type: 'string', example: 'FPT.VN' },
+        previousClose: { type: 'number', example: 98500, nullable: true },
+        open: { type: 'number', example: 98000, nullable: true },
+        high: { type: 'number', example: 99500, nullable: true },
+        low: { type: 'number', example: 97500, nullable: true },
+        volume: { type: 'number', example: 1000000, nullable: true },
+        marketCap: { type: 'number', example: 50000000000, nullable: true },
+        peRatio: { type: 'number', example: 15.5, nullable: true },
+        eps: { type: 'number', example: 6500, nullable: true },
+        beta: { type: 'number', example: 1.2, nullable: true },
+        yahooPrice: { type: 'number', example: 98500, nullable: true },
+        timestamp: { type: 'string', example: '2023-10-09T14:30:00Z' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - failed to retrieve financial data',
+  })
+  async getFinancialData(@Param('ticker') ticker: string) {
+    const result = await this.stockService.getFinancialData(ticker);
+
+    if (!result.success) {
+      throw new HttpException(
+        { message: 'Failed to get financial data', error: result.error },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const data = result.data || {};
+    return {
+      ticker: data['ticker'] || ticker,
+      previousClose: data['previous_close'] ?? null,
+      open: data['open'] ?? null,
+      high: data['high'] ?? null,
+      low: data['low'] ?? null,
+      volume: data['volume'] ?? null,
+      marketCap: data['market_cap'] ?? null,
+      peRatio: data['pe_ratio'] ?? null,
+      eps: data['eps'] ?? null,
+      beta: data['beta'] ?? null,
+      yahooPrice: data['yahoo_price'] ?? null,
+      timestamp: result.timestamp || new Date().toISOString(),
+    };
+  }
+
   @Get('predictions/:ticker')
   @ApiOperation({
     summary: 'Get stock price predictions',

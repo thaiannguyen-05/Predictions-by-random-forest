@@ -40,6 +40,34 @@ class RealTimePrediction:
             print(f"Lỗi khi lấy giá hiện tại: {e}")
             return None
 
+    def get_financial_data(self):
+        """Lấy thông tin tài chính chi tiết của cổ phiếu"""
+        try:
+            ticker_obj = yf.Ticker(self.ticker)
+            info = ticker_obj.info
+            
+            # Get historical data for daily values
+            hist = ticker_obj.history(period="1d")
+            
+            financial_data = {
+                "ticker": self.ticker,
+                "previous_close": info.get("previousClose"),
+                "open": hist["Open"].iloc[-1] if not hist.empty else info.get("open"),
+                "high": hist["High"].iloc[-1] if not hist.empty else info.get("dayHigh"),
+                "low": hist["Low"].iloc[-1] if not hist.empty else info.get("dayLow"),
+                "volume": int(hist["Volume"].iloc[-1]) if not hist.empty else info.get("volume"),
+                "market_cap": info.get("marketCap"),
+                "pe_ratio": info.get("trailingPE"),
+                "eps": info.get("trailingEps"),
+                "beta": info.get("beta"),
+                "yahoo_price": info.get("regularMarketPrice") or info.get("currentPrice"),
+            }
+            
+            return financial_data
+        except Exception as e:
+            print(f"Lỗi khi lấy dữ liệu tài chính: {e}")
+            return None
+
     def update_data(self):
         """Cập nhật dữ liệu mới nhất từ yfinance"""
         try:
