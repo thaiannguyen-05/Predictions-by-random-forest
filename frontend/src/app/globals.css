@@ -67,3 +67,27 @@ body {
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
+
+/* styles/globals.css */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 120s linear infinite;
+  display: inline-flex;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Đảm bảo hiệu ứng mượt mà */
+.animate-ticker > * {
+  flex-shrink: 0;
+}

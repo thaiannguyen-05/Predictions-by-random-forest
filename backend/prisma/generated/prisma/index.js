@@ -269,7 +269,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/generated/prisma",
+      "value": "/home/dogornz/Project Science/Predictions-by-random-forest/backend/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -287,12 +287,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/schema/schema.prisma",
+    "sourceFilePath": "/home/dogornz/Project Science/Predictions-by-random-forest/backend/prisma/schema/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../schema",
   "clientVersion": "6.16.2",
@@ -301,6 +300,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {

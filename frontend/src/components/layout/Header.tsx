@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import UserDropdown from '../common/UserDropdown';
-import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import React from "react";
+import UserDropdown from "../common/UserDropdown";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import RealTimeClock from "../common/RealTimeClock";
 
 const Header: React.FC = () => {
   const { user: currentUser, loading } = useAuth();
 
   return (
     <header className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
+      {/* Logo */}
       <div className="flex items-center cursor-pointer">
         <Link href="/" className="flex flex-col">
           <span className="text-3xl font-extrabold text-blue-400 tracking-wider">
@@ -21,6 +23,12 @@ const Header: React.FC = () => {
         </Link>
       </div>
 
+      {/* Đồng hồ ở giữa */}
+      <div className="flex-1 flex justify-center">
+        <RealTimeClock />
+      </div>
+
+      {/* User dropdown */}
       <div className="relative">
         {currentUser ? (
           <UserDropdown user={currentUser} />
