@@ -186,7 +186,9 @@ class StockPredictionTCPServer:
 
                     predictions.append(
                         {
+                            "hour": hours,
                             "hours_ahead": hours,
+                            "predicted_price": result.get("predicted_price"),
                             "prediction": result["prediction"],
                             "probability": result["probability"],
                             "confidence": result["confidence"],
