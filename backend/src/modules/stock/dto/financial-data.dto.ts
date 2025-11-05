@@ -8,7 +8,7 @@ export interface FinancialDataDto {
   marketCap: number | null;
   peRatio: number | null;
   eps: number | null;
-  beta: number | null
+  beta: number | null;
   yahooPrice: number | null;
   timestamp: string;
 }
