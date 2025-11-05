@@ -1,4 +1,3 @@
-// app/stocks/[symbol]/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,6 +6,7 @@ import StockSummary from "@/components/stock/StockSummary";
 import StockChart from "@/components/stock/StockChart";
 import KeyStatistics from "@/components/stock/KeyStatistics";
 import PredictionButton from "@/components/stock/PredictionButton";
+import { STOCK_DETAILS } from "../../../../constants/trainedStocks";
 
 interface StockDetailPageProps {
   params: {
@@ -17,77 +17,77 @@ interface StockDetailPageProps {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
+const REFRESH_INTERVAL = 5000;
+
 const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
   const router = useRouter();
   const { symbol } = params;
   const [stockData, setStockData] = useState<any>(null);
   const [financialData, setFinancialData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prediction, setPrediction] = useState<any>(null);
   const [isPredicting, setIsPredicting] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
 
-  // Format symbol cho API
-  const formatSymbolForAPI = (symbol: string) => {
-    return `${symbol}.VN`;
-  };
+  const formatSymbolForAPI = (symbol: string) => `${symbol}.VN`;
 
   useEffect(() => {
-    fetchStockDetails();
+    fetchStockDetails(true);
+    const interval = setInterval(
+      () => fetchStockDetails(false),
+      REFRESH_INTERVAL
+    );
+    return () => clearInterval(interval);
   }, [symbol]);
 
-  const fetchStockDetails = async () => {
-    setIsLoading(true);
-    setError(null);
+  const fetchStockDetails = async (firstLoad = false) => {
+    if (firstLoad) setIsLoading(true);
+    else setIsRefreshing(true);
+
     try {
       const apiSymbol = formatSymbolForAPI(symbol);
-
-      // Lấy dữ liệu giá hiện tại
       const priceResponse = await fetch(
-        `${API_BASE_URL}/stock/current-price/${apiSymbol}`
+        `${API_BASE_URL}/stock/current-price/${apiSymbol}`,
+        { cache: "no-store" }
       );
-      if (!priceResponse.ok) {
-        const errText = await priceResponse.text();
-        console.error("API error:", priceResponse.status, errText);
-        throw new Error(
-          `Không tìm thấy dữ liệu cho mã cổ phiếu ${symbol} (${priceResponse.status})`
-        );
-      }
+
+      if (!priceResponse.ok)
+        throw new Error(`Không tìm thấy dữ liệu cho ${symbol}`);
 
       const priceData = await priceResponse.json();
 
-      // Lấy dữ liệu tài chính
       const financialResponse = await fetch(
-        `${API_BASE_URL}/stock/financial/${apiSymbol}`
+        `${API_BASE_URL}/stock/financial/${apiSymbol}`,
+        { cache: "no-store" }
       );
       const financialData = financialResponse.ok
         ? await financialResponse.json()
         : {};
 
-      // Lấy dữ liệu phân tích
-      const analysisResponse = await fetch(
-        `${API_BASE_URL}/stock/analysis/${apiSymbol}`
-      );
-      const analysisData = analysisResponse.ok
-        ? await analysisResponse.json()
-        : {};
-
-      // Tính toán các giá trị
       const currentPrice = priceData.price || 0;
       const previousClose = financialData.previousClose || currentPrice * 0.95;
       const change = currentPrice - previousClose;
       const changePercent = (change / previousClose) * 100;
 
-      const stockData = {
+      // ✅ Lấy thông tin chi tiết từ STOCK_DETAILS
+      const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
+        name: `Công ty ${symbol}`,
+        sector: "Chưa phân loại",
+        marketCap: 0,
+      };
+
+      const updatedStockData = {
         symbol: symbol.toUpperCase(),
-        companyName: `Công ty ${symbol}`,
-        currentPrice: currentPrice,
-        previousClose: previousClose,
-        change: change,
-        changePercent: changePercent,
-        marketCap: financialData.marketCap
-          ? `${(financialData.marketCap / 1e9).toFixed(1)} tỷ`
+        companyName: stockInfo.name, // ✅ Dùng tên thật
+        sector: stockInfo.sector, // ✅ Hiển thị ngành
+        currentPrice,
+        previousClose,
+        change,
+        changePercent,
+        marketCap: stockInfo.marketCap
+          ? `${(stockInfo.marketCap / 1e9).toFixed(1)} tỷ`
           : "N/A",
         volume: financialData.volume
           ? `${(financialData.volume / 1e6).toFixed(1)}M`
@@ -105,78 +105,37 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         lastUpdated:
           priceData.time || new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
         chartData: await generateHistoricalData(symbol, currentPrice),
-        tradingHistory: await generateTradingHistory(symbol),
       };
 
-      setStockData(stockData);
+      setStockData(updatedStockData);
       setFinancialData(financialData);
-      setChartData(stockData.chartData);
+      setChartData(updatedStockData.chartData);
+      setError(null);
     } catch (err: any) {
-      setError(err.message);
-      console.error("Lỗi khi tải dữ liệu cổ phiếu:", err);
+      console.warn("⚠️ Lỗi khi tải dữ liệu:", err.message);
+      if (firstLoad) setError(err.message);
     } finally {
-      setIsLoading(false);
+      if (firstLoad) setIsLoading(false);
+      setIsRefreshing(false);
     }
   };
 
-  const generateHistoricalData = async (
-    symbol: string,
-    currentPrice: number
-  ) => {
-    try {
-      // Trong thực tế, bạn sẽ có API để lấy dữ liệu lịch sử
-      // Ở đây tôi tạo dữ liệu mẫu dựa trên giá hiện tại
-      return Array.from({ length: 30 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (29 - i));
-
-        // Tạo biến động giá thực tế
-        const volatility = 0.02; // 2% biến động mỗi ngày
-        const randomChange = (Math.random() - 0.5) * 2 * volatility;
-        const price =
-          i === 29 ? currentPrice : currentPrice * (1 + randomChange);
-
-        return {
-          date: date.toISOString().split("T")[0],
-          price: price,
-          open: price * (0.99 + Math.random() * 0.02),
-          high: price * (1 + Math.random() * 0.03),
-          low: price * (0.97 - Math.random() * 0.02),
-          close: price,
-          volume: Math.floor(1000000 + Math.random() * 9000000),
-        };
-      });
-    } catch (error) {
-      console.error("Error generating historical data:", error);
-      return [];
-    }
-  };
-
-  const generateTradingHistory = async (symbol: string) => {
-    try {
-      // Dữ liệu lịch sử giao dịch mẫu
-      return Array.from({ length: 10 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (9 - i));
-
-        const basePrice = stockData?.currentPrice || 40000;
-        const changePercent = (Math.random() - 0.5) * 5;
-
-        return {
-          date: date.toISOString().split("T")[0],
-          open: basePrice * (0.98 + Math.random() * 0.04),
-          high: basePrice * (1 + Math.random() * 0.05),
-          low: basePrice * (0.95 - Math.random() * 0.05),
-          close: basePrice * (1 + changePercent / 100),
-          volume: Math.floor(1000000 + Math.random() * 9000000),
-          change: changePercent,
-        };
-      });
-    } catch (error) {
-      console.error("Error generating trading history:", error);
-      return [];
-    }
-  };
+  const generateHistoricalData = async (symbol: string, currentPrice: number) =>
+    Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (29 - i));
+      const volatility = 0.02;
+      const randomChange = (Math.random() - 0.5) * 2 * volatility;
+      const price = i === 29 ? currentPrice : currentPrice * (1 + randomChange);
+      return {
+        date: date.toISOString().split("T")[0],
+        open: price * (0.99 + Math.random() * 0.02),
+        high: price * (1 + Math.random() * 0.03),
+        low: price * (0.97 - Math.random() * 0.02),
+        close: price,
+        volume: Math.floor(1000000 + Math.random() * 9000000),
+      };
+    });
 
   const handlePredict = async () => {
     setIsPredicting(true);
@@ -189,53 +148,29 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       if (response.ok) {
         const predictionData = await response.json();
 
-        const predictionResult = {
-          symbol: symbol,
-          prediction:
-            predictionData.predictions?.[0]?.predicted_price >
-            stockData.currentPrice
-              ? "TĂNG"
-              : "GIẢM",
-          confidence: predictionData.predictions?.[0]?.confidence
-            ? (predictionData.predictions[0].confidence * 100).toFixed(1)
-            : (70 + Math.random() * 25).toFixed(1),
+        // ✅ Nếu API trả predictions là ["TĂNG"] hoặc ["GIẢM"]
+        const rawPrediction = predictionData.predictions?.[0] || "GIẢM";
+
+        setPrediction({
+          symbol,
+          prediction: rawPrediction.toUpperCase(),
+          confidence: (predictionData.confidence ?? 0.75) * 100,
           predictedPrice:
-            predictionData.predictions?.[0]?.predicted_price ||
-            stockData.currentPrice * (1 + (Math.random() - 0.5) * 0.1),
+            predictionData.predicted_price ?? stockData.currentPrice,
           predictionDate: new Date(
             Date.now() + 24 * 60 * 60 * 1000
           ).toLocaleDateString("vi-VN"),
           reasoning: [
-            "Phân tích kỹ thuật cho thấy xu hướng tích cực",
-            "Khối lượng giao dịch ổn định",
-            "Chỉ số RSI ở vùng trung lập",
-            "Mô hình AI dự báo khả năng tăng điểm",
+            rawPrediction === "TĂNG"
+              ? "Mô hình AI dự đoán giá sẽ tăng dựa trên xu hướng tích cực."
+              : "Mô hình AI dự đoán giá sẽ giảm do tín hiệu thị trường yếu.",
           ],
-        };
-
-        setPrediction(predictionResult);
+        });
       } else {
-        throw new Error("Không thể lấy dự đoán từ server");
+        console.error("Lỗi phản hồi API:", response.status);
       }
-    } catch (error) {
-      console.error("Lỗi khi dự đoán:", error);
-      // Fallback prediction
-      const fallbackPrediction = {
-        symbol: symbol,
-        prediction: Math.random() > 0.5 ? "TĂNG" : "GIẢM",
-        confidence: (70 + Math.random() * 25).toFixed(1),
-        predictedPrice:
-          stockData.currentPrice * (1 + (Math.random() - 0.5) * 0.1),
-        predictionDate: new Date(
-          Date.now() + 24 * 60 * 60 * 1000
-        ).toLocaleDateString("vi-VN"),
-        reasoning: [
-          "Phân tích kỹ thuật cho thấy xu hướng tăng",
-          "Khối lượng giao dịch tăng mạnh",
-          "Chỉ số RSI ở vùng trung lập",
-        ],
-      };
-      setPrediction(fallbackPrediction);
+    } catch (err) {
+      console.error("Lỗi khi dự đoán:", err);
     } finally {
       setIsPredicting(false);
     }
@@ -293,11 +228,11 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       : "N/A",
     Beta: financialData?.beta ? financialData.beta.toFixed(2) : "N/A",
     "Vốn hóa": stockData.marketCap,
+    Ngành: stockData.sector, // ✅ thêm hiển thị ngành
   };
 
   return (
     <div className="min-h-screen p-4 max-w-7xl mx-auto">
-      {/* Nút dự đoán */}
       <div className="mb-6 flex justify-end">
         <PredictionButton
           onPredict={handlePredict}
@@ -306,14 +241,13 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         />
       </div>
 
-      {/* Hiển thị kết quả dự đoán */}
       {prediction && (
         <div className="mb-6 bg-gradient-to-r from-blue-900 to-purple-900 p-6 rounded-xl border border-blue-500">
           <h3 className="text-xl font-bold text-white mb-4">
             📊 Dự đoán cho ngày mai ({prediction.predictionDate})
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div>
               <div
                 className={`text-2xl font-bold ${
                   prediction.prediction === "TĂNG"
@@ -325,36 +259,24 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
               </div>
               <div className="text-sm text-gray-300">Xu hướng</div>
             </div>
-            <div className="text-center">
+            <div>
               <div className="text-2xl font-bold text-yellow-400">
-                {prediction.confidence}%
+                {prediction.confidence.toFixed(1)}%
               </div>
               <div className="text-sm text-gray-300">Độ tin cậy</div>
             </div>
-            <div className="text-center">
+            <div>
               <div className="text-2xl font-bold text-white">
                 {prediction.predictedPrice.toLocaleString("vi-VN")}₫
               </div>
               <div className="text-sm text-gray-300">Giá dự đoán</div>
             </div>
           </div>
-          {prediction.reasoning && (
-            <div className="mt-4">
-              <h4 className="font-semibold text-white mb-2">Phân tích:</h4>
-              <ul className="text-sm text-gray-300 space-y-1">
-                {prediction.reasoning.map((reason: string, index: number) => (
-                  <li key={index}>• {reason}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       )}
 
-      {/* 1. Phần Tóm tắt và Giá Hiện tại */}
       <StockSummary data={stockData} />
 
-      {/* 2. Biểu đồ và Dữ liệu Thống kê */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
         <div className="lg:col-span-8">
           <StockChart symbol={symbol} chartData={chartData} />
