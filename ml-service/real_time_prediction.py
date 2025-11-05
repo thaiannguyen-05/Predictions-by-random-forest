@@ -199,12 +199,38 @@ class RealTimePrediction:
 
             # Lấy giá hiện tại
             current_info = self.get_current_price()
+            current_price = current_info["price"] if current_info else None
 
-            # Tính độ tin cậy
+            # Tính độ tin cậy (0-1)
             confidence = max(prediction_prob, 1 - prediction_prob)
 
+            # Tính giá dự đoán dựa trên xu hướng và độ tin cậy
+            # Sử dụng volatility từ dữ liệu lịch sử để ước tính biến động
+            if current_price and len(df) > 1:
+                # Tính độ biến động trung bình (volatility) từ 20 ngày gần nhất
+                recent_data = df["Close"].tail(20)
+                daily_returns = recent_data.pct_change().dropna()
+                volatility = daily_returns.std()
+                
+                # Ước tính biến động theo giờ (giả định 8 giờ giao dịch/ngày)
+                hourly_volatility = volatility / (8 ** 0.5)
+                
+                # Tính % thay đổi dựa trên xu hướng, độ tin cậy và số giờ
+                # Nếu tăng (prediction=1): giá dự đoán cao hơn
+                # Nếu giảm (prediction=0): giá dự đoán thấp hơn
+                direction = 1 if prediction == 1 else -1
+                price_change_factor = direction * confidence * hourly_volatility * (hours_ahead ** 0.5)
+                
+                # Tính giá dự đoán
+                predicted_price = current_price * (1 + price_change_factor)
+            else:
+                # Fallback: sử dụng % thay đổi đơn giản
+                direction = 1 if prediction == 1 else -1
+                price_change_pct = direction * confidence * 0.02 * hours_ahead  # 2% mỗi giờ
+                predicted_price = current_price * (1 + price_change_pct) if current_price else None
+
             result = {
-                "current_price": current_info["price"] if current_info else None,
+                "current_price": current_price,
                 "current_time": (
                     current_info["time"] if current_info else datetime.now()
                 ),
@@ -212,6 +238,7 @@ class RealTimePrediction:
                 "prediction": "TĂNG" if prediction == 1 else "GIẢM",
                 "probability": prediction_prob,
                 "confidence": confidence,
+                "predicted_price": predicted_price,
                 "hours_ahead": hours_ahead,
                 "symbol": self.ticker,
             }

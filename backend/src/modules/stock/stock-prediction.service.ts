@@ -197,29 +197,20 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
    */
   async getPredictionsMultiHours(ticker: string): Promise<MLServiceResponse> {
     try {
-      // Get current price and prediction
-      const [currentPrice, prediction] = await Promise.all([
-        this.getCurrentPrice(ticker),
-        this.getPredictionSingle(ticker),
-      ]);
+      // Use predict_multi_hours command to get predictions for 1,2,3,4 hours
+      const response = await this.sendCommand('predict_multi_hours', {
+        ticker,
+      });
 
-      if (!prediction.success) {
-        return prediction;
+      if (!response.success) {
+        this.logger.error(
+          `ML service failed to get multi-hour predictions for ${ticker}: ${response.error}`,
+        );
+        return response;
       }
 
-      // Format response to match expected structure
-      return {
-        success: true,
-        ticker: ticker,
-        current_price: currentPrice.success
-          ? currentPrice.price
-          : prediction.prediction?.current_price,
-        current_time: currentPrice.success
-          ? currentPrice.time
-          : new Date().toISOString(),
-        predictions: prediction.prediction ? [prediction.prediction] : [],
-        timestamp: new Date().toISOString(),
-      };
+      // Response already has the correct format from ML service
+      return response;
     } catch (error) {
       this.logger.error(
         `Error getting predictions for ${ticker}: ${error.message}`,

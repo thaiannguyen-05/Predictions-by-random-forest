@@ -21,7 +21,7 @@ import { Public } from '../../common/decorator/public.decorator';
 @Public()
 @Controller('api/stock')
 export class StockController {
-  constructor(private readonly stockService: StockPredictionService) {}
+  constructor(private readonly stockService: StockPredictionService) { }
 
   @Get('health')
   @ApiOperation({
@@ -192,6 +192,7 @@ export class StockController {
       type: 'object',
       properties: {
         ticker: { type: 'string', example: 'AAPL' },
+        prediction: { type: 'string', example: 'AAPL' },
         current_price: { type: 'number', example: 150.25 },
         current_time: { type: 'string', example: '2023-10-09 14:30:00' },
         predictions: {
@@ -225,6 +226,7 @@ export class StockController {
 
     return {
       ticker: result.ticker || ticker,
+      prediction: ticker,
       current_price: result.current_price || 0,
       current_time: result.current_time || new Date().toISOString(),
       predictions: result.predictions || [],
