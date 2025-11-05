@@ -19,6 +19,7 @@ import { MessageService } from './service/message/message.service';
 import { RoomService } from './service/room/room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { FaqService } from './service/FAQ-service/Faq.service';
 @Injectable()
 export class SupportChatService {
   private readonly googleAi: GoogleGenerativeAI;
@@ -31,6 +32,7 @@ export class SupportChatService {
     private readonly prismaService: PrismaService,
     private readonly messageService: MessageService,
     private readonly roomService: RoomService,
+    private readonly faqService: FaqService,
   ) {
     const geminiApikey = configService.getOrThrow<string>('GENEMI_API_KEY');
     const geminiVersion = configService.getOrThrow<string>('GENEMI_MODEL');
@@ -163,13 +165,17 @@ export class SupportChatService {
     );
     this.logger.log(`Sending prompt to Gemini AI for session: ${sessionId}`);
 
+    if (data.payload) {
+      return this.faqService.handleFaq(data.payload);
+    }
+
     const result = await chat.sendMessage(data.prompt);
     const response = result.response.text();
 
     const messageQueue: MessageQueue = {
       content: data.prompt,
       roomId: data.sessionId,
-      senderId: randomUUID() + 'chat-bot-response',
+      senderId: data.userId,
     };
 
     // saving message

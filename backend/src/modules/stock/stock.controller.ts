@@ -21,7 +21,7 @@ import { Public } from '../../common/decorator/public.decorator';
 @Public()
 @Controller('api/stock')
 export class StockController {
-  constructor(private readonly stockService: StockPredictionService) { }
+  constructor(private readonly stockService: StockPredictionService) {}
 
   @Get('health')
   @ApiOperation({

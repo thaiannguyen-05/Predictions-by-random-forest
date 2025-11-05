@@ -30,4 +30,6 @@ export class ResponseMessageDto {
   userId: string;
 
   employeeId?: string;
+
+  payload?: string;
 }

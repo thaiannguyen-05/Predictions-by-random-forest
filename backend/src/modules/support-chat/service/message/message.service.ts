@@ -19,6 +19,7 @@ export class MessageService {
 
   // get user with id
   async getUserById(userId: string) {
+    console.log(userId);
     return await this.prismaService.user.findUnique({
       where: { id: userId },
     });

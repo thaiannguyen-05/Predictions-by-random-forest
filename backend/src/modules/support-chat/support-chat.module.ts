@@ -9,6 +9,8 @@ import { RedisService } from './service/message/redis.service';
 import { TestController } from './service/message/test.controller';
 import { RoomService } from './service/room/room.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SupportChatController } from './suport-chat.controller';
+import { FaqService } from './service/FAQ-service/Faq.service';
 
 @Module({
   imports: [
@@ -34,8 +36,9 @@ import { PrismaService } from '../../prisma/prisma.service';
     RedisService,
     PrismaService,
     RoomService,
+    FaqService,
   ],
-  controllers: [MessageConsumer, TestController],
+  controllers: [MessageConsumer, TestController, SupportChatController],
   exports: [MessageService, RedisService],
 })
 export class SupportChatModule {}
