@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SupportChatService } from './support-chat.service';
 import { ResponseMessageDto } from './dto/response-message.dto';
 import { Public } from '../../common/decorator/public.decorator';
@@ -10,5 +10,10 @@ export class SupportChatController {
   @Post('call-chat')
   async generateResponse(@Body() data: ResponseMessageDto) {
     return this.supportChatService.generateResponse(data);
+  }
+
+  @Get('intit-chat')
+  async initChat(@Query('userId') userId: string) {
+    return this.supportChatService.initialMessage(userId);
   }
 }
