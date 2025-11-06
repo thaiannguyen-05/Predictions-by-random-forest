@@ -126,7 +126,7 @@ export class AuthService {
     if (!valid) throw new ForbiddenException('Password is not correct');
 
     const { hashedPassword: _hashedPassword, ...userWithoutPassword } = user;
-    const hardware = await this.authOtherService.getClientInfo(
+    const hardware = this.authOtherService.getClientInfo(
       res.req as Request,
     );
     const { session, tokens } = await this.tokenService.createSession(

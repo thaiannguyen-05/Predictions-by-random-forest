@@ -27,3 +27,12 @@ export interface FacebookOAuth2User {
   provider: 'FACEBOOK';
   accessToken: string;
 }
+
+export interface SerializedUser {
+  id: string;
+  email?: string;
+  provider?: string;
+  firstName?: string;
+  lastName?: string;
+  [key: string]: unknown;
+}

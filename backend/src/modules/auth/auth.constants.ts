@@ -23,4 +23,7 @@ export const AUTH_CONSTANT = {
       path: '/',
     },
   },
+  REDIRECT_LINK(accessToken: string) {
+    return `http://localhost:3000/auth/success?token=${accessToken}`;
+  },
 };

@@ -10,7 +10,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,
@@ -30,14 +29,12 @@ import { AuthService } from './service/auth.service';
 import { FacebookOAuth2User, GoogleOAuth2User } from './auth.interface';
 import { Public } from '../../common/decorator/public.decorator';
 import { Cookies } from '../../common/decorator/cookie.decoratore';
+import { AUTH_CONSTANT } from './auth.constants';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('login')
@@ -223,11 +220,8 @@ export class AuthController {
 
     // Lấy token từ trường tokens
     const accessToken = result.tokens.accessToken;
-
     // Redirect về FE với token
-    return res.redirect(
-      `http://localhost:3000/auth/success?token=${accessToken}`,
-    );
+    return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
     // return this.authService.oauth2Login(req.user as any as GoogleOAuth2User, res)
   }
 

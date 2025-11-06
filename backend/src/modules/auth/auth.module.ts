@@ -9,13 +9,13 @@ import { CookieStrategy } from './strategy/auth-cookie.strategy';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { FacebookStrategy } from './strategy/facebook.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { SessionSerializer } from './strategy/session.serializer'; // THÊM DÒNG NÀY
+import { SessionSerializer } from './strategy/session.serializer';
 import { AuthTokenService } from './service/auth.token.service';
 
 @Module({
   imports: [
     PassportModule.register({
-      session: true, // ĐÃ CÓ
+      session: true,
       defaultStrategy: 'jwt',
     }),
     EmailModule,
@@ -35,7 +35,7 @@ import { AuthTokenService } from './service/auth.token.service';
     CookieStrategy,
     GoogleStrategy,
     FacebookStrategy,
-    SessionSerializer, // THÊM DÒNG NÀY
+    SessionSerializer,
   ],
   controllers: [AuthController],
   exports: [AuthService],

@@ -1,15 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-
-interface SerializedUser {
-  id: string;
-  email?: string;
-  provider?: string;
-  firstName?: string;
-  lastName?: string;
-  [key: string]: unknown;
-}
-
+import { SerializedUser } from '../auth.interface';
 type SerializationDone = (err: Error | null, data?: unknown) => void;
 
 @Injectable()
