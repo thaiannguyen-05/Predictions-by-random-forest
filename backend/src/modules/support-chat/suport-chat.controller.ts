@@ -12,7 +12,7 @@ export class SupportChatController {
     return this.supportChatService.generateResponse(data);
   }
 
-  @Get('intit-chat')
+  @Get('init-chat')
   async initChat(@Query('userId') userId: string) {
     return this.supportChatService.initialMessage(userId);
   }

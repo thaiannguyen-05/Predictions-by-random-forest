@@ -15,7 +15,7 @@ interface StockDetailPageProps {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  process.env.NEXT_PUBLIC_API_URL_TICKET_LOAD || "http://localhost:4000/api";
 
 const REFRESH_INTERVAL = 5000;
 
@@ -145,30 +145,39 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         `${API_BASE_URL}/stock/predictions/${apiSymbol}`
       );
 
-      if (response.ok) {
-        const predictionData = await response.json();
-
-        // ✅ Nếu API trả predictions là ["TĂNG"] hoặc ["GIẢM"]
-        const rawPrediction = predictionData.predictions?.[0] || "GIẢM";
-
-        setPrediction({
-          symbol,
-          prediction: rawPrediction.toUpperCase(),
-          confidence: (predictionData.confidence ?? 0.75) * 100,
-          predictedPrice:
-            predictionData.predicted_price ?? stockData.currentPrice,
-          predictionDate: new Date(
-            Date.now() + 24 * 60 * 60 * 1000
-          ).toLocaleDateString("vi-VN"),
-          reasoning: [
-            rawPrediction === "TĂNG"
-              ? "Mô hình AI dự đoán giá sẽ tăng dựa trên xu hướng tích cực."
-              : "Mô hình AI dự đoán giá sẽ giảm do tín hiệu thị trường yếu.",
-          ],
-        });
-      } else {
+      if (!response.ok) {
         console.error("Lỗi phản hồi API:", response.status);
+        return;
       }
+
+      const predictionData = await response.json();
+      console.log("📊 API trả về:", predictionData);
+
+      // ✅ Lấy phần tử đầu tiên trong mảng predictions
+      const firstPrediction = predictionData.predictions?.[0];
+
+      if (!firstPrediction) {
+        console.error("Không có dữ liệu dự đoán trong predictions");
+        return;
+      }
+
+      const rawPrediction = firstPrediction.prediction || "GIẢM";
+
+      setPrediction({
+        symbol,
+        prediction: rawPrediction.toUpperCase(),
+        confidence: (firstPrediction.confidence ?? 0.75) * 100,
+        predictedPrice:
+          firstPrediction.predicted_price ?? stockData.currentPrice,
+        predictionDate: new Date(
+          firstPrediction.prediction_time
+        ).toLocaleDateString("vi-VN"),
+        reasoning: [
+          rawPrediction === "TĂNG"
+            ? "Mô hình AI dự đoán giá sẽ tăng dựa trên xu hướng tích cực."
+            : "Mô hình AI dự đoán giá sẽ giảm do tín hiệu thị trường yếu.",
+        ],
+      });
     } catch (err) {
       console.error("Lỗi khi dự đoán:", err);
     } finally {
