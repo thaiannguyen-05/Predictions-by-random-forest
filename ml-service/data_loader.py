@@ -10,8 +10,8 @@ TICKERS = [
     "POW.VN", "VRE.VN", "SSI.VN", "HDB.VN", "MBB.VN",
     "STB.VN", "VJC.VN", "GVR.VN", "PDR.VN", "VCG.VN",
     "ACB.VN", "TPB.VN", "KDH.VN", "NVL.VN", "VCI.VN",
-    "BCM.VN", "DPM.VN", "DGC.VN", "HNG.VN", "PNJ.VN",
-    "REE.VN", "SBT.VN", "VGC.VN", "VHC.VN", "VNM.VN"
+    "BCM.VN", "DPM.VN", "DGC.VN", "BAF.VN", "PNJ.VN",
+    "REE.VN", "SBT.VN", "VGC.VN", "VHC.VN", "BVH.VN"
 ]
 
 # ========================

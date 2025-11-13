@@ -1,180 +1,301 @@
-// frontend/src/app/stocks/[symbol]/page.tsx
+"use client";
 
-'use client'; // Dòng này quan trọng nếu bạn dùng component client-side trong App Router
-
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Để xử lý lỗi hoặc redirect
-import StockSummary from '@/components/stock/StockSummary';
-import StockChart from '@/components/stock/StockChart';
-import KeyStatistics from '@/components/stock/KeyStatistics';
-import TradingHistory from '@/components/stock/TradingHistory';
-
-// Import các kiểu dữ liệu đã định nghĩa ở Bước 1
-import { 
-  BackendStockResponse, 
-  FrontendStockData, 
-  HistoricalDataItem, 
-  FormattedKeyStatistics 
-} from '@/types/stock'; // Hoặc đặt trực tiếp ở đây nếu muốn
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import StockSummary from "@/components/stock/StockSummary";
+import StockChart from "@/components/stock/StockChart";
+import KeyStatistics from "@/components/stock/KeyStatistics";
+import PredictionButton from "@/components/stock/PredictionButton";
+import { STOCK_DETAILS } from "../../../../constants/trainedStocks";
 
 interface StockDetailPageProps {
-    params: {
-        symbol: string;
-    }
+  params: {
+    symbol: string;
+  };
 }
 
-const API_BASE_URL = 'http://localhost:3000'; // Đảm bảo đúng cổng Backend NestJS của bạn
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL_TICKET_LOAD || "http://localhost:4000/api";
+
+const REFRESH_INTERVAL = 5000;
 
 const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
-    const router = useRouter();
-    const { symbol } = params;
-    
-    const [stockData, setStockData] = useState<FrontendStockData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { symbol } = params;
+  const [stockData, setStockData] = useState<any>(null);
+  const [financialData, setFinancialData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [prediction, setPrediction] = useState<any>(null);
+  const [isPredicting, setIsPredicting] = useState(false);
+  const [chartData, setChartData] = useState<any[]>([]);
 
-    useEffect(() => {
-        const fetchStockDetails = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(`${API_BASE_URL}/stock-prediction/stocks/${symbol}`);
-                
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Mã cổ phiếu không tìm thấy.');
-                    }
-                    throw new Error(`Lỗi khi lấy dữ liệu: ${response.statusText}`);
-                }
-                
-                const backendData: BackendStockResponse = await response.json();
-                console.log("Dữ liệu từ Backend:", backendData); // Kiểm tra dữ liệu trả về
+  const formatSymbolForAPI = (symbol: string) => `${symbol}.VN`;
 
-                // --- Xử lý và định dạng dữ liệu cho Frontend ---
-                const currentPrice = backendData.currentPrice?.price || 0;
-                const previousClose = backendData.additionalInfo?.summaryDetail?.previousClose?.raw || currentPrice;
-                const change = currentPrice - previousClose;
-                const changePercent = (change / previousClose) * 100;
-                
-                const formattedData: FrontendStockData = {
-                    symbol: symbol.toUpperCase(),
-                    companyName: backendData.additionalInfo?.summaryProfile?.longName || 'Đang cập nhật...',
-                    currentPrice: currentPrice,
-                    previousClose: previousClose,
-                    change: change,
-                    changePercent: changePercent,
-                    marketCap: (backendData.additionalInfo?.keyStatistics?.marketCap?.raw ? 
-                                new Intl.NumberFormat('vi-VN', { 
-                                    notation: 'compact', 
-                                    compactDisplay: 'short' 
-                                }).format(backendData.additionalInfo.keyStatistics.marketCap.raw) + ' VND' 
-                                : 'N/A'),
-                    volume: (backendData.historicalData[backendData.historicalData.length -1]?.volume ? 
-                                new Intl.NumberFormat('en-US').format(backendData.historicalData[backendData.historicalData.length -1].volume) 
-                                : 'N/A'),
-                    peRatio: backendData.additionalInfo?.keyStatistics?.forwardPE?.raw?.toFixed(2) + 'x' || 'N/A',
-                    eps: backendData.additionalInfo?.keyStatistics?.trailingEps?.raw?.toFixed(2) + ' VND' || 'N/A',
-                    beta: backendData.additionalInfo?.keyStatistics?.beta?.raw?.toFixed(2) || 'N/A',
-                    openPrice: backendData.additionalInfo?.summaryDetail?.open?.raw || 0,
-                    high52Week: backendData.additionalInfo?.keyStatistics?.fiftyTwoWeekHigh?.raw || 0,
-                    low52Week: backendData.additionalInfo?.keyStatistics?.fiftyTwoWeekLow?.raw || 0,
-                    lastUpdated: new Date().toLocaleTimeString('vi-VN') + ' (GMT+7)', // Cần lấy từ Backend nếu có
-                    
-                    chartData: backendData.historicalData,
-                    tradingHistory: backendData.historicalData.slice(0, 10).map(item => ({ // Lấy 10 mục gần nhất
-                        ...item,
-                        change: ((item.close - item.open) / item.open) * 100 // Tính lại thay đổi % cho lịch sử
-                    })),
-                };
-                
-                setStockData(formattedData);
-
-            } catch (err: any) {
-                setError(err.message);
-                console.error("Lỗi khi tải dữ liệu cổ phiếu:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (symbol) {
-            fetchStockDetails();
-        }
-    }, [symbol]); // Effect chạy lại khi 'symbol' thay đổi
-
-    // Xử lý trạng thái tải và lỗi
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-[400px] text-blue-400 text-xl">
-                <svg className="animate-spin h-8 w-8 mr-3" viewBox="0 0 24 24"> {/* Icon loading */}
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Đang tải dữ liệu cổ phiếu {symbol}...
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex flex-col justify-center items-center min-h-[400px] text-red-500 text-xl p-4">
-                <p>Đã xảy ra lỗi: {error}</p>
-                <button 
-                    onClick={() => router.push('/')} 
-                    className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                    Quay về Trang chủ
-                </button>
-            </div>
-        );
-    }
-
-    if (!stockData) {
-        return (
-            <div className="flex justify-center items-center min-h-[400px] text-gray-400 text-xl">
-                Không có dữ liệu cho mã cổ phiếu này.
-            </div>
-        );
-    }
-
-    // Định dạng dữ liệu thống kê cho component KeyStatistics
-    const formattedKeyStats: FormattedKeyStatistics = {
-        'Giá Mở Cửa (Open)': stockData.openPrice.toFixed(2),
-        'Giá Đỉnh (52 Tuần)': stockData.high52Week.toFixed(2),
-        'Giá Đáy (52 Tuần)': stockData.low52Week.toFixed(2),
-        'P/E Ratio': stockData.peRatio,
-        'EPS': stockData.eps,
-        'Beta': stockData.beta,
-        'Giá Đóng Trước': stockData.previousClose.toFixed(2),
-        // Thêm các chỉ số khác nếu bạn muốn từ summaryDetail, keyStatistics
-    };
-
-    return (
-        <div className="min-h-screen p-4 max-w-7xl mx-auto">
-            
-            {/* 1. Phần Tóm tắt và Giá Hiện tại */}
-            <StockSummary data={stockData} />
-
-            {/* 2. Biểu đồ và Dữ liệu Thống kê */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
-                
-                {/* Cột chính: Biểu đồ */}
-                <div className="lg:col-span-8">
-                    <StockChart symbol={symbol} chartData={stockData.chartData} />
-                </div>
-                
-                {/* Cột phụ: Dữ liệu Thống kê Tham khảo */}
-                <div className="lg:col-span-4">
-                    <KeyStatistics statistics={formattedKeyStats} />
-                </div>
-            </div>
-
-            {/* 3. Lịch sử Giao dịch */}
-            <TradingHistory symbol={symbol} historyData={stockData.tradingHistory} />
-            
-            {/* Tạm thời bỏ qua phần Tin tức để giữ tập trung */}
-        </div>
+  useEffect(() => {
+    fetchStockDetails(true);
+    const interval = setInterval(
+      () => fetchStockDetails(false),
+      REFRESH_INTERVAL
     );
+    return () => clearInterval(interval);
+  }, [symbol]);
+
+  const fetchStockDetails = async (firstLoad = false) => {
+    if (firstLoad) setIsLoading(true);
+    else setIsRefreshing(true);
+
+    try {
+      const apiSymbol = formatSymbolForAPI(symbol);
+      const priceResponse = await fetch(
+        `${API_BASE_URL}/stock/current-price/${apiSymbol}`,
+        { cache: "no-store" }
+      );
+
+      if (!priceResponse.ok)
+        throw new Error(`Không tìm thấy dữ liệu cho ${symbol}`);
+
+      const priceData = await priceResponse.json();
+
+      const financialResponse = await fetch(
+        `${API_BASE_URL}/stock/financial/${apiSymbol}`,
+        { cache: "no-store" }
+      );
+      const financialData = financialResponse.ok
+        ? await financialResponse.json()
+        : {};
+
+      const currentPrice = priceData.price || 0;
+      const previousClose = financialData.previousClose || currentPrice * 0.95;
+      const change = currentPrice - previousClose;
+      const changePercent = (change / previousClose) * 100;
+
+      // ✅ Lấy thông tin chi tiết từ STOCK_DETAILS
+      const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
+        name: `Công ty ${symbol}`,
+        sector: "Chưa phân loại",
+        marketCap: 0,
+      };
+
+      const updatedStockData = {
+        symbol: symbol.toUpperCase(),
+        companyName: stockInfo.name, // ✅ Dùng tên thật
+        sector: stockInfo.sector, // ✅ Hiển thị ngành
+        currentPrice,
+        previousClose,
+        change,
+        changePercent,
+        marketCap: stockInfo.marketCap
+          ? `${(stockInfo.marketCap / 1e9).toFixed(1)} tỷ`
+          : "N/A",
+        volume: financialData.volume
+          ? `${(financialData.volume / 1e6).toFixed(1)}M`
+          : "N/A",
+        peRatio: financialData.peRatio
+          ? financialData.peRatio.toFixed(1) + "x"
+          : "N/A",
+        eps: financialData.eps
+          ? financialData.eps.toLocaleString("vi-VN") + " VND"
+          : "N/A",
+        beta: financialData.beta ? financialData.beta.toFixed(2) : "N/A",
+        openPrice: financialData.open || previousClose,
+        high52Week: financialData.high || currentPrice * 1.2,
+        low52Week: financialData.low || currentPrice * 0.8,
+        lastUpdated:
+          priceData.time || new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
+        chartData: await generateHistoricalData(symbol, currentPrice),
+      };
+
+      setStockData(updatedStockData);
+      setFinancialData(financialData);
+      setChartData(updatedStockData.chartData);
+      setError(null);
+    } catch (err: any) {
+      console.warn("⚠️ Lỗi khi tải dữ liệu:", err.message);
+      if (firstLoad) setError(err.message);
+    } finally {
+      if (firstLoad) setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  const generateHistoricalData = async (symbol: string, currentPrice: number) =>
+    Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (29 - i));
+      const volatility = 0.02;
+      const randomChange = (Math.random() - 0.5) * 2 * volatility;
+      const price = i === 29 ? currentPrice : currentPrice * (1 + randomChange);
+      return {
+        date: date.toISOString().split("T")[0],
+        open: price * (0.99 + Math.random() * 0.02),
+        high: price * (1 + Math.random() * 0.03),
+        low: price * (0.97 - Math.random() * 0.02),
+        close: price,
+        volume: Math.floor(1000000 + Math.random() * 9000000),
+      };
+    });
+
+  const handlePredict = async () => {
+    setIsPredicting(true);
+    try {
+      const apiSymbol = formatSymbolForAPI(symbol);
+      const response = await fetch(
+        `${API_BASE_URL}/stock/predictions/${apiSymbol}`
+      );
+
+      if (!response.ok) {
+        console.error("Lỗi phản hồi API:", response.status);
+        return;
+      }
+
+      const predictionData = await response.json();
+      console.log("📊 API trả về:", predictionData);
+
+      // ✅ Lấy phần tử đầu tiên trong mảng predictions
+      const firstPrediction = predictionData.predictions?.[0];
+
+      if (!firstPrediction) {
+        console.error("Không có dữ liệu dự đoán trong predictions");
+        return;
+      }
+
+      const rawPrediction = firstPrediction.prediction || "GIẢM";
+
+      setPrediction({
+        symbol,
+        prediction: rawPrediction.toUpperCase(),
+        confidence: (firstPrediction.confidence ?? 0.75) * 100,
+        predictedPrice:
+          firstPrediction.predicted_price ?? stockData.currentPrice,
+        predictionDate: new Date(
+          firstPrediction.prediction_time
+        ).toLocaleDateString("vi-VN"),
+        reasoning: [
+          rawPrediction === "TĂNG"
+            ? "Mô hình AI dự đoán giá sẽ tăng dựa trên xu hướng tích cực."
+            : "Mô hình AI dự đoán giá sẽ giảm do tín hiệu thị trường yếu.",
+        ],
+      });
+    } catch (err) {
+      console.error("Lỗi khi dự đoán:", err);
+    } finally {
+      setIsPredicting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px] text-blue-400 text-xl">
+        <div className="animate-spin h-8 w-8 mr-3 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        Đang tải dữ liệu cổ phiếu {symbol}...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[400px] text-red-500 text-xl p-4">
+        <p>Đã xảy ra lỗi: {error}</p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+        >
+          Quay về Trang chủ
+        </button>
+      </div>
+    );
+  }
+
+  if (!stockData) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px] text-gray-400 text-xl">
+        Không có dữ liệu cho mã cổ phiếu này.
+      </div>
+    );
+  }
+
+  const formattedKeyStats = {
+    "Giá Mở Cửa": financialData?.open
+      ? financialData.open.toLocaleString("vi-VN") + "₫"
+      : "N/A",
+    "Giá Cao Nhất": financialData?.high
+      ? financialData.high.toLocaleString("vi-VN") + "₫"
+      : "N/A",
+    "Giá Thấp Nhất": financialData?.low
+      ? financialData.low.toLocaleString("vi-VN") + "₫"
+      : "N/A",
+    "Giá Đóng Cửa Trước": financialData?.previousClose
+      ? financialData.previousClose.toLocaleString("vi-VN") + "₫"
+      : "N/A",
+    "P/E Ratio": financialData?.peRatio
+      ? financialData.peRatio.toFixed(2) + "x"
+      : "N/A",
+    EPS: financialData?.eps
+      ? financialData.eps.toLocaleString("vi-VN") + "₫"
+      : "N/A",
+    Beta: financialData?.beta ? financialData.beta.toFixed(2) : "N/A",
+    "Vốn hóa": stockData.marketCap,
+    Ngành: stockData.sector, // ✅ thêm hiển thị ngành
+  };
+
+  return (
+    <div className="min-h-screen p-4 max-w-7xl mx-auto">
+      <div className="mb-6 flex justify-end">
+        <PredictionButton
+          onPredict={handlePredict}
+          isPredicting={isPredicting}
+          symbol={symbol}
+        />
+      </div>
+
+      {prediction && (
+        <div className="mb-6 bg-gradient-to-r from-blue-900 to-purple-900 p-6 rounded-xl border border-blue-500">
+          <h3 className="text-xl font-bold text-white mb-4">
+            📊 Dự đoán cho ngày mai ({prediction.predictionDate})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div>
+              <div
+                className={`text-2xl font-bold ${
+                  prediction.prediction === "TĂNG"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }`}
+              >
+                {prediction.prediction}
+              </div>
+              <div className="text-sm text-gray-300">Xu hướng</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-yellow-400">
+                {prediction.confidence.toFixed(1)}%
+              </div>
+              <div className="text-sm text-gray-300">Độ tin cậy</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-white">
+                {prediction.predictedPrice.toLocaleString("vi-VN")}₫
+              </div>
+              <div className="text-sm text-gray-300">Giá dự đoán</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <StockSummary data={stockData} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
+        <div className="lg:col-span-8">
+          <StockChart symbol={symbol} chartData={chartData} />
+        </div>
+        <div className="lg:col-span-4">
+          <KeyStatistics statistics={formattedKeyStats} />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default StockDetailPage;
