@@ -126,9 +126,7 @@ export class AuthService {
     if (!valid) throw new ForbiddenException('Password is not correct');
 
     const { hashedPassword: _hashedPassword, ...userWithoutPassword } = user;
-    const hardware = await this.authOtherService.getClientInfo(
-      res.req as Request,
-    );
+    const hardware = this.authOtherService.getClientInfo(res.req as Request);
     const { session, tokens } = await this.tokenService.createSession(
       user,
       hardware.ip,
@@ -219,9 +217,7 @@ export class AuthService {
   ) {
     const sid =
       sessionId || (res.req.cookies?.session_id as string | undefined);
-    const hardware = await this.authOtherService.getClientInfo(
-      res.req as Request,
-    );
+    const hardware = this.authOtherService.getClientInfo(res.req as Request);
     return await this.tokenService.refreshToken(
       sid as string,
       refreshToken,
@@ -366,9 +362,7 @@ export class AuthService {
     };
 
     // get hardware
-    const hardware = await this.authOtherService.getClientInfo(
-      res.req as Request,
-    );
+    const hardware = this.authOtherService.getClientInfo(res.req as Request);
 
     const oauth2User = {
       id: validateUser.id,
