@@ -11,10 +11,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'EMAIL_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://localhost:5672'],
+          urls: ['amqp://blog:Andev2005%40@localhost:5672'],
           queue: 'email_queue',
           queueOptions: {
-            durable: false,
+            durable: true,
           },
         },
       },
@@ -24,4 +24,4 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   controllers: [EmailConsumer],
   exports: [EmailService, EmailProducer],
 })
-export class EmailModule {}
+export class EmailModule { }
