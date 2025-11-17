@@ -21,6 +21,7 @@ interface ChatWindowProps {
   onSendMessage: () => void;
   onClose: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  userName?: string;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -31,6 +32,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   onSendMessage,
   onClose,
   onKeyDown,
+  userName,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -57,7 +59,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     <div className="fixed bottom-24 right-6 w-80 h-96 bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-blue-500 z-50">
       {/* Header */}
       <div className="p-3 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
-        <span className="font-semibold text-sm">💬 Trợ lý Chứng khoán AI</span>
+        <div className="flex flex-col">
+          <span className="font-semibold text-sm">
+            💬 Trợ lý Chứng khoán AI
+          </span>
+          {userName && (
+            <span className="text-xs text-blue-100">Xin chào, {userName}</span>
+          )}
+        </div>
         <button
           onClick={onClose}
           className="hover:bg-blue-700 rounded-full p-1 transition-colors cursor-pointer"
@@ -135,6 +144,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 const ChatbotIcon: React.FC = () => {
   const { user } = useAuth();
   const userId = user?.id;
+  const userName = user?.name; // Sử dụng trường name từ AuthContext
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -168,9 +178,29 @@ const ChatbotIcon: React.FC = () => {
         data = { result: textData, sessionId: undefined };
       }
 
+      // Thay thế userId bằng userName trong message chào mừng
+      let welcomeMessage = data.result;
+      if (userName) {
+        // Tìm và thay thế mọi chỗ có userId bằng userName
+        welcomeMessage = welcomeMessage.replace(
+          new RegExp(userId, "g"),
+          userName
+        );
+        // Cũng có thể thay thế email nếu có trong message
+        if (user?.email) {
+          welcomeMessage = welcomeMessage.replace(
+            new RegExp(user.email, "g"),
+            userName
+          );
+        }
+      }
+
       setSessionId(data.sessionId);
       setMessages([
-        { sender: "bot", text: data.result || "Xin chào! Tôi là trợ lý AI." },
+        {
+          sender: "bot",
+          text: welcomeMessage || "Xin chào! Tôi là trợ lý AI.",
+        },
       ]);
     } catch (err) {
       console.error("Lỗi khi khởi tạo chat:", err);
@@ -204,10 +234,26 @@ const ChatbotIcon: React.FC = () => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data: { result: string; sessionId?: string } = await res.json();
+
+      // Thay thế userId bằng userName trong response từ AI
+      let responseMessage = data.result;
+      if (userName) {
+        responseMessage = responseMessage.replace(
+          new RegExp(userId, "g"),
+          userName
+        );
+        if (user?.email) {
+          responseMessage = responseMessage.replace(
+            new RegExp(user.email, "g"),
+            userName
+          );
+        }
+      }
+
       setSessionId(data.sessionId);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: data.result || "🤖 (Không có phản hồi)" },
+        { sender: "bot", text: responseMessage || "🤖 (Không có phản hồi)" },
       ]);
     } catch (err) {
       console.error("Lỗi khi gửi tin nhắn:", err);
@@ -242,6 +288,7 @@ const ChatbotIcon: React.FC = () => {
           onSendMessage={sendMessage}
           onClose={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
+          userName={userName}
         />
       )}
       <button
