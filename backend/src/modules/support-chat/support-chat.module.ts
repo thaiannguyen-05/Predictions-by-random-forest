@@ -21,7 +21,7 @@ import { FaqService } from './service/FAQ-service/Faq.service';
         name: 'MESSAGE_QUEUE',
         transport: Transport.RMQ,
         options: {
-          urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
+          urls: ['amqp://blog:Andev2005%40@localhost:5672'],
           queue: 'message_queue',
           queueOptions: {
             durable: true,
