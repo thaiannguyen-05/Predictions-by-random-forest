@@ -19,6 +19,7 @@ import { RoomService } from './service/room/room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FaqService } from './service/FAQ-service/Faq.service';
+import { StockPredictionService } from '../stock/stock-prediction.service';
 @Injectable()
 export class SupportChatService {
   private readonly googleAi: GoogleGenerativeAI;
@@ -32,6 +33,7 @@ export class SupportChatService {
     private readonly messageService: MessageService,
     private readonly roomService: RoomService,
     private readonly faqService: FaqService,
+    private readonly stockService: StockPredictionService,
   ) {
     const geminiApikey = configService.getOrThrow<string>('GENEMI_API_KEY');
     const geminiVersion = configService.getOrThrow<string>('GENEMI_MODEL');
@@ -69,11 +71,11 @@ export class SupportChatService {
         });
         this.chatSessions[sessionIdToUse] = result;
 
-        // create room
+        // create room (use the actual sessionIdToUse)
         const room: CreateRoomDto = {
           ...(employeeId && { employeeId }),
           customerId,
-          sessionId,
+          sessionId: sessionIdToUse,
         };
 
         await this.roomService.createRoom(room);
@@ -164,6 +166,96 @@ export class SupportChatService {
     );
     this.logger.log(`Sending prompt to Gemini AI for session: ${sessionId}`);
 
+    // Quick numeric menu handling: support real actions. Accept "1" or "2 AAPL" (option + optional arg)
+    const parts = data.prompt.trim().split(/\s+/);
+    const opt = parts[0].toLowerCase();
+    const arg = parts[1]?.toUpperCase();
+
+    if (['1', '2', '3', '4', '5'].includes(opt)) {
+      // Save the user's selection message
+      const userMessage = {
+        content: data.prompt,
+        roomId: sessionId,
+        senderId: data.userId,
+      };
+      await this.messageService.createMessage(userMessage);
+
+      try {
+        if (opt === '1') {
+          const res = await this.stockService.ping();
+          const reply = res.success
+            ? `✅ ML Service is available${res.message ? ': ' + res.message : ''}`
+            : `❌ ML Service unavailable${res.error ? ': ' + res.error : ''}`;
+          return { result: reply, sessionId };
+        }
+
+        if (!arg) {
+          return {
+            result:
+              'Vui lòng gửi mã cổ phiếu sau lựa chọn, ví dụ: "2 AAPL" hoặc "3 AAPL"',
+            sessionId,
+          };
+        }
+
+        if (opt === '2') {
+          const res = await this.stockService.getCurrentPrice(arg);
+          if (!res.success)
+            return { result: `Lấy giá thất bại: ${res.error}`, sessionId };
+          return {
+            result: `Giá hiện tại của ${arg}: ${res.current_price ?? res.price} (at ${res.current_time ?? res.time ?? res.timestamp})`,
+            sessionId,
+          };
+        }
+
+        if (opt === '3') {
+          const res = await this.stockService.getPredictionsMultiHours(arg);
+          if (!res.success)
+            return { result: `Dự đoán thất bại: ${res.error}`, sessionId };
+          return {
+            result: `Dự đoán cho ${arg}: ${JSON.stringify(res.predictions ?? res.prediction)}`,
+            sessionId,
+          };
+        }
+
+        if (opt === '4') {
+          const [financial, prediction] = await Promise.all([
+            this.stockService.getFinancialData(arg),
+            this.stockService.getPredictionSingle(arg),
+          ]);
+          if (!financial.success)
+            return {
+              result: `Phân tích thất bại: ${financial.error}`,
+              sessionId,
+            };
+          if (!prediction.success)
+            return {
+              result: `Dự đoán thất bại: ${prediction.error}`,
+              sessionId,
+            };
+          return {
+            result: `Phân tích cho ${arg}:\nFinancial: ${JSON.stringify(financial.data ?? financial)}\nPrediction: ${JSON.stringify(prediction.predictions ?? prediction.prediction ?? prediction)}`,
+            sessionId,
+          };
+        }
+
+        if (opt === '5') {
+          const res = await this.stockService.trainModel(arg);
+          if (!res.success)
+            return { result: `Train thất bại: ${res.error}`, sessionId };
+          return {
+            result: `Train started/completed: ${res.message ?? JSON.stringify(res)}`,
+            sessionId,
+          };
+        }
+      } catch (err) {
+        this.logger.error(`Error handling menu option ${opt}: ${err.message}`);
+        return {
+          result: `Lỗi khi thực hiện yêu cầu: ${err.message}`,
+          sessionId,
+        };
+      }
+    }
+
     if (data.payload) {
       return this.faqService.handleFaq(data.payload);
     }
@@ -173,7 +265,7 @@ export class SupportChatService {
 
     const messageQueue: MessageQueue = {
       content: data.prompt,
-      roomId: data.sessionId,
+      roomId: sessionId,
       senderId: data.userId,
     };
 

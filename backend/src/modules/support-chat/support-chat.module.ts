@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SupportChatService } from './support-chat.service';
+import { StockModule } from '../stock/stock.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MessageService } from './service/message/message.service';
 import { MessageProducer } from './service/message/queue_service/message.producer';
@@ -14,6 +15,7 @@ import { FaqService } from './service/FAQ-service/Faq.service';
 
 @Module({
   imports: [
+    StockModule,
     ClientsModule.register([
       {
         name: 'MESSAGE_QUEUE',
