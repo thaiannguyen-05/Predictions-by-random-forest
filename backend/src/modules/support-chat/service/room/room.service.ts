@@ -22,7 +22,7 @@ export class RoomService {
     room = await this.prismaService.room.create({
       data: {
         id: dto.sessionId,
-        ...(dto.customerId && { clientId: dto.customerId }),
+        ...(dto.employeeId && { employeeId: dto.employeeId }),
         customerId: dto.customerId,
       },
     });
