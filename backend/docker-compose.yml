@@ -31,8 +31,8 @@ services:
       - "5672:5672"     # AMQP (cho app kết nối)
       - "15672:15672"   # Web UI
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
 
 volumes:
   postgres_data:

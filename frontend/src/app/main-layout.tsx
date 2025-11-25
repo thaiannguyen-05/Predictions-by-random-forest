@@ -1,11 +1,15 @@
-import Header from '@/components/layout/Header';
-import TickerBar from '@/components/layout/TickerBar';
-import ChatbotIcon from '@/components/layout/ChatbotIcon';
+import TicketWrapper from "@/components/layout/TicketWrapper";
+import ChatbotIcon from "@/components/layout/ChatbotIcon";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       {children}
+      <TicketWrapper />
       <ChatbotIcon />
     </>
   );

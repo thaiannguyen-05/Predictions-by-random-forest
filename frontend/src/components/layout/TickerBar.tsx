@@ -35,7 +35,7 @@ export default function TickerBar() {
           let data: any = null;
           let success = false;
 
-          // 🟢 Thử lần lượt 2 định dạng: có và không có .VN
+          // Thử lần lượt 2 định dạng: có và không có .VN
           const variants = [
             `${API_BASE}/stock/current-price/${apiSymbol}`,
             `${API_BASE}/stock/current-price/${symbol}`,
@@ -59,7 +59,7 @@ export default function TickerBar() {
             return getFallbackTickerData(symbol);
           }
 
-          // ✅ Lấy thêm dữ liệu tài chính (không quan trọng, bỏ qua lỗi)
+          // Lấy thêm dữ liệu tài chính (không quan trọng, bỏ qua lỗi)
           let previousClose = data.price * 0.95;
           try {
             const finRes = await fetch(

@@ -1,12 +1,11 @@
-import './globals.css';
-import MainLayout from '@/app/main-layout';
-import Header from '@/components/layout/Header';
-import TickerBar from '@/components/layout/TickerBar';
-import Providers from './providers';
+import "./globals.css";
+import Header from "@/components/layout/Header";
+import TicketWrapper from "@/components/layout/TicketWrapper";
+import Providers from "./providers";
 
 export const metadata = {
-  title: 'StockTrack - Phân tích & Dự đoán Chứng khoán',
-  description: 'Ứng dụng phân tích và dự đoán thị trường chứng khoán.',
+  title: "StockTrack - Phân tích & Dự đoán Chứng khoán",
+  description: "Ứng dụng phân tích và dự đoán thị trường chứng khoán.",
 };
 
 export default function RootLayout({
@@ -19,7 +18,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          <TickerBar />  
+          <TicketWrapper />
           {children}
         </Providers>
       </body>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { Facebook } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL_AUTH || "http://localhost:4000";
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
