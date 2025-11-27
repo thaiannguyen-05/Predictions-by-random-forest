@@ -8,8 +8,11 @@ import * as express from 'express';
 import { join } from 'path';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { QUEUE_EMAIL } from './common/type/common.type';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.use(cookieParser());
 
   // Swagger configuration
@@ -54,8 +57,10 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://admin:admin@localhost:5672'],
-      queue: 'email_queue',
+      urls: [
+        `amqp://${configService.getOrThrow<string>('ACCOUNT_RABBIT')}:${configService.getOrThrow<string>('PASSWORD_RABBIT')}@localhost:5672`,
+      ],
+      queue: QUEUE_EMAIL,
       queueOptions: {
         durable: true,
       },

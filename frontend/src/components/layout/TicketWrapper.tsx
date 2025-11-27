@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import TickerBar from "@/components/layout/TickerBar";
-
 export default function TickerWrapper() {
   const pathname = usePathname();
 
