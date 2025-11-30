@@ -72,7 +72,7 @@ export class AuthTokenService {
     if (!session) {
       // check if session is not available -> create userdevice and new session
       // new device notification
-      await this.emailProducer.sendDetectOtherDevice({
+      this.emailProducer.sendDetectOtherDevice({
         to: user.email,
         username: user.username,
       });

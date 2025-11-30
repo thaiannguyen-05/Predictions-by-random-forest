@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "log/.2c3ae5ae6846fda5b11cce7491ad67ac461ca9f6-audit.json",
+    "files": [
+        {
+            "date": 1764347615473,
+            "name": "log/nest-log-2025-11-28-23.log",
+            "hash": "0816d5864ce367903fc47468e7d3cca7ddad9e3c3b09541a892f4603b75e1bc2"
+        },
+        {
+            "date": 1764460473575,
+            "name": "log/nest-log-2025-11-30-06.log",
+            "hash": "9b85267b3a300d54cafaad50e8829ca1114de1a636c7855e5737fc424c247fde"
+        },
+        {
+            "date": 1764460800233,
+            "name": "log/nest-log-2025-11-30-07.log",
+            "hash": "53f2c0ed6363c84f8b0fe9e2bcda5906b4b91c7307d0156311947ff50ab4d036"
+        }
+    ],
+    "hashType": "sha256"
+}

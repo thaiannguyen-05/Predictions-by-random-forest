@@ -22,6 +22,9 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { EmailProducer } from '../../../email/emai.producer';
 import { DateUtils } from '../../../common/utils/string-to-date.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
+import { RedisService } from '../../redis/redis.service';
+import { MyLogger } from '../../../logger/logger.service';
+import { AUTH_CONSTANT } from '../auth.constants';
 
 @Injectable()
 export class AuthService {
@@ -32,11 +35,10 @@ export class AuthService {
     private readonly tokenService: AuthTokenService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    private readonly logger: MyLogger,
   ) {}
 
-  // ===============================
-  // REGISTER
-  // ===============================
   public async register(dto: CreateAccountDto) {
     const account = await this.prismaService.user.findUnique({
       where: { email: dto.email },
@@ -59,13 +61,11 @@ export class AuthService {
         state: 'pending',
       },
     });
-
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    await this.prismaService.code.create({
-      data: { code, userId: newAccount.id },
-    });
-    await this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
-
+    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(newAccount.id);
+    await this.redisService.set(key, code);
+    this.logger.debug(`${key} have value: ${code} has been saved `);
+    this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
     return { status: true, data: newAccount };
   }
 
@@ -75,15 +75,14 @@ export class AuthService {
   public async verifyAccount(dto: VerifyAccount) {
     const account = await this.prismaService.user.findUnique({
       where: { email: dto.email },
-      select: { id: true, isActive: true, codes: true },
+      select: { id: true, isActive: true },
     });
     if (!account) throw new NotFoundException('Account not found');
     if (account.isActive)
       throw new ConflictException('Account is already active');
 
-    const code = await this.prismaService.code.findUnique({
-      where: { code_userId: { code: dto.code, userId: account.id } },
-    });
+    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(account.id);
+    const code = await this.redisService.get(key);
     if (!code) throw new BadRequestException('Code is not existed or expired');
 
     await this.prismaService.$transaction([
@@ -91,9 +90,8 @@ export class AuthService {
         where: { id: account.id },
         data: { isActive: true },
       }),
-      this.prismaService.code.delete({ where: { id: code.id } }),
     ]);
-
+    await this.redisService.del(key);
     return { status: true };
   }
 
@@ -199,7 +197,7 @@ export class AuthService {
       data: { hashedPassword: newHashedPassword },
     });
 
-    await this.emailProducer.sendNotifiCaitonChangePassword({
+    this.emailProducer.sendNotifiCaitonChangePassword({
       to: account.email,
       username: account.username,
     });
@@ -452,21 +450,13 @@ export class AuthService {
       user.email;
 
     const avatar = user.picture || user.avtUrl || undefined;
-
-    // SỬA QUAN TRỌNG: CHỈ ẨN EMAIL NẾU THẬT SỰ LÀ FACEBOOK USER
     let displayEmail = user.email;
-
-    // Chỉ ẩn email nếu:
-    // 1. Provider là facebook VÀ
-    // 2. Email có chứa ".fb@" hoặc "@facebook.com"
     if (
       user.provider === 'facebook' &&
       (user.email.includes('.fb@') || user.email.includes('@facebook.com'))
     ) {
-      // Tạo email ảo từ username
       displayEmail = `${user.username || user.id}@facebook.com`;
     }
-    // Các trường hợp khác (Google, local) hiển thị email thật
 
     console.log('getMe - Final user data:', {
       id: user.id,

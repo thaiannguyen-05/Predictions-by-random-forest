@@ -37,24 +37,6 @@ model Session {
   @@map("sessions")
 }
 
-model Code {
-  id        String   @id @default(uuid()) @map("code_id") @db.Uuid
-  code      String   @db.VarChar(255)
-  type      CodeType @default(VERIFICATION) @map("code_type")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // foregin key
-  userId String @map("user_id") @db.Uuid
-
-  // relaions
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([code, userId])
-  @@index([userId])
-  @@map("codes")
-}
-
 enum AccountType {
   EMAIL
   OAUTH2
@@ -165,7 +147,6 @@ model User {
   provider       String?        @db.VarChar(50)
 
   //  relations
-  codes          Code[]
   Oauth2User     Oauth2User[]   @relation("oauth2")
   sessions       Session[]      @relation("sessions")
   userDevice     UserDevice[]

@@ -11,6 +11,7 @@ import { FacebookStrategy } from './strategy/facebook.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { SessionSerializer } from './strategy/session.serializer';
 import { AuthTokenService } from './service/auth.token.service';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthTokenService } from './service/auth.token.service';
       defaultStrategy: 'jwt',
     }),
     EmailModule,
+    RedisModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
