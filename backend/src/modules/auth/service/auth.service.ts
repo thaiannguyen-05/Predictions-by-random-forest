@@ -11,7 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
+import {
+  FacebookOAuth2User,
+  GoogleOAuth2User,
+  Payload,
+} from '../auth.interface';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -398,29 +402,13 @@ export class AuthService {
       throw new UnauthorizedException('Token validation failed');
     }
   }
-  // ===============================
-  // FETCH CURRENT USER
-  // ===============================
-  public async getMe(token: string) {
-    const payload = this.jwtService.verify(token, {
+
+  async getMe(token: string) {
+    const payload: Payload = this.jwtService.verify(token, {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
     });
 
-    const user = await this.prismaService.user.findUnique({
-      where: { id: payload.sub },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        fullname: true,
-        picture: true,
-        avtUrl: true,
-        isActive: true,
-        provider: true,
-      },
-    });
+    const user = await this.findUserByAccessor(payload.sub);
 
     if (!user) throw new UnauthorizedException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');
