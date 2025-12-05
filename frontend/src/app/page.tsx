@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import SearchBar from '@/components/common/SearchBar';
-import NewsFeed from '@/components/sections/NewsFeed';
-import Recommendations from '@/components/sections/Recommendations';
-import Watchlist from '@/components/sections/Watchlist';
-import AboutUs from '@/components/sections/AboutUs';
-import MainLayout from './main-layout';
+import { useEffect, useState } from "react";
+import SearchBar from "@/components/common/SearchBar";
+import NewsFeed from "@/components/sections/NewsFeed";
+import Recommendations from "@/components/sections/Recommendations";
+import Watchlist from "@/components/sections/Watchlist";
+import Support from "@/components/sections/Support";
+import MainLayout from "./main-layout";
 
 export default function Home() {
-  const [phase, setPhase] = useState<'boot' | 'logo' | 'content'>('boot');
+  const [phase, setPhase] = useState<"boot" | "logo" | "content">("boot");
   const [bootLines, setBootLines] = useState<string[]>([]);
 
   const messages = [
-    '> Initializing core modules...',
-    '> Loading AI neural matrix...',
-    '> Calibrating prediction engine...',
-    '> Connecting to global data stream...',
-    '> Running diagnostics...',
-    '> System check: OK ✅',
-    '> Boot sequence complete. Welcome, Commander.'
+    "> Initializing core modules...",
+    "> Loading AI neural matrix...",
+    "> Calibrating prediction engine...",
+    "> Connecting to global data stream...",
+    "> Running diagnostics...",
+    "> System check: OK ✅",
+    "> Boot sequence complete. Welcome, Commander.",
   ];
 
   useEffect(() => {
@@ -29,15 +29,15 @@ export default function Home() {
       index++;
       if (index === messages.length) {
         clearInterval(interval);
-        setTimeout(() => setPhase('logo'), 1000);
-        setTimeout(() => setPhase('content'), 4000); // sau 4s thì hiển thị trang chính
+        setTimeout(() => setPhase("logo"), 1000);
+        setTimeout(() => setPhase("content"), 4000); // sau 4s thì hiển thị trang chính
       }
     }, 700);
     return () => clearInterval(interval);
   }, []);
 
   /** 🧠 Giai đoạn 1: Console boot (che toàn trang) */
-  if (phase === 'boot') {
+  if (phase === "boot") {
     return (
       <div className="fixed inset-0 flex flex-col items-start justify-center bg-black text-green-400 font-mono px-8 z-[9999] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,100,0.15),transparent_70%)] blur-3xl"></div>
@@ -76,7 +76,7 @@ export default function Home() {
   }
 
   /** ⚙️ Giai đoạn 2: Logo hologram (che toàn trang, không hiện header) */
-  if (phase === 'logo') {
+  if (phase === "logo") {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black z-[9999] overflow-hidden">
         <div className="absolute w-[400px] h-[400px] bg-cyan-500/20 blur-3xl rounded-full animate-pulse"></div>
@@ -99,7 +99,8 @@ export default function Home() {
             animation: spinReverse 8s linear infinite;
           }
           @keyframes float {
-            0%, 100% {
+            0%,
+            100% {
               transform: translateY(0);
             }
             50% {
@@ -144,7 +145,7 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-3 space-y-6">
-            <AboutUs />
+            <Support />
           </div>
         </div>
       </div>
