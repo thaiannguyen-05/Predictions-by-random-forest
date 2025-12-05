@@ -24,11 +24,6 @@ export type UserDevice = $Result.DefaultSelection<Prisma.$UserDevicePayload>
  */
 export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
 /**
- * Model Code
- * 
- */
-export type Code = $Result.DefaultSelection<Prisma.$CodePayload>
-/**
  * Model Message
  * 
  */
@@ -277,16 +272,6 @@ export class PrismaClient<
     * ```
     */
   get session(): Prisma.SessionDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.code`: Exposes CRUD operations for the **Code** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Codes
-    * const codes = await prisma.code.findMany()
-    * ```
-    */
-  get code(): Prisma.CodeDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.message`: Exposes CRUD operations for the **Message** model.
@@ -779,7 +764,6 @@ export namespace Prisma {
   export const ModelName: {
     UserDevice: 'UserDevice',
     Session: 'Session',
-    Code: 'Code',
     Message: 'Message',
     Room: 'Room',
     MemberInRoom: 'MemberInRoom',
@@ -803,7 +787,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userDevice" | "session" | "code" | "message" | "room" | "memberInRoom" | "user" | "oauth2User"
+      modelProps: "userDevice" | "session" | "message" | "room" | "memberInRoom" | "user" | "oauth2User"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -952,80 +936,6 @@ export namespace Prisma {
           count: {
             args: Prisma.SessionCountArgs<ExtArgs>
             result: $Utils.Optional<SessionCountAggregateOutputType> | number
-          }
-        }
-      }
-      Code: {
-        payload: Prisma.$CodePayload<ExtArgs>
-        fields: Prisma.CodeFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.CodeFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.CodeFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          findFirst: {
-            args: Prisma.CodeFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.CodeFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          findMany: {
-            args: Prisma.CodeFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>[]
-          }
-          create: {
-            args: Prisma.CodeCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          createMany: {
-            args: Prisma.CodeCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.CodeCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>[]
-          }
-          delete: {
-            args: Prisma.CodeDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          update: {
-            args: Prisma.CodeUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          deleteMany: {
-            args: Prisma.CodeDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.CodeUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.CodeUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>[]
-          }
-          upsert: {
-            args: Prisma.CodeUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CodePayload>
-          }
-          aggregate: {
-            args: Prisma.CodeAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCode>
-          }
-          groupBy: {
-            args: Prisma.CodeGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CodeGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.CodeCountArgs<ExtArgs>
-            result: $Utils.Optional<CodeCountAggregateOutputType> | number
           }
         }
       }
@@ -1497,7 +1407,6 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     userDevice?: UserDeviceOmit
     session?: SessionOmit
-    code?: CodeOmit
     message?: MessageOmit
     room?: RoomOmit
     memberInRoom?: MemberInRoomOmit
@@ -1623,7 +1532,6 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    codes: number
     Oauth2User: number
     sessions: number
     userDevice: number
@@ -1633,7 +1541,6 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    codes?: boolean | UserCountOutputTypeCountCodesArgs
     Oauth2User?: boolean | UserCountOutputTypeCountOauth2UserArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     userDevice?: boolean | UserCountOutputTypeCountUserDeviceArgs
@@ -1651,13 +1558,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CodeWhereInput
   }
 
   /**
@@ -3898,1077 +3798,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SessionInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Code
-   */
-
-  export type AggregateCode = {
-    _count: CodeCountAggregateOutputType | null
-    _min: CodeMinAggregateOutputType | null
-    _max: CodeMaxAggregateOutputType | null
-  }
-
-  export type CodeMinAggregateOutputType = {
-    id: string | null
-    code: string | null
-    type: $Enums.CodeType | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type CodeMaxAggregateOutputType = {
-    id: string | null
-    code: string | null
-    type: $Enums.CodeType | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type CodeCountAggregateOutputType = {
-    id: number
-    code: number
-    type: number
-    createdAt: number
-    updatedAt: number
-    userId: number
-    _all: number
-  }
-
-
-  export type CodeMinAggregateInputType = {
-    id?: true
-    code?: true
-    type?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type CodeMaxAggregateInputType = {
-    id?: true
-    code?: true
-    type?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type CodeCountAggregateInputType = {
-    id?: true
-    code?: true
-    type?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type CodeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Code to aggregate.
-     */
-    where?: CodeWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Codes to fetch.
-     */
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: CodeWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Codes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Codes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Codes
-    **/
-    _count?: true | CodeCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CodeMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CodeMaxAggregateInputType
-  }
-
-  export type GetCodeAggregateType<T extends CodeAggregateArgs> = {
-        [P in keyof T & keyof AggregateCode]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCode[P]>
-      : GetScalarType<T[P], AggregateCode[P]>
-  }
-
-
-
-
-  export type CodeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CodeWhereInput
-    orderBy?: CodeOrderByWithAggregationInput | CodeOrderByWithAggregationInput[]
-    by: CodeScalarFieldEnum[] | CodeScalarFieldEnum
-    having?: CodeScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CodeCountAggregateInputType | true
-    _min?: CodeMinAggregateInputType
-    _max?: CodeMaxAggregateInputType
-  }
-
-  export type CodeGroupByOutputType = {
-    id: string
-    code: string
-    type: $Enums.CodeType
-    createdAt: Date
-    updatedAt: Date
-    userId: string
-    _count: CodeCountAggregateOutputType | null
-    _min: CodeMinAggregateOutputType | null
-    _max: CodeMaxAggregateOutputType | null
-  }
-
-  type GetCodeGroupByPayload<T extends CodeGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CodeGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CodeGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CodeGroupByOutputType[P]>
-            : GetScalarType<T[P], CodeGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CodeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    code?: boolean
-    type?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["code"]>
-
-  export type CodeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    code?: boolean
-    type?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["code"]>
-
-  export type CodeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    code?: boolean
-    type?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["code"]>
-
-  export type CodeSelectScalar = {
-    id?: boolean
-    code?: boolean
-    type?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
-  }
-
-  export type CodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "type" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["code"]>
-  export type CodeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type CodeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type CodeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $CodePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Code"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      code: string
-      type: $Enums.CodeType
-      createdAt: Date
-      updatedAt: Date
-      userId: string
-    }, ExtArgs["result"]["code"]>
-    composites: {}
-  }
-
-  type CodeGetPayload<S extends boolean | null | undefined | CodeDefaultArgs> = $Result.GetResult<Prisma.$CodePayload, S>
-
-  type CodeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<CodeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CodeCountAggregateInputType | true
-    }
-
-  export interface CodeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Code'], meta: { name: 'Code' } }
-    /**
-     * Find zero or one Code that matches the filter.
-     * @param {CodeFindUniqueArgs} args - Arguments to find a Code
-     * @example
-     * // Get one Code
-     * const code = await prisma.code.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends CodeFindUniqueArgs>(args: SelectSubset<T, CodeFindUniqueArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Code that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {CodeFindUniqueOrThrowArgs} args - Arguments to find a Code
-     * @example
-     * // Get one Code
-     * const code = await prisma.code.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends CodeFindUniqueOrThrowArgs>(args: SelectSubset<T, CodeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Code that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeFindFirstArgs} args - Arguments to find a Code
-     * @example
-     * // Get one Code
-     * const code = await prisma.code.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends CodeFindFirstArgs>(args?: SelectSubset<T, CodeFindFirstArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Code that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeFindFirstOrThrowArgs} args - Arguments to find a Code
-     * @example
-     * // Get one Code
-     * const code = await prisma.code.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends CodeFindFirstOrThrowArgs>(args?: SelectSubset<T, CodeFindFirstOrThrowArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Codes that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Codes
-     * const codes = await prisma.code.findMany()
-     * 
-     * // Get first 10 Codes
-     * const codes = await prisma.code.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const codeWithIdOnly = await prisma.code.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends CodeFindManyArgs>(args?: SelectSubset<T, CodeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Code.
-     * @param {CodeCreateArgs} args - Arguments to create a Code.
-     * @example
-     * // Create one Code
-     * const Code = await prisma.code.create({
-     *   data: {
-     *     // ... data to create a Code
-     *   }
-     * })
-     * 
-     */
-    create<T extends CodeCreateArgs>(args: SelectSubset<T, CodeCreateArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Codes.
-     * @param {CodeCreateManyArgs} args - Arguments to create many Codes.
-     * @example
-     * // Create many Codes
-     * const code = await prisma.code.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends CodeCreateManyArgs>(args?: SelectSubset<T, CodeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Codes and returns the data saved in the database.
-     * @param {CodeCreateManyAndReturnArgs} args - Arguments to create many Codes.
-     * @example
-     * // Create many Codes
-     * const code = await prisma.code.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Codes and only return the `id`
-     * const codeWithIdOnly = await prisma.code.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends CodeCreateManyAndReturnArgs>(args?: SelectSubset<T, CodeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Code.
-     * @param {CodeDeleteArgs} args - Arguments to delete one Code.
-     * @example
-     * // Delete one Code
-     * const Code = await prisma.code.delete({
-     *   where: {
-     *     // ... filter to delete one Code
-     *   }
-     * })
-     * 
-     */
-    delete<T extends CodeDeleteArgs>(args: SelectSubset<T, CodeDeleteArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Code.
-     * @param {CodeUpdateArgs} args - Arguments to update one Code.
-     * @example
-     * // Update one Code
-     * const code = await prisma.code.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends CodeUpdateArgs>(args: SelectSubset<T, CodeUpdateArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Codes.
-     * @param {CodeDeleteManyArgs} args - Arguments to filter Codes to delete.
-     * @example
-     * // Delete a few Codes
-     * const { count } = await prisma.code.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends CodeDeleteManyArgs>(args?: SelectSubset<T, CodeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Codes.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Codes
-     * const code = await prisma.code.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends CodeUpdateManyArgs>(args: SelectSubset<T, CodeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Codes and returns the data updated in the database.
-     * @param {CodeUpdateManyAndReturnArgs} args - Arguments to update many Codes.
-     * @example
-     * // Update many Codes
-     * const code = await prisma.code.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Codes and only return the `id`
-     * const codeWithIdOnly = await prisma.code.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends CodeUpdateManyAndReturnArgs>(args: SelectSubset<T, CodeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Code.
-     * @param {CodeUpsertArgs} args - Arguments to update or create a Code.
-     * @example
-     * // Update or create a Code
-     * const code = await prisma.code.upsert({
-     *   create: {
-     *     // ... data to create a Code
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Code we want to update
-     *   }
-     * })
-     */
-    upsert<T extends CodeUpsertArgs>(args: SelectSubset<T, CodeUpsertArgs<ExtArgs>>): Prisma__CodeClient<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Codes.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeCountArgs} args - Arguments to filter Codes to count.
-     * @example
-     * // Count the number of Codes
-     * const count = await prisma.code.count({
-     *   where: {
-     *     // ... the filter for the Codes we want to count
-     *   }
-     * })
-    **/
-    count<T extends CodeCountArgs>(
-      args?: Subset<T, CodeCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CodeCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Code.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CodeAggregateArgs>(args: Subset<T, CodeAggregateArgs>): Prisma.PrismaPromise<GetCodeAggregateType<T>>
-
-    /**
-     * Group by Code.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CodeGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CodeGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CodeGroupByArgs['orderBy'] }
-        : { orderBy?: CodeGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CodeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCodeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Code model
-   */
-  readonly fields: CodeFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Code.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__CodeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Code model
-   */
-  interface CodeFieldRefs {
-    readonly id: FieldRef<"Code", 'String'>
-    readonly code: FieldRef<"Code", 'String'>
-    readonly type: FieldRef<"Code", 'CodeType'>
-    readonly createdAt: FieldRef<"Code", 'DateTime'>
-    readonly updatedAt: FieldRef<"Code", 'DateTime'>
-    readonly userId: FieldRef<"Code", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Code findUnique
-   */
-  export type CodeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter, which Code to fetch.
-     */
-    where: CodeWhereUniqueInput
-  }
-
-  /**
-   * Code findUniqueOrThrow
-   */
-  export type CodeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter, which Code to fetch.
-     */
-    where: CodeWhereUniqueInput
-  }
-
-  /**
-   * Code findFirst
-   */
-  export type CodeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter, which Code to fetch.
-     */
-    where?: CodeWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Codes to fetch.
-     */
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Codes.
-     */
-    cursor?: CodeWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Codes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Codes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Codes.
-     */
-    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
-  }
-
-  /**
-   * Code findFirstOrThrow
-   */
-  export type CodeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter, which Code to fetch.
-     */
-    where?: CodeWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Codes to fetch.
-     */
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Codes.
-     */
-    cursor?: CodeWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Codes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Codes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Codes.
-     */
-    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
-  }
-
-  /**
-   * Code findMany
-   */
-  export type CodeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter, which Codes to fetch.
-     */
-    where?: CodeWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Codes to fetch.
-     */
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Codes.
-     */
-    cursor?: CodeWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Codes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Codes.
-     */
-    skip?: number
-    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
-  }
-
-  /**
-   * Code create
-   */
-  export type CodeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Code.
-     */
-    data: XOR<CodeCreateInput, CodeUncheckedCreateInput>
-  }
-
-  /**
-   * Code createMany
-   */
-  export type CodeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Codes.
-     */
-    data: CodeCreateManyInput | CodeCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Code createManyAndReturn
-   */
-  export type CodeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * The data used to create many Codes.
-     */
-    data: CodeCreateManyInput | CodeCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Code update
-   */
-  export type CodeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Code.
-     */
-    data: XOR<CodeUpdateInput, CodeUncheckedUpdateInput>
-    /**
-     * Choose, which Code to update.
-     */
-    where: CodeWhereUniqueInput
-  }
-
-  /**
-   * Code updateMany
-   */
-  export type CodeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Codes.
-     */
-    data: XOR<CodeUpdateManyMutationInput, CodeUncheckedUpdateManyInput>
-    /**
-     * Filter which Codes to update
-     */
-    where?: CodeWhereInput
-    /**
-     * Limit how many Codes to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Code updateManyAndReturn
-   */
-  export type CodeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * The data used to update Codes.
-     */
-    data: XOR<CodeUpdateManyMutationInput, CodeUncheckedUpdateManyInput>
-    /**
-     * Filter which Codes to update
-     */
-    where?: CodeWhereInput
-    /**
-     * Limit how many Codes to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Code upsert
-   */
-  export type CodeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Code to update in case it exists.
-     */
-    where: CodeWhereUniqueInput
-    /**
-     * In case the Code found by the `where` argument doesn't exist, create a new Code with this data.
-     */
-    create: XOR<CodeCreateInput, CodeUncheckedCreateInput>
-    /**
-     * In case the Code was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<CodeUpdateInput, CodeUncheckedUpdateInput>
-  }
-
-  /**
-   * Code delete
-   */
-  export type CodeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    /**
-     * Filter which Code to delete.
-     */
-    where: CodeWhereUniqueInput
-  }
-
-  /**
-   * Code deleteMany
-   */
-  export type CodeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Codes to delete
-     */
-    where?: CodeWhereInput
-    /**
-     * Limit how many Codes to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Code without action
-   */
-  export type CodeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
   }
 
 
@@ -8626,7 +7455,6 @@ export namespace Prisma {
     lastActived?: boolean
     picture?: boolean
     provider?: boolean
-    codes?: boolean | User$codesArgs<ExtArgs>
     Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
@@ -8722,7 +7550,6 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    codes?: boolean | User$codesArgs<ExtArgs>
     Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     userDevice?: boolean | User$userDeviceArgs<ExtArgs>
@@ -8737,7 +7564,6 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      codes: Prisma.$CodePayload<ExtArgs>[]
       Oauth2User: Prisma.$Oauth2UserPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       userDevice: Prisma.$UserDevicePayload<ExtArgs>[]
@@ -9165,7 +7991,6 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    codes<T extends User$codesArgs<ExtArgs> = {}>(args?: Subset<T, User$codesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Oauth2User<T extends User$Oauth2UserArgs<ExtArgs> = {}>(args?: Subset<T, User$Oauth2UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Oauth2UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userDevice<T extends User$userDeviceArgs<ExtArgs> = {}>(args?: Subset<T, User$userDeviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9611,30 +8436,6 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
-  }
-
-  /**
-   * User.codes
-   */
-  export type User$codesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Code
-     */
-    select?: CodeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Code
-     */
-    omit?: CodeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CodeInclude<ExtArgs> | null
-    where?: CodeWhereInput
-    orderBy?: CodeOrderByWithRelationInput | CodeOrderByWithRelationInput[]
-    cursor?: CodeWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CodeScalarFieldEnum | CodeScalarFieldEnum[]
   }
 
   /**
@@ -11004,18 +9805,6 @@ export namespace Prisma {
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
-  export const CodeScalarFieldEnum: {
-    id: 'id',
-    code: 'code',
-    type: 'type',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    userId: 'userId'
-  };
-
-  export type CodeScalarFieldEnum = (typeof CodeScalarFieldEnum)[keyof typeof CodeScalarFieldEnum]
-
-
   export const MessageScalarFieldEnum: {
     id: 'id',
     content: 'content',
@@ -11156,20 +9945,6 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'CodeType'
-   */
-  export type EnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType'>
-    
-
-
-  /**
-   * Reference to a field of type 'CodeType[]'
-   */
-  export type ListEnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType[]'>
     
 
 
@@ -11409,67 +10184,6 @@ export namespace Prisma {
     userId?: UuidWithAggregatesFilter<"Session"> | string
   }
 
-  export type CodeWhereInput = {
-    AND?: CodeWhereInput | CodeWhereInput[]
-    OR?: CodeWhereInput[]
-    NOT?: CodeWhereInput | CodeWhereInput[]
-    id?: UuidFilter<"Code"> | string
-    code?: StringFilter<"Code"> | string
-    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
-    createdAt?: DateTimeFilter<"Code"> | Date | string
-    updatedAt?: DateTimeFilter<"Code"> | Date | string
-    userId?: UuidFilter<"Code"> | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type CodeOrderByWithRelationInput = {
-    id?: SortOrder
-    code?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type CodeWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    code_userId?: CodeCodeUserIdCompoundUniqueInput
-    AND?: CodeWhereInput | CodeWhereInput[]
-    OR?: CodeWhereInput[]
-    NOT?: CodeWhereInput | CodeWhereInput[]
-    code?: StringFilter<"Code"> | string
-    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
-    createdAt?: DateTimeFilter<"Code"> | Date | string
-    updatedAt?: DateTimeFilter<"Code"> | Date | string
-    userId?: UuidFilter<"Code"> | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "code_userId">
-
-  export type CodeOrderByWithAggregationInput = {
-    id?: SortOrder
-    code?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-    _count?: CodeCountOrderByAggregateInput
-    _max?: CodeMaxOrderByAggregateInput
-    _min?: CodeMinOrderByAggregateInput
-  }
-
-  export type CodeScalarWhereWithAggregatesInput = {
-    AND?: CodeScalarWhereWithAggregatesInput | CodeScalarWhereWithAggregatesInput[]
-    OR?: CodeScalarWhereWithAggregatesInput[]
-    NOT?: CodeScalarWhereWithAggregatesInput | CodeScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"Code"> | string
-    code?: StringWithAggregatesFilter<"Code"> | string
-    type?: EnumCodeTypeWithAggregatesFilter<"Code"> | $Enums.CodeType
-    createdAt?: DateTimeWithAggregatesFilter<"Code"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Code"> | Date | string
-    userId?: UuidWithAggregatesFilter<"Code"> | string
-  }
-
   export type MessageWhereInput = {
     AND?: MessageWhereInput | MessageWhereInput[]
     OR?: MessageWhereInput[]
@@ -11693,7 +10407,6 @@ export namespace Prisma {
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     provider?: StringNullableFilter<"User"> | string | null
-    codes?: CodeListRelationFilter
     Oauth2User?: Oauth2UserListRelationFilter
     sessions?: SessionListRelationFilter
     userDevice?: UserDeviceListRelationFilter
@@ -11728,7 +10441,6 @@ export namespace Prisma {
     lastActived?: SortOrderInput | SortOrder
     picture?: SortOrderInput | SortOrder
     provider?: SortOrderInput | SortOrder
-    codes?: CodeOrderByRelationAggregateInput
     Oauth2User?: Oauth2UserOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     userDevice?: UserDeviceOrderByRelationAggregateInput
@@ -11766,7 +10478,6 @@ export namespace Prisma {
     lastActived?: DateTimeNullableFilter<"User"> | Date | string | null
     picture?: StringNullableFilter<"User"> | string | null
     provider?: StringNullableFilter<"User"> | string | null
-    codes?: CodeListRelationFilter
     Oauth2User?: Oauth2UserListRelationFilter
     sessions?: SessionListRelationFilter
     userDevice?: UserDeviceListRelationFilter
@@ -12086,68 +10797,6 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
   }
 
-  export type CodeCreateInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutCodesInput
-  }
-
-  export type CodeUncheckedCreateInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-  }
-
-  export type CodeUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCodesNestedInput
-  }
-
-  export type CodeUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type CodeCreateManyInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-  }
-
-  export type CodeUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CodeUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
   export type MessageCreateInput = {
     id?: string
     content: string
@@ -12366,7 +11015,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -12401,7 +11049,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -12436,7 +11083,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -12471,7 +11117,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -12904,55 +11549,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type EnumCodeTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCodeTypeFilter<$PrismaModel> | $Enums.CodeType
-  }
-
-  export type CodeCodeUserIdCompoundUniqueInput = {
-    code: string
-    userId: string
-  }
-
-  export type CodeCountOrderByAggregateInput = {
-    id?: SortOrder
-    code?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type CodeMaxOrderByAggregateInput = {
-    id?: SortOrder
-    code?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type CodeMinOrderByAggregateInput = {
-    id?: SortOrder
-    code?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type EnumCodeTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel> | $Enums.CodeType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCodeTypeFilter<$PrismaModel>
-    _max?: NestedEnumCodeTypeFilter<$PrismaModel>
-  }
-
   export type EnumTypeMessageFilter<$PrismaModel = never> = {
     equals?: $Enums.TypeMessage | EnumTypeMessageFieldRefInput<$PrismaModel>
     in?: $Enums.TypeMessage[] | ListEnumTypeMessageFieldRefInput<$PrismaModel>
@@ -13148,12 +11744,6 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type CodeListRelationFilter = {
-    every?: CodeWhereInput
-    some?: CodeWhereInput
-    none?: CodeWhereInput
-  }
-
   export type Oauth2UserListRelationFilter = {
     every?: Oauth2UserWhereInput
     some?: Oauth2UserWhereInput
@@ -13170,10 +11760,6 @@ export namespace Prisma {
     every?: UserDeviceWhereInput
     some?: UserDeviceWhereInput
     none?: UserDeviceWhereInput
-  }
-
-  export type CodeOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type Oauth2UserOrderByRelationAggregateInput = {
@@ -13433,24 +12019,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
   }
 
-  export type UserCreateNestedOneWithoutCodesInput = {
-    create?: XOR<UserCreateWithoutCodesInput, UserUncheckedCreateWithoutCodesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCodesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type EnumCodeTypeFieldUpdateOperationsInput = {
-    set?: $Enums.CodeType
-  }
-
-  export type UserUpdateOneRequiredWithoutCodesNestedInput = {
-    create?: XOR<UserCreateWithoutCodesInput, UserUncheckedCreateWithoutCodesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCodesInput
-    upsert?: UserUpsertWithoutCodesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCodesInput, UserUpdateWithoutCodesInput>, UserUncheckedUpdateWithoutCodesInput>
-  }
-
   export type UserCreateNestedOneWithoutSenderMessageInput = {
     create?: XOR<UserCreateWithoutSenderMessageInput, UserUncheckedCreateWithoutSenderMessageInput>
     connectOrCreate?: UserCreateOrConnectWithoutSenderMessageInput
@@ -13611,13 +12179,6 @@ export namespace Prisma {
     update?: XOR<XOR<RoomUpdateToOneWithWhereWithoutMembersInput, RoomUpdateWithoutMembersInput>, RoomUncheckedUpdateWithoutMembersInput>
   }
 
-  export type CodeCreateNestedManyWithoutUserInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-  }
-
   export type Oauth2UserCreateNestedManyWithoutUserInput = {
     create?: XOR<Oauth2UserCreateWithoutUserInput, Oauth2UserUncheckedCreateWithoutUserInput> | Oauth2UserCreateWithoutUserInput[] | Oauth2UserUncheckedCreateWithoutUserInput[]
     connectOrCreate?: Oauth2UserCreateOrConnectWithoutUserInput | Oauth2UserCreateOrConnectWithoutUserInput[]
@@ -13658,13 +12219,6 @@ export namespace Prisma {
     connectOrCreate?: MemberInRoomCreateOrConnectWithoutUserInput | MemberInRoomCreateOrConnectWithoutUserInput[]
     createMany?: MemberInRoomCreateManyUserInputEnvelope
     connect?: MemberInRoomWhereUniqueInput | MemberInRoomWhereUniqueInput[]
-  }
-
-  export type CodeUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
   }
 
   export type Oauth2UserUncheckedCreateNestedManyWithoutUserInput = {
@@ -13727,20 +12281,6 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
-  }
-
-  export type CodeUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
   export type Oauth2UserUpdateManyWithoutUserNestedInput = {
@@ -13825,20 +12365,6 @@ export namespace Prisma {
     update?: MemberInRoomUpdateWithWhereUniqueWithoutUserInput | MemberInRoomUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MemberInRoomUpdateManyWithWhereWithoutUserInput | MemberInRoomUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MemberInRoomScalarWhereInput | MemberInRoomScalarWhereInput[]
-  }
-
-  export type CodeUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput> | CodeCreateWithoutUserInput[] | CodeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CodeCreateOrConnectWithoutUserInput | CodeCreateOrConnectWithoutUserInput[]
-    upsert?: CodeUpsertWithWhereUniqueWithoutUserInput | CodeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CodeCreateManyUserInputEnvelope
-    set?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    disconnect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    delete?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    connect?: CodeWhereUniqueInput | CodeWhereUniqueInput[]
-    update?: CodeUpdateWithWhereUniqueWithoutUserInput | CodeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CodeUpdateManyWithWhereWithoutUserInput | CodeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CodeScalarWhereInput | CodeScalarWhereInput[]
   }
 
   export type Oauth2UserUncheckedUpdateManyWithoutUserNestedInput = {
@@ -14102,23 +12628,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumCodeTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCodeTypeFilter<$PrismaModel> | $Enums.CodeType
-  }
-
-  export type NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CodeType | EnumCodeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CodeType[] | ListEnumCodeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCodeTypeWithAggregatesFilter<$PrismaModel> | $Enums.CodeType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCodeTypeFilter<$PrismaModel>
-    _max?: NestedEnumCodeTypeFilter<$PrismaModel>
-  }
-
   export type NestedEnumTypeMessageFilter<$PrismaModel = never> = {
     equals?: $Enums.TypeMessage | EnumTypeMessageFieldRefInput<$PrismaModel>
     in?: $Enums.TypeMessage[] | ListEnumTypeMessageFieldRefInput<$PrismaModel>
@@ -14278,7 +12787,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     senderMessage?: MessageCreateNestedManyWithoutSenderInput
@@ -14312,7 +12820,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     senderMessage?: MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -14362,7 +12869,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUpdateManyWithoutSenderNestedInput
@@ -14396,7 +12902,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -14430,7 +12935,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
     senderMessage?: MessageCreateNestedManyWithoutSenderInput
@@ -14464,7 +12968,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
     senderMessage?: MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -14514,7 +13017,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUpdateManyWithoutSenderNestedInput
@@ -14548,160 +13050,7 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
-    userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
-    senderMessage?: MessageUncheckedUpdateManyWithoutSenderNestedInput
-    receiveMessage?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
-    memberInRoom?: MemberInRoomUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutCodesInput = {
-    id?: string
-    fullname: string
-    username: string
-    email: string
-    hashedPassword?: string | null
-    accountType?: $Enums.AccountType
-    avtUrl?: string | null
-    address?: string | null
-    city?: string | null
-    state: string
-    searchCount?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    visible?: $Enums.UserVisibility
-    phone?: string | null
-    numberIdentity?: string | null
-    dateOfBirth?: Date | string | null
-    firstName?: string | null
-    lastName?: string | null
-    isActive?: boolean
-    isBanned?: boolean
-    isLocked?: boolean
-    lastActived?: Date | string | null
-    picture?: string | null
-    provider?: string | null
-    Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    userDevice?: UserDeviceCreateNestedManyWithoutUserInput
-    senderMessage?: MessageCreateNestedManyWithoutSenderInput
-    receiveMessage?: MessageCreateNestedManyWithoutReceiverInput
-    memberInRoom?: MemberInRoomCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCodesInput = {
-    id?: string
-    fullname: string
-    username: string
-    email: string
-    hashedPassword?: string | null
-    accountType?: $Enums.AccountType
-    avtUrl?: string | null
-    address?: string | null
-    city?: string | null
-    state: string
-    searchCount?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    visible?: $Enums.UserVisibility
-    phone?: string | null
-    numberIdentity?: string | null
-    dateOfBirth?: Date | string | null
-    firstName?: string | null
-    lastName?: string | null
-    isActive?: boolean
-    isBanned?: boolean
-    isLocked?: boolean
-    lastActived?: Date | string | null
-    picture?: string | null
-    provider?: string | null
-    Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
-    senderMessage?: MessageUncheckedCreateNestedManyWithoutSenderInput
-    receiveMessage?: MessageUncheckedCreateNestedManyWithoutReceiverInput
-    memberInRoom?: MemberInRoomUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCodesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCodesInput, UserUncheckedCreateWithoutCodesInput>
-  }
-
-  export type UserUpsertWithoutCodesInput = {
-    update: XOR<UserUpdateWithoutCodesInput, UserUncheckedUpdateWithoutCodesInput>
-    create: XOR<UserCreateWithoutCodesInput, UserUncheckedCreateWithoutCodesInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutCodesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutCodesInput, UserUncheckedUpdateWithoutCodesInput>
-  }
-
-  export type UserUpdateWithoutCodesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fullname?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
-    searchCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    isBanned?: BoolFieldUpdateOperationsInput | boolean
-    isLocked?: BoolFieldUpdateOperationsInput | boolean
-    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
-    senderMessage?: MessageUpdateManyWithoutSenderNestedInput
-    receiveMessage?: MessageUpdateManyWithoutReceiverNestedInput
-    memberInRoom?: MemberInRoomUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutCodesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fullname?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
-    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
-    avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
-    searchCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    visible?: EnumUserVisibilityFieldUpdateOperationsInput | $Enums.UserVisibility
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    numberIdentity?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    isBanned?: BoolFieldUpdateOperationsInput | boolean
-    isLocked?: BoolFieldUpdateOperationsInput | boolean
-    lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: NullableStringFieldUpdateOperationsInput | string | null
-    Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     receiveMessage?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
@@ -14734,7 +13083,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -14768,7 +13116,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -14807,7 +13154,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -14841,7 +13187,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -14914,7 +13259,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -14948,7 +13292,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -14993,7 +13336,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -15027,7 +13369,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -15201,7 +13542,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
@@ -15235,7 +13575,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     Oauth2User?: Oauth2UserUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
@@ -15308,7 +13647,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
@@ -15342,7 +13680,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     Oauth2User?: Oauth2UserUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
@@ -15377,32 +13714,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutRoomNestedInput
-  }
-
-  export type CodeCreateWithoutUserInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CodeUncheckedCreateWithoutUserInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CodeCreateOrConnectWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
-  }
-
-  export type CodeCreateManyUserInputEnvelope = {
-    data: CodeCreateManyUserInput | CodeCreateManyUserInput[]
-    skipDuplicates?: boolean
   }
 
   export type Oauth2UserCreateWithoutUserInput = {
@@ -15589,34 +13900,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CodeUpsertWithWhereUniqueWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    update: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
-    create: XOR<CodeCreateWithoutUserInput, CodeUncheckedCreateWithoutUserInput>
-  }
-
-  export type CodeUpdateWithWhereUniqueWithoutUserInput = {
-    where: CodeWhereUniqueInput
-    data: XOR<CodeUpdateWithoutUserInput, CodeUncheckedUpdateWithoutUserInput>
-  }
-
-  export type CodeUpdateManyWithWhereWithoutUserInput = {
-    where: CodeScalarWhereInput
-    data: XOR<CodeUpdateManyMutationInput, CodeUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type CodeScalarWhereInput = {
-    AND?: CodeScalarWhereInput | CodeScalarWhereInput[]
-    OR?: CodeScalarWhereInput[]
-    NOT?: CodeScalarWhereInput | CodeScalarWhereInput[]
-    id?: UuidFilter<"Code"> | string
-    code?: StringFilter<"Code"> | string
-    type?: EnumCodeTypeFilter<"Code"> | $Enums.CodeType
-    createdAt?: DateTimeFilter<"Code"> | Date | string
-    updatedAt?: DateTimeFilter<"Code"> | Date | string
-    userId?: UuidFilter<"Code"> | string
-  }
-
   export type Oauth2UserUpsertWithWhereUniqueWithoutUserInput = {
     where: Oauth2UserWhereUniqueInput
     update: XOR<Oauth2UserUpdateWithoutUserInput, Oauth2UserUncheckedUpdateWithoutUserInput>
@@ -15786,7 +14069,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceCreateNestedManyWithoutUserInput
     senderMessage?: MessageCreateNestedManyWithoutSenderInput
@@ -15820,7 +14102,6 @@ export namespace Prisma {
     lastActived?: Date | string | null
     picture?: string | null
     provider?: string | null
-    codes?: CodeUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     userDevice?: UserDeviceUncheckedCreateNestedManyWithoutUserInput
     senderMessage?: MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -15870,7 +14151,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUpdateManyWithoutSenderNestedInput
@@ -15904,7 +14184,6 @@ export namespace Prisma {
     lastActived?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: NullableStringFieldUpdateOperationsInput | string | null
-    codes?: CodeUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     userDevice?: UserDeviceUncheckedUpdateManyWithoutUserNestedInput
     senderMessage?: MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -15980,14 +14259,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CodeCreateManyUserInput = {
-    id?: string
-    code: string
-    type?: $Enums.CodeType
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type Oauth2UserCreateManyUserInput = {
     id?: string
     provider: $Enums.Provider
@@ -16048,30 +14319,6 @@ export namespace Prisma {
     roomId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type CodeUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CodeUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CodeUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    type?: EnumCodeTypeFieldUpdateOperationsInput | $Enums.CodeType
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type Oauth2UserUpdateWithoutUserInput = {

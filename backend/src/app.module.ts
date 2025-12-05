@@ -12,6 +12,7 @@ import { UserModule } from './modules/user/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from './modules/redis/redis.module';
 import { SupportChatModule } from './modules/support-chat/support-chat.module';
+import { LoggerModule } from './logger/logger.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +26,7 @@ import { SupportChatModule } from './modules/support-chat/support-chat.module';
     UserModule,
     RedisModule,
     SupportChatModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [

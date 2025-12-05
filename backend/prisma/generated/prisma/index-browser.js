@@ -142,15 +142,6 @@ exports.Prisma.SessionScalarFieldEnum = {
   userId: 'userId'
 };
 
-exports.Prisma.CodeScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  type: 'type',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId'
-};
-
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -236,13 +227,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.CodeType = exports.$Enums.CodeType = {
-  VERIFICATION: 'VERIFICATION',
-  PASSWORD_RESET: 'PASSWORD_RESET',
-  EMAIL_CHANGE: 'EMAIL_CHANGE',
-  PHONE_CHANGE: 'PHONE_CHANGE'
-};
-
 exports.TypeMessage = exports.$Enums.TypeMessage = {
   TEXT: 'TEXT',
   IMAGE: 'IMAGE',
@@ -272,7 +256,6 @@ exports.Provider = exports.$Enums.Provider = {
 exports.Prisma.ModelName = {
   UserDevice: 'UserDevice',
   Session: 'Session',
-  Code: 'Code',
   Message: 'Message',
   Room: 'Room',
   MemberInRoom: 'MemberInRoom',

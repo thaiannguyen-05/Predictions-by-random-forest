@@ -11,7 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import { FacebookOAuth2User, GoogleOAuth2User } from '../auth.interface';
+import {
+  FacebookOAuth2User,
+  GoogleOAuth2User,
+  Payload,
+} from '../auth.interface';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -22,6 +26,9 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { EmailProducer } from '../../../email/emai.producer';
 import { DateUtils } from '../../../common/utils/string-to-date.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
+import { RedisService } from '../../redis/redis.service';
+import { MyLogger } from '../../../logger/logger.service';
+import { AUTH_CONSTANT } from '../auth.constants';
 
 @Injectable()
 export class AuthService {
@@ -32,20 +39,42 @@ export class AuthService {
     private readonly tokenService: AuthTokenService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    private readonly logger: MyLogger,
   ) {}
 
-  // ===============================
-  // REGISTER
-  // ===============================
-  public async register(dto: CreateAccountDto) {
-    const account = await this.prismaService.user.findUnique({
-      where: { email: dto.email },
-    });
-    if (account) throw new ConflictException('Account is available');
+  private isUUID(value: string) {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(value);
+  }
 
+  private async findUserByAccessor(accessor: string) {
+    if (this.isUUID(accessor)) {
+      return await this.prismaService.user.findUnique({
+        where: { id: accessor },
+      }); 
+    }
+
+    return await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ email: accessor }, { username: accessor }],
+      },
+    });
+  }
+
+  async register(dto: CreateAccountDto) {
+    // check available user
+    const availableUser = await this.findUserByAccessor(dto.email);
+    if (availableUser) throw new ConflictException('Account is available');
+
+    // hash password
     const hashedPassword = await hash(dto.password);
+
+    // trans dto
     const dateOfBirth = DateUtils.stringToBirthday(dto.dateOfBirth);
 
+    // create new record
     const newAccount = await this.prismaService.user.create({
       data: {
         email: dto.email,
@@ -60,74 +89,76 @@ export class AuthService {
       },
     });
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    await this.prismaService.code.create({
-      data: { code, userId: newAccount.id },
-    });
-    await this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
+    // generate tokens and saving in redis
+    const code = this.authOtherService.genrateTokens();
+    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(newAccount.id);
+    await this.redisService.set(key, code);
+    this.logger.debug(`${key} have value: ${code} has been saved `);
 
-    return { status: true, data: newAccount };
+    // send email
+    this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
+    return {
+      status: true,
+      data: {
+        newUser: newAccount,
+      },
+    };
   }
 
   // ===============================
   // VERIFY ACCOUNT
   // ===============================
-  public async verifyAccount(dto: VerifyAccount) {
-    const account = await this.prismaService.user.findUnique({
-      where: { email: dto.email },
-      select: { id: true, isActive: true, codes: true },
-    });
-    if (!account) throw new NotFoundException('Account not found');
-    if (account.isActive)
-      throw new ConflictException('Account is already active');
+  async verifyAccount(dto: VerifyAccount) {
+    const availableUser = await this.findUserByAccessor(dto.email);
+    if (!availableUser) throw new NotFoundException('availableUser not found');
 
-    const code = await this.prismaService.code.findUnique({
-      where: { code_userId: { code: dto.code, userId: account.id } },
-    });
+    // check isActive
+    if (availableUser.isActive)
+      throw new ConflictException('availableUser is already active');
+
+    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(availableUser.id);
+    const code = await this.redisService.get(key);
     if (!code) throw new BadRequestException('Code is not existed or expired');
 
-    await this.prismaService.$transaction([
-      this.prismaService.user.update({
-        where: { id: account.id },
+    try {
+      await this.prismaService.user.update({
+        where: { id: availableUser.id },
         data: { isActive: true },
-      }),
-      this.prismaService.code.delete({ where: { id: code.id } }),
-    ]);
+      });
 
+      this.logger.debug(`Updated success`);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Got error in update process: ${errorMessage}`,
+        'AuthService.verifyAccount',
+      );
+    }
+
+    await this.redisService.del(key);
+    this.logger.debug(`${key} have value: ${code} has been deleted `);
     return { status: true };
   }
 
   // ===============================
   // LOGIN
   // ===============================
-  public async login(dto: LoginDto, res: Response) {
-    const user = await this.prismaService.user.findFirst({
-      where: {
-        AND: [
-          {
-            OR: [{ email: dto.access }, { username: dto.access }],
-          },
-          { isActive: true },
-        ],
-      },
-      omit: { hashedPassword: false },
-    });
-
-    console.log(user?.hashedPassword);
-
+  async login(dto: LoginDto, res: Response) {
+    const user = await this.findUserByAccessor(dto.access);
     if (!user) throw new NotFoundException('User not found');
 
-    // FIX 1: Handle nullable hashedPassword
     if (!user.hashedPassword) {
       throw new ForbiddenException('Invalid login credentials or method.');
     }
 
+    // check valid password
     const valid = await verify(user.hashedPassword, dto.password);
     if (!valid) throw new ForbiddenException('Password is not correct');
 
     const { hashedPassword: _hashedPassword, ...userWithoutPassword } = user;
     const hardware = this.authOtherService.getClientInfo(res.req as Request);
-    const { session, tokens } = await this.tokenService.createSession(
+    const { tokens } = await this.tokenService.createSession(
       user,
       hardware.ip,
       hardware.userAgent,
@@ -136,20 +167,11 @@ export class AuthService {
 
     return {
       data: userWithoutPassword,
-      session: {
-        id: session.id,
-        userAgent: hardware.userAgent,
-        userIp: session.userIp,
-        loginedAt: session.createdAt,
-      },
       tokens,
     };
   }
 
-  // ===============================
-  // LOGOUT
-  // ===============================
-  public async logout(res: Response, sessionId?: string) {
+  async logout(res: Response, sessionId?: string) {
     const sid =
       sessionId || (res.req.cookies?.session_id as string | undefined);
     if (!sid) throw new BadRequestException('Session id required');
@@ -166,24 +188,13 @@ export class AuthService {
     return { status: true };
   }
 
-  // ===============================
-  // CHANGE PASSWORD
-  // ===============================
-  public async changePassword(req: Request, dto: ChangePasswordDto) {
+  async changePassword(req: Request, dto: ChangePasswordDto) {
     const requestId = req.user?.id;
     if (!requestId) throw new UnauthorizedException('Unauthorized');
 
-    const account = await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email: dto.accessor }, { username: dto.accessor }],
-        isActive: true,
-      },
-    });
+    const account = await this.findUserByAccessor(requestId as string);
     if (!account) throw new NotFoundException('User not found');
-    if (account.id !== requestId)
-      throw new BadRequestException('You are not author');
 
-    // FIX 2: Handle nullable hashedPassword
     if (!account.hashedPassword) {
       throw new ForbiddenException(
         'Account does not have a locally set password.',
@@ -199,7 +210,7 @@ export class AuthService {
       data: { hashedPassword: newHashedPassword },
     });
 
-    await this.emailProducer.sendNotifiCaitonChangePassword({
+    this.emailProducer.sendNotifiCaitonChangePassword({
       to: account.email,
       username: account.username,
     });
@@ -207,9 +218,6 @@ export class AuthService {
     return { status: true };
   }
 
-  // ===============================
-  // REFRESH TOKEN
-  // ===============================
   public async refreshToken(
     sessionId: string | undefined,
     refreshToken: string,
@@ -371,7 +379,7 @@ export class AuthService {
       createdAt: new Date(),
     };
 
-    const { session, tokens } = await this.tokenService.createSession(
+    const { tokens } = await this.tokenService.createSession(
       oauth2User,
       hardware.ip,
       hardware.userAgent,
@@ -380,19 +388,10 @@ export class AuthService {
 
     return {
       data: oauth2User,
-      session: {
-        id: session.id,
-        userAgent: hardware.userAgent,
-        userIp: session.userIp,
-        loginedAt: session.createdAt,
-      },
       tokens,
     };
   }
 
-  // ===============================
-  // VALIDATE
-  // ===============================
   public async validate(accessToken: string) {
     try {
       // 1. Verify the token using the secret key
@@ -418,29 +417,13 @@ export class AuthService {
       throw new UnauthorizedException('Token validation failed');
     }
   }
-  // ===============================
-  // FETCH CURRENT USER
-  // ===============================
-  public async getMe(token: string) {
-    const payload = this.jwtService.verify(token, {
+
+  async getMe(token: string) {
+    const payload: Payload = this.jwtService.verify(token, {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
     });
 
-    const user = await this.prismaService.user.findUnique({
-      where: { id: payload.sub },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        fullname: true,
-        picture: true,
-        avtUrl: true,
-        isActive: true,
-        provider: true,
-      },
-    });
+    const user = await this.findUserByAccessor(payload.sub);
 
     if (!user) throw new UnauthorizedException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');
@@ -452,30 +435,15 @@ export class AuthService {
       user.email;
 
     const avatar = user.picture || user.avtUrl || undefined;
-
-    // SỬA QUAN TRỌNG: CHỈ ẨN EMAIL NẾU THẬT SỰ LÀ FACEBOOK USER
     let displayEmail = user.email;
-
-    // Chỉ ẩn email nếu:
-    // 1. Provider là facebook VÀ
-    // 2. Email có chứa ".fb@" hoặc "@facebook.com"
     if (
       user.provider === 'facebook' &&
       (user.email.includes('.fb@') || user.email.includes('@facebook.com'))
     ) {
-      // Tạo email ảo từ username
       displayEmail = `${user.username || user.id}@facebook.com`;
     }
-    // Các trường hợp khác (Google, local) hiển thị email thật
 
-    console.log('getMe - Final user data:', {
-      id: user.id,
-      name,
-      originalEmail: user.email,
-      displayEmail,
-      provider: user.provider,
-      avatar: avatar,
-    });
+    this.logger.debug(`user has been get ${JSON.stringify(user)}`);
 
     return {
       id: user.id,

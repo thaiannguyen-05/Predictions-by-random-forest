@@ -25,8 +25,7 @@ model User {
   picture        String?        @db.VarChar(1000)
   provider       String?        @db.VarChar(50)
 
-  //  relations
-  codes          Code[]
+  //  
   Oauth2User     Oauth2User[]   @relation("oauth2")
   sessions       Session[]      @relation("sessions")
   userDevice     UserDevice[]

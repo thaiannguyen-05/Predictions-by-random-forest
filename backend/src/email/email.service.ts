@@ -91,9 +91,9 @@ export class EmailService {
       const info = await this.transporter.sendMail(mailOptions);
       return !!(
         info &&
-        (Array.isArray((info as any).accepted)
-          ? (info as any).accepted.length > 0
-          : (info as any).messageId)
+        (Array.isArray(info.accepted)
+          ? info.accepted.length > 0
+          : info.messageId)
       );
     } catch (error) {
       this.logger.error('Send email failed:', error);
@@ -121,9 +121,9 @@ export class EmailService {
       const info = await this.transporter.sendMail(mailOptions);
       return !!(
         info &&
-        (Array.isArray((info as any).accepted)
-          ? (info as any).accepted.length > 0
-          : (info as any).messageId)
+        (Array.isArray(info.accepted)
+          ? info.accepted.length > 0
+          : info.messageId)
       );
     } catch (error) {
       this.logger.error('Send email failed:', error);

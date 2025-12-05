@@ -5,15 +5,15 @@ import { ClientProxy } from '@nestjs/microservices';
 export class EmailProducer {
   constructor(@Inject('EMAIL_SERVICE') private readonly client: ClientProxy) {}
 
-  async sendVerifyCodeRegister(data: { to: string; code: string }) {
-    await this.client.emit('send-code-register', data);
+  sendVerifyCodeRegister(data: { to: string; code: string }) {
+    this.client.emit('send-code-register', data);
   }
 
-  async sendDetectOtherDevice(data: { to: string; username: string }) {
-    await this.client.emit('send-detect-other-device', data);
+  sendDetectOtherDevice(data: { to: string; username: string }) {
+    this.client.emit('send-detect-other-device', data);
   }
 
-  async sendNotifiCaitonChangePassword(data: { to: string; username: string }) {
-    await this.client.emit('send-notification-password', data);
+  sendNotifiCaitonChangePassword(data: { to: string; username: string }) {
+    this.client.emit('send-notification-password', data);
   }
 }
