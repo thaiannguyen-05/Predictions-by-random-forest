@@ -157,6 +157,7 @@ export class RegisterResponseDto {
       newUser: {
         type: 'object',
         description: 'Newly created user information',
+        additionalProperties: true,
       },
     },
   })

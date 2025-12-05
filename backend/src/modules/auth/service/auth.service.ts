@@ -43,14 +43,24 @@ export class AuthService {
     private readonly logger: MyLogger,
   ) {}
 
+  private isUUID(value: string) {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(value);
+  }
+
   private async findUserByAccessor(accessor: string) {
-    const availableUser = await this.prismaService.user.findFirst({
+    if (this.isUUID(accessor)) {
+      return await this.prismaService.user.findUnique({
+        where: { id: accessor },
+      }); 
+    }
+
+    return await this.prismaService.user.findFirst({
       where: {
-        OR: [{ email: accessor }, { username: accessor }, { id: accessor }],
+        OR: [{ email: accessor }, { username: accessor }],
       },
-      omit: { hashedPassword: false },
     });
-    return availableUser;
   }
 
   async register(dto: CreateAccountDto) {
@@ -118,7 +128,12 @@ export class AuthService {
 
       this.logger.debug(`Updated success`);
     } catch (error) {
-      this.logger.debug(`Got error in update process`, error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Got error in update process: ${errorMessage}`,
+        'AuthService.verifyAccount',
+      );
     }
 
     await this.redisService.del(key);

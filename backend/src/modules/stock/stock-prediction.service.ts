@@ -5,6 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import * as net from 'net';
+import { fallBackPrice } from './stock.constants';
 
 interface MLServiceResponse {
   success: boolean;
@@ -137,9 +138,12 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     try {
       const response = await this.sendCommand('get_current_price', { ticker });
       if (!response.success) {
-        this.logger.error(
-          `ML service failed to get current price for ${ticker}: ${response.error}`,
-        );
+        const data = await fetch(fallBackPrice(ticker));
+        const json = await data.json();
+        return {
+          success: true,
+          data: json.taggedSymbols[0].price,
+        };
       }
       return response;
     } catch (error) {

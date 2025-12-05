@@ -14,6 +14,7 @@ export class ApiSuccessResponse<T = unknown> {
   @ApiProperty({
     description: 'Response data payload',
     type: 'object',
+    additionalProperties: true,
   })
   data?: T;
 
