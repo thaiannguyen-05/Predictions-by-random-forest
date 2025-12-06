@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
-import { EmailConsumer } from './email.consumer';
-import { EmailProducer } from './emai.producer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { QUEUE_EMAIL } from '../common/type/common.type';
+import { EmailController } from './email.controller';
 
 @Module({
   imports: [
@@ -27,8 +26,8 @@ import { QUEUE_EMAIL } from '../common/type/common.type';
       },
     ]),
   ],
-  providers: [EmailService, EmailProducer],
-  controllers: [EmailConsumer],
-  exports: [EmailService, EmailProducer],
+  providers: [EmailService],
+  controllers: [EmailController],
+  exports: [EmailService],
 })
 export class EmailModule {}

@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from './modules/redis/redis.module';
 import { SupportChatModule } from './modules/support-chat/support-chat.module';
 import { LoggerModule } from './logger/logger.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +28,14 @@ import { LoggerModule } from './logger/logger.module';
     RedisModule,
     SupportChatModule,
     LoggerModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [

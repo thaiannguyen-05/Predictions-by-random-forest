@@ -7127,7 +7127,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string | null
     searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7155,7 +7154,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string | null
     searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7183,7 +7181,6 @@ export namespace Prisma {
     avtUrl: number
     address: number
     city: number
-    state: number
     searchCount: number
     createdAt: number
     updatedAt: number
@@ -7221,7 +7218,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7249,7 +7245,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7277,7 +7272,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7392,7 +7386,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string
     searchCount: number
     createdAt: Date
     updatedAt: Date
@@ -7439,7 +7432,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7474,7 +7466,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7502,7 +7493,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7530,7 +7520,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7548,7 +7537,7 @@ export namespace Prisma {
     provider?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -7581,7 +7570,6 @@ export namespace Prisma {
       avtUrl: string | null
       address: string | null
       city: string | null
-      state: string
       searchCount: number
       createdAt: Date
       updatedAt: Date
@@ -8035,7 +8023,6 @@ export namespace Prisma {
     readonly avtUrl: FieldRef<"User", 'String'>
     readonly address: FieldRef<"User", 'String'>
     readonly city: FieldRef<"User", 'String'>
-    readonly state: FieldRef<"User", 'String'>
     readonly searchCount: FieldRef<"User", 'Int'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -9851,7 +9838,6 @@ export namespace Prisma {
     avtUrl: 'avtUrl',
     address: 'address',
     city: 'city',
-    state: 'state',
     searchCount: 'searchCount',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -10391,7 +10377,6 @@ export namespace Prisma {
     avtUrl?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     city?: StringNullableFilter<"User"> | string | null
-    state?: StringFilter<"User"> | string
     searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10425,7 +10410,6 @@ export namespace Prisma {
     avtUrl?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10462,7 +10446,6 @@ export namespace Prisma {
     avtUrl?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     city?: StringNullableFilter<"User"> | string | null
-    state?: StringFilter<"User"> | string
     searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10496,7 +10479,6 @@ export namespace Prisma {
     avtUrl?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10532,7 +10514,6 @@ export namespace Prisma {
     avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     address?: StringNullableWithAggregatesFilter<"User"> | string | null
     city?: StringNullableWithAggregatesFilter<"User"> | string | null
-    state?: StringWithAggregatesFilter<"User"> | string
     searchCount?: IntWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -10999,7 +10980,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11033,7 +11013,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11067,7 +11046,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11101,7 +11079,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11135,7 +11112,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11163,7 +11139,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11191,7 +11166,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11784,7 +11758,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11816,7 +11789,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11844,7 +11816,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12771,7 +12742,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12804,7 +12774,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12853,7 +12822,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12886,7 +12854,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12919,7 +12886,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12952,7 +12918,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13001,7 +12966,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13034,7 +12998,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13067,7 +13030,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13100,7 +13062,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13138,7 +13099,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13171,7 +13131,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13243,7 +13202,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13276,7 +13234,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13320,7 +13277,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13353,7 +13309,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13526,7 +13481,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13559,7 +13513,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13631,7 +13584,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13664,7 +13616,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14053,7 +14004,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14086,7 +14036,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14135,7 +14084,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14168,7 +14116,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

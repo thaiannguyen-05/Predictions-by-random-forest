@@ -129,7 +129,6 @@ model User {
   avtUrl         String?        @map("avt_url") @db.VarChar(1000)
   address        String?        @db.VarChar(500)
   city           String?        @db.VarChar(50)
-  state          String         @db.VarChar(50)
   searchCount    Int            @default(0) @map("search_times")
   createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -146,7 +145,7 @@ model User {
   picture        String?        @db.VarChar(1000)
   provider       String?        @db.VarChar(50)
 
-  //  relations
+  //  
   Oauth2User     Oauth2User[]   @relation("oauth2")
   sessions       Session[]      @relation("sessions")
   userDevice     UserDevice[]

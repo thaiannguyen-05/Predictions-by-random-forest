@@ -23,7 +23,6 @@ import { VerifyAccount } from '../dto/verify-account.dto';
 import { AuthOtherService } from './auth.other.service';
 import { AuthTokenService } from './auth.token.service';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { EmailProducer } from '../../../email/emai.producer';
 import { DateUtils } from '../../../common/utils/string-to-date.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
 import { RedisService } from '../../redis/redis.service';
@@ -34,7 +33,6 @@ import { AUTH_CONSTANT } from '../auth.constants';
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly emailProducer: EmailProducer,
     private readonly authOtherService: AuthOtherService,
     private readonly tokenService: AuthTokenService,
     private readonly jwtService: JwtService,
@@ -51,16 +49,22 @@ export class AuthService {
 
   private async findUserByAccessor(accessor: string) {
     if (this.isUUID(accessor)) {
-      return await this.prismaService.user.findUnique({
+      const availableUser = await this.prismaService.user.findUnique({
         where: { id: accessor },
-      }); 
+        omit: { hashedPassword: false },
+      });
+
+      return availableUser;
     }
 
-    return await this.prismaService.user.findFirst({
+    const userLoginWithoutUuid = await this.prismaService.user.findFirst({
       where: {
         OR: [{ email: accessor }, { username: accessor }],
       },
+      omit: { hashedPassword: false },
     });
+
+    return userLoginWithoutUuid;
   }
 
   async register(dto: CreateAccountDto) {
@@ -82,10 +86,8 @@ export class AuthService {
         firstName: dto.firstName,
         lastName: dto.lastName,
         hashedPassword,
-        ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
         dateOfBirth,
         fullname: `${dto.firstName} ${dto.lastName}`,
-        state: 'pending',
       },
     });
 
@@ -275,7 +277,6 @@ export class AuthService {
             isActive: true,
             hashedPassword: null,
             avtUrl: avatarUrl,
-            state: 'active',
           },
         }),
         this.prismaService.oauth2User.create({

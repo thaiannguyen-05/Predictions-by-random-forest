@@ -43,21 +43,21 @@ const NewsFeed: React.FC = () => {
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700">
-      
+
       {/* Tiêu đề */}
-      <h2 className="flex items-center text-xl font-bold text-blue-400 mb-5 border-b border-gray-700 pb-3">
+      <h2 className="flex items-center text-xl font-bold text-brand-orange mb-5 border-b border-gray-700 pb-3">
         <Newspaper size={24} className="mr-2" />
         Tin tức Mới nhất
       </h2>
 
       <div className="space-y-4">
         {DUMMY_NEWS.map((item) => (
-          <a 
-            key={item.id} 
+          <a
+            key={item.id}
             href="#" // Liên kết đến trang chi tiết tin tức
             className="block p-4 rounded-lg bg-gray-900 hover:bg-gray-700 transition-colors duration-200 cursor-pointer group"
           >
-            <h3 className="text-white font-semibold mb-1 group-hover:text-blue-300 transition-colors">
+            <h3 className="text-white font-semibold mb-1 group-hover:text-brand-orange transition-colors">
               {item.title}
             </h3>
             <p className="text-sm text-gray-400 mb-2 line-clamp-2">
@@ -73,9 +73,9 @@ const NewsFeed: React.FC = () => {
           </a>
         ))}
       </div>
-      
+
       <div className="mt-5 text-right">
-        <a href="/news" className="text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors">
+        <a href="/news" className="text-brand-orange hover:text-orange-400 text-sm font-semibold transition-colors">
           Xem tất cả tin tức →
         </a>
       </div>

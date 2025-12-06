@@ -179,7 +179,6 @@ exports.Prisma.UserScalarFieldEnum = {
   avtUrl: 'avtUrl',
   address: 'address',
   city: 'city',
-  state: 'state',
   searchCount: 'searchCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',

@@ -72,9 +72,6 @@ export class CreateAccountDto {
   })
   @IsOptional()
   @IsString({ message: 'Phone number must be a string' })
-  @Matches(/^\+?[1-9]\d{1,14}$/, {
-    message: 'Please provide a valid phone number',
-  })
   phoneNumber?: string;
 
   @ApiProperty({
