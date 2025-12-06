@@ -5,7 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 export class EmailProducer {
   constructor(@Inject('EMAIL_SERVICE') private readonly client: ClientProxy) {}
 
-  sendVerifyCodeRegister(data: { to: string; code: string }) {
+  sendVerifyCodeRegister(data: { to: string }) {
     this.client.emit('send-code-register', data);
   }
 

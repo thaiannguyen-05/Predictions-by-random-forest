@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { LogOut, Settings, User } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface UserData {
   name: string;
@@ -17,6 +19,8 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [imageError, setImageError] = useState(false);
+  const { logout } = useAuth();
+  const router = useRouter();
 
   // Đóng menu khi click ra ngoài
   useEffect(() => {
@@ -29,23 +33,22 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Gọi API logout
+  // Gọi API logout và clear AuthContext
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:4000/auth/logout', {
+      // Call backend logout API để clear server-side session/cookies
+      await fetch('http://localhost:4000/auth/logout', {
         method: 'PATCH',
         credentials: 'include',
       });
-
-      if (!response.ok) throw new Error(`Logout failed: ${response.status}`);
-
-      const result = await response.json();
-      if (result.status) {
-        window.location.href = '/auth/login';
-      }
     } catch (error) {
-      console.error('Logout error:', error);
-      alert('Đăng xuất thất bại. Vui lòng thử lại.');
+      console.error('Logout API error:', error);
+      // Continue with client-side logout even if API fails
+    } finally {
+      // Clear client-side state ngay lập tức
+      logout();
+      // Redirect to login
+      router.push('/auth/login');
     }
   };
 

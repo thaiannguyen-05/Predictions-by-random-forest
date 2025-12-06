@@ -1,6 +1,6 @@
 export const AUTH_CONSTANT = {
-  KEY_VERIFY_CODE(userId: string) {
-    return `verify_code_${userId}`;
+  KEY_VERIFY_CODE(accessor: string) {
+    return `verify_code_${accessor}`;
   },
   TIME_LIFE_CACHE: 10 * 24 * 60 * 60, // 10h
   TIME_LIFE_SESSION: 10 * 365 * 24 * 60 * 60 * 1000, // 10 years

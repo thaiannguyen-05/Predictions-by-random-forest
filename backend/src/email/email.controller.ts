@@ -1,16 +1,15 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { EmailService } from "./email.service";
-import { Throttle } from "@nestjs/throttler";
+import { Body, Controller, Post } from '@nestjs/common';
+import { EmailProducer } from './emai.producer';
+import { VerifyAccount } from '../modules/auth/dto/verify-account.dto';
+import { Public } from '../common/decorator/public.decorator';
 
 @Controller('email')
 export class EmailController {
+  constructor(private readonly emailProducer: EmailProducer) {}
 
-	constructor(private readonly emailService: EmailService) {}
-
-	@Throttle({ default: { ttl: 60000, limit: 3 } })
-	@Post('send-verify-code')
-	async sendVerifyCode(@Body() sendVerifyCodeDto: ) {
-
-	}
-
+  @Public()
+  @Post('send-verify-code-register')
+  sendVerifyCodeRegister(@Body() dto: VerifyAccount) {
+    return this.emailProducer.sendVerifyCodeRegister(dto);
+  }
 }

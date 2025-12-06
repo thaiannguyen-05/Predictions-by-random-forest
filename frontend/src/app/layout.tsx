@@ -1,7 +1,7 @@
 import './globals.css';
 import MainLayout from '@/app/main-layout';
 import Header from '@/components/layout/Header';
-import TickerBar from '@/components/layout/TickerBar';
+import ConditionalTickerBar from '@/components/layout/ConditionalTickerBar';
 import Providers from './providers';
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          <TickerBar />  
+          <ConditionalTickerBar />
           {children}
         </Providers>
       </body>

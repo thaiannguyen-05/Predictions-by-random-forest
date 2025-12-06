@@ -28,6 +28,7 @@ import { Provider } from '../../../../prisma/generated/prisma';
 import { RedisService } from '../../redis/redis.service';
 import { MyLogger } from '../../../logger/logger.service';
 import { AUTH_CONSTANT } from '../auth.constants';
+import { EmailProducer } from '../../../email/emai.producer';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +40,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly logger: MyLogger,
+    private readonly emailProducer: EmailProducer,
   ) {}
 
   private isUUID(value: string) {
@@ -91,14 +93,10 @@ export class AuthService {
       },
     });
 
-    // generate tokens and saving in redis
-    const code = this.authOtherService.genrateTokens();
-    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(newAccount.id);
-    await this.redisService.set(key, code);
-    this.logger.debug(`${key} have value: ${code} has been saved `);
+    // send verification code to email
+    this.emailProducer.sendVerifyCodeRegister({ to: newAccount.email });
+    this.logger.debug(`Verification code sent to ${newAccount.email}`);
 
-    // send email
-    this.emailProducer.sendVerifyCodeRegister({ to: dto.email, code });
     return {
       status: true,
       data: {
@@ -110,17 +108,34 @@ export class AuthService {
   // ===============================
   // VERIFY ACCOUNT
   // ===============================
-  async verifyAccount(dto: VerifyAccount) {
-    const availableUser = await this.findUserByAccessor(dto.email);
-    if (!availableUser) throw new NotFoundException('availableUser not found');
+  async verifyAccount(dto: VerifyAccount, res?: Response) {
+    if (!dto.code) {
+      throw new BadRequestException('Verification code is required');
+    }
+
+    const availableUser = await this.findUserByAccessor(dto.to);
+    if (!availableUser) throw new NotFoundException('User not found');
 
     // check isActive
-    if (availableUser.isActive)
-      throw new ConflictException('availableUser is already active');
+    if (availableUser.isActive) {
+      throw new ConflictException('Account is already verified');
+    }
 
-    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(availableUser.id);
-    const code = await this.redisService.get(key);
-    if (!code) throw new BadRequestException('Code is not existed or expired');
+    const key = AUTH_CONSTANT.KEY_VERIFY_CODE(availableUser.email);
+    const storedCode = await this.redisService.get(key);
+
+    this.logger.debug(
+      `Verification code for ${availableUser.email}: ${storedCode}`,
+    );
+
+    if (!storedCode) {
+      throw new BadRequestException('Verification code expired or not found');
+    }
+
+    // validate code
+    if (dto.code.localeCompare(storedCode) !== 0) {
+      throw new BadRequestException('Invalid verification code');
+    }
 
     try {
       await this.prismaService.user.update({
@@ -128,19 +143,26 @@ export class AuthService {
         data: { isActive: true },
       });
 
-      this.logger.debug(`Updated success`);
+      this.logger.debug(
+        `Account verified successfully for ${availableUser.email}`,
+      );
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Got error in update process: ${errorMessage}`,
+        `Error verifying account: ${errorMessage}`,
         'AuthService.verifyAccount',
       );
+      throw new BadRequestException('Failed to verify account');
     }
 
     await this.redisService.del(key);
-    this.logger.debug(`${key} have value: ${code} has been deleted `);
-    return { status: true };
+    this.logger.debug(`Verification code for ${availableUser.email} deleted`);
+
+    return {
+      status: true,
+      message: 'Account verified successfully',
+    };
   }
 
   // ===============================

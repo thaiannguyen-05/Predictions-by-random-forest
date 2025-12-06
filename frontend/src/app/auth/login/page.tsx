@@ -67,8 +67,8 @@ export default function LoginPage() {
       // Refresh Auth Context state
       await refreshUser();
 
-      // Redirect
-      router.push("/");
+      // Redirect to dashboard
+      router.push("/dashboard");
 
     } catch (err: any) {
       console.error("Login error:", err);

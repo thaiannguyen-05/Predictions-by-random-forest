@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { apiFetch } from "@/utils/api";
 
 interface UserData {
   id: string;
@@ -13,6 +14,8 @@ interface AuthContextType {
   user: UserData | null;
   loading: boolean;
   refreshUser: () => Promise<void>;
+  logout: () => void;
+  setUserData: (userData: UserData) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,14 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/auth/me", {
+      // Use apiFetch - will auto-refresh token on 401
+      const res = await apiFetch("http://localhost:4000/auth/me", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-        cache: "no-cache",
+        cache: "no-cache" as RequestCache,
       });
 
       if (!res.ok) {
@@ -77,12 +76,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshUser = async () => {
+    // Chỉ refetch nếu có token
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     await fetchUser();
   };
 
+  const logout = () => {
+    // Clear token và user state ngay lập tức
+    localStorage.removeItem("accessToken");
+    setUser(null);
+    setLoading(false);
+  };
+
+  const setUserData = (userData: UserData) => {
+    setUser(userData);
+    setLoading(false);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, refreshUser, logout, setUserData }}>
       {children}
     </AuthContext.Provider>
   );

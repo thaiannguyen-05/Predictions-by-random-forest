@@ -55,8 +55,9 @@ const VerifyEmailPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
-          email: email.trim(),
+          to: email.trim(),
           code: code.trim(),
         }),
       });
@@ -64,12 +65,12 @@ const VerifyEmailPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess("Xác thực email thành công! Đang chuyển hướng...");
+        setSuccess("Xác thực thành công! Đang chuyển đến trang đăng nhập...");
 
-        // Redirect đến login page sau 2 giây
+        // Redirect đến login page sau 1.5 giây
         setTimeout(() => {
           router.push("/auth/login");
-        }, 2000);
+        }, 1500);
       } else {
         setError(data.message || "Xác thực thất bại. Vui lòng thử lại.");
       }
@@ -89,34 +90,18 @@ const VerifyEmailPage: React.FC = () => {
     setResendLoading(true);
 
     try {
-      // API resend chưa được định nghĩa rõ trong controller bạn đưa,
-      // nhưng mình giả định giống trang cũ hoặc logic backend xử lý resend?
-      // Xem lại logic cũ dùng POST /auth/verify nhưng controller chỉ có PUT.
-      // Tuy nhiên trang cũ dùng POST verify để resend? 
-      // Kiểm tra lại auth.controller.ts: chỉ có PUT verify.
-      // Backend auth.controller.ts không thấy endpoint request verify code lại.
-      // Dựa vào code cũ, có thể endpoint đó ở đâu đó khác hoặc code cũ sai?
-      // Nhưng để an toàn tôi sẽ dùng lại logic cũ, nếu thất bại thì báo lỗi user.
-
-      // Update: auth.controller.ts không có resend. Có lẽ phải gọi register lại hoặc endpoint khác?
-      // Tạm thời disable hoặc giả lập logic này nếu không biết endpoint. 
-      // Nhưng code cũ gọi POST /auth/verify, tôi sẽ giữ nguyên để test.
-      // Nếu không có, tôi sẽ báo tính năng chưa khả dụng.
-
-      // Giữ nguyên logic cũ của user để tránh break nếu backend có endpoint lạ
-      const response = await fetch(`${API_URL}/auth/verify`, {
-        method: "POST", // Endpoint này có vẻ không tồn tại trong controller đã xem
+      const response = await fetch(`${API_URL}/email/send-verify-code-register`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ to: email.trim() }),
       });
 
       if (response.ok) {
         setSuccess("Đã gửi lại mã xác thực. Vui lòng kiểm tra email.");
         setCountdown(60);
       } else {
-        // Fallback: Thường resend code là gọi register lại hoặc endpoint specific
-        console.warn("Resend endpoint might be missing");
-        setError("Không thể gửi lại mã lúc này. Vui lòng kiểm tra lại sau.");
+        const data = await response.json();
+        setError(data.message || "Không thể gửi lại mã lúc này. Vui lòng thử lại sau.");
       }
     } catch (err: any) {
       setError("Lỗi kết nối đến server.");
@@ -203,7 +188,7 @@ const VerifyEmailPage: React.FC = () => {
             {loading ? (
               <Loader2 size={20} className="animate-spin" />
             ) : (
-              "Xác Thực & Đăng Nhập"
+              "Xác Thực Tài Khoản"
             )}
           </button>
         </form>

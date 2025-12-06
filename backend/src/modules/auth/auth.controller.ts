@@ -121,8 +121,11 @@ export class AuthController {
     status: 400,
     description: 'Invalid verification code or account already verified',
   })
-  async verify(@Body() dto: VerifyAccount) {
-    return this.authService.verifyAccount(dto);
+  async verify(
+    @Body() dto: VerifyAccount,
+    @Res({ passthrough: true }) res: express.Response,
+  ) {
+    return this.authService.verifyAccount(dto, res);
   }
 
   @Patch('logout')
@@ -296,7 +299,7 @@ export class AuthController {
         name: user.name,
         avatar: user.avatar,
         provider: user.provider,
-        isActive: user.isActive,
+        isActive: user?.isActive,
       },
     };
   }
