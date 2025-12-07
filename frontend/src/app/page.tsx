@@ -37,7 +37,7 @@ export default function Home() {
 
 						<div className="flex flex-wrap gap-4">
 							<Link
-								href="/stocks/FPT"
+								href="/dashboard"
 								className="px-8 py-4 bg-brand-orange hover:bg-brand-orange-hover text-white font-bold rounded-xl shadow-lg shadow-brand-orange/25 transition-all transform hover:-translate-y-1 flex items-center gap-2"
 							>
 								Xem Dự Báo Ngay <ArrowRight size={20} />

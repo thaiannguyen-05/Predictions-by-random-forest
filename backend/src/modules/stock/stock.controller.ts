@@ -365,4 +365,48 @@ export class StockController {
       timestamp: Date.now(),
     };
   }
+
+  @Get('history-search')
+  @ApiOperation({
+    summary: 'Get history search',
+    description: 'Get history search',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'History search retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        history_search: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number', example: 1 },
+              ticker: { type: 'string', example: 'AAPL' },
+              timestamp: { type: 'number', example: 1696858200 },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - history search failed',
+  })
+  async getHistorySearch() {
+    const result = await this.stockService.loadingHisorySearch();
+
+    if (!result.success) {
+      throw new HttpException(
+        { message: 'Failed to get history search', error: result.error },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      history_search: result.data || [],
+    };
+  }
 }

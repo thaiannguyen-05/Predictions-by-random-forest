@@ -108,7 +108,7 @@ export class AuthService {
   // ===============================
   // VERIFY ACCOUNT
   // ===============================
-  async verifyAccount(dto: VerifyAccount, res?: Response) {
+  async verifyAccount(dto: VerifyAccount) {
     if (!dto.code) {
       throw new BadRequestException('Verification code is required');
     }
@@ -476,6 +476,9 @@ export class AuthService {
       avatar,
       isActive: user.isActive,
       provider: user.provider,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
     };
   }
 }

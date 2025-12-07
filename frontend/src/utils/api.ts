@@ -61,6 +61,7 @@ export async function apiFetch(
 	options: RequestInit = {}
 ): Promise<Response> {
 	const token = localStorage.getItem('accessToken');
+	const fullUrl = url.startsWith('/') ? `${API_BASE}${url}` : url;
 
 	// Add authorization header if token exists
 	const headers: Record<string, string> = {
@@ -73,7 +74,7 @@ export async function apiFetch(
 	}
 
 	// Make the initial request
-	let response = await fetch(url, {
+	let response = await fetch(fullUrl, {
 		...options,
 		headers,
 		credentials: 'include', // Important for cookies
@@ -93,7 +94,7 @@ export async function apiFetch(
 
 				// Retry the original request with new token
 				headers['Authorization'] = `Bearer ${newToken}`;
-				response = await fetch(url, {
+				response = await fetch(fullUrl, {
 					...options,
 					headers,
 					credentials: 'include',
@@ -115,7 +116,7 @@ export async function apiFetch(
 
 			// Retry with new token
 			headers['Authorization'] = `Bearer ${newToken}`;
-			response = await fetch(url, {
+			response = await fetch(fullUrl, {
 				...options,
 				headers,
 				credentials: 'include',

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import StockSummary from "@/components/stock/StockSummary";
 import StockChart from "@/components/stock/StockChart";
@@ -17,7 +17,8 @@ interface StockDetailPageProps {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL_TICKET_LOAD || "http://localhost:4000/api";
 
-const REFRESH_INTERVAL = 5000;
+// ⚡ Giảm tần suất refresh từ 5s → 30s để tránh biểu đồ nhảy liên tục
+const REFRESH_INTERVAL = 30000;
 
 const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
   const router = useRouter();
@@ -31,15 +32,19 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
   const [isPredicting, setIsPredicting] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
 
+  // ✅ Cache historical data để không re-generate mỗi lần refresh
+  const historicalDataCache = useRef<any[]>([]);
+  const isInitialLoad = useRef<boolean>(true);
+
   const formatSymbolForAPI = (symbol: string) => `${symbol}.VN`;
 
   useEffect(() => {
+    // Reset cache khi symbol thay đổi
+    isInitialLoad.current = true;
+    historicalDataCache.current = [];
+
+    // ✅ CHỈ CALL 1 LẦN DUY NHẤT khi load trang, KHÔNG auto-refresh
     fetchStockDetails(true);
-    const interval = setInterval(
-      () => fetchStockDetails(false),
-      REFRESH_INTERVAL
-    );
-    return () => clearInterval(interval);
   }, [symbol]);
 
   const fetchStockDetails = async (firstLoad = false) => {
@@ -78,6 +83,36 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         marketCap: 0,
       };
 
+      // ✅ CHỈ GENERATE DATA MỘT LẦN khi load lần đầu
+      let updatedChartData: any[];
+      if (isInitialLoad.current) {
+        // Lần đầu tiên: Generate toàn bộ historical data
+        updatedChartData = await generateHistoricalData(symbol, currentPrice);
+        historicalDataCache.current = updatedChartData;
+        isInitialLoad.current = false;
+      } else {
+        // Các lần sau: CHỈ UPDATE điểm cuối cùng với current price mới
+        if (historicalDataCache.current.length > 0) {
+          updatedChartData = [...historicalDataCache.current];
+          const lastIndex = updatedChartData.length - 1;
+
+          // Update chỉ điểm cuối cùng
+          updatedChartData[lastIndex] = {
+            ...updatedChartData[lastIndex],
+            close: currentPrice,
+            high: Math.max(updatedChartData[lastIndex].high || currentPrice, currentPrice),
+            low: Math.min(updatedChartData[lastIndex].low || currentPrice, currentPrice),
+            date: new Date().toISOString().split("T")[0],
+          };
+
+          historicalDataCache.current = updatedChartData;
+        } else {
+          // Fallback: nếu cache bị mất, generate lại
+          updatedChartData = await generateHistoricalData(symbol, currentPrice);
+          historicalDataCache.current = updatedChartData;
+        }
+      }
+
       const updatedStockData = {
         symbol: symbol.toUpperCase(),
         companyName: stockInfo.name, // ✅ Dùng tên thật
@@ -104,12 +139,12 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         low52Week: financialData.low || currentPrice * 0.8,
         lastUpdated:
           priceData.time || new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
-        chartData: await generateHistoricalData(symbol, currentPrice),
+        chartData: updatedChartData, // ✅ Dùng cached data
       };
 
       setStockData(updatedStockData);
       setFinancialData(financialData);
-      setChartData(updatedStockData.chartData);
+      setChartData(updatedChartData); // ✅ Set cached chart data
       setError(null);
     } catch (err: any) {
       console.warn("⚠️ Lỗi khi tải dữ liệu:", err.message);
@@ -120,22 +155,43 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
     }
   };
 
-  const generateHistoricalData = async (symbol: string, currentPrice: number) =>
-    Array.from({ length: 30 }, (_, i) => {
+  // ✅ FUNCTION NÀY CHỈ ĐƯỢC GỌI 1 LẦN DUY NHẤT khi load trang đầu tiên
+  // Sau đó data sẽ được cache và chỉ update điểm cuối cùng
+  const generateHistoricalData = async (symbol: string, currentPrice: number) => {
+    // Generate data cho 5 năm (khoảng 1825 ngày) để hỗ trợ chart 5Y/MAX
+    const days = 365 * 5;
+    const data = [];
+    let price = currentPrice;
+
+    // Generate ngược từ hôm nay về quá khứ để đảm bảo giá cuối cùng khớp currentPrice
+    for (let i = 0; i < days; i++) {
       const date = new Date();
-      date.setDate(date.getDate() - (29 - i));
-      const volatility = 0.02;
-      const randomChange = (Math.random() - 0.5) * 2 * volatility;
-      const price = i === 29 ? currentPrice : currentPrice * (1 + randomChange);
-      return {
+      date.setDate(date.getDate() - i);
+
+      // Bỏ qua Thứ 7, Chủ Nhật để giống thị trường chứng khoán hơn (tùy chọn)
+      // const day = date.getDay();
+      // if (day === 0 || day === 6) continue;
+
+      const volatility = 0.025; // Độ biến động
+      const changePercent = (Math.random() - 0.5) * 2 * volatility;
+
+      // Giá ngày hôm trước = Giá ngày hôm nay / (1 + % thay đổi)
+      // (Tính ngược lại của: Giá hôm nay = Giá hôm trước * (1 + % thay đổi))
+      const prevPrice = price / (1 + changePercent);
+
+      data.unshift({
         date: date.toISOString().split("T")[0],
-        open: price * (0.99 + Math.random() * 0.02),
-        high: price * (1 + Math.random() * 0.03),
-        low: price * (0.97 - Math.random() * 0.02),
+        open: prevPrice * (1 + (Math.random() - 0.5) * 0.01),
+        high: price > prevPrice ? price * (1 + Math.random() * 0.01) : prevPrice * (1 + Math.random() * 0.01),
+        low: price < prevPrice ? price * (1 - Math.random() * 0.01) : prevPrice * (1 - Math.random() * 0.01),
         close: price,
         volume: Math.floor(1000000 + Math.random() * 9000000),
-      };
-    });
+      });
+
+      price = prevPrice;
+    }
+    return data;
+  };
 
   const handlePredict = async () => {
     setIsPredicting(true);
@@ -251,34 +307,45 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       </div>
 
       {prediction && (
-        <div className="mb-6 bg-gradient-to-r from-blue-900 to-purple-900 p-6 rounded-xl border border-blue-500">
-          <h3 className="text-xl font-bold text-white mb-4">
-            📊 Dự đoán cho ngày mai ({prediction.predictionDate})
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div>
+        <div className="mb-6 bg-gray-900/50 backdrop-blur-md p-6 rounded-2xl border border-gray-800 shadow-xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <span className="w-1 h-6 bg-brand-orange rounded-full"></span>
+              Dự báo AI cho ngày mai ({prediction.predictionDate})
+            </h3>
+            <span className="px-3 py-1 bg-brand-orange/10 text-brand-orange text-xs font-semibold rounded-full border border-brand-orange/20">
+              Random Forest Model
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            {/* Thẻ Xu hướng */}
+            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
+              <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Xu hướng</div>
               <div
-                className={`text-2xl font-bold ${
-                  prediction.prediction === "TĂNG"
-                    ? "text-green-400"
-                    : "text-red-400"
-                }`}
+                className={`text-3xl font-black ${prediction.prediction === "TĂNG"
+                  ? "text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                  : "text-rose-500 drop-shadow-[0_0_10px_rgba(244,63,94,0.3)]"
+                  }`}
               >
                 {prediction.prediction}
               </div>
-              <div className="text-sm text-gray-300">Xu hướng</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-yellow-400">
+
+            {/* Thẻ Độ tin cậy */}
+            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
+              <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Độ tin cậy</div>
+              <div className="text-3xl font-black text-brand-orange drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]">
                 {prediction.confidence.toFixed(1)}%
               </div>
-              <div className="text-sm text-gray-300">Độ tin cậy</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-white">
+
+            {/* Thẻ Giá dự đoán */}
+            <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
+              <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Giá mục tiêu</div>
+              <div className="text-3xl font-black text-white">
                 {prediction.predictedPrice.toLocaleString("vi-VN")}₫
               </div>
-              <div className="text-sm text-gray-300">Giá dự đoán</div>
             </div>
           </div>
         </div>

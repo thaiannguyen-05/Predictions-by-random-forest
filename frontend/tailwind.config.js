@@ -35,8 +35,22 @@ module.exports = {
 				float: {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-10px)' },
+				},
+				popIn: {
+					'0%': { opacity: '0', transform: 'scale(0.5)' },
+					'100%': { opacity: '1', transform: 'scale(1)' },
+				},
+				slideInRight: {
+					'0%': { opacity: '0', transform: 'translateX(-20px)' },
+					'100%': { opacity: '1', transform: 'translateX(0)' },
 				}
-			}
+			},
+			animation: {
+				'fade-in': 'fadeIn 0.5s ease-out forwards',
+				'float': 'float 3s ease-in-out infinite',
+				'pop-in': 'popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+				'slide-in-right': 'slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+			},
 		},
 	},
 	plugins: [],

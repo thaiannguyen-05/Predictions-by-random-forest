@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import * as net from 'net';
 import { fallBackPrice } from './stock.constants';
+import { PrismaService } from '../../prisma/prisma.service';
 
 interface MLServiceResponse {
   success: boolean;
@@ -38,6 +39,8 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   private readonly ML_HOST = process.env.ML_SERVICE_HOST || '127.0.0.1';
   private readonly ML_PORT = parseInt(process.env.ML_SERVICE_PORT || '9999');
   private readonly TIMEOUT = 30000; // 30 seconds
+
+  constructor(private readonly prismaService: PrismaService) {}
 
   async onModuleInit() {
     this.logger.log(`ML Service configured at ${this.ML_HOST}:${this.ML_PORT}`);
@@ -163,6 +166,52 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   async getFinancialData(ticker: string): Promise<MLServiceResponse> {
     try {
       const response = await this.sendCommand('get_financial_data', { ticker });
+
+      if (response.success && response.data) {
+        try {
+          const data: any = response.data; // Cast to any to access properties dynamically
+
+          // ✅ FIX DUPLICATE: Kiểm tra xem đã lưu record cho symbol này trong 30s chưa?
+          const latestRecord =
+            await this.prismaService.history_searching.findFirst({
+              where: {
+                symbol: ticker,
+                createdAt: {
+                  gt: new Date(Date.now() - 30 * 1000), // Lớn hơn (hiện tại - 30s)
+                },
+              },
+            });
+
+          // Nếu chưa có record nào trong 30s gần đây -> Mới lưu
+          if (!latestRecord) {
+            await this.prismaService.history_searching.create({
+              data: {
+                symbol: ticker,
+                currentPrice: BigInt(Math.round(Number(data.yahoo_price || 0))),
+                previousClose: BigInt(
+                  Math.round(Number(data.previous_close || 0)),
+                ),
+                open: BigInt(Math.round(Number(data.open || 0))),
+                high: BigInt(Math.round(Number(data.high || 0))),
+                low: BigInt(Math.round(Number(data.low || 0))),
+                volume: BigInt(Math.round(Number(data.volume || 0))),
+                marketCap: BigInt(Math.round(Number(data.market_cap || 0))),
+                peRatio: Number(data.pe_ratio || 0),
+                eps: Number(data.eps || 0),
+                beta: Number(data.beta || 0),
+                yahooPrice: Number(data.yahoo_price || 0),
+              },
+            });
+          }
+        } catch (dbError: any) {
+          // Catch error as any to access message property
+          this.logger.error(
+            `Failed to save history search for ${ticker}: ${dbError.message}`,
+          );
+          // Don't fail the request if saving history fails
+        }
+      }
+
       if (!response.success) {
         this.logger.error(
           `ML service failed to get financial data for ${ticker}: ${response.error}`,
@@ -389,6 +438,40 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       return response;
     } catch (error) {
       this.logger.error(`Error running full pipeline: ${error.message}`);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  async loadingHisorySearch(): Promise<MLServiceResponse> {
+    try {
+      const response = await this.prismaService.history_searching.findMany({
+        take: 10,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      // Convert BigInt to string for JSON serialization
+      const serializedResponse = response.map((item) => ({
+        ...item,
+        currentPrice: item.currentPrice.toString(),
+        previousClose: item.previousClose.toString(),
+        open: item.open.toString(),
+        high: item.high.toString(),
+        low: item.low.toString(),
+        volume: item.volume.toString(),
+        marketCap: item.marketCap.toString(),
+      }));
+
+      return {
+        success: true,
+        data: serializedResponse,
+      };
+    } catch (error) {
+      this.logger.error(`Error loading history search: ${error.message}`);
       return {
         success: false,
         error: error.message,

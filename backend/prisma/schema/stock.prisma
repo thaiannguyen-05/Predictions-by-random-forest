@@ -1,0 +1,18 @@
+model history_searching {
+    id     String @id @default(uuid()) @db.Uuid
+    symbol String
+	currentPrice BigInt
+    previousClose BigInt
+    open          BigInt
+    high          BigInt
+    low           BigInt
+    volume        BigInt
+    marketCap     BigInt
+    peRatio       Float
+    eps           Float
+    beta          Float
+    yahooPrice    Float
+
+	createdAt     DateTime @default(now())
+	updatedAt     DateTime @updatedAt
+}

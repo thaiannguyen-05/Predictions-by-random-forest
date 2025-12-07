@@ -81,7 +81,10 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
 
           <button
             className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-700 transition"
-            onClick={() => alert('Trang cá nhân đang phát triển')}
+            onClick={() => {
+              setOpen(false);
+              router.push('/profile');
+            }}
           >
             <User size={16} /> Trang cá nhân
           </button>

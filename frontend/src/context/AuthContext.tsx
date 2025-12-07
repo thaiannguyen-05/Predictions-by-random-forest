@@ -8,6 +8,9 @@ interface UserData {
   name: string;
   email: string;
   avatar?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -62,6 +65,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: data.user.name || data.user.username || data.user.email,
         email: data.user.email,
         avatar: avatarUrl,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        phone: data.user.phoneNumber || data.user.phone, // Controller returns phoneNumber, Service returns phone. Controller maps user.phone to phoneNumber.
       });
     } catch (err) {
       console.error("Error fetching user:", err);

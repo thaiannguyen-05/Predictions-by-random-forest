@@ -23,10 +23,9 @@ const Header: React.FC = () => {
 
 				{/* Navigation Items */}
 				<div className="hidden md:flex items-center space-x-8">
-					<Link href="/" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Trang chủ</Link>
-					<Link href="#" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Sản phẩm</Link>
-					<Link href="#" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Bộ sưu tập</Link>
-					<Link href="#" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Giới thiệu</Link>
+					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Trang Chủ</Link>
+					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Giới Thiệu</Link>
+					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Liên Hệ</Link>
 				</div>
 
 				{/* Right Side: Clock + User/Login */}
