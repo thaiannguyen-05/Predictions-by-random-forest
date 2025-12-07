@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, TrendingUp, ShieldCheck, BarChart3 } from "lucide-react";
 import MainLayout from "@/app/main-layout";
 import SearchBar from "@/components/common/SearchBar";
+import AuthLink from "@/components/common/AuthLink";
 
 export default function Home() {
 	return (
@@ -36,12 +37,13 @@ export default function Home() {
 						</p>
 
 						<div className="flex flex-wrap gap-4">
-							<Link
+							<AuthLink
 								href="/dashboard"
 								className="px-8 py-4 bg-brand-orange hover:bg-brand-orange-hover text-white font-bold rounded-xl shadow-lg shadow-brand-orange/25 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+								requireAuth={true}
 							>
 								Xem Dự Báo Ngay <ArrowRight size={20} />
-							</Link>
+							</AuthLink>
 							<Link
 								href="/about"
 								className="px-8 py-4 bg-brand-card hover:bg-brand-card/80 text-white border border-white/10 font-bold rounded-xl transition-all transform hover:-translate-y-1"
