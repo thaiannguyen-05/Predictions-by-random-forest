@@ -79,6 +79,26 @@
             "date": 1765076419814,
             "name": "log/nest-log-2025-12-07-10.log",
             "hash": "add83f8bc0e43ce1220d218a1863ea4581bf86c650701de3e510a8fc463823f4"
+        },
+        {
+            "date": 1765086140012,
+            "name": "log/nest-log-2025-12-07-12.log",
+            "hash": "0c9435f2c354b93003af64b31604034818eb40f4f97a91be58f34dd9a7228612"
+        },
+        {
+            "date": 1765087200926,
+            "name": "log/nest-log-2025-12-07-13.log",
+            "hash": "5952e0e486157a199a321a3d963c5c28139be3d4338f85fe0ec79b9ab1bec6bc"
+        },
+        {
+            "date": 1765123133604,
+            "name": "log/nest-log-2025-12-07-22.log",
+            "hash": "ab9c112c9b39fd82bcf6b2e742cf84b9a027e0aa4afb06b51ce5bc45e1f90962"
+        },
+        {
+            "date": 1765123208253,
+            "name": "log/nest-log-2025-12-07-23.log",
+            "hash": "37348c6ce9744c36ea0101437bc48cbf3f6eff6333c485676137d601b884f782"
         }
     ],
     "hashType": "sha256"

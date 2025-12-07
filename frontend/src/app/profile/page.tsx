@@ -64,40 +64,52 @@ export default function ProfilePage() {
 		const file = e.target.files?.[0];
 		if (!file) return;
 
-		// Generate a unique upload ID
-		const uploadId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-		const chunkSize = 10 * 1024; // 10KB chunks as requested
-		const totalChunks = Math.ceil(file.size / chunkSize);
+		// Validate file size (max 10MB)
+		if (file.size > 10 * 1024 * 1024) {
+			setStatus({ type: 'error', message: 'File quá lớn. Tối đa 10MB.' });
+			return;
+		}
+
+		// Chunking configuration
+		const CHUNK_SIZE = 256 * 1024; // 256KB per chunk
+		const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+		const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+		setStatus({ type: null, message: `Đang tải ảnh (0/${totalChunks})...` });
 
 		try {
 			let finalUrl = '';
 
 			for (let i = 0; i < totalChunks; i++) {
-				const start = i * chunkSize;
-				const end = Math.min(file.size, start + chunkSize);
+				const start = i * CHUNK_SIZE;
+				const end = Math.min(file.size, start + CHUNK_SIZE);
 				const chunk = file.slice(start, end);
 
-				const uploadFormData = new FormData();
-				uploadFormData.append('file', chunk);
-				uploadFormData.append('index', i.toString());
-				uploadFormData.append('total', totalChunks.toString());
-				uploadFormData.append('uploadId', uploadId);
-				uploadFormData.append('originalname', file.name);
+				const formData = new FormData();
+				formData.append('file', chunk, file.name);
+				formData.append('sessionId', sessionId);
+				formData.append('index', i.toString());
+				formData.append('totalChunks', totalChunks.toString());
+				formData.append('originalName', file.name);
 
-				const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/user/upload-avatar-chunk`, {
+				const res = await fetch('http://localhost:4000/user/upload-avatar-chunk', {
 					method: 'POST',
-					body: uploadFormData,
-					headers: {
-						'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-					}
+					body: formData,
+					credentials: 'include',
 				});
 
 				if (!res.ok) {
-					throw new Error(`Upload failed at chunk ${i}`);
+					const err = await res.json();
+					throw new Error(err.message || `Chunk ${i} upload failed`);
 				}
 
 				const data = await res.json();
-				if (data.url) {
+
+				// Update progress
+				setStatus({ type: null, message: `Đang tải ảnh (${i + 1}/${totalChunks})...` });
+
+				// Check if complete
+				if (data.status === 'complete' && data.url) {
 					finalUrl = data.url;
 				}
 			}
@@ -105,12 +117,13 @@ export default function ProfilePage() {
 			if (finalUrl) {
 				setFormData(prev => ({ ...prev, avtUrl: finalUrl }));
 				setStatus({ type: 'success', message: 'Tải ảnh thành công!' });
-				setTimeout(() => setStatus({ type: null, message: '' }), 3000);
+				setTimeout(() => setStatus({ type: null, message: '' }), 2000);
+			} else {
+				throw new Error('Upload completed but no URL returned');
 			}
-
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Avatar upload error:', error);
-			setStatus({ type: 'error', message: 'Không thể tải ảnh lên.' });
+			setStatus({ type: 'error', message: error.message || 'Không thể tải ảnh lên.' });
 		}
 	};
 

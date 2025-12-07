@@ -5,6 +5,7 @@ import UserDropdown from "../common/UserDropdown";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import RealTimeClock from "../common/RealTimeClock";
+import AuthLink from "../common/AuthLink";
 
 const Header: React.FC = () => {
 	const { user: currentUser } = useAuth();
@@ -12,7 +13,7 @@ const Header: React.FC = () => {
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/5 transition-all duration-300">
 			<div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-				{/* Logo */}
+				{/* Logo - Click sẽ về trang chủ */}
 				<div className="flex items-center cursor-pointer">
 					<Link href="/" className="flex flex-col group">
 						<span className="text-2xl font-bold text-white tracking-wide group-hover:text-brand-orange transition-colors duration-300">
@@ -21,11 +22,11 @@ const Header: React.FC = () => {
 					</Link>
 				</div>
 
-				{/* Navigation Items */}
+				{/* Navigation Items - Yêu cầu đăng nhập */}
 				<div className="hidden md:flex items-center space-x-8">
-					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Trang Chủ</Link>
-					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Giới Thiệu</Link>
-					<Link href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium">Liên Hệ</Link>
+					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Trang Chủ</AuthLink>
+					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Giới Thiệu</AuthLink>
+					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Liên Hệ</AuthLink>
 				</div>
 
 				{/* Right Side: Clock + User/Login */}

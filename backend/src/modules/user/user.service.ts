@@ -7,7 +7,7 @@ import { DateUtils } from '../../common/utils/string-to-date.utils';
 @Injectable()
 export class UserService {
   private users: User[] = [];
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   // check available user and active user
   private async getActiveAccount(userId: string) {

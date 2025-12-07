@@ -86,7 +86,7 @@ export default function HistoryPage() {
 						<p className="text-gray-400">10 mã cổ phiếu được tra cứu gần đây nhất</p>
 					</div>
 					<Link
-						href="/"
+						href="/dashboard"
 						className="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 text-sm font-medium"
 					>
 						<Search size={16} className="mr-2" />
@@ -108,7 +108,7 @@ export default function HistoryPage() {
 						<h3 className="text-xl font-medium text-gray-300 mb-2">Chưa có lịch sử tìm kiếm</h3>
 						<p className="text-gray-500 mb-6">Hãy bắt đầu tra cứu các mã cổ phiếu để xem lịch sử tại đây.</p>
 						<Link
-							href="/"
+							href="/dashboard"
 							className="inline-flex items-center px-6 py-3 bg-brand-orange hover:bg-brand-orange-hover text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/40"
 						>
 							Tra cứu ngay

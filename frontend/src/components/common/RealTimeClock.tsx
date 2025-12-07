@@ -11,10 +11,10 @@ const RealTimeClock: React.FC = () => {
 
   useEffect(() => {
     setIsClient(true);
-    
+
     const updateTime = () => {
       const now = new Date();
-      
+
       // Format time: HH:MM:SS
       const timeString = now.toLocaleTimeString("vi-VN", {
         hour: "2-digit",
@@ -60,36 +60,30 @@ const RealTimeClock: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center space-x-3 bg-gray-800 px-4 py-3 rounded-lg border border-gray-700 hover:bg-gray-750 transition-colors duration-200 group">
-      {/* Calendar Icon */}
-      <div className="flex-shrink-0">
-        <Calendar 
-          size={18} 
-          className="text-blue-400 group-hover:text-blue-300 transition-colors" 
-        />
-      </div>
-      
-      {/* Date and Time */}
-      <div className="flex flex-col items-start">
-        <div className="flex items-center space-x-2">
-          <Clock size={14} className="text-green-400" />
-          <span className="text-white font-mono text-sm font-medium tracking-wide">
-            {currentTime}
-          </span>
-          <span className="text-xs text-blue-400 font-medium bg-blue-400/10 px-1.5 py-0.5 rounded">
-            GMT+7
-          </span>
-        </div>
-        
-        <span className="text-gray-400 text-xs font-medium mt-0.5 capitalize">
-          {currentDate}
+    <div className="flex items-center gap-4 px-4 py-2.5 rounded-xl border border-white/10 bg-brand-card/50 backdrop-blur-sm">
+      {/* Time + Timezone */}
+      <div className="flex items-center gap-2">
+        <Clock size={16} className="text-brand-orange" />
+        <span className="text-white font-mono text-base font-semibold tracking-wide">
+          {currentTime}
+        </span>
+        <span className="text-xs text-brand-orange font-medium bg-brand-orange/10 px-2 py-0.5 rounded-md">
+          GMT+7
         </span>
       </div>
 
+      {/* Separator */}
+      <div className="w-px h-5 bg-white/10" />
+
+      {/* Date */}
+      <span className="text-gray-400 text-sm font-medium capitalize">
+        {currentDate}
+      </span>
+
       {/* Live Indicator */}
-      <div className="flex items-center space-x-1 flex-shrink-0">
-        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        <span className="text-green-400 text-xs font-medium">LIVE</span>
+      <div className="flex items-center gap-1.5 ml-1">
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50" />
+        <span className="text-green-400 text-xs font-semibold">LIVE</span>
       </div>
     </div>
   );
