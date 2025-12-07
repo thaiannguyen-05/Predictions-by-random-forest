@@ -35,10 +35,10 @@ const SearchBar: React.FC = () => {
   // Hàm tìm kiếm trong danh sách cổ phiếu đã train
   const fetchSuggestions = async (query: string): Promise<StockSuggestion[]> => {
     if (query.length < 1) return [];
-    
+
     // Tìm trong danh sách cổ phiếu đã train
-    const filteredStocks = TRAINED_STOCKS.filter(stock => 
-      stock.toLowerCase().includes(query.toLowerCase()) || 
+    const filteredStocks = TRAINED_STOCKS.filter(stock =>
+      stock.toLowerCase().includes(query.toLowerCase()) ||
       (STOCK_DETAILS[stock as keyof typeof STOCK_DETAILS]?.name.toLowerCase().includes(query.toLowerCase()))
     ).slice(0, 10); // Giới hạn 10 kết quả
 
@@ -90,7 +90,7 @@ const SearchBar: React.FC = () => {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
-      const foundStock = TRAINED_STOCKS.find(stock => 
+      const foundStock = TRAINED_STOCKS.find(stock =>
         stock.toLowerCase() === searchTerm.toUpperCase()
       );
       if (foundStock) {
@@ -103,7 +103,7 @@ const SearchBar: React.FC = () => {
 
   return (
     <div className="relative w-full max-w-4xl mx-auto my-6 px-4">
-      <div className="relative flex items-center bg-gray-800 rounded-lg border border-gray-700 focus-within:border-blue-500 transition-all shadow-xl">
+      <div className="relative flex items-center bg-gray-800 rounded-lg border border-gray-700 focus-within:border-brand-orange transition-all shadow-xl">
         <Search size={20} className="text-gray-400 ml-4 absolute" />
         <input
           type="text"
@@ -116,7 +116,7 @@ const SearchBar: React.FC = () => {
           onKeyPress={handleKeyPress}
         />
         {isLoading && (
-          <Loader2 size={20} className="text-blue-400 mr-4 animate-spin absolute right-0" />
+          <Loader2 size={20} className="text-brand-orange mr-4 animate-spin absolute right-0" />
         )}
       </div>
 
@@ -144,9 +144,8 @@ const SearchBar: React.FC = () => {
                       <p className="text-white font-bold">
                         {stock.currentPrice.toLocaleString('vi-VN')}₫
                       </p>
-                      <p className={`text-sm ${
-                        (stock.changePercent || 0) >= 0 ? 'text-green-400' : 'text-red-400'
-                      }`}>
+                      <p className={`text-sm ${(stock.changePercent || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
                         {(stock.changePercent || 0) >= 0 ? '+' : ''}{(stock.changePercent || 0).toFixed(2)}%
                       </p>
                     </div>

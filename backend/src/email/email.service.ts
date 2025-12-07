@@ -3,13 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { join } from 'path';
 import { promises as fs } from 'fs';
+import { RedisService } from '../modules/redis/redis.service';
+import { AUTH_CONSTANT } from '../modules/auth/auth.constants';
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private transporter: nodemailer.Transporter;
   private templateCache = new Map<string, string>();
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+  ) {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -40,11 +45,26 @@ export class EmailService {
   }
 
   // send verification register
-  async sendVerificationRegister(toEmail: string, code: string) {
+  async sendVerificationRegister(toEmail: string) {
     try {
       // get template
       const template = await this.getTemplate(`verificationRegister`);
       const subject = 'Verify email';
+
+      // generate tokens and saving in redis
+      const key = AUTH_CONSTANT.KEY_VERIFY_CODE(toEmail);
+
+      // check key is exist
+      const existKey = await this.redisService.get(key);
+      if (existKey) {
+        this.logger.debug(`${key} have value: ${existKey} has been saved `);
+        await this.redisService.del(key);
+      }
+
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      await this.redisService.set(key, code);
+      this.logger.debug(`${key} have value: ${code} has been saved `);
+
       const html = template
         ?.replace(' {CODE_VERIFY}', code)
         .replace('{USER_EMAIL}', toEmail);

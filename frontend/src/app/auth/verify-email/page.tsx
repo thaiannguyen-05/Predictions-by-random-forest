@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Loader2, Mail, CheckCircle2 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -26,6 +28,10 @@ const VerifyEmailPage: React.FC = () => {
     }
   }, [countdown]);
 
+  useEffect(() => {
+    if (emailFromParams) setEmail(emailFromParams);
+  }, [emailFromParams]);
+
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -49,8 +55,9 @@ const VerifyEmailPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
-          email: email.trim(),
+          to: email.trim(),
           code: code.trim(),
         }),
       });
@@ -58,12 +65,12 @@ const VerifyEmailPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess("Xác thực email thành công! Bây giờ bạn có thể đăng nhập.");
+        setSuccess("Xác thực thành công! Đang chuyển đến trang đăng nhập...");
 
-        // Redirect đến login page sau 3 giây
+        // Redirect đến login page sau 1.5 giây
         setTimeout(() => {
           router.push("/auth/login");
-        }, 3000);
+        }, 1500);
       } else {
         setError(data.message || "Xác thực thất bại. Vui lòng thử lại.");
       }
@@ -83,26 +90,21 @@ const VerifyEmailPage: React.FC = () => {
     setResendLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auth/verify`, {
+      const response = await fetch(`${API_URL}/email/send-verify-code-register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to: email.trim() }),
       });
-
-      const data = await response.json();
 
       if (response.ok) {
         setSuccess("Đã gửi lại mã xác thực. Vui lòng kiểm tra email.");
-        setCountdown(60); // 60 giây countdown
+        setCountdown(60);
       } else {
-        setError(data.message || "Gửi lại mã thất bại. Vui lòng thử lại.");
+        const data = await response.json();
+        setError(data.message || "Không thể gửi lại mã lúc này. Vui lòng thử lại sau.");
       }
     } catch (err: any) {
-      setError("Lỗi kết nối đến server. Vui lòng thử lại.");
+      setError("Lỗi kết nối đến server.");
     } finally {
       setResendLoading(false);
     }
@@ -115,101 +117,78 @@ const VerifyEmailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      <div className="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
+    <div className="w-full max-w-md mx-auto">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <Link href="/" className="inline-block group">
+          <span className="text-3xl font-extrabold text-white tracking-widest block">
+            STOCK<span className="text-brand-orange">DN</span>
+          </span>
+        </Link>
+        <p className="text-gray-400 mt-2 text-sm">
+          Xác thực tài khoản để bắt đầu
+        </p>
+      </div>
+
+      <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
+          <div className="w-16 h-16 bg-brand-orange/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Mail size={32} className="text-brand-orange" />
           </div>
-          <h2 className="text-3xl font-bold text-white">Xác thực Email</h2>
-          <p className="text-gray-400 mt-2">
-            Nhập mã xác thực đã được gửi đến email của bạn
+          <h2 className="text-2xl font-bold text-white">Xác thực Email</h2>
+          <p className="text-gray-400 mt-2 text-sm">
+            Nhập mã 6 số đã gửi tới <span className="text-brand-orange font-medium">{email || "email của bạn"}</span>
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm text-center font-medium animate-fade-in mb-4">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="bg-green-900/50 border border-green-500 text-green-200 px-4 py-3 rounded-lg mb-4">
-            {success}
+          <div className="bg-green-500/10 border border-green-500/50 text-green-500 p-3 rounded-xl text-sm text-center font-medium animate-fade-in mb-4 flex items-center justify-center gap-2">
+            <CheckCircle2 size={16} /> {success}
           </div>
         )}
 
         <form onSubmit={handleVerify} className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-gray-300 text-sm font-medium mb-2"
-            >
-              Email
-            </label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300 ml-1">Email</label>
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Nhập email của bạn"
+              className="w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all"
+              placeholder="nhadautu@example.com"
               required
               disabled={!!emailFromParams}
             />
-            {emailFromParams && (
-              <p className="text-gray-400 text-xs mt-1">
-                Email đã được tự động điền từ quá trình đăng ký
-              </p>
-            )}
           </div>
 
-          <div>
-            <label
-              htmlFor="code"
-              className="block text-gray-300 text-sm font-medium mb-2"
-            >
-              Mã xác thực (6 số)
-            </label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300 ml-1">Mã xác thực</label>
             <input
               type="text"
-              id="code"
               value={code}
               onChange={(e) => handleCodeChange(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-2xl font-mono tracking-widest"
+              className="w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange text-center text-3xl font-mono tracking-[0.5em] transition-all"
               placeholder="000000"
               maxLength={6}
               required
             />
-            <p className="text-gray-400 text-xs mt-2 text-center">
-              Vui lòng kiểm tra hộp thư email và nhập mã 6 số
-            </p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-brand-orange to-red-500 hover:from-orange-500 hover:to-red-400 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/40 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
           >
             {loading ? (
-              <span className="flex justify-center items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Đang xác thực...
-              </span>
+              <Loader2 size={20} className="animate-spin" />
             ) : (
-              "Xác thực Email"
+              "Xác Thực Tài Khoản"
             )}
           </button>
         </form>
@@ -218,40 +197,24 @@ const VerifyEmailPage: React.FC = () => {
           <button
             onClick={handleResendCode}
             disabled={resendLoading || countdown > 0}
-            className="text-blue-500 hover:text-blue-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="text-brand-orange hover:text-orange-400 text-sm font-medium disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
           >
             {resendLoading ? (
               <span className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
-                Đang gửi...
+                <Loader2 size={14} className="animate-spin mr-2" /> Đang gửi...
               </span>
             ) : countdown > 0 ? (
-              `Gửi lại sau ${countdown}s`
+              `Gửi lại mã sau ${countdown}s`
             ) : (
-              "Gửi lại mã xác thực"
+              "Chưa nhận được mã? Gửi lại"
             )}
           </button>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-700">
-          <div className="text-gray-400 text-sm text-center">
-            <p className="mb-2">📧 Mẹo:</p>
-            <ul className="text-left space-y-1">
-              <li>• Kiểm tra thư mục spam nếu không thấy email</li>
-              <li>• Mã xác thực có thời hạn 10 phút</li>
-              <li>• Nhập chính xác mã 6 số</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="text-gray-400 text-sm text-center mt-6">
-          Quay lại{" "}
-          <button
-            onClick={() => router.push("/auth/login")}
-            className="text-blue-500 hover:underline font-medium"
-          >
-            Đăng nhập
-          </button>
+        <div className="mt-8 text-center border-t border-gray-700/50 pt-6">
+          <Link href="/auth/login" className="text-gray-400 hover:text-white text-sm transition-colors">
+            Quay lại Đăng nhập
+          </Link>
         </div>
       </div>
     </div>

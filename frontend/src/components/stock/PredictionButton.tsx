@@ -11,10 +11,10 @@ interface PredictionButtonProps {
   symbol: string;
 }
 
-const PredictionButton: React.FC<PredictionButtonProps> = ({ 
-  onPredict, 
-  isPredicting, 
-  symbol 
+const PredictionButton: React.FC<PredictionButtonProps> = ({
+  onPredict,
+  isPredicting,
+  symbol
 }) => {
   const isTrainedStock = TRAINED_STOCKS.includes(symbol);
 
@@ -22,7 +22,7 @@ const PredictionButton: React.FC<PredictionButtonProps> = ({
     return (
       <button
         disabled
-        className="flex items-center px-6 py-3 rounded-lg font-bold text-gray-400 bg-gray-600 cursor-not-allowed"
+        className="flex items-center px-6 py-3 rounded-xl font-bold text-gray-400 bg-gray-600 cursor-not-allowed border border-white/5"
         title="Cổ phiếu này chưa được train model"
       >
         <Brain size={20} className="mr-2" />
@@ -36,26 +36,26 @@ const PredictionButton: React.FC<PredictionButtonProps> = ({
       onClick={onPredict}
       disabled={isPredicting}
       className={`
-        flex items-center px-6 py-3 rounded-lg font-bold text-white
-        transition-all duration-300 transform hover:scale-105
-        ${isPredicting 
-          ? 'bg-purple-600 cursor-not-allowed' 
-          : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+        relative overflow-hidden group w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all duration-300
+        ${isPredicting
+          ? "bg-gray-700 cursor-not-allowed"
+          : "bg-brand-orange hover:bg-brand-orange-hover border border-white/10 transform hover:-translate-y-1 shadow-brand-orange/20"
         }
-        shadow-lg hover:shadow-xl
       `}
     >
-      {isPredicting ? (
-        <>
-          <Loader size={20} className="mr-2 animate-spin" />
-          Đang dự đoán...
-        </>
-      ) : (
-        <>
-          <Brain size={20} className="mr-2" />
-          Dự đoán giá {symbol} ngày mai
-        </>
-      )}
+      <div className="flex items-center justify-center">
+        {isPredicting ? (
+          <>
+            <Loader size={20} className="mr-2 animate-spin" />
+            Đang dự đoán...
+          </>
+        ) : (
+          <>
+            <Brain size={20} className="mr-2" />
+            Dự đoán giá {symbol} ngày mai
+          </>
+        )}
+      </div>
     </button>
   );
 };

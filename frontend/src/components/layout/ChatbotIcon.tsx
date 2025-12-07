@@ -12,6 +12,28 @@ interface ChatMessage {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL_AUTH || "http://localhost:4000";
 
+// Basic Markdown Formatter
+const MessageContent: React.FC<{ text: string }> = ({ text }) => {
+  return (
+    <div className="whitespace-pre-line">
+      {text.split("\n").map((line, i) => (
+        <React.Fragment key={i}>
+          {line.split(/(\*\*.*?\*\*|\*.*?\*)/g).map((part, j) => {
+            if (part.startsWith("**") && part.endsWith("**")) {
+              return <strong key={j}>{part.slice(2, -2)}</strong>;
+            }
+            if (part.startsWith("*") && part.endsWith("*")) {
+              return <em key={j}>{part.slice(1, -1)}</em>;
+            }
+            return part;
+          })}
+          <br />
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 // Tách component ChatWindow ra ngoài
 interface ChatWindowProps {
   messages: ChatMessage[];
@@ -22,6 +44,7 @@ interface ChatWindowProps {
   onClose: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   userName?: string;
+  isMobile: boolean;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -33,9 +56,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   onClose,
   onKeyDown,
   userName,
+  isMobile, // Receive isMobile prop
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ startX: number; startY: number; startLeft: number; startTop: number } | null>(null);
+
+  // State for position (desktop only)
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
   // Cuộn xuống dưới khi có tin nhắn mới
   useEffect(() => {
@@ -55,10 +84,71 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     onInputChange(e.target.value);
   };
 
+  // Dragging logic
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile || !chatWindowRef.current) return;
+
+    // Calculate initial offsets
+    const rect = chatWindowRef.current.getBoundingClientRect();
+
+    // If position is null (initial state), we need to set it to current computed values
+    const currentLeft = rect.left;
+    const currentTop = rect.top;
+
+    setPosition({ top: currentTop, left: currentLeft });
+
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startLeft: currentLeft,
+      startTop: currentTop,
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragRef.current) return;
+
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+
+    setPosition({
+      left: dragRef.current.startLeft + dx,
+      top: dragRef.current.startTop + dy,
+    });
+  };
+
+  const handleMouseUp = () => {
+    dragRef.current = null;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  // Styles based on state
+  const containerStyle: React.CSSProperties = isMobile
+    ? { top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%" }
+    : position
+      ? { top: `${position.top}px`, left: `${position.left}px`, margin: 0, width: "24rem", height: "30rem" } // Default size when dragged
+      : {}; // Let CSS handle initial 'bottom-24 right-6'
+
+  const containerClasses = isMobile
+    ? "fixed bg-gray-900 z-50 flex flex-col rounded-none"
+    : `fixed bg-gray-900 rounded-lg shadow-2xl flex flex-col border border-brand-orange z-50 resize overflow-hidden min-w-[300px] min-h-[400px] ${!position ? "bottom-24 right-6 w-96 h-[32rem]" : ""}`;
+
   return (
-    <div className="fixed bottom-24 right-6 w-80 h-96 bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-blue-500 z-50">
-      {/* Header */}
-      <div className="p-3 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
+    <div
+      ref={chatWindowRef}
+      className={containerClasses}
+      style={!isMobile && position ? { ...containerStyle, resize: 'both' } : containerStyle}
+    >
+      {/* Header - Draggable on Desktop */}
+      <div
+        className={`p-3 bg-brand-orange text-white flex justify-between items-center ${isMobile ? "" : "cursor-move rounded-t-lg"
+          }`}
+        onMouseDown={!isMobile ? handleMouseDown : undefined}
+      >
         <div className="flex flex-col">
           <span className="font-semibold text-sm">
             💬 Trợ lý Chứng khoán AI
@@ -69,7 +159,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
         <button
           onClick={onClose}
-          className="hover:bg-blue-700 rounded-full p-1 transition-colors cursor-pointer"
+          className="hover:bg-brand-orange-hover rounded-full p-1 transition-colors cursor-pointer"
           type="button"
         >
           <X size={18} />
@@ -81,24 +171,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${
-              m.sender === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"
+              }`}
           >
             <div
-              className={`px-3 py-2 rounded-lg max-w-[80%] whitespace-pre-wrap break-words ${
-                m.sender === "user"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-700 text-gray-200"
-              }`}
+              className={`px-3 py-2 rounded-lg max-w-[80%] break-words ${m.sender === "user"
+                  ? "bg-brand-orange/20 text-brand-orange border border-brand-orange/20"
+                  : "bg-gray-800 text-gray-200 border border-gray-700"
+                }`}
             >
-              {m.text}
+              <MessageContent text={m.text} />
             </div>
           </div>
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="px-3 py-2 rounded-lg bg-gray-700 text-gray-200 max-w-[80%]">
+            <div className="px-3 py-2 rounded-lg bg-gray-800 text-gray-200 max-w-[80%] border border-gray-700">
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                 <div
@@ -125,12 +213,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           onChange={handleInputChange}
           onKeyDown={onKeyDown}
           placeholder="Nhập câu hỏi..."
-          className="flex-1 p-2 bg-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none max-h-32 placeholder-gray-400"
+          className="flex-1 p-2 bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange text-white resize-none max-h-32 placeholder-gray-500 border border-gray-700"
           disabled={isLoading}
         />
         <button
           onClick={onSendMessage}
-          className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer flex-shrink-0"
+          className="p-2 bg-brand-orange hover:bg-brand-orange-hover disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer flex-shrink-0"
           disabled={isLoading || !input.trim()}
           type="button"
         >
@@ -150,6 +238,17 @@ const ChatbotIcon: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Khi mở chat lần đầu, gọi init-chat
   useEffect(() => {
@@ -289,11 +388,12 @@ const ChatbotIcon: React.FC = () => {
           onClose={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
           userName={userName}
+          isMobile={isMobile}
         />
       )}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900 cursor-pointer"
+        className="w-14 h-14 bg-brand-orange text-white rounded-full flex items-center justify-center shadow-lg hover:bg-brand-orange-hover transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2 focus:ring-offset-gray-900 cursor-pointer shadow-brand-orange/20"
         type="button"
       >
         {isOpen ? <X size={28} /> : <MessageCircle size={28} />}

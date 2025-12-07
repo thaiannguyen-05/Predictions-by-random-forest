@@ -294,9 +294,12 @@ export class AuthController {
         email: user.email,
         username: user.username,
         name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phone,
         avatar: user.avatar,
         provider: user.provider,
-        isActive: user.isActive,
+        isActive: user?.isActive,
       },
     };
   }

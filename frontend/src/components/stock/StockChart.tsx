@@ -129,7 +129,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     return (
       padding.left +
       (index / (filteredData.length - 1)) *
-        (chartWidth - padding.left - padding.right)
+      (chartWidth - padding.left - padding.right)
     );
   };
 
@@ -139,7 +139,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     return (
       padding.top +
       ((maxPrice - price) / range) *
-        (chartHeight - padding.top - padding.bottom)
+      (chartHeight - padding.top - padding.bottom)
     );
   };
 
@@ -183,7 +183,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
         maxPrice -
         ((mouseY - padding.top) /
           (chartHeight - padding.top - padding.bottom)) *
-          (maxPrice - minPrice);
+        (maxPrice - minPrice);
 
       setCrosshair({
         x: getXPosition(nearest.index),
@@ -322,16 +322,15 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
       .map((d, i) => `${getXPosition(i)},${getYPosition(d.close || d.price)}`)
       .join(" ");
 
-    return `M${points} L${chartWidth - padding.right},${
-      chartHeight - padding.bottom
-    } L${padding.left},${chartHeight - padding.bottom} Z`;
+    return `M${points} L${chartWidth - padding.right},${chartHeight - padding.bottom
+      } L${padding.left},${chartHeight - padding.bottom} Z`;
   };
 
   if (!filteredData.length) {
     return (
       <div className="bg-gray-800 p-5 rounded-xl shadow-2xl border border-gray-700">
         <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3">
-          <h2 className="flex items-center text-xl font-bold text-blue-400">
+          <h2 className="flex items-center text-xl font-bold text-brand-orange">
             <BarChart2 size={22} className="mr-2" />
             Biểu đồ Giá ({symbol})
           </h2>
@@ -350,7 +349,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
   return (
     <div className="bg-gray-800 p-5 rounded-xl shadow-2xl border border-gray-700">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 border-b border-gray-700 pb-3 gap-3">
-        <h2 className="flex items-center text-xl font-bold text-blue-400">
+        <h2 className="flex items-center text-xl font-bold text-brand-orange">
           <BarChart2 size={22} className="mr-2" />
           Biểu đồ Giá ({symbol})
         </h2>
@@ -359,11 +358,10 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
             <button
               key={range.value}
               onClick={() => setSelectedRange(range.value)}
-              className={`px-2 py-1 rounded transition-colors text-xs lg:text-sm ${
-                selectedRange === range.value
-                  ? "bg-blue-600 text-white font-semibold"
+              className={`px-2 py-1 rounded transition-colors text-xs lg:text-sm ${selectedRange === range.value
+                  ? "bg-brand-orange text-white font-semibold"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-              }`}
+                }`}
             >
               {range.label}
             </button>
@@ -387,14 +385,14 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
           {/* Gradient definition */}
           <defs>
             <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.6" />
-              <stop offset="70%" stopColor="#3B82F6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#F97316" stopOpacity="0.6" />
+              <stop offset="70%" stopColor="#F97316" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#F97316" stopOpacity="0.1" />
             </linearGradient>
 
             <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#3B82F6" />
-              <stop offset="100%" stopColor="#60A5FA" />
+              <stop offset="0%" stopColor="#F97316" />
+              <stop offset="100%" stopColor="#FB923C" />
             </linearGradient>
           </defs>
 
@@ -468,7 +466,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
                 cx={crosshair.x}
                 cy={crosshair.y}
                 r="6"
-                fill="#3B82F6"
+                fill="#F97316"
                 stroke="#FFFFFF"
                 strokeWidth="2"
               />
@@ -570,8 +568,8 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
                   ? crosshair.dataPoint.volume > 1e6
                     ? `${(crosshair.dataPoint.volume / 1e6).toFixed(2)}M`
                     : crosshair.dataPoint.volume > 1e3
-                    ? `${(crosshair.dataPoint.volume / 1e3).toFixed(2)}K`
-                    : crosshair.dataPoint.volume.toLocaleString()
+                      ? `${(crosshair.dataPoint.volume / 1e3).toFixed(2)}K`
+                      : crosshair.dataPoint.volume.toLocaleString()
                   : "N/A"}
               </div>
             </div>

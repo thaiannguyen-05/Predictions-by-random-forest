@@ -39,6 +39,11 @@ export type Room = $Result.DefaultSelection<Prisma.$RoomPayload>
  */
 export type MemberInRoom = $Result.DefaultSelection<Prisma.$MemberInRoomPayload>
 /**
+ * Model history_searching
+ * 
+ */
+export type history_searching = $Result.DefaultSelection<Prisma.$history_searchingPayload>
+/**
  * Model User
  * 
  */
@@ -302,6 +307,16 @@ export class PrismaClient<
     * ```
     */
   get memberInRoom(): Prisma.MemberInRoomDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.history_searching`: Exposes CRUD operations for the **history_searching** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more History_searchings
+    * const history_searchings = await prisma.history_searching.findMany()
+    * ```
+    */
+  get history_searching(): Prisma.history_searchingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -767,6 +782,7 @@ export namespace Prisma {
     Message: 'Message',
     Room: 'Room',
     MemberInRoom: 'MemberInRoom',
+    history_searching: 'history_searching',
     User: 'User',
     Oauth2User: 'Oauth2User'
   };
@@ -787,7 +803,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userDevice" | "session" | "message" | "room" | "memberInRoom" | "user" | "oauth2User"
+      modelProps: "userDevice" | "session" | "message" | "room" | "memberInRoom" | "history_searching" | "user" | "oauth2User"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1161,6 +1177,80 @@ export namespace Prisma {
           }
         }
       }
+      history_searching: {
+        payload: Prisma.$history_searchingPayload<ExtArgs>
+        fields: Prisma.history_searchingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.history_searchingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.history_searchingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          findFirst: {
+            args: Prisma.history_searchingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.history_searchingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          findMany: {
+            args: Prisma.history_searchingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>[]
+          }
+          create: {
+            args: Prisma.history_searchingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          createMany: {
+            args: Prisma.history_searchingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.history_searchingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>[]
+          }
+          delete: {
+            args: Prisma.history_searchingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          update: {
+            args: Prisma.history_searchingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          deleteMany: {
+            args: Prisma.history_searchingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.history_searchingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.history_searchingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>[]
+          }
+          upsert: {
+            args: Prisma.history_searchingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$history_searchingPayload>
+          }
+          aggregate: {
+            args: Prisma.History_searchingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHistory_searching>
+          }
+          groupBy: {
+            args: Prisma.history_searchingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<History_searchingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.history_searchingCountArgs<ExtArgs>
+            result: $Utils.Optional<History_searchingCountAggregateOutputType> | number
+          }
+        }
+      }
       User: {
         payload: Prisma.$UserPayload<ExtArgs>
         fields: Prisma.UserFieldRefs
@@ -1410,6 +1500,7 @@ export namespace Prisma {
     message?: MessageOmit
     room?: RoomOmit
     memberInRoom?: MemberInRoomOmit
+    history_searching?: history_searchingOmit
     user?: UserOmit
     oauth2User?: Oauth2UserOmit
   }
@@ -7098,6 +7189,1205 @@ export namespace Prisma {
 
 
   /**
+   * Model history_searching
+   */
+
+  export type AggregateHistory_searching = {
+    _count: History_searchingCountAggregateOutputType | null
+    _avg: History_searchingAvgAggregateOutputType | null
+    _sum: History_searchingSumAggregateOutputType | null
+    _min: History_searchingMinAggregateOutputType | null
+    _max: History_searchingMaxAggregateOutputType | null
+  }
+
+  export type History_searchingAvgAggregateOutputType = {
+    currentPrice: number | null
+    previousClose: number | null
+    open: number | null
+    high: number | null
+    low: number | null
+    volume: number | null
+    marketCap: number | null
+    peRatio: number | null
+    eps: number | null
+    beta: number | null
+    yahooPrice: number | null
+  }
+
+  export type History_searchingSumAggregateOutputType = {
+    currentPrice: bigint | null
+    previousClose: bigint | null
+    open: bigint | null
+    high: bigint | null
+    low: bigint | null
+    volume: bigint | null
+    marketCap: bigint | null
+    peRatio: number | null
+    eps: number | null
+    beta: number | null
+    yahooPrice: number | null
+  }
+
+  export type History_searchingMinAggregateOutputType = {
+    id: string | null
+    symbol: string | null
+    currentPrice: bigint | null
+    previousClose: bigint | null
+    open: bigint | null
+    high: bigint | null
+    low: bigint | null
+    volume: bigint | null
+    marketCap: bigint | null
+    peRatio: number | null
+    eps: number | null
+    beta: number | null
+    yahooPrice: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type History_searchingMaxAggregateOutputType = {
+    id: string | null
+    symbol: string | null
+    currentPrice: bigint | null
+    previousClose: bigint | null
+    open: bigint | null
+    high: bigint | null
+    low: bigint | null
+    volume: bigint | null
+    marketCap: bigint | null
+    peRatio: number | null
+    eps: number | null
+    beta: number | null
+    yahooPrice: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type History_searchingCountAggregateOutputType = {
+    id: number
+    symbol: number
+    currentPrice: number
+    previousClose: number
+    open: number
+    high: number
+    low: number
+    volume: number
+    marketCap: number
+    peRatio: number
+    eps: number
+    beta: number
+    yahooPrice: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type History_searchingAvgAggregateInputType = {
+    currentPrice?: true
+    previousClose?: true
+    open?: true
+    high?: true
+    low?: true
+    volume?: true
+    marketCap?: true
+    peRatio?: true
+    eps?: true
+    beta?: true
+    yahooPrice?: true
+  }
+
+  export type History_searchingSumAggregateInputType = {
+    currentPrice?: true
+    previousClose?: true
+    open?: true
+    high?: true
+    low?: true
+    volume?: true
+    marketCap?: true
+    peRatio?: true
+    eps?: true
+    beta?: true
+    yahooPrice?: true
+  }
+
+  export type History_searchingMinAggregateInputType = {
+    id?: true
+    symbol?: true
+    currentPrice?: true
+    previousClose?: true
+    open?: true
+    high?: true
+    low?: true
+    volume?: true
+    marketCap?: true
+    peRatio?: true
+    eps?: true
+    beta?: true
+    yahooPrice?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type History_searchingMaxAggregateInputType = {
+    id?: true
+    symbol?: true
+    currentPrice?: true
+    previousClose?: true
+    open?: true
+    high?: true
+    low?: true
+    volume?: true
+    marketCap?: true
+    peRatio?: true
+    eps?: true
+    beta?: true
+    yahooPrice?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type History_searchingCountAggregateInputType = {
+    id?: true
+    symbol?: true
+    currentPrice?: true
+    previousClose?: true
+    open?: true
+    high?: true
+    low?: true
+    volume?: true
+    marketCap?: true
+    peRatio?: true
+    eps?: true
+    beta?: true
+    yahooPrice?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type History_searchingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which history_searching to aggregate.
+     */
+    where?: history_searchingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of history_searchings to fetch.
+     */
+    orderBy?: history_searchingOrderByWithRelationInput | history_searchingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: history_searchingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` history_searchings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` history_searchings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned history_searchings
+    **/
+    _count?: true | History_searchingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: History_searchingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: History_searchingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: History_searchingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: History_searchingMaxAggregateInputType
+  }
+
+  export type GetHistory_searchingAggregateType<T extends History_searchingAggregateArgs> = {
+        [P in keyof T & keyof AggregateHistory_searching]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHistory_searching[P]>
+      : GetScalarType<T[P], AggregateHistory_searching[P]>
+  }
+
+
+
+
+  export type history_searchingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: history_searchingWhereInput
+    orderBy?: history_searchingOrderByWithAggregationInput | history_searchingOrderByWithAggregationInput[]
+    by: History_searchingScalarFieldEnum[] | History_searchingScalarFieldEnum
+    having?: history_searchingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: History_searchingCountAggregateInputType | true
+    _avg?: History_searchingAvgAggregateInputType
+    _sum?: History_searchingSumAggregateInputType
+    _min?: History_searchingMinAggregateInputType
+    _max?: History_searchingMaxAggregateInputType
+  }
+
+  export type History_searchingGroupByOutputType = {
+    id: string
+    symbol: string
+    currentPrice: bigint
+    previousClose: bigint
+    open: bigint
+    high: bigint
+    low: bigint
+    volume: bigint
+    marketCap: bigint
+    peRatio: number
+    eps: number
+    beta: number
+    yahooPrice: number
+    createdAt: Date
+    updatedAt: Date
+    _count: History_searchingCountAggregateOutputType | null
+    _avg: History_searchingAvgAggregateOutputType | null
+    _sum: History_searchingSumAggregateOutputType | null
+    _min: History_searchingMinAggregateOutputType | null
+    _max: History_searchingMaxAggregateOutputType | null
+  }
+
+  type GetHistory_searchingGroupByPayload<T extends history_searchingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<History_searchingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof History_searchingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], History_searchingGroupByOutputType[P]>
+            : GetScalarType<T[P], History_searchingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type history_searchingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    symbol?: boolean
+    currentPrice?: boolean
+    previousClose?: boolean
+    open?: boolean
+    high?: boolean
+    low?: boolean
+    volume?: boolean
+    marketCap?: boolean
+    peRatio?: boolean
+    eps?: boolean
+    beta?: boolean
+    yahooPrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["history_searching"]>
+
+  export type history_searchingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    symbol?: boolean
+    currentPrice?: boolean
+    previousClose?: boolean
+    open?: boolean
+    high?: boolean
+    low?: boolean
+    volume?: boolean
+    marketCap?: boolean
+    peRatio?: boolean
+    eps?: boolean
+    beta?: boolean
+    yahooPrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["history_searching"]>
+
+  export type history_searchingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    symbol?: boolean
+    currentPrice?: boolean
+    previousClose?: boolean
+    open?: boolean
+    high?: boolean
+    low?: boolean
+    volume?: boolean
+    marketCap?: boolean
+    peRatio?: boolean
+    eps?: boolean
+    beta?: boolean
+    yahooPrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["history_searching"]>
+
+  export type history_searchingSelectScalar = {
+    id?: boolean
+    symbol?: boolean
+    currentPrice?: boolean
+    previousClose?: boolean
+    open?: boolean
+    high?: boolean
+    low?: boolean
+    volume?: boolean
+    marketCap?: boolean
+    peRatio?: boolean
+    eps?: boolean
+    beta?: boolean
+    yahooPrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type history_searchingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "symbol" | "currentPrice" | "previousClose" | "open" | "high" | "low" | "volume" | "marketCap" | "peRatio" | "eps" | "beta" | "yahooPrice" | "createdAt" | "updatedAt", ExtArgs["result"]["history_searching"]>
+
+  export type $history_searchingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "history_searching"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      symbol: string
+      currentPrice: bigint
+      previousClose: bigint
+      open: bigint
+      high: bigint
+      low: bigint
+      volume: bigint
+      marketCap: bigint
+      peRatio: number
+      eps: number
+      beta: number
+      yahooPrice: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["history_searching"]>
+    composites: {}
+  }
+
+  type history_searchingGetPayload<S extends boolean | null | undefined | history_searchingDefaultArgs> = $Result.GetResult<Prisma.$history_searchingPayload, S>
+
+  type history_searchingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<history_searchingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: History_searchingCountAggregateInputType | true
+    }
+
+  export interface history_searchingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['history_searching'], meta: { name: 'history_searching' } }
+    /**
+     * Find zero or one History_searching that matches the filter.
+     * @param {history_searchingFindUniqueArgs} args - Arguments to find a History_searching
+     * @example
+     * // Get one History_searching
+     * const history_searching = await prisma.history_searching.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends history_searchingFindUniqueArgs>(args: SelectSubset<T, history_searchingFindUniqueArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one History_searching that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {history_searchingFindUniqueOrThrowArgs} args - Arguments to find a History_searching
+     * @example
+     * // Get one History_searching
+     * const history_searching = await prisma.history_searching.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends history_searchingFindUniqueOrThrowArgs>(args: SelectSubset<T, history_searchingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first History_searching that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingFindFirstArgs} args - Arguments to find a History_searching
+     * @example
+     * // Get one History_searching
+     * const history_searching = await prisma.history_searching.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends history_searchingFindFirstArgs>(args?: SelectSubset<T, history_searchingFindFirstArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first History_searching that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingFindFirstOrThrowArgs} args - Arguments to find a History_searching
+     * @example
+     * // Get one History_searching
+     * const history_searching = await prisma.history_searching.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends history_searchingFindFirstOrThrowArgs>(args?: SelectSubset<T, history_searchingFindFirstOrThrowArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more History_searchings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all History_searchings
+     * const history_searchings = await prisma.history_searching.findMany()
+     * 
+     * // Get first 10 History_searchings
+     * const history_searchings = await prisma.history_searching.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const history_searchingWithIdOnly = await prisma.history_searching.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends history_searchingFindManyArgs>(args?: SelectSubset<T, history_searchingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a History_searching.
+     * @param {history_searchingCreateArgs} args - Arguments to create a History_searching.
+     * @example
+     * // Create one History_searching
+     * const History_searching = await prisma.history_searching.create({
+     *   data: {
+     *     // ... data to create a History_searching
+     *   }
+     * })
+     * 
+     */
+    create<T extends history_searchingCreateArgs>(args: SelectSubset<T, history_searchingCreateArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many History_searchings.
+     * @param {history_searchingCreateManyArgs} args - Arguments to create many History_searchings.
+     * @example
+     * // Create many History_searchings
+     * const history_searching = await prisma.history_searching.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends history_searchingCreateManyArgs>(args?: SelectSubset<T, history_searchingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many History_searchings and returns the data saved in the database.
+     * @param {history_searchingCreateManyAndReturnArgs} args - Arguments to create many History_searchings.
+     * @example
+     * // Create many History_searchings
+     * const history_searching = await prisma.history_searching.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many History_searchings and only return the `id`
+     * const history_searchingWithIdOnly = await prisma.history_searching.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends history_searchingCreateManyAndReturnArgs>(args?: SelectSubset<T, history_searchingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a History_searching.
+     * @param {history_searchingDeleteArgs} args - Arguments to delete one History_searching.
+     * @example
+     * // Delete one History_searching
+     * const History_searching = await prisma.history_searching.delete({
+     *   where: {
+     *     // ... filter to delete one History_searching
+     *   }
+     * })
+     * 
+     */
+    delete<T extends history_searchingDeleteArgs>(args: SelectSubset<T, history_searchingDeleteArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one History_searching.
+     * @param {history_searchingUpdateArgs} args - Arguments to update one History_searching.
+     * @example
+     * // Update one History_searching
+     * const history_searching = await prisma.history_searching.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends history_searchingUpdateArgs>(args: SelectSubset<T, history_searchingUpdateArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more History_searchings.
+     * @param {history_searchingDeleteManyArgs} args - Arguments to filter History_searchings to delete.
+     * @example
+     * // Delete a few History_searchings
+     * const { count } = await prisma.history_searching.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends history_searchingDeleteManyArgs>(args?: SelectSubset<T, history_searchingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more History_searchings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many History_searchings
+     * const history_searching = await prisma.history_searching.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends history_searchingUpdateManyArgs>(args: SelectSubset<T, history_searchingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more History_searchings and returns the data updated in the database.
+     * @param {history_searchingUpdateManyAndReturnArgs} args - Arguments to update many History_searchings.
+     * @example
+     * // Update many History_searchings
+     * const history_searching = await prisma.history_searching.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more History_searchings and only return the `id`
+     * const history_searchingWithIdOnly = await prisma.history_searching.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends history_searchingUpdateManyAndReturnArgs>(args: SelectSubset<T, history_searchingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one History_searching.
+     * @param {history_searchingUpsertArgs} args - Arguments to update or create a History_searching.
+     * @example
+     * // Update or create a History_searching
+     * const history_searching = await prisma.history_searching.upsert({
+     *   create: {
+     *     // ... data to create a History_searching
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the History_searching we want to update
+     *   }
+     * })
+     */
+    upsert<T extends history_searchingUpsertArgs>(args: SelectSubset<T, history_searchingUpsertArgs<ExtArgs>>): Prisma__history_searchingClient<$Result.GetResult<Prisma.$history_searchingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of History_searchings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingCountArgs} args - Arguments to filter History_searchings to count.
+     * @example
+     * // Count the number of History_searchings
+     * const count = await prisma.history_searching.count({
+     *   where: {
+     *     // ... the filter for the History_searchings we want to count
+     *   }
+     * })
+    **/
+    count<T extends history_searchingCountArgs>(
+      args?: Subset<T, history_searchingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], History_searchingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a History_searching.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {History_searchingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends History_searchingAggregateArgs>(args: Subset<T, History_searchingAggregateArgs>): Prisma.PrismaPromise<GetHistory_searchingAggregateType<T>>
+
+    /**
+     * Group by History_searching.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {history_searchingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends history_searchingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: history_searchingGroupByArgs['orderBy'] }
+        : { orderBy?: history_searchingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, history_searchingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHistory_searchingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the history_searching model
+   */
+  readonly fields: history_searchingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for history_searching.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__history_searchingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the history_searching model
+   */
+  interface history_searchingFieldRefs {
+    readonly id: FieldRef<"history_searching", 'String'>
+    readonly symbol: FieldRef<"history_searching", 'String'>
+    readonly currentPrice: FieldRef<"history_searching", 'BigInt'>
+    readonly previousClose: FieldRef<"history_searching", 'BigInt'>
+    readonly open: FieldRef<"history_searching", 'BigInt'>
+    readonly high: FieldRef<"history_searching", 'BigInt'>
+    readonly low: FieldRef<"history_searching", 'BigInt'>
+    readonly volume: FieldRef<"history_searching", 'BigInt'>
+    readonly marketCap: FieldRef<"history_searching", 'BigInt'>
+    readonly peRatio: FieldRef<"history_searching", 'Float'>
+    readonly eps: FieldRef<"history_searching", 'Float'>
+    readonly beta: FieldRef<"history_searching", 'Float'>
+    readonly yahooPrice: FieldRef<"history_searching", 'Float'>
+    readonly createdAt: FieldRef<"history_searching", 'DateTime'>
+    readonly updatedAt: FieldRef<"history_searching", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * history_searching findUnique
+   */
+  export type history_searchingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter, which history_searching to fetch.
+     */
+    where: history_searchingWhereUniqueInput
+  }
+
+  /**
+   * history_searching findUniqueOrThrow
+   */
+  export type history_searchingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter, which history_searching to fetch.
+     */
+    where: history_searchingWhereUniqueInput
+  }
+
+  /**
+   * history_searching findFirst
+   */
+  export type history_searchingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter, which history_searching to fetch.
+     */
+    where?: history_searchingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of history_searchings to fetch.
+     */
+    orderBy?: history_searchingOrderByWithRelationInput | history_searchingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for history_searchings.
+     */
+    cursor?: history_searchingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` history_searchings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` history_searchings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of history_searchings.
+     */
+    distinct?: History_searchingScalarFieldEnum | History_searchingScalarFieldEnum[]
+  }
+
+  /**
+   * history_searching findFirstOrThrow
+   */
+  export type history_searchingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter, which history_searching to fetch.
+     */
+    where?: history_searchingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of history_searchings to fetch.
+     */
+    orderBy?: history_searchingOrderByWithRelationInput | history_searchingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for history_searchings.
+     */
+    cursor?: history_searchingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` history_searchings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` history_searchings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of history_searchings.
+     */
+    distinct?: History_searchingScalarFieldEnum | History_searchingScalarFieldEnum[]
+  }
+
+  /**
+   * history_searching findMany
+   */
+  export type history_searchingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter, which history_searchings to fetch.
+     */
+    where?: history_searchingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of history_searchings to fetch.
+     */
+    orderBy?: history_searchingOrderByWithRelationInput | history_searchingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing history_searchings.
+     */
+    cursor?: history_searchingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` history_searchings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` history_searchings.
+     */
+    skip?: number
+    distinct?: History_searchingScalarFieldEnum | History_searchingScalarFieldEnum[]
+  }
+
+  /**
+   * history_searching create
+   */
+  export type history_searchingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * The data needed to create a history_searching.
+     */
+    data: XOR<history_searchingCreateInput, history_searchingUncheckedCreateInput>
+  }
+
+  /**
+   * history_searching createMany
+   */
+  export type history_searchingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many history_searchings.
+     */
+    data: history_searchingCreateManyInput | history_searchingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * history_searching createManyAndReturn
+   */
+  export type history_searchingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * The data used to create many history_searchings.
+     */
+    data: history_searchingCreateManyInput | history_searchingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * history_searching update
+   */
+  export type history_searchingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * The data needed to update a history_searching.
+     */
+    data: XOR<history_searchingUpdateInput, history_searchingUncheckedUpdateInput>
+    /**
+     * Choose, which history_searching to update.
+     */
+    where: history_searchingWhereUniqueInput
+  }
+
+  /**
+   * history_searching updateMany
+   */
+  export type history_searchingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update history_searchings.
+     */
+    data: XOR<history_searchingUpdateManyMutationInput, history_searchingUncheckedUpdateManyInput>
+    /**
+     * Filter which history_searchings to update
+     */
+    where?: history_searchingWhereInput
+    /**
+     * Limit how many history_searchings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * history_searching updateManyAndReturn
+   */
+  export type history_searchingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * The data used to update history_searchings.
+     */
+    data: XOR<history_searchingUpdateManyMutationInput, history_searchingUncheckedUpdateManyInput>
+    /**
+     * Filter which history_searchings to update
+     */
+    where?: history_searchingWhereInput
+    /**
+     * Limit how many history_searchings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * history_searching upsert
+   */
+  export type history_searchingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * The filter to search for the history_searching to update in case it exists.
+     */
+    where: history_searchingWhereUniqueInput
+    /**
+     * In case the history_searching found by the `where` argument doesn't exist, create a new history_searching with this data.
+     */
+    create: XOR<history_searchingCreateInput, history_searchingUncheckedCreateInput>
+    /**
+     * In case the history_searching was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<history_searchingUpdateInput, history_searchingUncheckedUpdateInput>
+  }
+
+  /**
+   * history_searching delete
+   */
+  export type history_searchingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+    /**
+     * Filter which history_searching to delete.
+     */
+    where: history_searchingWhereUniqueInput
+  }
+
+  /**
+   * history_searching deleteMany
+   */
+  export type history_searchingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which history_searchings to delete
+     */
+    where?: history_searchingWhereInput
+    /**
+     * Limit how many history_searchings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * history_searching without action
+   */
+  export type history_searchingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the history_searching
+     */
+    select?: history_searchingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the history_searching
+     */
+    omit?: history_searchingOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model User
    */
 
@@ -7127,7 +8417,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string | null
     searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7155,7 +8444,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string | null
     searchCount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7183,7 +8471,6 @@ export namespace Prisma {
     avtUrl: number
     address: number
     city: number
-    state: number
     searchCount: number
     createdAt: number
     updatedAt: number
@@ -7221,7 +8508,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7249,7 +8535,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7277,7 +8562,6 @@ export namespace Prisma {
     avtUrl?: true
     address?: true
     city?: true
-    state?: true
     searchCount?: true
     createdAt?: true
     updatedAt?: true
@@ -7392,7 +8676,6 @@ export namespace Prisma {
     avtUrl: string | null
     address: string | null
     city: string | null
-    state: string
     searchCount: number
     createdAt: Date
     updatedAt: Date
@@ -7439,7 +8722,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7474,7 +8756,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7502,7 +8783,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7530,7 +8810,6 @@ export namespace Prisma {
     avtUrl?: boolean
     address?: boolean
     city?: boolean
-    state?: boolean
     searchCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7548,7 +8827,7 @@ export namespace Prisma {
     provider?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "state" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullname" | "username" | "email" | "hashedPassword" | "accountType" | "avtUrl" | "address" | "city" | "searchCount" | "createdAt" | "updatedAt" | "visible" | "phone" | "numberIdentity" | "dateOfBirth" | "firstName" | "lastName" | "isActive" | "isBanned" | "isLocked" | "lastActived" | "picture" | "provider", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Oauth2User?: boolean | User$Oauth2UserArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -7581,7 +8860,6 @@ export namespace Prisma {
       avtUrl: string | null
       address: string | null
       city: string | null
-      state: string
       searchCount: number
       createdAt: Date
       updatedAt: Date
@@ -8035,7 +9313,6 @@ export namespace Prisma {
     readonly avtUrl: FieldRef<"User", 'String'>
     readonly address: FieldRef<"User", 'String'>
     readonly city: FieldRef<"User", 'String'>
-    readonly state: FieldRef<"User", 'String'>
     readonly searchCount: FieldRef<"User", 'Int'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -9841,6 +11118,27 @@ export namespace Prisma {
   export type MemberInRoomScalarFieldEnum = (typeof MemberInRoomScalarFieldEnum)[keyof typeof MemberInRoomScalarFieldEnum]
 
 
+  export const History_searchingScalarFieldEnum: {
+    id: 'id',
+    symbol: 'symbol',
+    currentPrice: 'currentPrice',
+    previousClose: 'previousClose',
+    open: 'open',
+    high: 'high',
+    low: 'low',
+    volume: 'volume',
+    marketCap: 'marketCap',
+    peRatio: 'peRatio',
+    eps: 'eps',
+    beta: 'beta',
+    yahooPrice: 'yahooPrice',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type History_searchingScalarFieldEnum = (typeof History_searchingScalarFieldEnum)[keyof typeof History_searchingScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     fullname: 'fullname',
@@ -9851,7 +11149,6 @@ export namespace Prisma {
     avtUrl: 'avtUrl',
     address: 'address',
     city: 'city',
-    state: 'state',
     searchCount: 'searchCount',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -9963,6 +11260,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'AccountType'
    */
   export type EnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType'>
@@ -10022,20 +11347,6 @@ export namespace Prisma {
    * Reference to a field of type 'Provider[]'
    */
   export type ListEnumProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Provider[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -10378,6 +11689,110 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"MemberInRoom"> | Date | string
   }
 
+  export type history_searchingWhereInput = {
+    AND?: history_searchingWhereInput | history_searchingWhereInput[]
+    OR?: history_searchingWhereInput[]
+    NOT?: history_searchingWhereInput | history_searchingWhereInput[]
+    id?: UuidFilter<"history_searching"> | string
+    symbol?: StringFilter<"history_searching"> | string
+    currentPrice?: BigIntFilter<"history_searching"> | bigint | number
+    previousClose?: BigIntFilter<"history_searching"> | bigint | number
+    open?: BigIntFilter<"history_searching"> | bigint | number
+    high?: BigIntFilter<"history_searching"> | bigint | number
+    low?: BigIntFilter<"history_searching"> | bigint | number
+    volume?: BigIntFilter<"history_searching"> | bigint | number
+    marketCap?: BigIntFilter<"history_searching"> | bigint | number
+    peRatio?: FloatFilter<"history_searching"> | number
+    eps?: FloatFilter<"history_searching"> | number
+    beta?: FloatFilter<"history_searching"> | number
+    yahooPrice?: FloatFilter<"history_searching"> | number
+    createdAt?: DateTimeFilter<"history_searching"> | Date | string
+    updatedAt?: DateTimeFilter<"history_searching"> | Date | string
+  }
+
+  export type history_searchingOrderByWithRelationInput = {
+    id?: SortOrder
+    symbol?: SortOrder
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type history_searchingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: history_searchingWhereInput | history_searchingWhereInput[]
+    OR?: history_searchingWhereInput[]
+    NOT?: history_searchingWhereInput | history_searchingWhereInput[]
+    symbol?: StringFilter<"history_searching"> | string
+    currentPrice?: BigIntFilter<"history_searching"> | bigint | number
+    previousClose?: BigIntFilter<"history_searching"> | bigint | number
+    open?: BigIntFilter<"history_searching"> | bigint | number
+    high?: BigIntFilter<"history_searching"> | bigint | number
+    low?: BigIntFilter<"history_searching"> | bigint | number
+    volume?: BigIntFilter<"history_searching"> | bigint | number
+    marketCap?: BigIntFilter<"history_searching"> | bigint | number
+    peRatio?: FloatFilter<"history_searching"> | number
+    eps?: FloatFilter<"history_searching"> | number
+    beta?: FloatFilter<"history_searching"> | number
+    yahooPrice?: FloatFilter<"history_searching"> | number
+    createdAt?: DateTimeFilter<"history_searching"> | Date | string
+    updatedAt?: DateTimeFilter<"history_searching"> | Date | string
+  }, "id">
+
+  export type history_searchingOrderByWithAggregationInput = {
+    id?: SortOrder
+    symbol?: SortOrder
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: history_searchingCountOrderByAggregateInput
+    _avg?: history_searchingAvgOrderByAggregateInput
+    _max?: history_searchingMaxOrderByAggregateInput
+    _min?: history_searchingMinOrderByAggregateInput
+    _sum?: history_searchingSumOrderByAggregateInput
+  }
+
+  export type history_searchingScalarWhereWithAggregatesInput = {
+    AND?: history_searchingScalarWhereWithAggregatesInput | history_searchingScalarWhereWithAggregatesInput[]
+    OR?: history_searchingScalarWhereWithAggregatesInput[]
+    NOT?: history_searchingScalarWhereWithAggregatesInput | history_searchingScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"history_searching"> | string
+    symbol?: StringWithAggregatesFilter<"history_searching"> | string
+    currentPrice?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    previousClose?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    open?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    high?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    low?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    volume?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    marketCap?: BigIntWithAggregatesFilter<"history_searching"> | bigint | number
+    peRatio?: FloatWithAggregatesFilter<"history_searching"> | number
+    eps?: FloatWithAggregatesFilter<"history_searching"> | number
+    beta?: FloatWithAggregatesFilter<"history_searching"> | number
+    yahooPrice?: FloatWithAggregatesFilter<"history_searching"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"history_searching"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"history_searching"> | Date | string
+  }
+
   export type UserWhereInput = {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
@@ -10391,7 +11806,6 @@ export namespace Prisma {
     avtUrl?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     city?: StringNullableFilter<"User"> | string | null
-    state?: StringFilter<"User"> | string
     searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10425,7 +11839,6 @@ export namespace Prisma {
     avtUrl?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10462,7 +11875,6 @@ export namespace Prisma {
     avtUrl?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     city?: StringNullableFilter<"User"> | string | null
-    state?: StringFilter<"User"> | string
     searchCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10496,7 +11908,6 @@ export namespace Prisma {
     avtUrl?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     city?: SortOrderInput | SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10532,7 +11943,6 @@ export namespace Prisma {
     avtUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     address?: StringNullableWithAggregatesFilter<"User"> | string | null
     city?: StringNullableWithAggregatesFilter<"User"> | string | null
-    state?: StringWithAggregatesFilter<"User"> | string
     searchCount?: IntWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -10989,6 +12399,132 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type history_searchingCreateInput = {
+    id?: string
+    symbol: string
+    currentPrice: bigint | number
+    previousClose: bigint | number
+    open: bigint | number
+    high: bigint | number
+    low: bigint | number
+    volume: bigint | number
+    marketCap: bigint | number
+    peRatio: number
+    eps: number
+    beta: number
+    yahooPrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type history_searchingUncheckedCreateInput = {
+    id?: string
+    symbol: string
+    currentPrice: bigint | number
+    previousClose: bigint | number
+    open: bigint | number
+    high: bigint | number
+    low: bigint | number
+    volume: bigint | number
+    marketCap: bigint | number
+    peRatio: number
+    eps: number
+    beta: number
+    yahooPrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type history_searchingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    symbol?: StringFieldUpdateOperationsInput | string
+    currentPrice?: BigIntFieldUpdateOperationsInput | bigint | number
+    previousClose?: BigIntFieldUpdateOperationsInput | bigint | number
+    open?: BigIntFieldUpdateOperationsInput | bigint | number
+    high?: BigIntFieldUpdateOperationsInput | bigint | number
+    low?: BigIntFieldUpdateOperationsInput | bigint | number
+    volume?: BigIntFieldUpdateOperationsInput | bigint | number
+    marketCap?: BigIntFieldUpdateOperationsInput | bigint | number
+    peRatio?: FloatFieldUpdateOperationsInput | number
+    eps?: FloatFieldUpdateOperationsInput | number
+    beta?: FloatFieldUpdateOperationsInput | number
+    yahooPrice?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type history_searchingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    symbol?: StringFieldUpdateOperationsInput | string
+    currentPrice?: BigIntFieldUpdateOperationsInput | bigint | number
+    previousClose?: BigIntFieldUpdateOperationsInput | bigint | number
+    open?: BigIntFieldUpdateOperationsInput | bigint | number
+    high?: BigIntFieldUpdateOperationsInput | bigint | number
+    low?: BigIntFieldUpdateOperationsInput | bigint | number
+    volume?: BigIntFieldUpdateOperationsInput | bigint | number
+    marketCap?: BigIntFieldUpdateOperationsInput | bigint | number
+    peRatio?: FloatFieldUpdateOperationsInput | number
+    eps?: FloatFieldUpdateOperationsInput | number
+    beta?: FloatFieldUpdateOperationsInput | number
+    yahooPrice?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type history_searchingCreateManyInput = {
+    id?: string
+    symbol: string
+    currentPrice: bigint | number
+    previousClose: bigint | number
+    open: bigint | number
+    high: bigint | number
+    low: bigint | number
+    volume: bigint | number
+    marketCap: bigint | number
+    peRatio: number
+    eps: number
+    beta: number
+    yahooPrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type history_searchingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    symbol?: StringFieldUpdateOperationsInput | string
+    currentPrice?: BigIntFieldUpdateOperationsInput | bigint | number
+    previousClose?: BigIntFieldUpdateOperationsInput | bigint | number
+    open?: BigIntFieldUpdateOperationsInput | bigint | number
+    high?: BigIntFieldUpdateOperationsInput | bigint | number
+    low?: BigIntFieldUpdateOperationsInput | bigint | number
+    volume?: BigIntFieldUpdateOperationsInput | bigint | number
+    marketCap?: BigIntFieldUpdateOperationsInput | bigint | number
+    peRatio?: FloatFieldUpdateOperationsInput | number
+    eps?: FloatFieldUpdateOperationsInput | number
+    beta?: FloatFieldUpdateOperationsInput | number
+    yahooPrice?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type history_searchingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    symbol?: StringFieldUpdateOperationsInput | string
+    currentPrice?: BigIntFieldUpdateOperationsInput | bigint | number
+    previousClose?: BigIntFieldUpdateOperationsInput | bigint | number
+    open?: BigIntFieldUpdateOperationsInput | bigint | number
+    high?: BigIntFieldUpdateOperationsInput | bigint | number
+    low?: BigIntFieldUpdateOperationsInput | bigint | number
+    volume?: BigIntFieldUpdateOperationsInput | bigint | number
+    marketCap?: BigIntFieldUpdateOperationsInput | bigint | number
+    peRatio?: FloatFieldUpdateOperationsInput | number
+    eps?: FloatFieldUpdateOperationsInput | number
+    beta?: FloatFieldUpdateOperationsInput | number
+    yahooPrice?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     fullname: string
@@ -10999,7 +12535,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11033,7 +12568,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11067,7 +12601,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11101,7 +12634,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11135,7 +12667,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11163,7 +12694,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11191,7 +12721,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11714,6 +13243,142 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type BigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type history_searchingCountOrderByAggregateInput = {
+    id?: SortOrder
+    symbol?: SortOrder
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type history_searchingAvgOrderByAggregateInput = {
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+  }
+
+  export type history_searchingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    symbol?: SortOrder
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type history_searchingMinOrderByAggregateInput = {
+    id?: SortOrder
+    symbol?: SortOrder
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type history_searchingSumOrderByAggregateInput = {
+    currentPrice?: SortOrder
+    previousClose?: SortOrder
+    open?: SortOrder
+    high?: SortOrder
+    low?: SortOrder
+    volume?: SortOrder
+    marketCap?: SortOrder
+    peRatio?: SortOrder
+    eps?: SortOrder
+    beta?: SortOrder
+    yahooPrice?: SortOrder
+  }
+
+  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type EnumAccountTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
     in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
@@ -11784,7 +13449,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11816,7 +13480,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11844,7 +13507,6 @@ export namespace Prisma {
     avtUrl?: SortOrder
     address?: SortOrder
     city?: SortOrder
-    state?: SortOrder
     searchCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12177,6 +13839,22 @@ export namespace Prisma {
     upsert?: RoomUpsertWithoutMembersInput
     connect?: RoomWhereUniqueInput
     update?: XOR<XOR<RoomUpdateToOneWithWhereWithoutMembersInput, RoomUpdateWithoutMembersInput>, RoomUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type Oauth2UserCreateNestedManyWithoutUserInput = {
@@ -12670,6 +14348,60 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type NestedBigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
     in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
@@ -12713,17 +14445,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumUserVisibilityWithAggregatesFilter<$PrismaModel = never> = {
@@ -12771,7 +14492,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12804,7 +14524,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12853,7 +14572,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12886,7 +14604,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12919,7 +14636,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12952,7 +14668,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13001,7 +14716,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13034,7 +14748,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13067,7 +14780,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13100,7 +14812,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13138,7 +14849,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13171,7 +14881,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13243,7 +14952,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13276,7 +14984,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13320,7 +15027,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13353,7 +15059,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13526,7 +15231,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13559,7 +15263,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13631,7 +15334,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13664,7 +15366,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14053,7 +15754,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14086,7 +15786,6 @@ export namespace Prisma {
     avtUrl?: string | null
     address?: string | null
     city?: string | null
-    state: string
     searchCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14135,7 +15834,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14168,7 +15866,6 @@ export namespace Prisma {
     avtUrl?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: StringFieldUpdateOperationsInput | string
     searchCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

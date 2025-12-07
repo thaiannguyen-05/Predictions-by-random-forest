@@ -169,6 +169,24 @@ exports.Prisma.MemberInRoomScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.History_searchingScalarFieldEnum = {
+  id: 'id',
+  symbol: 'symbol',
+  currentPrice: 'currentPrice',
+  previousClose: 'previousClose',
+  open: 'open',
+  high: 'high',
+  low: 'low',
+  volume: 'volume',
+  marketCap: 'marketCap',
+  peRatio: 'peRatio',
+  eps: 'eps',
+  beta: 'beta',
+  yahooPrice: 'yahooPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   fullname: 'fullname',
@@ -179,7 +197,6 @@ exports.Prisma.UserScalarFieldEnum = {
   avtUrl: 'avtUrl',
   address: 'address',
   city: 'city',
-  state: 'state',
   searchCount: 'searchCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -259,6 +276,7 @@ exports.Prisma.ModelName = {
   Message: 'Message',
   Room: 'Room',
   MemberInRoom: 'MemberInRoom',
+  history_searching: 'history_searching',
   User: 'User',
   Oauth2User: 'Oauth2User'
 };

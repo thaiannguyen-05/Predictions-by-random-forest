@@ -4,3 +4,4 @@ logs/
 .venv/
 .pytest_cache/
 _pycache_/
+data/

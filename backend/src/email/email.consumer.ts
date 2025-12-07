@@ -6,8 +6,8 @@ export class EmailConsumer {
   constructor(private readonly emailService: EmailService) {}
 
   @EventPattern('send-code-register')
-  async handleSendCodeRegister(@Payload() data: { to: string; code: string }) {
-    await this.emailService.sendVerificationRegister(data.to, data.code);
+  async handleSendCodeRegister(@Payload() data: { to: string }) {
+    await this.emailService.sendVerificationRegister(data.to);
   }
 
   @EventPattern('send-detect-other-device')

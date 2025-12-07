@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
-import { EmailConsumer } from './email.consumer';
-import { EmailProducer } from './emai.producer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { QUEUE_EMAIL } from '../common/type/common.type';
+import { EmailConsumer } from './email.consumer';
+import { EmailProducer } from './emai.producer';
+import { EmailController } from './email.controller';
+import { RedisModule } from '../modules/redis/redis.module';
 
 @Module({
   imports: [
@@ -26,9 +28,10 @@ import { QUEUE_EMAIL } from '../common/type/common.type';
         }),
       },
     ]),
+    RedisModule,
   ],
   providers: [EmailService, EmailProducer],
-  controllers: [EmailConsumer],
+  controllers: [EmailConsumer, EmailController],
   exports: [EmailService, EmailProducer],
 })
 export class EmailModule {}
