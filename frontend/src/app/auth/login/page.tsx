@@ -183,13 +183,30 @@ export default function LoginPage() {
           </div>
 
           {/* Social Icons (Placeholder) */}
+          {/* Social Icons */}
           <div className="grid grid-cols-2 gap-4">
-            <button type="button" className="flex items-center justify-center py-2.5 border border-gray-700 rounded-xl hover:bg-gray-800 transition-colors gap-2">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+            <button
+              type="button"
+              onClick={() => (window.location.href = `${API_BASE}/auth/google`)}
+              className="flex items-center justify-center py-2.5 border border-gray-700 rounded-xl hover:bg-gray-800 transition-colors gap-2"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                className="w-5 h-5"
+                alt="Google"
+              />
               <span className="text-sm text-gray-300 font-medium">Google</span>
             </button>
-            <button type="button" className="flex items-center justify-center py-2.5 border border-gray-700 rounded-xl hover:bg-gray-800 transition-colors gap-2">
-              <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" alt="Facebook" />
+            <button
+              type="button"
+              onClick={() => (window.location.href = `${API_BASE}/auth/facebook`)}
+              className="flex items-center justify-center py-2.5 border border-gray-700 rounded-xl hover:bg-gray-800 transition-colors gap-2"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+                className="w-5 h-5"
+                alt="Facebook"
+              />
               <span className="text-sm text-gray-300 font-medium">Facebook</span>
             </button>
           </div>

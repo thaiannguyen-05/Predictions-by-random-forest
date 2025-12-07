@@ -91,9 +91,12 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
 
           <button
             className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-700 transition"
-            onClick={() => alert('Cài đặt đang phát triển')}
+            onClick={() => {
+              setOpen(false);
+              router.push('/change-password');
+            }}
           >
-            <Settings size={16} /> Cài đặt
+            <Settings size={16} /> Đổi mật khẩu
           </button>
 
           <button

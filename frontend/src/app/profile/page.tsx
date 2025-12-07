@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { User, Mail, Shield, LogOut, Edit, Phone, Save, X, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
+import { User, Mail, Shield, LogOut, Edit, Phone, Save, X, Calendar, AlertCircle, CheckCircle, Camera } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/utils/api';
 
 export default function ProfilePage() {
 	const { user, logout, refreshUser } = useAuth();
 	const router = useRouter();
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +18,8 @@ export default function ProfilePage() {
 		firstName: '',
 		lastName: '',
 		phoneNumber: '',
-		username: ''
+		username: '',
+		avtUrl: ''
 	});
 
 	const handleLogout = async () => {
@@ -37,7 +39,8 @@ export default function ProfilePage() {
 				firstName: user.firstName || '',
 				lastName: user.lastName || '',
 				phoneNumber: user.phone || '',
-				username: user.name === user.email ? '' : (user.name || '')
+				username: user.name === user.email ? '' : (user.name || ''),
+				avtUrl: user.avatar || ''
 			});
 			setIsEditing(true);
 			setStatus({ type: null, message: '' });
@@ -57,6 +60,60 @@ export default function ProfilePage() {
 		});
 	};
 
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		// Generate a unique upload ID
+		const uploadId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+		const chunkSize = 10 * 1024; // 10KB chunks as requested
+		const totalChunks = Math.ceil(file.size / chunkSize);
+
+		try {
+			let finalUrl = '';
+
+			for (let i = 0; i < totalChunks; i++) {
+				const start = i * chunkSize;
+				const end = Math.min(file.size, start + chunkSize);
+				const chunk = file.slice(start, end);
+
+				const uploadFormData = new FormData();
+				uploadFormData.append('file', chunk);
+				uploadFormData.append('index', i.toString());
+				uploadFormData.append('total', totalChunks.toString());
+				uploadFormData.append('uploadId', uploadId);
+				uploadFormData.append('originalname', file.name);
+
+				const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/user/upload-avatar-chunk`, {
+					method: 'POST',
+					body: uploadFormData,
+					headers: {
+						'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+					}
+				});
+
+				if (!res.ok) {
+					throw new Error(`Upload failed at chunk ${i}`);
+				}
+
+				const data = await res.json();
+				if (data.url) {
+					finalUrl = data.url;
+				}
+			}
+
+			if (finalUrl) {
+				setFormData(prev => ({ ...prev, avtUrl: finalUrl }));
+				setStatus({ type: 'success', message: 'Tải ảnh thành công!' });
+				setTimeout(() => setStatus({ type: null, message: '' }), 3000);
+			}
+
+		} catch (error) {
+			console.error('Avatar upload error:', error);
+			setStatus({ type: 'error', message: 'Không thể tải ảnh lên.' });
+		}
+	};
+
 	const handleSave = async () => {
 		setIsLoading(true);
 		setStatus({ type: null, message: '' });
@@ -66,6 +123,7 @@ export default function ProfilePage() {
 				firstName: formData.firstName,
 				lastName: formData.lastName,
 				phoneNumber: formData.phoneNumber,
+				avtUrl: formData.avtUrl
 			});
 
 			if (res.ok) {
@@ -107,12 +165,29 @@ export default function ProfilePage() {
 
 					<div className="relative flex flex-col md:flex-row items-center md:items-start gap-8">
 						{/* Avatar */}
-						<div className="relative animate-pop-in">
-							<div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-brand-orange to-orange-900 shadow-2xl shadow-brand-orange/20">
+						<div className="relative animate-pop-in group/avatar">
+							<div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-brand-orange to-orange-900 shadow-2xl shadow-brand-orange/20 relative">
 								<img
-									src={user.avatar || '/default-avatar.png'}
+									src={isEditing && formData.avtUrl ? formData.avtUrl : (user.avatar || '/default-avatar.png')}
 									alt={user.name}
 									className="w-full h-full rounded-full object-cover bg-gray-900 border-4 border-gray-900"
+								/>
+
+								{/* Camera Overlay for Editing */}
+								{isEditing && (
+									<div
+										onClick={() => fileInputRef.current?.click()}
+										className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center cursor-pointer opacity-0 group-hover/avatar:opacity-100 transition-opacity"
+									>
+										<Camera size={32} className="text-white drop-shadow-lg" />
+									</div>
+								)}
+								<input
+									type="file"
+									ref={fileInputRef}
+									className="hidden"
+									accept="image/*"
+									onChange={handleFileChange}
 								/>
 							</div>
 						</div>

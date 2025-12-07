@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Use apiFetch - will auto-refresh token on 401
-      const res = await apiFetch("http://localhost:4000/auth/me", {
+      const res = await apiFetch("/auth/me", {
         method: "GET",
         cache: "no-cache" as RequestCache,
       });
