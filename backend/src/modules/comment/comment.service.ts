@@ -8,6 +8,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Request } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MyLogger } from '../../logger/logger.service';
+import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
 @Injectable()
 export class CommentService {
   constructor(
@@ -145,6 +146,64 @@ export class CommentService {
       status: true,
       data: {
         deletedComment,
+      },
+    };
+  }
+
+  async loadingPostComments(postId: string, dto: LoadingPostCommentsDto) {
+    const availablePost = await this.prismaService.post.findUnique({
+      where: { id: postId },
+    });
+    if (!availablePost) throw new NotFoundException('Post not found');
+
+    const currentPage = dto.page;
+    const skip = (currentPage - 1) * dto.limit;
+
+    if (dto.cursor) {
+      const comments = await this.prismaService.comment.findMany({
+        where: { postId },
+        cursor: { id: dto.cursor },
+        take: dto.limit + 1,
+        skip,
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+
+      const hasMore = comments.length > dto.limit;
+      const newCursor = hasMore ? comments[comments.length - 1].id : null;
+      const nextPage = dto.page + 1;
+
+      return {
+        status: true,
+        data: {
+          comments,
+          cursor: newCursor,
+          page: nextPage,
+          hasMore,
+        },
+      };
+    }
+
+    const comments = await this.prismaService.comment.findMany({
+      where: { postId },
+      take: dto.limit,
+      skip,
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    const newCursor = comments[comments.length - 1].id;
+    const nextPage = dto.page + 1;
+    const hasMore = comments.length > dto.limit;
+    return {
+      status: true,
+      data: {
+        comments,
+        cursor: newCursor,
+        page: nextPage,
+        hasMore,
       },
     };
   }
