@@ -3,6 +3,7 @@ import MainLayout from '@/app/main-layout';
 import Header from '@/components/layout/Header';
 import ConditionalTickerBar from '@/components/layout/ConditionalTickerBar';
 import Providers from './providers';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'StockTrack - Phân tích & Dự đoán Chứng khoán',
@@ -21,6 +22,7 @@ export default function RootLayout({
           <Header />
           <ConditionalTickerBar />
           {children}
+          <Toaster position="top-right" />
         </Providers>
       </body>
     </html>

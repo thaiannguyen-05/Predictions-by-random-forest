@@ -14168,6 +14168,7 @@ export namespace Prisma {
 
   export type PostWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    id_userId?: PostIdUserIdCompoundUniqueInput
     AND?: PostWhereInput | PostWhereInput[]
     OR?: PostWhereInput[]
     NOT?: PostWhereInput | PostWhereInput[]
@@ -14181,7 +14182,7 @@ export namespace Prisma {
     userId?: UuidFilter<"Post"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     comments?: CommentListRelationFilter
-  }, "id">
+  }, "id" | "id_userId">
 
   export type PostOrderByWithAggregationInput = {
     id?: SortOrder
@@ -14242,6 +14243,7 @@ export namespace Prisma {
 
   export type CommentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    id_userId?: CommentIdUserIdCompoundUniqueInput
     AND?: CommentWhereInput | CommentWhereInput[]
     OR?: CommentWhereInput[]
     NOT?: CommentWhereInput | CommentWhereInput[]
@@ -14252,7 +14254,7 @@ export namespace Prisma {
     postId?: UuidFilter<"Comment"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     post?: XOR<PostScalarRelationFilter, PostWhereInput>
-  }, "id">
+  }, "id" | "id_userId">
 
   export type CommentOrderByWithAggregationInput = {
     id?: SortOrder
@@ -16067,6 +16069,11 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type PostIdUserIdCompoundUniqueInput = {
+    id: string
+    userId: string
+  }
+
   export type PostCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -16128,6 +16135,11 @@ export namespace Prisma {
   export type PostScalarRelationFilter = {
     is?: PostWhereInput
     isNot?: PostWhereInput
+  }
+
+  export type CommentIdUserIdCompoundUniqueInput = {
+    id: string
+    userId: string
   }
 
   export type CommentCountOrderByAggregateInput = {

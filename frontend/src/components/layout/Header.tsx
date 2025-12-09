@@ -25,6 +25,7 @@ const Header: React.FC = () => {
 				{/* Navigation Items - Yêu cầu đăng nhập */}
 				<div className="hidden md:flex items-center space-x-8">
 					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Trang Chủ</AuthLink>
+					<AuthLink href="/blog" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Blog</AuthLink>
 					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Giới Thiệu</AuthLink>
 					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Liên Hệ</AuthLink>
 				</div>
