@@ -153,6 +153,27 @@ exports.Prisma.MessageScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PostScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  file: 'file',
+  viewCount: 'viewCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  postId: 'postId'
+};
+
 exports.Prisma.RoomScalarFieldEnum = {
   id: 'id',
   employeeId: 'employeeId',
@@ -274,6 +295,8 @@ exports.Prisma.ModelName = {
   UserDevice: 'UserDevice',
   Session: 'Session',
   Message: 'Message',
+  Post: 'Post',
+  Comment: 'Comment',
   Room: 'Room',
   MemberInRoom: 'MemberInRoom',
   history_searching: 'history_searching',

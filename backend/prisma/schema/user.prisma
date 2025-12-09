@@ -31,6 +31,8 @@ model User {
   senderMessage  Message[]      @relation("sender-message")
   receiveMessage Message[]      @relation("receiv-message")
   memberInRoom   MemberInRoom[]
+  posts          Post[]
+  comments       Comment[]
 
   @@index([username])
   @@index([email])

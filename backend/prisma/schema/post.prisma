@@ -1,0 +1,30 @@
+model Post {
+	id String @id @default(uuid()) @db.Uuid
+	title String
+	content String
+	file String[]
+    viewCount Int @default(0)
+	
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	deletedAt DateTime @updatedAt
+
+	userId String @db.Uuid
+	user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+	comments Comment[]
+}
+
+model Comment {
+	id String @id @default(uuid()) @db.Uuid
+	content String
+
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	userId String @db.Uuid
+	user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+	postId String @db.Uuid
+	post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}

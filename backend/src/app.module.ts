@@ -14,6 +14,8 @@ import { RedisModule } from './modules/redis/redis.module';
 import { SupportChatModule } from './modules/support-chat/support-chat.module';
 import { LoggerModule } from './logger/logger.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CommentModule } from './modules/comment/comment.module';
+import { PostModule } from './modules/post/post.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +30,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
     RedisModule,
     SupportChatModule,
     LoggerModule,
+    CommentModule,
+    PostModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
