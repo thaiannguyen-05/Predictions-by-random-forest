@@ -60,9 +60,15 @@ export default function ProfilePage() {
 		});
 	};
 
-	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
 		const file = e.target.files?.[0];
 		if (!file) return;
+
+		// Validate file type
+		if (!file.type.startsWith('image/')) {
+			setStatus({ type: 'error', message: 'Chỉ chấp nhận file ảnh.' });
+			return;
+		}
 
 		// Validate file size (max 10MB)
 		if (file.size > 10 * 1024 * 1024) {
@@ -70,45 +76,48 @@ export default function ProfilePage() {
 			return;
 		}
 
-		// Chunking configuration
-		const CHUNK_SIZE = 256 * 1024; // 256KB per chunk
+		const CHUNK_SIZE = 140 * 1024; // 140KB per chunk
+		const chunks: Blob[] = [];
+
+		// Split file into chunks
+		let start = 0;
+		while (start < file.size) {
+			chunks.push(file.slice(start, start + CHUNK_SIZE));
+			start += CHUNK_SIZE;
+		}
+
+		if (!chunks.length) return;
+
+		// Generate unique session ID
 		const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-		const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+		const originalName = file.name;
+		const totalChunks = chunks.length;
 
 		setStatus({ type: null, message: `Đang tải ảnh (0/${totalChunks})...` });
 
 		try {
 			let finalUrl = '';
 
+			// Upload chunks sequentially to ensure order
 			for (let i = 0; i < totalChunks; i++) {
-				const start = i * CHUNK_SIZE;
-				const end = Math.min(file.size, start + CHUNK_SIZE);
-				const chunk = file.slice(start, end);
-
 				const formData = new FormData();
-				formData.append('file', chunk, file.name);
+				formData.append('file', chunks[i], originalName);
 				formData.append('sessionId', sessionId);
 				formData.append('index', i.toString());
 				formData.append('totalChunks', totalChunks.toString());
-				formData.append('originalName', file.name);
+				formData.append('originalName', originalName);
 
-				const res = await fetch('http://localhost:4000/user/upload-avatar-chunk', {
-					method: 'POST',
-					body: formData,
-					credentials: 'include',
-				});
+				const res = await api.post('/user/upload-avatar-chunk', formData);
+				const data = await res.json();
 
 				if (!res.ok) {
-					const err = await res.json();
-					throw new Error(err.message || `Chunk ${i} upload failed`);
+					throw new Error(data.message || `Upload chunk ${i} thất bại`);
 				}
-
-				const data = await res.json();
 
 				// Update progress
 				setStatus({ type: null, message: `Đang tải ảnh (${i + 1}/${totalChunks})...` });
 
-				// Check if complete
+				// Check if all chunks merged and complete
 				if (data.status === 'complete' && data.url) {
 					finalUrl = data.url;
 				}
@@ -118,12 +127,10 @@ export default function ProfilePage() {
 				setFormData(prev => ({ ...prev, avtUrl: finalUrl }));
 				setStatus({ type: 'success', message: 'Tải ảnh thành công!' });
 				setTimeout(() => setStatus({ type: null, message: '' }), 2000);
-			} else {
-				throw new Error('Upload completed but no URL returned');
 			}
-		} catch (error: any) {
-			console.error('Avatar upload error:', error);
-			setStatus({ type: 'error', message: error.message || 'Không thể tải ảnh lên.' });
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Không thể tải ảnh lên.';
+			setStatus({ type: 'error', message: errorMessage });
 		}
 	};
 

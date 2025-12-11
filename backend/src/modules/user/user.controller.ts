@@ -7,6 +7,7 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -23,6 +24,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import * as fs from 'fs';
+import type {
+  ChunkUploadSession,
+  UploadChunkResponse,
+} from './interfaces/chunk-upload.interface';
 
 // Directories
 const UPLOAD_DIR = './upload';
@@ -48,10 +53,7 @@ const chunkStorage = {
 };
 
 // In-memory tracking of uploaded chunks per session
-const uploadSessions: Map<
-  string,
-  { chunks: Map<number, string>; total: number; originalName: string }
-> = new Map();
+const uploadSessions: Map<string, ChunkUploadSession> = new Map();
 
 @ApiTags('User')
 @Controller('user')
@@ -69,7 +71,7 @@ export class UserController {
     @Body('index') indexStr: string,
     @Body('totalChunks') totalChunksStr: string,
     @Body('originalName') originalName: string,
-  ) {
+  ): Promise<UploadChunkResponse> {
     if (!file) {
       throw new BadRequestException('No file chunk provided');
     }
@@ -210,5 +212,46 @@ export class UserController {
   })
   async changeDetalUser(@Req() req: Request, @Body() dto: ChangeDetailDto) {
     return this.userService.changeDetail(req, dto);
+  }
+
+  @Get('me')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get authenticated user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'boolean', example: true },
+        data: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            username: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            phoneNumber: { type: 'string', nullable: true },
+            dateOfBirth: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+            },
+            avtUrl: { type: 'string', nullable: true },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - invalid or missing token',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found or not active',
+  })
+  async getMe(@Req() req: Request) {
+    return this.userService.me(req);
   }
 }

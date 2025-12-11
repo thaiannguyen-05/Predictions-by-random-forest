@@ -63,9 +63,12 @@ export async function apiFetch(
 	const token = localStorage.getItem('accessToken');
 	const fullUrl = url.startsWith('/') ? `${API_BASE}${url}` : url;
 
+	// Check if body is FormData - don't set Content-Type for FormData
+	const isFormData = options.body instanceof FormData;
+
 	// Add authorization header if token exists
 	const headers: Record<string, string> = {
-		'Content-Type': 'application/json',
+		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(options.headers as Record<string, string>),
 	};
 
@@ -134,12 +137,15 @@ export const api = {
 	get: (url: string, options?: RequestInit) =>
 		apiFetch(url, { ...options, method: 'GET' }),
 
-	post: (url: string, body?: any, options?: RequestInit) =>
-		apiFetch(url, {
+	post: (url: string, body?: unknown, options?: RequestInit) => {
+		const isFormData = body instanceof FormData;
+		return apiFetch(url, {
 			...options,
 			method: 'POST',
-			body: body ? JSON.stringify(body) : undefined,
-		}),
+			body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
+			headers: isFormData ? undefined : options?.headers,
+		});
+	},
 
 	put: (url: string, body?: any, options?: RequestInit) =>
 		apiFetch(url, {

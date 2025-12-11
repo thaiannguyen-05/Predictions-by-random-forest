@@ -42,7 +42,20 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  app.use(helmet());
+  // Configure Helmet - allow images from self and disable CORP for static files
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:4000', 'https://ui-avatars.com'],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+        },
+      },
+    }),
+  );
   app.use('/upload', express.static(join(__dirname, '..', 'upload')));
   app.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
   app.getHttpAdapter().getInstance().set('trust proxy', 1);

@@ -8,7 +8,7 @@ import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) { }
+  constructor(private readonly postService: PostService) {}
 
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Post('create')
