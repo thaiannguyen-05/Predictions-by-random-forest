@@ -9,7 +9,7 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
 @Injectable()
 export class PostService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   private isUUID(value: string) {
     const uuidRegex =
@@ -216,7 +216,7 @@ export class PostService {
           select: {
             id: true,
             username: true,
-            avatar: true,
+            avtUrl: true,
           },
         },
         _count: {

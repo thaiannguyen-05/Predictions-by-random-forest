@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { FaImage, FaSmile, FaPaperPlane, FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { api } from "@/utils/api";
 
 interface CreatePostFormProps {
 	onPostCreated: () => void;
@@ -29,19 +30,10 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 
 		setLoading(true);
 		try {
-			const token = localStorage.getItem("accessToken");
-			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/create`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({
-					title,
-					content,
-					file: [], // Hiện tại chưa làm upload file thực tế
-					// sentiment có thể gửi lên nếu backend hỗ trợ, hiện tại DTO chưa có
-				}),
+			const res = await api.post("/post/create", {
+				title,
+				content,
+				file: [], // Hiện tại chưa làm upload file thực tế
 			});
 
 			const data = await res.json();
