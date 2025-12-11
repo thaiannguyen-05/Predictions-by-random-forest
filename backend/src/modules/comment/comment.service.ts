@@ -14,7 +14,7 @@ export class CommentService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly logger: MyLogger,
-  ) {}
+  ) { }
 
   private isUUID(value: string) {
     const uuidRegex =
@@ -163,21 +163,35 @@ export class CommentService {
       const comments = await this.prismaService.comment.findMany({
         where: { postId },
         cursor: { id: dto.cursor },
-        take: dto.limit + 1,
-        skip,
+        take: dto.limit + 1, // Lấy thêm 1 để check hasMore
+        skip: 1, // Bỏ qua chính cursor
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc', // Mới nhất trước
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avtUrl: true,
+            },
+          },
         },
       });
 
       const hasMore = comments.length > dto.limit;
-      const newCursor = hasMore ? comments[comments.length - 1].id : null;
+      // Chỉ trả về đúng limit record
+      const resultComments = hasMore ? comments.slice(0, dto.limit) : comments;
+      const newCursor =
+        resultComments.length > 0
+          ? resultComments[resultComments.length - 1].id
+          : null;
       const nextPage = dto.page + 1;
 
       return {
         status: true,
         data: {
-          comments,
+          comments: resultComments,
           cursor: newCursor,
           page: nextPage,
           hasMore,
@@ -187,20 +201,35 @@ export class CommentService {
 
     const comments = await this.prismaService.comment.findMany({
       where: { postId },
-      take: dto.limit,
+      take: dto.limit + 1, // Lấy thêm 1 để check hasMore
       skip,
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc', // Mới nhất trước
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            avtUrl: true,
+          },
+        },
       },
     });
 
-    const newCursor = comments[comments.length - 1].id;
-    const nextPage = dto.page + 1;
     const hasMore = comments.length > dto.limit;
+    // Chỉ trả về đúng limit record
+    const resultComments = hasMore ? comments.slice(0, dto.limit) : comments;
+    const newCursor =
+      resultComments.length > 0
+        ? resultComments[resultComments.length - 1].id
+        : null;
+    const nextPage = dto.page + 1;
+
     return {
       status: true,
       data: {
-        comments,
+        comments: resultComments,
         cursor: newCursor,
         page: nextPage,
         hasMore,
