@@ -9,7 +9,7 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
 @Injectable()
 export class PostService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   private isUUID(value: string) {
     const uuidRegex =
@@ -216,21 +216,21 @@ export class PostService {
           select: {
             id: true,
             username: true,
-            avatar: true
-          }
+            avatar: true,
+          },
         },
         _count: {
           select: {
-            comments: true
-          }
-        }
-      }
+            comments: true,
+          },
+        },
+      },
     };
 
     if (dto.cursor) {
       Object.assign(baseQuery, {
         cursor: { id: dto.cursor },
-        skip: 1 // Skip the cursor itself when using cursor-based pagination
+        skip: 1, // Skip the cursor itself when using cursor-based pagination
       });
     }
 

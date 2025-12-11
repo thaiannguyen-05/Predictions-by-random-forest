@@ -36,8 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Use apiFetch - will auto-refresh token on 401
-      const res = await apiFetch("/auth/me", {
+      // Use /user/me endpoint for user data
+      const res = await apiFetch("/user/me", {
         method: "GET",
         cache: "no-cache" as RequestCache,
       });
@@ -51,23 +51,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      const data = await res.json();
-      let avatarUrl = data.user.avatar;
+      const response = await res.json();
+      const userData = response.data;
+
+      // Get avatar URL - use avtUrl from DB or generate fallback
+      let avatarUrl = userData.avtUrl;
+      const displayName = userData.fullname || userData.username || userData.email;
 
       if (!avatarUrl || avatarUrl === "") {
         avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          data.user.name
+          displayName
         )}&background=random`;
       }
 
       setUser({
-        id: data.user.id,
-        name: data.user.name || data.user.username || data.user.email,
-        email: data.user.email,
+        id: userData.id,
+        name: displayName,
+        email: userData.email,
         avatar: avatarUrl,
-        firstName: data.user.firstName,
-        lastName: data.user.lastName,
-        phone: data.user.phoneNumber || data.user.phone, // Controller returns phoneNumber, Service returns phone. Controller maps user.phone to phoneNumber.
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
       });
     } catch (err) {
       console.error("Error fetching user:", err);

@@ -71,4 +71,19 @@ export class UserService {
       data: userWithoutPassword,
     };
   }
+
+  async me(req: Request) {
+    const userId = req.user?.id;
+    const availableUser = await this.getActiveAccount(userId as string);
+    if (!availableUser)
+      throw new NotFoundException('User not found or not active');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { hashedPassword, ...userWithoutPassword } = availableUser;
+
+    return {
+      status: true,
+      data: userWithoutPassword,
+    };
+  }
 }
