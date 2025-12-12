@@ -147,14 +147,14 @@ export const api = {
 		});
 	},
 
-	put: (url: string, body?: any, options?: RequestInit) =>
+	put: (url: string, body?: unknown, options?: RequestInit) =>
 		apiFetch(url, {
 			...options,
 			method: 'PUT',
 			body: body ? JSON.stringify(body) : undefined,
 		}),
 
-	patch: (url: string, body?: any, options?: RequestInit) =>
+	patch: (url: string, body?: unknown, options?: RequestInit) =>
 		apiFetch(url, {
 			...options,
 			method: 'PATCH',

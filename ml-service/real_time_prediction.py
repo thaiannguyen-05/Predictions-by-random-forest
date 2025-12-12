@@ -1,31 +1,84 @@
+"""
+Real-time prediction module cho ML Service.
+Cung cấp các phương thức dự đoán giá cổ phiếu real-time.
+"""
+import os
+import pickle
+import logging
+from datetime import datetime, timedelta
+from typing import Optional, List, Dict, Any
+
 import pandas as pd
 import yfinance as yf
-import pickle
-import os
-from datetime import datetime, timedelta
+
+from config import (
+    TRADING_HOURS_PER_DAY,
+    DEFAULT_HOURLY_PRICE_CHANGE,
+    PREDICTION_INTERVALS,
+    standardize_ticker,
+    get_csv_path,
+    get_model_path,
+)
 from data_loader import load_data
 from features import add_features
 from model import create_model, select_features
+from exceptions import (
+    ModelNotTrainedException,
+    PredictionException,
+    PriceDataException,
+)
+from type_defs import PriceInfo, FinancialData, PredictionResult
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class RealTimePrediction:
+    """
+    Class xử lý dự đoán giá cổ phiếu real-time.
+    
+    Attributes:
+        ticker: Mã cổ phiếu (đã chuẩn hóa)
+        csv_file: Đường dẫn file CSV chứa dữ liệu
+        model_file: Đường dẫn file model
+        model: Model RandomForest đã train
+        selected_predictors: Danh sách features được chọn
+        is_trained: Trạng thái model đã train hay chưa
+    """
+    
     def __init__(
-        self, ticker="FPT.VN", csv_file="fpt_vn.csv", model_file="trained_model.pkl"
+        self,
+        ticker: str = "FPT.VN",
+        csv_file: Optional[str] = None,
+        model_file: Optional[str] = None,
     ):
-        self.ticker = ticker
-        self.csv_file = csv_file
-        self.model_file = model_file
+        """
+        Khởi tạo RealTimePrediction.
+        
+        Args:
+            ticker: Mã cổ phiếu
+            csv_file: Đường dẫn file CSV (optional)
+            model_file: Đường dẫn file model (optional)
+        """
+        self.ticker = standardize_ticker(ticker)
+        self.csv_file = csv_file or get_csv_path(self.ticker)
+        self.model_file = model_file or get_model_path(self.ticker)
         self.model = None
-        self.selected_predictors = None
+        self.selected_predictors: Optional[List[str]] = None
         self.is_trained = False
 
-    def get_current_price(self):
-        """Lấy giá hiện tại của cổ phiếu"""
+    def get_current_price(self) -> Optional[Dict[str, Any]]:
+        """
+        Lấy giá hiện tại của cổ phiếu.
+        
+        Returns:
+            Dictionary chứa price, time, symbol hoặc None nếu lỗi
+        """
         try:
             ticker_obj = yf.Ticker(self.ticker)
             current_data = ticker_obj.history(period="1d", interval="1m")
+            
             if not current_data.empty:
-                # Use iloc for proper indexing
                 current_price = float(current_data["Close"].iloc[-1])
                 current_time = current_data.index[-1]
                 return {
@@ -33,20 +86,24 @@ class RealTimePrediction:
                     "time": current_time,
                     "symbol": self.ticker,
                 }
-            else:
-                print(f"Không thể lấy giá hiện tại cho {self.ticker}")
-                return None
+            
+            logger.warning(f"No price data for {self.ticker}")
+            return None
+            
         except Exception as e:
-            print(f"Lỗi khi lấy giá hiện tại: {e}")
+            logger.error(f"Error getting price for {self.ticker}: {e}")
             return None
 
-    def get_financial_data(self):
-        """Lấy thông tin tài chính chi tiết của cổ phiếu"""
+    def get_financial_data(self) -> Optional[Dict[str, Any]]:
+        """
+        Lấy thông tin tài chính chi tiết của cổ phiếu.
+        
+        Returns:
+            Dictionary chứa thông tin tài chính hoặc None nếu lỗi
+        """
         try:
             ticker_obj = yf.Ticker(self.ticker)
             info = ticker_obj.info
-            
-            # Get historical data for daily values
             hist = ticker_obj.history(period="1d")
             
             financial_data = {
@@ -64,176 +121,168 @@ class RealTimePrediction:
             }
             
             return financial_data
+            
         except Exception as e:
-            print(f"Lỗi khi lấy dữ liệu tài chính: {e}")
+            logger.error(f"Error getting financial data for {self.ticker}: {e}")
             return None
 
-    def update_data(self):
-        """Cập nhật dữ liệu mới nhất từ yfinance"""
+    def update_data(self) -> bool:
+        """
+        Cập nhật dữ liệu mới nhất từ yfinance.
+        
+        Returns:
+            True nếu thành công, False nếu thất bại
+        """
         try:
-            # Lấy dữ liệu mới nhất
             ticker_obj = yf.Ticker(self.ticker)
-            new_data = ticker_obj.history(period="5d")  # Lấy 5 ngày gần nhất
-
-            # Đọc dữ liệu cũ nếu có
+            new_data = ticker_obj.history(period="5d")
+            
             if os.path.exists(self.csv_file):
                 old_data = pd.read_csv(self.csv_file, index_col=0)
                 old_data.index = pd.to_datetime(old_data.index)
-
-                # Kết hợp dữ liệu cũ và mới, loại bỏ trùng lặp
+                
                 combined_data = pd.concat([old_data, new_data])
-                combined_data = combined_data[
-                    ~combined_data.index.duplicated(keep="last")
-                ]
+                combined_data = combined_data[~combined_data.index.duplicated(keep="last")]
                 combined_data = combined_data.sort_index()
             else:
+                os.makedirs(os.path.dirname(self.csv_file), exist_ok=True)
                 combined_data = new_data
-
-            # Lưu dữ liệu đã cập nhật
+            
             combined_data.to_csv(self.csv_file)
-            print(f"Đã cập nhật dữ liệu cho {self.ticker}")
+            logger.info(f"Updated data for {self.ticker}")
             return True
-
+            
         except Exception as e:
-            print(f"Lỗi khi cập nhật dữ liệu: {e}")
+            logger.error(f"Error updating data for {self.ticker}: {e}")
             return False
 
-    def train_model(self):
-        """Train model với dữ liệu mới nhất"""
+    def train_model(self) -> bool:
+        """
+        Train model với dữ liệu mới nhất.
+        
+        Returns:
+            True nếu thành công, False nếu thất bại
+        """
         try:
             # Load dữ liệu
             df = load_data(self.ticker, self.csv_file)
-
+            
             # Sinh features
             df, predictors = add_features(df)
-
+            
             # Chọn features quan trọng
             self.selected_predictors, feat_importances = select_features(
                 df, predictors, threshold=0.01
             )
-
+            
             # Train model
             self.model = create_model()
-            X = df[self.selected_predictors]
-            y = df["Target"]
-
-            self.model.fit(X, y)
+            self.model.fit(df[self.selected_predictors], df["Target"])
             self.is_trained = True
-
-            # Lưu model đã train
+            
+            # Lưu model
             self.save_model()
-
-            print(f"Model đã được train với {len(self.selected_predictors)} features")
-            print("Top 10 features quan trọng nhất:")
-            print(feat_importances.head(10))
-
+            
+            logger.info(f"Trained model for {self.ticker} with {len(self.selected_predictors)} features")
+            logger.debug(f"Top 10 features: {list(feat_importances.head(10).index)}")
+            
             return True
-
+            
         except Exception as e:
-            print(f"Lỗi khi train model: {e}")
+            logger.error(f"Error training model for {self.ticker}: {e}")
             return False
 
-    def save_model(self):
-        """Lưu model đã train"""
+    def save_model(self) -> None:
+        """Lưu model đã train vào file."""
         model_data = {
             "model": self.model,
             "selected_predictors": self.selected_predictors,
             "ticker": self.ticker,
         }
+        
+        os.makedirs(os.path.dirname(self.model_file), exist_ok=True)
+        
         with open(self.model_file, "wb") as f:
             pickle.dump(model_data, f)
-        print(f"Model đã được lưu vào {self.model_file}")
+        
+        logger.info(f"Saved model to {self.model_file}")
 
-    def load_model(self):
-        """Load model đã train trước đó"""
+    def load_model(self) -> bool:
+        """
+        Load model đã train từ file.
+        
+        Returns:
+            True nếu thành công, False nếu không tìm thấy hoặc lỗi
+        """
         try:
             if os.path.exists(self.model_file):
                 with open(self.model_file, "rb") as f:
                     model_data = pickle.load(f)
-
+                
                 self.model = model_data["model"]
                 self.selected_predictors = model_data["selected_predictors"]
                 self.is_trained = True
-
-                print(f"Đã load model từ {self.model_file}")
+                
+                logger.info(f"Loaded model from {self.model_file}")
                 return True
-            else:
-                print(f"Không tìm thấy file model {self.model_file}")
-                return False
+            
+            logger.warning(f"Model file not found: {self.model_file}")
+            return False
+            
         except Exception as e:
-            print(f"Lỗi khi load model: {e}")
+            logger.error(f"Error loading model from {self.model_file}: {e}")
             return False
 
-    def predict_next_hours(self, hours_ahead=1):
+    def predict_next_hours(self, hours_ahead: int = 1) -> Optional[Dict[str, Any]]:
         """
-        Dự đoán xu hướng giá trong vài giờ tới
-
+        Dự đoán xu hướng giá trong vài giờ tới.
+        
         Args:
             hours_ahead: Số giờ muốn dự đoán (1-24)
-
+            
         Returns:
-            dict: Kết quả dự đoán
+            Dictionary chứa kết quả dự đoán hoặc None nếu lỗi
         """
         if not self.is_trained:
-            print("Model chưa được train hoặc load. Vui lòng train model trước.")
+            logger.warning(f"Model for {self.ticker} is not trained")
             return None
-
+        
         try:
-            # Cập nhật dữ liệu mới nhất
+            # Cập nhật dữ liệu
             self.update_data()
-
+            
             # Load dữ liệu
             df = load_data(self.ticker, self.csv_file)
-
+            
             # Sinh features
             df, _ = add_features(df)
-
-            # Lấy dòng dữ liệu mới nhất
+            
+            # Lấy dữ liệu mới nhất
             latest_data = df[self.selected_predictors].iloc[-1:]
-
+            
             # Dự đoán
-            prediction_prob = self.model.predict_proba(latest_data)[0][
-                1
-            ]  # Xác suất tăng giá
-            prediction = int(prediction_prob >= 0.5)  # 1: tăng, 0: giảm
-
+            prediction_prob = self.model.predict_proba(latest_data)[0][1]
+            prediction = int(prediction_prob >= 0.5)
+            
             # Lấy giá hiện tại
             current_info = self.get_current_price()
             current_price = current_info["price"] if current_info else None
-
-            # Tính độ tin cậy (0-1)
+            
+            # Tính độ tin cậy
             confidence = max(prediction_prob, 1 - prediction_prob)
-
-            # Tính giá dự đoán dựa trên xu hướng và độ tin cậy
-            # Sử dụng volatility từ dữ liệu lịch sử để ước tính biến động
-            if current_price and len(df) > 1:
-                # Tính độ biến động trung bình (volatility) từ 20 ngày gần nhất
-                recent_data = df["Close"].tail(20)
-                daily_returns = recent_data.pct_change().dropna()
-                volatility = daily_returns.std()
-                
-                # Ước tính biến động theo giờ (giả định 8 giờ giao dịch/ngày)
-                hourly_volatility = volatility / (8 ** 0.5)
-                
-                # Tính % thay đổi dựa trên xu hướng, độ tin cậy và số giờ
-                # Nếu tăng (prediction=1): giá dự đoán cao hơn
-                # Nếu giảm (prediction=0): giá dự đoán thấp hơn
-                direction = 1 if prediction == 1 else -1
-                price_change_factor = direction * confidence * hourly_volatility * (hours_ahead ** 0.5)
-                
-                # Tính giá dự đoán
-                predicted_price = current_price * (1 + price_change_factor)
-            else:
-                # Fallback: sử dụng % thay đổi đơn giản
-                direction = 1 if prediction == 1 else -1
-                price_change_pct = direction * confidence * 0.02 * hours_ahead  # 2% mỗi giờ
-                predicted_price = current_price * (1 + price_change_pct) if current_price else None
-
-            result = {
+            
+            # Tính giá dự đoán
+            predicted_price = self._calculate_predicted_price(
+                current_price=current_price,
+                df=df,
+                prediction=prediction,
+                confidence=confidence,
+                hours_ahead=hours_ahead,
+            )
+            
+            return {
                 "current_price": current_price,
-                "current_time": (
-                    current_info["time"] if current_info else datetime.now()
-                ),
+                "current_time": current_info["time"] if current_info else datetime.now(),
                 "prediction_time": datetime.now() + timedelta(hours=hours_ahead),
                 "prediction": "TĂNG" if prediction == 1 else "GIẢM",
                 "probability": prediction_prob,
@@ -242,22 +291,70 @@ class RealTimePrediction:
                 "hours_ahead": hours_ahead,
                 "symbol": self.ticker,
             }
-
-            return result
-
+            
         except Exception as e:
-            print(f"Lỗi khi dự đoán: {e}")
+            logger.error(f"Error predicting for {self.ticker}: {e}")
             return None
 
-    def get_prediction_report(self):
-        """Tạo báo cáo dự đoán chi tiết"""
-        if not self.is_trained:
-            return "Model chưa được train!"
+    def _calculate_predicted_price(
+        self,
+        current_price: Optional[float],
+        df: pd.DataFrame,
+        prediction: int,
+        confidence: float,
+        hours_ahead: int,
+    ) -> Optional[float]:
+        """
+        Tính giá dự đoán dựa trên volatility lịch sử.
+        
+        Args:
+            current_price: Giá hiện tại
+            df: DataFrame với dữ liệu lịch sử
+            prediction: 1 (tăng) hoặc 0 (giảm)
+            confidence: Độ tin cậy (0-1)
+            hours_ahead: Số giờ dự đoán
+            
+        Returns:
+            Giá dự đoán hoặc None
+        """
+        if current_price is None:
+            return None
+        
+        if len(df) <= 1:
+            # Fallback với % thay đổi đơn giản
+            direction = 1 if prediction == 1 else -1
+            price_change_pct = direction * confidence * DEFAULT_HOURLY_PRICE_CHANGE * hours_ahead
+            return current_price * (1 + price_change_pct)
+        
+        # Tính volatility từ 20 ngày gần nhất
+        recent_data = df["Close"].tail(20)
+        daily_returns = recent_data.pct_change().dropna()
+        volatility = daily_returns.std()
+        
+        # Ước tính volatility theo giờ
+        hourly_volatility = volatility / (TRADING_HOURS_PER_DAY ** 0.5)
+        
+        # Tính % thay đổi
+        direction = 1 if prediction == 1 else -1
+        price_change_factor = direction * confidence * hourly_volatility * (hours_ahead ** 0.5)
+        
+        return current_price * (1 + price_change_factor)
 
+    def get_prediction_report(self) -> Optional[List[Dict[str, Any]]]:
+        """
+        Tạo báo cáo dự đoán cho nhiều khung thời gian.
+        
+        Returns:
+            List các predictions hoặc None nếu model chưa train
+        """
+        if not self.is_trained:
+            logger.warning(f"Model for {self.ticker} is not trained")
+            return None
+        
         predictions = []
-        for hours in [1, 2, 4, 8, 24]:
+        for hours in PREDICTION_INTERVALS:
             pred = self.predict_next_hours(hours)
             if pred:
                 predictions.append(pred)
-
+        
         return predictions

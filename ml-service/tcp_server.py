@@ -3,11 +3,20 @@ import json
 import threading
 import logging
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import signal
 import sys
 
 from real_time_prediction import RealTimePrediction
+from config import (
+    SERVER_HOST,
+    SERVER_PORT,
+    SOCKET_BUFFER_SIZE,
+    MAX_CONNECTIONS,
+    standardize_ticker,
+    get_csv_path,
+    get_model_path,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -17,26 +26,42 @@ logger = logging.getLogger(__name__)
 
 
 class StockPredictionTCPServer:
-    def __init__(self, host="localhost", port=9999):
+    """TCP Server cho Stock Prediction Service."""
+    
+    def __init__(self, host: str = SERVER_HOST, port: int = SERVER_PORT):
+        """
+        Khởi tạo TCP Server.
+        
+        Args:
+            host: Host address
+            port: Port number
+        """
         self.host = host
         self.port = port
-        self.socket = None
-        self.prediction_instances = {}
+        self.socket: Optional[socket.socket] = None
+        self.prediction_instances: Dict[str, RealTimePrediction] = {}
         self.running = False
 
-    def get_prediction_instance(self, ticker: str):
-        """Get or create prediction instance for a ticker"""
-        # Standardize ticker
-        if not ticker.upper().endswith(".VN"):
-            ticker = f"{ticker.upper()}.VN"
-
-        if ticker not in self.prediction_instances:
-            csv_file = f"data/{ticker.replace('.', '_')}_stock_data.csv"
-            model_file = f"models/{ticker.replace('.', '_')}_model.pkl"
-            self.prediction_instances[ticker] = RealTimePrediction(
-                ticker=ticker, csv_file=csv_file, model_file=model_file
+    def get_prediction_instance(self, ticker: str) -> RealTimePrediction:
+        """
+        Get or create prediction instance for a ticker.
+        
+        Args:
+            ticker: Mã cổ phiếu
+            
+        Returns:
+            RealTimePrediction instance
+        """
+        standardized = standardize_ticker(ticker)
+        
+        if standardized not in self.prediction_instances:
+            self.prediction_instances[standardized] = RealTimePrediction(
+                ticker=standardized,
+                csv_file=get_csv_path(standardized),
+                model_file=get_model_path(standardized),
             )
-        return self.prediction_instances[ticker]
+        
+        return self.prediction_instances[standardized]
 
     def handle_get_current_price(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handler cho lệnh lấy giá hiện tại"""
@@ -46,8 +71,7 @@ class StockPredictionTCPServer:
                 return {"success": False, "error": "Missing ticker parameter"}
 
             # Standardize ticker
-            if not ticker.upper().endswith(".VN"):
-                ticker = f"{ticker.upper()}.VN"
+            ticker = standardize_ticker(ticker)
 
             # Create a temporary instance to get the price
             predictor = RealTimePrediction(ticker=ticker)
@@ -79,8 +103,7 @@ class StockPredictionTCPServer:
                 return {"success": False, "error": "Missing ticker parameter"}
 
             # Standardize ticker
-            if not ticker.upper().endswith(".VN"):
-                ticker = f"{ticker.upper()}.VN"
+            ticker = standardize_ticker(ticker)
 
             # Create a temporary instance to get financial data
             predictor = RealTimePrediction(ticker=ticker)

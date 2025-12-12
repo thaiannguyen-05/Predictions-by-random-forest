@@ -1,118 +1,168 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
+import { isUUID } from '../../common/utils/uuid.utils';
+import { PostNotFoundException } from './exceptions/post.exception';
+import { UserNotFoundOrNotActiveException } from '../user/exceptions/user.exception';
+
+/**
+ * Post response interface
+ */
+export interface PostResponse<T> {
+  status: boolean;
+  data: T;
+}
+
+/**
+ * Paginated response interface
+ */
+export interface PaginatedPostResponse {
+  status: boolean;
+  data: {
+    post: unknown[];
+    cursor: string | null;
+    page: number;
+    hasMore: boolean;
+  };
+}
+
+/**
+ * Service xử lý các nghiệp vụ liên quan đến Post
+ * @class PostService
+ */
 @Injectable()
 export class PostService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
-  private isUUID(value: string) {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(value);
-  }
-
+  /**
+   * Tìm user theo các accessor khác nhau (id, email, username)
+   * @param accessor - ID, email hoặc username của user
+   * @returns User nếu tìm thấy, null nếu không
+   */
   private async findUserByAccessor(accessor: string) {
-    if (this.isUUID(accessor)) {
-      const availableUser = await this.prismaService.user.findUnique({
+    if (isUUID(accessor)) {
+      return await this.prismaService.user.findUnique({
         where: { id: accessor },
         omit: { hashedPassword: false },
       });
-
-      return availableUser;
     }
 
-    const userLoginWithoutUuid = await this.prismaService.user.findFirst({
+    return await this.prismaService.user.findFirst({
       where: {
         OR: [{ email: accessor }, { username: accessor }],
       },
       omit: { hashedPassword: false },
     });
-
-    return userLoginWithoutUuid;
   }
 
+  /**
+   * Lấy user và validate
+   * @param userId - ID của user
+   * @returns User active
+   * @throws UnauthorizedException nếu không có userId
+   * @throws UserNotFoundOrNotActiveException nếu user không tồn tại
+   */
   private async getAvailableUser(userId: string) {
-    if (!userId) throw new UnauthorizedException('User not found');
+    if (!userId) {
+      throw new UnauthorizedException('User not found');
+    }
 
     const availableUser = await this.findUserByAccessor(userId);
-    if (!availableUser) throw new NotFoundException('User not found');
+
+    if (!availableUser) {
+      throw new UserNotFoundOrNotActiveException(userId);
+    }
 
     return availableUser;
   }
 
-  async createPost(req: Request, data: CreatePostDto) {
+  /**
+   * Tạo bài post mới
+   * @param req - Request object chứa thông tin user
+   * @param data - Dữ liệu bài post
+   * @returns Post được tạo
+   */
+  async createPost(
+    req: Request,
+    data: CreatePostDto,
+  ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
     const availableUser = await this.getAvailableUser(userId as string);
-
-    if (!availableUser) {
-      throw new Error('User not found');
-    }
 
     const post = await this.prismaService.post.create({
       data: {
-        ...data,
+        title: data.title,
+        content: data.content,
+        file: data.file || [],
         userId: availableUser.id,
       },
     });
+
     return {
       status: true,
-      data: {
-        post,
-      },
+      data: { post },
     };
   }
 
-  async updatePost(req: Request, postId: string, data: CreatePostDto) {
+  /**
+   * Cập nhật bài post
+   * @param req - Request object
+   * @param postId - ID của post cần update
+   * @param data - Dữ liệu cập nhật
+   * @returns Post sau khi update
+   */
+  async updatePost(
+    req: Request,
+    postId: string,
+    data: CreatePostDto,
+  ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
     const availableUser = await this.getAvailableUser(userId as string);
-
-    if (!availableUser) {
-      throw new Error('User not found');
-    }
 
     const availablePost = await this.prismaService.post.findUnique({
       where: { id: postId },
     });
 
     if (!availablePost) {
-      throw new Error('Post not found');
+      throw new PostNotFoundException(postId);
     }
 
     const post = await this.prismaService.post.update({
       where: { id_userId: { id: postId, userId: availableUser.id } },
       data: {
-        ...data,
+        title: data.title,
+        content: data.content,
+        file: data.file || [],
       },
     });
 
     return {
       status: true,
-      data: {
-        post,
-      },
+      data: { post },
     };
   }
 
-  async deletePost(req: Request, postId: string) {
+  /**
+   * Xóa bài post
+   * @param req - Request object
+   * @param postId - ID của post cần xóa
+   * @returns Post đã xóa
+   */
+  async deletePost(
+    req: Request,
+    postId: string,
+  ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
     const availableUser = await this.getAvailableUser(userId as string);
-
-    if (!availableUser) {
-      throw new Error('User not found');
-    }
 
     const availablePost = await this.prismaService.post.findUnique({
       where: { id: postId },
     });
 
     if (!availablePost) {
-      throw new Error('Post not found');
+      throw new PostNotFoundException(postId);
     }
 
     const post = await this.prismaService.post.delete({
@@ -121,96 +171,105 @@ export class PostService {
 
     return {
       status: true,
-      data: {
-        post,
-      },
+      data: { post },
     };
   }
 
-  async loadingPosts(userId: string, dto: LoadingPostDto) {
+  /**
+   * Load danh sách posts của một user với pagination
+   * @param userId - ID của user
+   * @param dto - DTO chứa thông tin pagination
+   * @returns Danh sách posts với metadata pagination
+   */
+  async loadingPosts(
+    userId: string,
+    dto: LoadingPostDto,
+  ): Promise<PaginatedPostResponse> {
     const availableUser = await this.getAvailableUser(userId);
-
-    if (!availableUser) {
-      throw new Error('User not found');
-    }
-
-    // calculate cursor
-    const numberGet = (dto.page - 1) * dto.limit;
+    const skip = (dto.page - 1) * dto.limit;
 
     if (dto.cursor) {
-      const cursorPost = await this.prismaService.post.findMany({
+      const posts = await this.prismaService.post.findMany({
         where: { userId: availableUser.id },
         cursor: { id: dto.cursor },
-        take: numberGet,
-        orderBy: {
-          createdAt: 'asc',
-        },
+        take: dto.limit + 1,
+        skip: 1,
+        orderBy: { createdAt: 'desc' },
       });
 
-      const newCursor = cursorPost[cursorPost.length - 1].id;
-      const nextPage = dto.page + 1;
-      const hasMore = cursorPost.length > dto.limit;
+      const hasMore = posts.length > dto.limit;
+      const resultPosts = hasMore ? posts.slice(0, dto.limit) : posts;
+      const newCursor =
+        resultPosts.length > 0 ? resultPosts[resultPosts.length - 1].id : null;
 
       return {
         status: true,
         data: {
-          post: cursorPost,
+          post: resultPosts,
           cursor: newCursor,
-          page: nextPage,
+          page: dto.page + 1,
           hasMore,
         },
       };
     }
 
-    const post = await this.prismaService.post.findMany({
+    const posts = await this.prismaService.post.findMany({
       where: { userId: availableUser.id },
-      take: dto.limit,
-      skip: numberGet,
-      orderBy: {
-        createdAt: 'asc',
-      },
+      take: dto.limit + 1,
+      skip,
+      orderBy: { createdAt: 'desc' },
     });
 
-    const newCursor = post[post.length - 1].id;
-    const nextPage = dto.page + 1;
-    const hasMore = post.length > dto.limit;
+    const hasMore = posts.length > dto.limit;
+    const resultPosts = hasMore ? posts.slice(0, dto.limit) : posts;
+    const newCursor =
+      resultPosts.length > 0 ? resultPosts[resultPosts.length - 1].id : null;
 
     return {
       status: true,
       data: {
-        post,
+        post: resultPosts,
         cursor: newCursor,
-        page: nextPage,
+        page: dto.page + 1,
         hasMore,
       },
     };
   }
 
-  async loadingPostById(postId: string) {
+  /**
+   * Load một post theo ID
+   * @param postId - ID của post
+   * @returns Post data
+   */
+  async loadingPostById(
+    postId: string,
+  ): Promise<PostResponse<{ post: unknown }>> {
     const post = await this.prismaService.post.findUnique({
       where: { id: postId },
     });
 
     if (!post) {
-      throw new Error('Post not found');
+      throw new PostNotFoundException(postId);
     }
 
     return {
       status: true,
-      data: {
-        post,
-      },
+      data: { post },
     };
   }
-  async loadingFeed(dto: LoadingPostDto) {
-    const numberGet = (dto.page - 1) * dto.limit;
+
+  /**
+   * Load feed với pagination
+   * @param dto - DTO chứa thông tin pagination
+   * @returns Danh sách posts cho feed
+   */
+  async loadingFeed(dto: LoadingPostDto): Promise<PaginatedPostResponse> {
+    const skip = (dto.page - 1) * dto.limit;
 
     const baseQuery = {
-      take: dto.limit,
-      skip: numberGet,
-      orderBy: {
-        createdAt: 'desc',
-      } as const,
+      take: dto.limit + 1,
+      skip,
+      orderBy: { createdAt: 'desc' } as const,
       include: {
         user: {
           select: {
@@ -220,9 +279,7 @@ export class PostService {
           },
         },
         _count: {
-          select: {
-            comments: true,
-          },
+          select: { comments: true },
         },
       },
     };
@@ -230,22 +287,23 @@ export class PostService {
     if (dto.cursor) {
       Object.assign(baseQuery, {
         cursor: { id: dto.cursor },
-        skip: 1, // Skip the cursor itself when using cursor-based pagination
+        skip: 1,
       });
     }
 
     const posts = await this.prismaService.post.findMany(baseQuery);
 
-    const hasMore = posts.length === dto.limit;
-    const newCursor = hasMore ? posts[posts.length - 1].id : null;
-    const nextPage = dto.page + 1;
+    const hasMore = posts.length > dto.limit;
+    const resultPosts = hasMore ? posts.slice(0, dto.limit) : posts;
+    const newCursor =
+      resultPosts.length > 0 ? resultPosts[resultPosts.length - 1].id : null;
 
     return {
       status: true,
       data: {
-        post: posts,
+        post: resultPosts,
         cursor: newCursor,
-        page: nextPage,
+        page: dto.page + 1,
         hasMore,
       },
     };

@@ -3,51 +3,104 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Patch,
   Post,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CommentService } from './comment.service';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import type { Request } from 'express';
+import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
 import { IsAuthorCommentGuard } from './isAuthorComment.guard';
-import { Throttle } from '@nestjs/throttler';
 import { TIME_LIMIT_POST } from '../../common/type/common.type';
 
+/**
+ * Controller xử lý các request liên quan đến Comment
+ * @class CommentController
+ */
+@ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  /**
+   * Tạo comment mới cho một post
+   */
   @Post('create')
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
+  @ApiOperation({ summary: 'Create a new comment' })
+  @ApiBody({ type: CreateCommentDto })
+  @ApiResponse({ status: 201, description: 'Comment created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - validation error' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   create(@Req() req: Request, @Body() dto: CreateCommentDto) {
     return this.commentService.create(req, dto);
   }
 
+  /**
+   * Lấy thông tin một comment theo ID
+   */
   @Get(':id')
-  findOne(@Param('commentId') commentId: string) {
+  @ApiOperation({ summary: 'Get comment by ID' })
+  @ApiParam({ name: 'id', description: 'Comment ID' })
+  @ApiResponse({ status: 200, description: 'Comment retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
+  findOne(@Query('commentId') commentId: string) {
     return this.commentService.findOne(commentId);
   }
 
+  /**
+   * Cập nhật comment (chỉ author mới được phép)
+   */
   @UseGuards(IsAuthorCommentGuard)
-  @Patch(':id')
+  @Post('update')
+  @ApiOperation({ summary: 'Update a comment (author only)' })
+  @ApiBody({ type: UpdateCommentDto })
+  @ApiResponse({ status: 200, description: 'Comment updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   update(@Req() req: Request, @Body() dto: UpdateCommentDto) {
     return this.commentService.update(req, dto);
   }
 
+  /**
+   * Xóa comment (chỉ author mới được phép)
+   */
   @UseGuards(IsAuthorCommentGuard)
   @Delete('delete')
+  @ApiOperation({ summary: 'Delete a comment (author only)' })
+  @ApiQuery({ name: 'commentId', description: 'Comment ID to delete' })
+  @ApiResponse({ status: 200, description: 'Comment deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   delete(@Req() req: Request, @Query('commentId') commentId: string) {
     return this.commentService.remove(req, commentId);
   }
 
+  /**
+   * Load danh sách comments của một post với pagination
+   */
   @Post('loadingPostComments')
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
+  @ApiOperation({ summary: 'Load comments for a post with pagination' })
+  @ApiQuery({ name: 'postId', description: 'Post ID to load comments for' })
+  @ApiBody({ type: LoadingPostCommentsDto })
+  @ApiResponse({ status: 200, description: 'Comments retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   loadingPostComments(
     @Query('postId') postId: string,
     @Body() dto: LoadingPostCommentsDto,

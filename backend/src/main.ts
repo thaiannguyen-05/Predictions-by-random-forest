@@ -49,7 +49,13 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:4000', 'https://ui-avatars.com'],
+          imgSrc: [
+            "'self'",
+            'data:',
+            'blob:',
+            'http://localhost:4000',
+            'https://ui-avatars.com',
+          ],
           scriptSrc: ["'self'", "'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
         },

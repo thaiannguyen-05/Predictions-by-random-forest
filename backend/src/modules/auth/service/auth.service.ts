@@ -375,7 +375,7 @@ export class AuthService {
       username,
     } = user;
 
-    console.log(user);
+    this.logger.debug(`OAuth2 user login: ${JSON.stringify(user)}`);
 
     const validateUser = await this.validateOauth2({
       providerUserId,
