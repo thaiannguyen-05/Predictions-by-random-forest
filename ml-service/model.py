@@ -1,91 +1,178 @@
+"""
+Model module cho ML Service.
+Xử lý việc train, predict và backtest model Random Forest.
+"""
 import os
 import pickle
+import logging
+from typing import List, Tuple, Optional
+
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
-# ========================
-# Hàm dự đoán
-# ========================
-def predict(train, test, predictors, model):
-    # Train dữ liệu
+from config import (
+    MODEL_CONFIG,
+    FEATURE_THRESHOLD,
+    BACKTEST_START,
+    BACKTEST_STEP,
+    MODELS_DIR,
+    get_csv_path,
+    get_model_path,
+)
+from exceptions import InsufficientDataException, ModelTrainingException
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+
+def create_model() -> RandomForestClassifier:
+    """
+    Khởi tạo mô hình Random Forest với configuration chuẩn.
+    
+    Returns:
+        RandomForestClassifier đã được cấu hình
+    """
+    return RandomForestClassifier(
+        n_estimators=MODEL_CONFIG["n_estimators"],
+        min_samples_split=MODEL_CONFIG["min_samples_split"],
+        random_state=MODEL_CONFIG["random_state"],
+    )
+
+
+def predict(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    predictors: List[str],
+    model: RandomForestClassifier,
+) -> pd.Series:
+    """
+    Dự đoán xu hướng giá cổ phiếu.
+    
+    Args:
+        train: DataFrame dữ liệu training
+        test: DataFrame dữ liệu test
+        predictors: List tên các features
+        model: Model RandomForest
+        
+    Returns:
+        Series chứa predictions (0: giảm, 1: tăng)
+    """
+    # Train model
     model.fit(train[predictors], train["Target"])
-
+    
     # Dự đoán xác suất cổ phiếu tăng
-    preds = model.predict_proba(test[predictors])[:, 1]
-
+    preds_proba = model.predict_proba(test[predictors])[:, 1]
+    
     # Quy đổi về nhãn: >= 0.5 → tăng
-    preds = (preds >= 0.5).astype(int)
-
-    # Trả về Series dự đoán, index theo ngày
+    preds = (preds_proba >= 0.5).astype(int)
+    
     return pd.Series(preds, index=test.index, name="Predictions")
 
 
-# ========================
-# Hàm backtest
-# ========================
-def backtest(data, model, predictors, start=50, step=20):
+def backtest(
+    data: pd.DataFrame,
+    model: RandomForestClassifier,
+    predictors: List[str],
+    start: int = BACKTEST_START,
+    step: int = BACKTEST_STEP,
+) -> pd.DataFrame:
+    """
+    Backtest model trên dữ liệu lịch sử.
+    
+    Args:
+        data: DataFrame chứa toàn bộ dữ liệu
+        model: Model RandomForest
+        predictors: List tên các features
+        start: Số dòng dùng để train ban đầu
+        step: Số ngày test mỗi iteration
+        
+    Returns:
+        DataFrame chứa kết quả backtest
+        
+    Raises:
+        InsufficientDataException: Khi không đủ dữ liệu để backtest
+    """
     all_predictions = []
-
-    # Lấy 50 dòng đầu để train, sau đó test 20 ngày tiếp theo
+    
+    if len(data) < start:
+        raise InsufficientDataException(
+            ticker="unknown",
+            required=start,
+            available=len(data),
+        )
+    
     for i in range(start, data.shape[0], step):
         train = data.iloc[0:i].copy()
         test = data.iloc[i:(i + step)].copy()
+        
         if test.empty:
             continue
-
+        
         preds = predict(train, test, predictors, model)
         combined = pd.concat([test["Target"], preds], axis=1)
         all_predictions.append(combined)
-
+    
     if not all_predictions:
-        raise ValueError("Không đủ dữ liệu để backtest. Hãy giảm start hoặc step.")
+        raise InsufficientDataException(
+            ticker="unknown",
+            required=start + step,
+            available=len(data),
+        )
+    
+    result = pd.concat(all_predictions)
+    logger.info(f"Backtest completed: {len(result)} predictions")
+    
+    return result
 
-    return pd.concat(all_predictions)
 
-
-# ========================
-# Hàm khởi tạo mô hình Random Forest
-# ========================
-def create_model():
-    return RandomForestClassifier(
-        n_estimators=200,       # số lượng cây
-        min_samples_split=50,   # giới hạn độ sâu → chống overfit
-        random_state=1          # cố định kết quả
-    )
-
-# chon feature quan trong , giam thoi gian train , tranh overfitting
-def select_features(df, predictors, threshold=0.01):
-    # train model tren toan bo du lieu de tinh importance 
-    # giu lai feature co importance > threshold
-
+def select_features(
+    df: pd.DataFrame,
+    predictors: List[str],
+    threshold: float = FEATURE_THRESHOLD,
+) -> Tuple[List[str], pd.Series]:
+    """
+    Chọn features quan trọng để giảm thời gian train và tránh overfitting.
+    
+    Args:
+        df: DataFrame chứa dữ liệu
+        predictors: List tất cả predictors
+        threshold: Ngưỡng importance tối thiểu
+        
+    Returns:
+        Tuple[List features được chọn, Series feature importances]
+    """
     model = create_model()
     model.fit(df[predictors], df["Target"])
-
-    # lay importance
-    feat_importances = pd.Series(model.feature_importances_, index = predictors)
+    
+    # Lấy feature importances
+    feat_importances = pd.Series(model.feature_importances_, index=predictors)
     feat_importances = feat_importances.sort_values(ascending=False)
-
-    # Giữ feature quan trọng hơn threshold
+    
+    # Giữ features có importance > threshold
     selected = feat_importances[feat_importances > threshold].index.tolist()
+    
+    logger.info(f"Selected {len(selected)}/{len(predictors)} features (threshold={threshold})")
+    
     return selected, feat_importances
 
 
-# ========================
-# Train models cho tất cả tickers
-# ========================
 def train_all_models() -> None:
-    """Train models cho tất cả tickers và lưu vào file .pkl"""
-    from data_loader import TICKERS, load_data
+    """Train models cho tất cả tickers và lưu vào file .pkl."""
+    from config import TICKERS
+    from data_loader import load_data
     from features import add_features
     
-    os.makedirs("models", exist_ok=True)
+    os.makedirs(MODELS_DIR, exist_ok=True)
+    
+    success_count = 0
+    failed_count = 0
     
     for ticker in TICKERS:
         try:
-            csv_file = f"data/{ticker.replace('.', '_')}_stock_data.csv"
-            model_file = f"models/{ticker.replace('.', '_')}_model.pkl"
+            csv_file = get_csv_path(ticker)
+            model_file = get_model_path(ticker)
             
-            print(f"\nĐang train model cho {ticker}...")
+            logger.info(f"Training model for {ticker}...")
             
             # Load data
             df = load_data(ticker, csv_file)
@@ -95,7 +182,7 @@ def train_all_models() -> None:
             
             # Select important features
             selected_predictors, feat_importances = select_features(
-                df, predictors, threshold=0.01
+                df, predictors, threshold=FEATURE_THRESHOLD
             )
             
             # Train model
@@ -112,8 +199,31 @@ def train_all_models() -> None:
             with open(model_file, "wb") as f:
                 pickle.dump(model_data, f)
             
-            print(f"  ✓ Đã train với {len(selected_predictors)} features")
-            print(f"  ✓ Đã lưu vào {model_file}")
+            logger.info(f"Trained {ticker} with {len(selected_predictors)} features")
+            success_count += 1
             
         except Exception as e:
-            print(f"  ✗ Lỗi khi train {ticker}: {e}")
+            logger.error(f"Error training {ticker}: {e}")
+            failed_count += 1
+    
+    logger.info(f"Training complete: {success_count} success, {failed_count} failed")
+
+
+def load_model_file(model_file: str) -> Optional[dict]:
+    """
+    Load model từ file.
+    
+    Args:
+        model_file: Đường dẫn file model
+        
+    Returns:
+        Dictionary chứa model data hoặc None nếu không tìm thấy
+    """
+    try:
+        if os.path.exists(model_file):
+            with open(model_file, "rb") as f:
+                return pickle.load(f)
+        return None
+    except Exception as e:
+        logger.error(f"Error loading model from {model_file}: {e}")
+        return None

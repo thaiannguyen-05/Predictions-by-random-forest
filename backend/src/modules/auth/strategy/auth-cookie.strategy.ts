@@ -19,7 +19,7 @@ export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
     if (!accessToken) throw new UnauthorizedException('Access token not found');
 
     // Always return UserWithoutPassword, not full User
-    const user = await this.authService.validate(accessToken);
+    const user = await this.authService.validate(accessToken as string);
     if (!user) throw new UnauthorizedException('User not found');
     // Remove hashedPassword if present
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

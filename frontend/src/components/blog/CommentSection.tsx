@@ -7,19 +7,8 @@ import { FaPaperPlane, FaSpinner, FaTrash } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/utils/api";
 import { toast } from "react-hot-toast";
-
-interface Comment {
-	id: string;
-	content: string;
-	userId: string;
-	postId: string;
-	createdAt: string;
-	user?: {
-		id: string;
-		username: string;
-		avtUrl: string | null;
-	};
-}
+import type { CommentData } from "@/types/api.types";
+import { API_ENDPOINTS, PAGINATION } from "@/constants/api.constants";
 
 interface CommentSectionProps {
 	postId: string;
@@ -31,7 +20,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 	initialCommentCount,
 }) => {
 	const { user } = useAuth();
-	const [comments, setComments] = useState<Comment[]>([]);
+	const [comments, setComments] = useState<CommentData[]>([]);
 	const [newComment, setNewComment] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
@@ -110,7 +99,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 			if (data.status) {
 				// Add new comment to the list with user info
-				const createdComment: Comment = {
+				const createdComment: CommentData = {
 					...data.data.newComment,
 					user: {
 						id: user.id,

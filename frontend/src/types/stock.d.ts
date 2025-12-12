@@ -47,9 +47,22 @@ export interface BackendStockResponse {
   currentPrice: CurrentPriceData;
   additionalInfo: {
     keyStatistics: KeyStatistics;
-    summaryProfile: any; // Có thể định nghĩa chi tiết hơn nếu cần
+    summaryProfile: SummaryProfile;
     summaryDetail: SummaryDetail;
   };
+}
+
+/**
+ * Summary Profile từ Yahoo Finance
+ */
+export interface SummaryProfile {
+  longBusinessSummary?: string;
+  industry?: string;
+  sector?: string;
+  fullTimeEmployees?: number;
+  website?: string;
+  country?: string;
+  city?: string;
 }
 
 // === KIỂU DỮ LIỆU CHÚNG TA SẼ SỬ DỤNG TRÊN FRONTEND (Đã tổng hợp) ===
@@ -70,7 +83,7 @@ export interface FrontendStockData {
   high52Week: number;
   low52Week: number;
   lastUpdated: string; // Thời gian cập nhật
-  
+
   chartData: HistoricalDataItem[]; // Dữ liệu cho biểu đồ
   tradingHistory: HistoricalDataItem[]; // Dữ liệu cho bảng lịch sử giao dịch (thường là historicalData)
 }

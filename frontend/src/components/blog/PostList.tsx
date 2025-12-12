@@ -6,33 +6,15 @@ import { vi } from "date-fns/locale";
 import { FaRegComment, FaRegHeart, FaShare } from "react-icons/fa";
 import CommentSection from "./CommentSection";
 import { api } from "@/utils/api";
-
-interface User {
-	id: string;
-	username: string;
-	avatar?: string | null;
-	avtUrl?: string | null; // Backend uses avtUrl
-}
-
-interface Post {
-	id: string;
-	title: string;
-	content: string;
-	file: string[];
-	userId: string;
-	createdAt: string;
-	user: User;
-	_count?: {
-		comments: number;
-	};
-}
+import type { PostData, FeedResponse } from "@/types/api.types";
+import { API_ENDPOINTS, PAGINATION } from "@/constants/api.constants";
 
 export interface PostListHandle {
 	refresh: () => void;
 }
 
 const PostList = forwardRef<PostListHandle>((props, ref) => {
-	const [posts, setPosts] = useState<Post[]>([]);
+	const [posts, setPosts] = useState<PostData[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
@@ -47,8 +29,8 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 			const currentPage = reset ? 1 : page;
 			const currentCursor = reset ? undefined : cursor;
 
-			const res = await api.post("/post/feed", {
-				limit: 10,
+			const res = await api.post(API_ENDPOINTS.POST.FEED, {
+				limit: PAGINATION.POST_LIMIT,
 				page: currentPage,
 				cursor: currentCursor,
 			});
