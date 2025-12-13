@@ -247,10 +247,14 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.oauth2Login(
-      req.user as any as FacebookOAuth2User,
+    const result = await this.authService.oauth2Login(
+      req.user as unknown as FacebookOAuth2User,
       res,
     );
+
+    // Lấy token từ trường tokens và redirect về FE
+    const accessToken = result.tokens.accessToken;
+    return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
   }
 
   @Get('me')

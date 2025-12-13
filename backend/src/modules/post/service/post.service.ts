@@ -1,32 +1,23 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreatePostDto } from './dto/createPost.dto';
-import { LoadingPostDto } from './dto/loadingPosts.dto';
-import { isUUID } from '../../common/utils/uuid.utils';
-import { PostNotFoundException } from './exceptions/post.exception';
-import { UserNotFoundOrNotActiveException } from '../user/exceptions/user.exception';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { CreatePostDto } from '../dto/createPost.dto';
+import { LoadingPostDto } from '../dto/loadingPosts.dto';
+import { isUUID } from '../../../common/utils/uuid.utils';
+import { PostNotFoundException } from '../exceptions/post.exception';
+import { UserNotFoundOrNotActiveException } from '../../user/exceptions/user.exception';
+import {
+  DisLikePost,
+  LikePost,
+  PaginatedPostResponse,
+  PostResponse,
+  likeCount,
+} from '../post.constant';
+import { BatchInsertService } from './batchInsert.service';
+import { RedisService } from '../../redis/redis.service';
+import { MyLogger } from '../../../logger/logger.service';
 
-/**
- * Post response interface
- */
-export interface PostResponse<T> {
-  status: boolean;
-  data: T;
-}
-
-/**
- * Paginated response interface
- */
-export interface PaginatedPostResponse {
-  status: boolean;
-  data: {
-    post: unknown[];
-    cursor: string | null;
-    page: number;
-    hasMore: boolean;
-  };
-}
+const CONTEXT = 'PostService';
 
 /**
  * Service xử lý các nghiệp vụ liên quan đến Post
@@ -34,7 +25,12 @@ export interface PaginatedPostResponse {
  */
 @Injectable()
 export class PostService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly batchInsertService: BatchInsertService,
+    private readonly redisService: RedisService,
+    private readonly logger: MyLogger,
+  ) {}
 
   /**
    * Tìm user theo các accessor khác nhau (id, email, username)
@@ -89,6 +85,7 @@ export class PostService {
     data: CreatePostDto,
   ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
+    this.logger.log(`Creating post for userId: ${userId}`, CONTEXT);
     const availableUser = await this.getAvailableUser(userId as string);
 
     const post = await this.prismaService.post.create({
@@ -100,6 +97,7 @@ export class PostService {
       },
     });
 
+    this.logger.debug(`Post created successfully: ${post.id}`, CONTEXT);
     return {
       status: true,
       data: { post },
@@ -119,6 +117,7 @@ export class PostService {
     data: CreatePostDto,
   ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
+    this.logger.log(`Updating post: ${postId} by userId: ${userId}`, CONTEXT);
     const availableUser = await this.getAvailableUser(userId as string);
 
     const availablePost = await this.prismaService.post.findUnique({
@@ -126,6 +125,7 @@ export class PostService {
     });
 
     if (!availablePost) {
+      this.logger.warn(`Post not found: ${postId}`, CONTEXT);
       throw new PostNotFoundException(postId);
     }
 
@@ -138,6 +138,7 @@ export class PostService {
       },
     });
 
+    this.logger.debug(`Post updated successfully: ${postId}`, CONTEXT);
     return {
       status: true,
       data: { post },
@@ -155,6 +156,7 @@ export class PostService {
     postId: string,
   ): Promise<PostResponse<{ post: unknown }>> {
     const userId = req.user?.id;
+    this.logger.log(`Deleting post: ${postId} by userId: ${userId}`, CONTEXT);
     const availableUser = await this.getAvailableUser(userId as string);
 
     const availablePost = await this.prismaService.post.findUnique({
@@ -162,6 +164,7 @@ export class PostService {
     });
 
     if (!availablePost) {
+      this.logger.warn(`Post not found for deletion: ${postId}`, CONTEXT);
       throw new PostNotFoundException(postId);
     }
 
@@ -169,6 +172,7 @@ export class PostService {
       where: { id_userId: { id: postId, userId: availableUser.id } },
     });
 
+    this.logger.debug(`Post deleted successfully: ${postId}`, CONTEXT);
     return {
       status: true,
       data: { post },
@@ -306,6 +310,63 @@ export class PostService {
         page: dto.page + 1,
         hasMore,
       },
+    };
+  }
+
+  async likePost(req: Request, postId: string) {
+    const userId = req.user?.id;
+    this.logger.log(
+      `Like/Unlike post: ${postId} by userId: ${userId}`,
+      CONTEXT,
+    );
+    const availableUser = await this.getAvailableUser(userId as string);
+
+    const availablePost = await this.prismaService.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!availablePost) {
+      this.logger.warn(`Post not found for like action: ${postId}`, CONTEXT);
+      throw new PostNotFoundException(postId);
+    }
+
+    const likePost = await this.prismaService.likePost.findUnique({
+      where: { id_userId: { id: postId, userId: availableUser.id } },
+    });
+
+    if (likePost?.isLike) {
+      const likePostData: LikePost = {
+        postId,
+        userId: availableUser.id,
+        isLike: true,
+      };
+      await this.batchInsertService.insertBatch(postId, likePostData);
+      const key = likeCount(postId);
+      const currentScore = availablePost.likeCount;
+      await this.redisService.set(key, currentScore + 1);
+      this.logger.debug(
+        `Post ${postId} liked by user ${availableUser.id}`,
+        CONTEXT,
+      );
+    } else {
+      const dislikePostData: DisLikePost = {
+        postId,
+        userId: availableUser.id,
+        isLike: false,
+      };
+      await this.batchInsertService.deInsertBatch(postId, dislikePostData);
+      const key = likeCount(postId);
+      const currentScore = availablePost.likeCount;
+      await this.redisService.set(key, currentScore - 1);
+      this.logger.debug(
+        `Post ${postId} unliked by user ${availableUser.id}`,
+        CONTEXT,
+      );
+    }
+
+    return {
+      status: true,
+      data: { post: availablePost },
     };
   }
 }

@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
 		FEED: '/post/feed',
 		BY_ID: '/post/loadingById',
 		BY_USER: '/post/loading',
+		LIKE: '/post/like',
 	},
 	// Comment
 	COMMENT: {

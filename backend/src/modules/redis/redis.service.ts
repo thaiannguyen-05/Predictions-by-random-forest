@@ -1,10 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 import { REDIS_CONSTANTS } from './redis.constaints';
+import { MyLogger } from '../../logger/logger.service';
+
+const CONTEXT = 'RedisService';
 
 @Injectable()
 export class RedisService {
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    private readonly logger: MyLogger,
+  ) {}
 
   async get<T = string>(key: string): Promise<T | null> {
     const value = await this.redis.get(key);
@@ -24,10 +30,12 @@ export class RedisService {
       'EX',
       REDIS_CONSTANTS.TIME_FILE_CACHE.CACHE_LARGE_DATA,
     );
+    this.logger.debug(`Redis SET: ${key}`, CONTEXT);
   }
 
   async del(key: string): Promise<void> {
     await this.redis.del(key);
+    this.logger.debug(`Redis DEL: ${key}`, CONTEXT);
   }
 
   async incr(key: string): Promise<number> {
@@ -39,6 +47,22 @@ export class RedisService {
   }
 
   async flushAll(): Promise<void> {
+    this.logger.warn('Redis FLUSHALL called - clearing all data', CONTEXT);
     await this.redis.flushall();
+  }
+
+  async increase(key: string): Promise<number> {
+    const newCount = await this.incr(key);
+    return newCount;
+  }
+
+  async getCurrentScore(key: string): Promise<number> {
+    const currentScore = await this.redis.get(key);
+    return currentScore ? Number(currentScore) : 0;
+  }
+
+  async decrease(key: string): Promise<number> {
+    const newCount = await this.redis.decr(key);
+    return newCount;
   }
 }

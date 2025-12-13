@@ -396,7 +396,7 @@ export class StockController {
     description: 'Bad request - history search failed',
   })
   async getHistorySearch() {
-    const result = await this.stockService.loadingHisorySearch();
+    const result = await this.stockService.loadingHistorySearch();
 
     if (!result.success) {
       throw new HttpException(

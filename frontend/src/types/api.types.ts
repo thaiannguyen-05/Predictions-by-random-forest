@@ -52,9 +52,12 @@ export interface PostData {
 	userId: string;
 	createdAt: string;
 	updatedAt?: string;
+	likeCount?: number;
+	isLiked?: boolean;
 	user: PostAuthor;
 	_count?: {
 		comments: number;
+		likes?: number;
 	};
 }
 
