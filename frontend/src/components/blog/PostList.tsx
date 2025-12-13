@@ -3,7 +3,7 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-import { FaRegComment, FaRegHeart, FaShare } from "react-icons/fa";
+import { FaRegComment, FaHeart, FaRegHeart, FaShare } from "react-icons/fa";
 import CommentSection from "./CommentSection";
 import { api } from "@/utils/api";
 import type { PostData, FeedResponse } from "@/types/api.types";
@@ -13,19 +13,27 @@ export interface PostListHandle {
 	refresh: () => void;
 }
 
+interface LikeState {
+	[postId: string]: {
+		isLiked: boolean;
+		likeCount: number;
+	};
+}
+
 const PostList = forwardRef<PostListHandle>((props, ref) => {
 	const [posts, setPosts] = useState<PostData[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [cursor, setCursor] = useState<string | undefined>(undefined);
+	const [likeStates, setLikeStates] = useState<LikeState>({});
+	const [likingPosts, setLikingPosts] = useState<Set<string>>(new Set());
 
 	const fetchPosts = async (reset = false): Promise<void> => {
 		if (loading) return;
 		setLoading(true);
 
 		try {
-			// If resetting, start from scratch
 			const currentPage = reset ? 1 : page;
 			const currentCursor = reset ? undefined : cursor;
 
@@ -38,11 +46,27 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 			const data = await res.json();
 
 			if (data.status) {
+				const newPosts = data.data.post;
+
 				if (reset) {
-					setPosts(data.data.post);
+					setPosts(newPosts);
 				} else {
-					setPosts((prev) => [...prev, ...data.data.post]);
+					setPosts((prev) => [...prev, ...newPosts]);
 				}
+
+				// Initialize like states for new posts
+				const newLikeStates: LikeState = {};
+				newPosts.forEach((post: PostData) => {
+					newLikeStates[post.id] = {
+						isLiked: post.isLiked || false,
+						likeCount: post.likeCount || post._count?.likes || 0,
+					};
+				});
+
+				setLikeStates((prev) => ({
+					...prev,
+					...newLikeStates,
+				}));
 
 				setHasMore(data.data.hasMore);
 				setCursor(data.data.cursor);
@@ -52,6 +76,58 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 			console.error("Failed to fetch posts:", error);
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const handleLike = async (postId: string): Promise<void> => {
+		// Prevent double-clicking
+		if (likingPosts.has(postId)) return;
+
+		// Add to liking set
+		setLikingPosts((prev) => new Set(prev).add(postId));
+
+		// Get current state
+		const currentState = likeStates[postId] || { isLiked: false, likeCount: 0 };
+		const newIsLiked = !currentState.isLiked;
+		const newLikeCount = newIsLiked
+			? currentState.likeCount + 1
+			: Math.max(0, currentState.likeCount - 1);
+
+		// Optimistic update
+		setLikeStates((prev) => ({
+			...prev,
+			[postId]: {
+				isLiked: newIsLiked,
+				likeCount: newLikeCount,
+			},
+		}));
+
+		try {
+			const res = await api.post(`${API_ENDPOINTS.POST.LIKE}?postId=${postId}`, {});
+			const data = await res.json();
+
+			if (!data.status) {
+				// Revert on error
+				setLikeStates((prev) => ({
+					...prev,
+					[postId]: currentState,
+				}));
+				console.error("Failed to like post");
+			}
+		} catch (error) {
+			// Revert on error
+			setLikeStates((prev) => ({
+				...prev,
+				[postId]: currentState,
+			}));
+			console.error("Failed to like post:", error);
+		} finally {
+			// Remove from liking set
+			setLikingPosts((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(postId);
+				return newSet;
+			});
 		}
 	};
 
@@ -84,8 +160,9 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 	return (
 		<div className="space-y-6">
 			{posts.map((post) => {
-				// Get avatar URL - backend uses avtUrl
 				const avatarUrl = post.user.avatar || post.user.avtUrl;
+				const likeState = likeStates[post.id] || { isLiked: false, likeCount: 0 };
+				const isLiking = likingPosts.has(post.id);
 
 				return (
 					<article
@@ -122,9 +199,22 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 
 						{/* Footer: Actions */}
 						<div className="flex items-center gap-6 pt-4 border-t border-white/5">
-							<button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm group">
-								<FaRegHeart className="group-hover:scale-110 transition-transform" />
-								<span>Thích</span>
+							<button
+								onClick={() => handleLike(post.id)}
+								disabled={isLiking}
+								className={`flex items-center gap-2 transition-all text-sm group ${likeState.isLiked
+										? 'text-red-500'
+										: 'text-gray-400 hover:text-red-500'
+									} ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
+							>
+								{likeState.isLiked ? (
+									<FaHeart className={`transition-transform ${isLiking ? '' : 'group-hover:scale-125'}`} />
+								) : (
+									<FaRegHeart className={`transition-transform ${isLiking ? '' : 'group-hover:scale-110'}`} />
+								)}
+								<span>
+									{likeState.likeCount > 0 ? likeState.likeCount : ''} Thích
+								</span>
 							</button>
 
 							<button className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors text-sm group">
@@ -147,9 +237,8 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 				);
 			})}
 
-			{/* Sentinel for infinite scroll - observe this to load more */}
+			{/* Sentinel for infinite scroll */}
 			{posts.length > 0 && hasMore && <div ref={lastPostElementRef} className="h-4 w-full" />}
-
 
 			{loading && (
 				<div className="flex justify-center py-4">
@@ -177,3 +266,4 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 PostList.displayName = "PostList";
 
 export default PostList;
+

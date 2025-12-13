@@ -24,6 +24,7 @@ import { AuthOtherService } from './auth.other.service';
 import { AuthTokenService } from './auth.token.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { DateUtils } from '../../../common/utils/string-to-date.utils';
+import { isUUID } from '../../../common/utils/uuid.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
 import { RedisService } from '../../redis/redis.service';
 import { MyLogger } from '../../../logger/logger.service';
@@ -43,14 +44,8 @@ export class AuthService {
     private readonly emailProducer: EmailProducer,
   ) {}
 
-  private isUUID(value: string) {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(value);
-  }
-
   private async findUserByAccessor(accessor: string) {
-    if (this.isUUID(accessor)) {
+    if (isUUID(accessor)) {
       const availableUser = await this.prismaService.user.findUnique({
         where: { id: accessor },
         omit: { hashedPassword: false },

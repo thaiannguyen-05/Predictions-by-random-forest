@@ -33,6 +33,7 @@ model User {
   memberInRoom   MemberInRoom[]
   posts          Post[]
   comments       Comment[]
+  likes          likePost[]
 
   @@index([username])
   @@index([email])

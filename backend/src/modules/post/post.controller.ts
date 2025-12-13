@@ -20,7 +20,7 @@ import { Throttle } from '@nestjs/throttler';
 import type { Request } from 'express';
 import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
-import { PostService } from './post.service';
+import { PostService } from './service/post.service';
 import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { TIME_LIMIT_POST } from '../../common/type/common.type';
 
@@ -128,5 +128,14 @@ export class PostController {
   })
   async loadingFeed(@Body() dto: LoadingPostDto) {
     return this.postService.loadingFeed(dto);
+  }
+
+  @Post('like')
+  @ApiOperation({ summary: 'Like a post' })
+  @ApiQuery({ name: 'postId', description: 'Post ID to like' })
+  @ApiResponse({ status: 200, description: 'Post liked successfully' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  async likePost(@Req() req: Request, @Query('postId') postId: string) {
+    return this.postService.likePost(req, postId);
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/utils/api";
 
 interface UserData {
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setUser(null);
@@ -36,7 +36,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Use /user/me endpoint for user data
       const res = await apiFetch("/user/me", {
         method: "GET",
         cache: "no-cache" as RequestCache,
@@ -54,7 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await res.json();
       const userData = response.data;
 
-      // Get avatar URL - use avtUrl from DB or generate fallback
       let avatarUrl = userData.avtUrl;
       const displayName = userData.fullname || userData.username || userData.email;
 
@@ -79,14 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
-  const refreshUser = async () => {
-    // Chỉ refetch nếu có token
+  const refreshUser = useCallback(async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setUser(null);
@@ -96,19 +93,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setLoading(true);
     await fetchUser();
-  };
+  }, [fetchUser]);
 
-  const logout = () => {
-    // Clear token và user state ngay lập tức
+  const logout = useCallback(() => {
     localStorage.removeItem("accessToken");
     setUser(null);
     setLoading(false);
-  };
+  }, []);
 
-  const setUserData = (userData: UserData) => {
+  const setUserData = useCallback((userData: UserData) => {
     setUser(userData);
     setLoading(false);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, refreshUser, logout, setUserData }}>
@@ -124,3 +120,4 @@ export function useAuth() {
   }
   return context;
 }
+

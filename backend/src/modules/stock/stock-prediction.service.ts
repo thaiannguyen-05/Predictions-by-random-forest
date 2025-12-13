@@ -4,47 +4,61 @@ import {
   OnModuleInit,
   OnModuleDestroy,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as net from 'net';
-import { fallBackPrice } from './stock.constants';
-import { PrismaService } from '../../prisma/prisma.service';
 
-interface MLServiceResponse {
-  success: boolean;
-  error?: string;
-  data?: unknown;
-  message?: string;
-  ticker?: string;
-  current_price?: number;
-  current_time?: string;
-  price?: number;
-  time?: string;
-  prediction?: {
-    current_price?: number;
-    [key: string]: unknown;
-  };
-  predictions?: unknown[];
-  timestamp?: string;
-  metrics?: {
-    features_count?: number;
-    [key: string]: unknown;
-  };
-  trained_models?: number;
-  updated_tickers?: number;
-  [key: string]: unknown;
-}
+import { PrismaService } from '../../prisma/prisma.service';
+import {
+  ML_SERVICE_CONFIG,
+  ML_COMMANDS,
+  HISTORY_SEARCH_CONFIG,
+  MODEL_TRAINING_CONFIG,
+  PREDICTION_CONFIG,
+  getFallbackPriceUrl,
+} from './stock.constants';
+import {
+  MLServiceResponse,
+  FinancialData,
+  HistorySearchRecord,
+} from './interfaces/stock.interface';
+import {
+  MLServiceConnectionException,
+  MLServiceTimeoutException,
+} from './exceptions/stock.exception';
 
 @Injectable()
 export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(StockPredictionService.name);
-  private readonly ML_HOST = process.env.ML_SERVICE_HOST || '127.0.0.1';
-  private readonly ML_PORT = parseInt(process.env.ML_SERVICE_PORT || '9999');
-  private readonly TIMEOUT = 30000; // 30 seconds
+  private readonly mlHost: string;
+  private readonly mlPort: number;
+  private readonly timeout: number;
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+  ) {
+    this.mlHost =
+      this.configService.get<string>('ML_SERVICE_HOST') ||
+      ML_SERVICE_CONFIG.DEFAULT_HOST;
+    this.mlPort =
+      this.configService.get<number>('ML_SERVICE_PORT') ||
+      ML_SERVICE_CONFIG.DEFAULT_PORT;
+    this.timeout = ML_SERVICE_CONFIG.TIMEOUT_MS;
+  }
 
-  async onModuleInit() {
-    this.logger.log(`ML Service configured at ${this.ML_HOST}:${this.ML_PORT}`);
-    // Test connection on startup
+  async onModuleInit(): Promise<void> {
+    this.logger.log(`ML Service configured at ${this.mlHost}:${this.mlPort}`);
+    await this.testConnection();
+  }
+
+  onModuleDestroy(): void {
+    this.logger.log('Shutting down ML Service connection');
+  }
+
+  /**
+   * Test connection to ML Service on startup.
+   */
+  private async testConnection(): Promise<void> {
     try {
       const result = await this.ping();
       if (result.success) {
@@ -57,12 +71,11 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  onModuleDestroy() {
-    this.logger.log('Shutting down ML Service connection');
-  }
-
   /**
-   * Send command to ML TCP server and get response
+   * Send command to ML TCP server and get response.
+   * @param command - Command to send
+   * @param params - Additional parameters
+   * @returns ML Service response
    */
   private async sendCommand(
     command: string,
@@ -72,13 +85,13 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       const client = new net.Socket();
       let responseData = '';
 
-      const timeout = setTimeout(() => {
+      const timeoutHandler = setTimeout(() => {
         client.destroy();
         this.logger.error(`Request timed out for command: ${command}`);
-        reject(new Error('Request timeout'));
-      }, this.TIMEOUT);
+        reject(new MLServiceTimeoutException(command));
+      }, this.timeout);
 
-      client.connect(this.ML_PORT, this.ML_HOST, () => {
+      client.connect(this.mlPort, this.mlHost, () => {
         const request = JSON.stringify({ command, ...params });
         this.logger.log(`Sending command: ${request}`);
         client.write(request);
@@ -91,18 +104,20 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       });
 
       client.on('end', () => {
-        clearTimeout(timeout);
+        clearTimeout(timeoutHandler);
         this.logger.log(
           `Connection ended for command: ${command}. Full response: ${responseData}`,
         );
         try {
-          const response = JSON.parse(responseData);
+          const response: MLServiceResponse = JSON.parse(responseData);
           resolve(response);
-        } catch (error) {
+        } catch (parseError) {
+          const errorMessage =
+            parseError instanceof Error ? parseError.message : 'Unknown error';
           this.logger.error(
-            `Failed to parse ML response: ${error.message}. Raw response: ${responseData}`,
+            `Failed to parse ML response: ${errorMessage}. Raw response: ${responseData}`,
           );
-          reject(new Error(`Failed to parse ML response: ${error.message}`));
+          reject(new Error(`Failed to parse ML response: ${errorMessage}`));
         }
       });
 
@@ -111,105 +126,75 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       });
 
       client.on('error', (error) => {
-        clearTimeout(timeout);
+        clearTimeout(timeoutHandler);
         this.logger.error(
           `ML Service connection error for command ${command}: ${error.message}`,
         );
-        reject(error);
+        reject(new MLServiceConnectionException());
       });
     });
   }
 
   /**
-   * Ping ML service to check if it's alive
+   * Ping ML service to check if it's alive.
    */
   async ping(): Promise<MLServiceResponse> {
     try {
-      return await this.sendCommand('ping');
+      return await this.sendCommand(ML_COMMANDS.PING);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get current price for a ticker
+   * Get current price for a ticker.
    */
   async getCurrentPrice(ticker: string): Promise<MLServiceResponse> {
     try {
-      const response = await this.sendCommand('get_current_price', { ticker });
+      const response = await this.sendCommand(ML_COMMANDS.GET_CURRENT_PRICE, {
+        ticker,
+      });
+
       if (!response.success) {
-        const data = await fetch(fallBackPrice(ticker));
+        // Fallback to external API
+        const data = await fetch(getFallbackPriceUrl(ticker));
         const json = await data.json();
         return {
           success: true,
           data: json.taggedSymbols[0].price,
         };
       }
+
       return response;
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
-        `Error calling ML service for current price of ${ticker}: ${error.message}`,
+        `Error calling ML service for current price of ${ticker}: ${errorMessage}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get financial data for a ticker
+   * Get financial data for a ticker.
    */
   async getFinancialData(ticker: string): Promise<MLServiceResponse> {
     try {
-      const response = await this.sendCommand('get_financial_data', { ticker });
+      const response = await this.sendCommand(ML_COMMANDS.GET_FINANCIAL_DATA, {
+        ticker,
+      });
 
       if (response.success && response.data) {
-        try {
-          const data: any = response.data; // Cast to any to access properties dynamically
-
-          // ✅ FIX DUPLICATE: Kiểm tra xem đã lưu record cho symbol này trong 30s chưa?
-          const latestRecord =
-            await this.prismaService.history_searching.findFirst({
-              where: {
-                symbol: ticker,
-                createdAt: {
-                  gt: new Date(Date.now() - 30 * 1000), // Lớn hơn (hiện tại - 30s)
-                },
-              },
-            });
-
-          // Nếu chưa có record nào trong 30s gần đây -> Mới lưu
-          if (!latestRecord) {
-            await this.prismaService.history_searching.create({
-              data: {
-                symbol: ticker,
-                currentPrice: BigInt(Math.round(Number(data.yahoo_price || 0))),
-                previousClose: BigInt(
-                  Math.round(Number(data.previous_close || 0)),
-                ),
-                open: BigInt(Math.round(Number(data.open || 0))),
-                high: BigInt(Math.round(Number(data.high || 0))),
-                low: BigInt(Math.round(Number(data.low || 0))),
-                volume: BigInt(Math.round(Number(data.volume || 0))),
-                marketCap: BigInt(Math.round(Number(data.market_cap || 0))),
-                peRatio: Number(data.pe_ratio || 0),
-                eps: Number(data.eps || 0),
-                beta: Number(data.beta || 0),
-                yahooPrice: Number(data.yahoo_price || 0),
-              },
-            });
-          }
-        } catch (dbError: any) {
-          // Catch error as any to access message property
-          this.logger.error(
-            `Failed to save history search for ${ticker}: ${dbError.message}`,
-          );
-          // Don't fail the request if saving history fails
-        }
+        await this.saveHistorySearch(ticker, response.data as FinancialData);
       }
 
       if (!response.success) {
@@ -217,41 +202,96 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
           `ML service failed to get financial data for ${ticker}: ${response.error}`,
         );
       }
+
       return response;
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
-        `Error calling ML service for financial data of ${ticker}: ${error.message}`,
+        `Error calling ML service for financial data of ${ticker}: ${errorMessage}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get predictions for a single ticker
+   * Save financial data to history search table.
+   * Implements duplicate prevention within a time window.
+   */
+  private async saveHistorySearch(
+    ticker: string,
+    data: FinancialData,
+  ): Promise<void> {
+    try {
+      // Check for duplicate within time window
+      const latestRecord = await this.prismaService.history_searching.findFirst(
+        {
+          where: {
+            symbol: ticker,
+            createdAt: {
+              gt: new Date(
+                Date.now() - HISTORY_SEARCH_CONFIG.DUPLICATE_WINDOW_MS,
+              ),
+            },
+          },
+        },
+      );
+
+      // Only save if no recent record exists
+      if (!latestRecord) {
+        await this.prismaService.history_searching.create({
+          data: {
+            symbol: ticker,
+            currentPrice: BigInt(Math.round(Number(data.yahoo_price || 0))),
+            previousClose: BigInt(Math.round(Number(data.previous_close || 0))),
+            open: BigInt(Math.round(Number(data.open || 0))),
+            high: BigInt(Math.round(Number(data.high || 0))),
+            low: BigInt(Math.round(Number(data.low || 0))),
+            volume: BigInt(Math.round(Number(data.volume || 0))),
+            marketCap: BigInt(Math.round(Number(data.market_cap || 0))),
+            peRatio: Number(data.pe_ratio || 0),
+            eps: Number(data.eps || 0),
+            beta: Number(data.beta || 0),
+            yahooPrice: Number(data.yahoo_price || 0),
+          },
+        });
+      }
+    } catch (dbError) {
+      const errorMessage =
+        dbError instanceof Error ? dbError.message : 'Unknown error';
+      this.logger.error(
+        `Failed to save history search for ${ticker}: ${errorMessage}`,
+      );
+      // Don't fail the request if saving history fails
+    }
+  }
+
+  /**
+   * Get predictions for a single ticker.
    */
   async getPredictionSingle(ticker: string): Promise<MLServiceResponse> {
     try {
-      const response = await this.sendCommand('predict', { ticker });
-      return response;
+      return await this.sendCommand(ML_COMMANDS.PREDICT, { ticker });
     } catch (error) {
-      this.logger.error(`Error predicting for ${ticker}: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error predicting for ${ticker}: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get predictions for multiple hours (using single prediction)
+   * Get predictions for multiple hours (1,2,3,4 hours).
    */
   async getPredictionsMultiHours(ticker: string): Promise<MLServiceResponse> {
     try {
-      // Use predict_multi_hours command to get predictions for 1,2,3,4 hours
-      const response = await this.sendCommand('predict_multi_hours', {
+      const response = await this.sendCommand(ML_COMMANDS.PREDICT_MULTI_HOURS, {
         ticker,
       });
 
@@ -259,49 +299,52 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         this.logger.error(
           `ML service failed to get multi-hour predictions for ${ticker}: ${response.error}`,
         );
-        return response;
       }
 
-      // Response already has the correct format from ML service
       return response;
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(
-        `Error getting predictions for ${ticker}: ${error.message}`,
+        `Error getting predictions for ${ticker}: ${errorMessage}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get predictions for all tickers
+   * Get predictions for all tickers.
    */
-  async getPredictionsAll(topN: number = 5): Promise<MLServiceResponse> {
+  async getPredictionsAll(
+    topN: number = PREDICTION_CONFIG.DEFAULT_TOP_N,
+  ): Promise<MLServiceResponse> {
     try {
-      const response = await this.sendCommand('predict_all', { top_n: topN });
-      return response;
+      return await this.sendCommand(ML_COMMANDS.PREDICT_ALL, { top_n: topN });
     } catch (error) {
-      this.logger.error(`Error predicting all tickers: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error predicting all tickers: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Train model for a single ticker
+   * Train model for a single ticker.
    */
   async trainModel(
     ticker: string,
-    testSize: number = 0.2,
-    nEstimators: number = 100,
+    testSize: number = MODEL_TRAINING_CONFIG.DEFAULT_TEST_SIZE,
+    nEstimators: number = MODEL_TRAINING_CONFIG.DEFAULT_N_ESTIMATORS,
   ): Promise<MLServiceResponse> {
     try {
       this.logger.log(`Training model for ${ticker}...`);
-      const response = await this.sendCommand('train_single', {
+      const response = await this.sendCommand(ML_COMMANDS.TRAIN_SINGLE, {
         ticker,
         test_size: testSize,
         n_estimators: nEstimators,
@@ -319,24 +362,26 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         features_count: response.metrics?.features_count || 0,
       };
     } catch (error) {
-      this.logger.error(`Error training model for ${ticker}: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error training model for ${ticker}: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Train models for all tickers
+   * Train models for all tickers.
    */
   async trainAllModels(
-    testSize: number = 0.2,
-    nEstimators: number = 100,
+    testSize: number = MODEL_TRAINING_CONFIG.DEFAULT_TEST_SIZE,
+    nEstimators: number = MODEL_TRAINING_CONFIG.DEFAULT_N_ESTIMATORS,
   ): Promise<MLServiceResponse> {
     try {
       this.logger.log('Training all models...');
-      const response = await this.sendCommand('train_all', {
+      const response = await this.sendCommand(ML_COMMANDS.TRAIN_ALL, {
         test_size: testSize,
         n_estimators: nEstimators,
       });
@@ -349,16 +394,18 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 
       return response;
     } catch (error) {
-      this.logger.error(`Error training all models: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error training all models: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Update data for tickers
+   * Update data for tickers.
    */
   async updateData(
     tickers?: string[],
@@ -366,7 +413,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   ): Promise<MLServiceResponse> {
     try {
       this.logger.log('Updating data...');
-      const response = await this.sendCommand('update_data', {
+      const response = await this.sendCommand(ML_COMMANDS.UPDATE_DATA, {
         tickers,
         force_update: forceUpdate,
       });
@@ -379,46 +426,52 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 
       return response;
     } catch (error) {
-      this.logger.error(`Error updating data: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error updating data: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get list of all available tickers
+   * Get list of all available tickers.
    */
   async getTickerList(): Promise<MLServiceResponse> {
     try {
-      return await this.sendCommand('get_ticker_list');
+      return await this.sendCommand(ML_COMMANDS.GET_TICKER_LIST);
     } catch (error) {
-      this.logger.error(`Error getting ticker list: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error getting ticker list: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Get model status for all tickers
+   * Get model status for all tickers.
    */
   async getModelStatus(tickers?: string[]): Promise<MLServiceResponse> {
     try {
-      return await this.sendCommand('get_model_status', { tickers });
+      return await this.sendCommand(ML_COMMANDS.GET_MODEL_STATUS, { tickers });
     } catch (error) {
-      this.logger.error(`Error getting model status: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error getting model status: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
   /**
-   * Run full pipeline: update data -> train models -> make predictions
+   * Run full pipeline: update data -> train models -> make predictions.
    */
   async runFullPipeline(
     tickers?: string[],
@@ -426,7 +479,7 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
   ): Promise<MLServiceResponse> {
     try {
       this.logger.log('Running full pipeline...');
-      const response = await this.sendCommand('full_pipeline', {
+      const response = await this.sendCommand(ML_COMMANDS.FULL_PIPELINE, {
         tickers,
         force_update: forceUpdate,
       });
@@ -437,44 +490,59 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 
       return response;
     } catch (error) {
-      this.logger.error(`Error running full pipeline: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error running full pipeline: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
 
-  async loadingHisorySearch(): Promise<MLServiceResponse> {
+  /**
+   * Load history search records.
+   */
+  async loadingHistorySearch(): Promise<MLServiceResponse> {
     try {
       const response = await this.prismaService.history_searching.findMany({
-        take: 10,
+        take: HISTORY_SEARCH_CONFIG.DEFAULT_LIMIT,
         orderBy: {
           createdAt: 'desc',
         },
       });
 
       // Convert BigInt to string for JSON serialization
-      const serializedResponse = response.map((item) => ({
-        ...item,
-        currentPrice: item.currentPrice.toString(),
-        previousClose: item.previousClose.toString(),
-        open: item.open.toString(),
-        high: item.high.toString(),
-        low: item.low.toString(),
-        volume: item.volume.toString(),
-        marketCap: item.marketCap.toString(),
-      }));
+      const serializedResponse: HistorySearchRecord[] = response.map(
+        (item) => ({
+          id: item.id,
+          symbol: item.symbol,
+          currentPrice: item.currentPrice.toString(),
+          previousClose: item.previousClose.toString(),
+          open: item.open.toString(),
+          high: item.high.toString(),
+          low: item.low.toString(),
+          volume: item.volume.toString(),
+          marketCap: item.marketCap.toString(),
+          peRatio: item.peRatio,
+          eps: item.eps,
+          beta: item.beta,
+          yahooPrice: item.yahooPrice,
+          createdAt: item.createdAt,
+        }),
+      );
 
       return {
         success: true,
         data: serializedResponse,
       };
     } catch (error) {
-      this.logger.error(`Error loading history search: ${error.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error loading history search: ${errorMessage}`);
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }

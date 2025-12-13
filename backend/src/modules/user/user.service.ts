@@ -4,6 +4,9 @@ import { ChangeDetailDto } from './dto/change-detail.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DateUtils } from '../../common/utils/string-to-date.utils';
 import { UserNotFoundOrNotActiveException } from './exceptions/user.exception';
+import { MyLogger } from '../../logger/logger.service';
+
+const CONTEXT = 'UserService';
 
 /**
  * Response interface cho user data
@@ -19,7 +22,10 @@ export interface UserResponse {
  */
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly logger: MyLogger,
+  ) {}
 
   /**
    * Lấy thông tin user active từ database
@@ -49,25 +55,26 @@ export class UserService {
     dto: ChangeDetailDto,
   ): Promise<UserResponse> {
     const userId = req.user?.id;
+    this.logger.log(`Changing user details for userId: ${userId}`, CONTEXT);
 
     if (!userId) {
+      this.logger.warn('User ID not found in request', CONTEXT);
       throw new UserNotFoundOrNotActiveException();
     }
 
     const user = await this.getActiveAccount(userId);
 
     if (!user) {
+      this.logger.warn(`User not found or not active: ${userId}`, CONTEXT);
       throw new UserNotFoundOrNotActiveException(userId, {
         action: 'changeDetail',
       });
     }
 
-    // Transform date string to Date object
     const dateOfBirth = dto.dateOfBirth
       ? DateUtils.stringToBirthday(dto.dateOfBirth)
       : undefined;
 
-    // Construct fullname if firstName or lastName is updated
     let fullname: string | undefined = undefined;
     if (dto.firstName || dto.lastName) {
       const newFirstName =
@@ -77,7 +84,6 @@ export class UserService {
       fullname = `${newFirstName || ''} ${newLastName || ''}`.trim();
     }
 
-    // Update user data
     const updatedUser = await this.prismaService.user.update({
       where: { id: user.id },
       data: {
@@ -91,8 +97,8 @@ export class UserService {
       },
     });
 
-    // Remove hashedPassword before returning
     const { hashedPassword: _, ...userWithoutPassword } = updatedUser;
+    this.logger.debug(`User details updated successfully: ${userId}`, CONTEXT);
 
     return {
       status: true,
@@ -108,14 +114,17 @@ export class UserService {
    */
   async me(req: Request): Promise<UserResponse> {
     const userId = req.user?.id;
+    this.logger.debug(`Getting profile for userId: ${userId}`, CONTEXT);
 
     if (!userId) {
+      this.logger.warn('User ID not found in request for getMe', CONTEXT);
       throw new UserNotFoundOrNotActiveException();
     }
 
     const availableUser = await this.getActiveAccount(userId);
 
     if (!availableUser) {
+      this.logger.warn(`User not found for getMe: ${userId}`, CONTEXT);
       throw new UserNotFoundOrNotActiveException(userId, {
         action: 'getMe',
       });
