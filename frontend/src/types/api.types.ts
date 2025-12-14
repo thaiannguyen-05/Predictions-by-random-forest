@@ -53,12 +53,21 @@ export interface PostData {
 	createdAt: string;
 	updatedAt?: string;
 	likeCount?: number;
+	viewCount?: number;
 	isLiked?: boolean;
 	user: PostAuthor;
 	_count?: {
 		comments: number;
 		likes?: number;
 	};
+}
+
+/**
+ * View count response từ /post/view API
+ */
+export interface ViewCountResponse {
+	postId: string;
+	viewCount: number;
 }
 
 /**
