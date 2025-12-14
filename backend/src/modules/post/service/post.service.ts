@@ -1,21 +1,22 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
+import { isUUID } from '../../../common/utils/uuid.utils';
+import { MyLogger } from '../../../logger/logger.service';
 import { PrismaService } from '../../../prisma/prisma.service';
+import { RedisService } from '../../redis/redis.service';
+import { UserNotFoundOrNotActiveException } from '../../user/exceptions/user.exception';
 import { CreatePostDto } from '../dto/createPost.dto';
 import { LoadingPostDto } from '../dto/loadingPosts.dto';
-import { isUUID } from '../../../common/utils/uuid.utils';
 import { PostNotFoundException } from '../exceptions/post.exception';
-import { UserNotFoundOrNotActiveException } from '../../user/exceptions/user.exception';
 import {
   DisLikePost,
   LikePost,
   PaginatedPostResponse,
   PostResponse,
   likeCount,
+  viewCountTotalKey,
 } from '../post.constant';
 import { BatchInsertService } from './batchInsert.service';
-import { RedisService } from '../../redis/redis.service';
-import { MyLogger } from '../../../logger/logger.service';
 
 const CONTEXT = 'PostService';
 
@@ -248,6 +249,9 @@ export class PostService {
   async loadingPostById(
     postId: string,
   ): Promise<PostResponse<{ post: unknown }>> {
+    const viewCountKey = viewCountTotalKey(postId);
+    const viewCountInRedis = await this.redisService.get(viewCountKey);
+
     const post = await this.prismaService.post.findUnique({
       where: { id: postId },
     });
@@ -256,9 +260,17 @@ export class PostService {
       throw new PostNotFoundException(postId);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { viewCount, ...postWithoutViewCount } = post;
+
+    const responseData = {
+      ...postWithoutViewCount,
+      viewCount: viewCountInRedis,
+    };
+
     return {
       status: true,
-      data: { post },
+      data: { post: responseData },
     };
   }
 

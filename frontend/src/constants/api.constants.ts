@@ -56,6 +56,8 @@ export const API_ENDPOINTS = {
 		BY_ID: '/post/loadingById',
 		BY_USER: '/post/loading',
 		LIKE: '/post/like',
+		VIEW_INCREMENT: '/post/view',
+		VIEW_GET: '/post/view',
 	},
 	// Comment
 	COMMENT: {

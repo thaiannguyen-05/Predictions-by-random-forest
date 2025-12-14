@@ -1,7 +1,67 @@
-tests/
-models/
-logs/
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ========== Virtual Environment ==========
+venv/
 .venv/
+ENV/
+env/
+
+# ========== Environment Files ==========
+.env
+.env.*
+.env.local
+!.env.example
+
+# ========== Testing ==========
+tests/
 .pytest_cache/
-_pycache_/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ========== Data & Models ==========
+models/
 data/
+*.pkl
+*.joblib
+*.h5
+
+# ========== Logs ==========
+logs/
+*.log
+
+# ========== IDE ==========
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ========== OS ==========
+.DS_Store
+Thumbs.db
+
+# ========== Jupyter ==========
+.ipynb_checkpoints/

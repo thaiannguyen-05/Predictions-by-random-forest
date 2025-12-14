@@ -21,6 +21,7 @@ import type { Request } from 'express';
 import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
 import { PostService } from './service/post.service';
+import { ViewCountService } from './service/viewCount.service';
 import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { TIME_LIMIT_POST } from '../../common/type/common.type';
 
@@ -32,7 +33,10 @@ import { TIME_LIMIT_POST } from '../../common/type/common.type';
 @ApiBearerAuth('JWT-auth')
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly viewCountService: ViewCountService,
+  ) {}
 
   /**
    * Tạo bài post mới
@@ -137,5 +141,41 @@ export class PostController {
   @ApiResponse({ status: 404, description: 'Post not found' })
   async likePost(@Req() req: Request, @Query('postId') postId: string) {
     return this.postService.likePost(req, postId);
+  }
+
+  /**
+   * Tăng view count cho một bài post
+   * Sử dụng batch sync: buffer trong Redis, định kỳ sync vào DB
+   */
+  @Throttle({ default: { limit: 100, ttl: TIME_LIMIT_POST } })
+  @Post('view')
+  @ApiOperation({ summary: 'Increase view count for a post' })
+  @ApiQuery({ name: 'postId', description: 'Post ID to increase view' })
+  @ApiResponse({
+    status: 200,
+    description: 'View count increased successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  async increaseViewCount(@Query('postId') postId: string) {
+    return this.viewCountService.increaseViewCount(postId);
+  }
+
+  /**
+   * Lấy view count hiện tại từ Redis
+   */
+  @Throttle({ default: { limit: 100, ttl: TIME_LIMIT_POST } })
+  @Get('view')
+  @ApiOperation({ summary: 'Get current view count for a post' })
+  @ApiQuery({ name: 'postId', description: 'Post ID to get view count' })
+  @ApiResponse({
+    status: 200,
+    description: 'View count retrieved successfully',
+  })
+  async getCurrentViewCount(@Query('postId') postId: string) {
+    const viewCount = await this.viewCountService.getCurrentViewCount(postId);
+    return {
+      status: true,
+      data: { postId, viewCount },
+    };
   }
 }
