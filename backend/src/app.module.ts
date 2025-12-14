@@ -16,6 +16,7 @@ import { LoggerModule } from './logger/logger.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CommentModule } from './modules/comment/comment.module';
 import { PostModule } from './modules/post/post.module';
+import { ContactModule } from './modules/contact/contact.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,6 +33,7 @@ import { PostModule } from './modules/post/post.module';
     LoggerModule,
     CommentModule,
     PostModule,
+    ContactModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -52,4 +54,4 @@ import { PostModule } from './modules/post/post.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
