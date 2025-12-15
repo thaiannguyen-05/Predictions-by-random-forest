@@ -207,11 +207,10 @@ export class AuthService {
     return { status: true };
   }
 
-  async changePassword(req: Request, dto: ChangePasswordDto) {
-    const requestId = req.user?.id;
-    if (!requestId) throw new UnauthorizedException('Unauthorized');
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    if (!userId) throw new UnauthorizedException('Unauthorized');
 
-    const account = await this.findUserByAccessor(requestId as string);
+    const account = await this.findUserByAccessor(userId);
     if (!account) throw new NotFoundException('User not found');
 
     if (!account.hashedPassword) {

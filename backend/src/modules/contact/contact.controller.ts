@@ -9,33 +9,35 @@ import { ContactFormDto } from './dto/contact-form.dto';
 @ApiTags('Contact')
 @Controller('contact')
 export class ContactController {
-	constructor(private readonly contactService: ContactService) { }
+  constructor(private readonly contactService: ContactService) {}
 
-	/**
-	 * Gửi form liên hệ
-	 * POST /api/contact
-	 */
-	@Post()
-	@HttpCode(HttpStatus.OK)
-	@ApiOperation({ summary: 'Gửi form liên hệ' })
-	@ApiResponse({ status: 200, description: 'Gửi thành công' })
-	@ApiResponse({ status: 400, description: 'Dữ liệu không hợp lệ' })
-	@ApiResponse({ status: 500, description: 'Gửi email thất bại' })
-	async submitContactForm(
-		@Body() contactForm: ContactFormDto,
-	): Promise<{ success: boolean; message: string }> {
-		const result = await this.contactService.sendContactEmail(contactForm);
+  /**
+   * Gửi form liên hệ
+   * POST /api/contact
+   */
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Gửi form liên hệ' })
+  @ApiResponse({ status: 200, description: 'Gửi thành công' })
+  @ApiResponse({ status: 400, description: 'Dữ liệu không hợp lệ' })
+  @ApiResponse({ status: 500, description: 'Gửi email thất bại' })
+  async submitContactForm(
+    @Body() contactForm: ContactFormDto,
+  ): Promise<{ success: boolean; message: string }> {
+    const result = await this.contactService.sendContactEmail(contactForm);
 
-		if (result) {
-			return {
-				success: true,
-				message: 'Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ phản hồi trong 24 giờ.',
-			};
-		}
+    if (result) {
+      return {
+        success: true,
+        message:
+          'Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ phản hồi trong 24 giờ.',
+      };
+    }
 
-		return {
-			success: false,
-			message: 'Gửi tin nhắn thất bại. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua email.',
-		};
-	}
+    return {
+      success: false,
+      message:
+        'Gửi tin nhắn thất bại. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua email.',
+    };
+  }
 }

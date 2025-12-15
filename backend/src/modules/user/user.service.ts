@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
 import { ChangeDetailDto } from './dto/change-detail.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DateUtils } from '../../common/utils/string-to-date.utils';
@@ -45,16 +44,15 @@ export class UserService {
 
   /**
    * Cập nhật thông tin chi tiết của user
-   * @param req - Request object chứa thông tin user đang đăng nhập
+   * @param userId - ID của user đang đăng nhập
    * @param dto - DTO chứa các thông tin cần cập nhật
    * @returns User data sau khi cập nhật (không bao gồm password)
    * @throws UserNotFoundOrNotActiveException nếu user không tồn tại hoặc không active
    */
   async changeDetail(
-    req: Request,
+    userId: string,
     dto: ChangeDetailDto,
   ): Promise<UserResponse> {
-    const userId = req.user?.id;
     this.logger.log(`Changing user details for userId: ${userId}`, CONTEXT);
 
     if (!userId) {
@@ -108,12 +106,11 @@ export class UserService {
 
   /**
    * Lấy thông tin profile của user hiện tại
-   * @param req - Request object chứa thông tin user đang đăng nhập
+   * @param userId - ID của user đang đăng nhập
    * @returns User data (không bao gồm password)
    * @throws UserNotFoundOrNotActiveException nếu user không tồn tại hoặc không active
    */
-  async me(req: Request): Promise<UserResponse> {
-    const userId = req.user?.id;
+  async me(userId: string): Promise<UserResponse> {
     this.logger.debug(`Getting profile for userId: ${userId}`, CONTEXT);
 
     if (!userId) {

@@ -10,6 +10,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { QUEUE_EMAIL } from './common/type/common.type';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
@@ -66,6 +67,7 @@ async function bootstrap() {
   app.use('/payment/webhook', bodyParser.raw({ type: 'application/json' }));
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   app.enableCors({
     origin: 'http://localhost:3000', // frontend URL

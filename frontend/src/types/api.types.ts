@@ -1,10 +1,22 @@
 /**
  * API Response Types cho Frontend
- * Tương ứng với backend response interfaces
+ * Tương ứng với backend StandardResponse format
  */
 
 /**
- * Generic API response wrapper
+ * Standard API response wrapper (mới)
+ * Đây là format chuẩn từ ResponseInterceptor
+ */
+export interface StandardResponse<T> {
+	success: boolean;
+	data: T;
+	message: string;
+	timestamp: string;
+}
+
+/**
+ * Legacy API response wrapper (cũ - để tương thích ngược)
+ * @deprecated Sử dụng StandardResponse thay thế
  */
 export interface ApiResponse<T> {
 	status: boolean;
@@ -13,7 +25,24 @@ export interface ApiResponse<T> {
 }
 
 /**
- * Paginated response với cursor-based pagination
+ * Paginated data wrapper
+ */
+export interface PaginatedData<T> {
+	items: T[];
+	cursor: string | null;
+	page: number;
+	hasMore: boolean;
+	total?: number;
+}
+
+/**
+ * Standard paginated response
+ */
+export type StandardPaginatedResponse<T> = StandardResponse<PaginatedData<T>>;
+
+/**
+ * Legacy paginated response (cũ)
+ * @deprecated Sử dụng StandardPaginatedResponse thay thế
  */
 export interface PaginatedResponse<T> {
 	status: boolean;
@@ -97,9 +126,9 @@ export interface CommentData {
 }
 
 /**
- * Feed response từ /post/feed API
+ * Feed response data
  */
-export interface FeedResponse {
+export interface FeedResponseData {
 	post: PostData[];
 	cursor: string | null;
 	page: number;
@@ -107,9 +136,9 @@ export interface FeedResponse {
 }
 
 /**
- * Comments response từ /comment/loadingPostComments API
+ * Comments response data
  */
-export interface CommentsResponse {
+export interface CommentsResponseData {
 	comments: CommentData[];
 	cursor: string | null;
 	page: number;

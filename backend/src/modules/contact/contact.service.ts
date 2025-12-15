@@ -8,108 +8,108 @@ import { ContactFormDto } from './dto/contact-form.dto';
  */
 @Injectable()
 export class ContactService {
-	private readonly logger = new Logger(ContactService.name);
-	private transporter: nodemailer.Transporter;
-	private readonly adminEmail: string;
+  private readonly logger = new Logger(ContactService.name);
+  private transporter: nodemailer.Transporter;
+  private readonly adminEmail: string;
 
-	constructor(private readonly configService: ConfigService) {
-		this.transporter = nodemailer.createTransport({
-			service: 'gmail',
-			auth: {
-				user: configService.getOrThrow<string>('EMAIL_USER'),
-				pass: configService.getOrThrow<string>('EMAIL_PASS'),
-			},
-		});
+  constructor(private readonly configService: ConfigService) {
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: configService.getOrThrow<string>('EMAIL_USER'),
+        pass: configService.getOrThrow<string>('EMAIL_PASS'),
+      },
+    });
 
-		// Email admin nhận thông báo liên hệ
-		this.adminEmail = 'thaianthedev@gmail.com';
-	}
+    // Email admin nhận thông báo liên hệ
+    this.adminEmail = 'thaianthedev@gmail.com';
+  }
 
-	/**
-	 * Gửi email liên hệ từ form đến admin
-	 * @param contactForm - Dữ liệu từ form liên hệ
-	 * @returns true nếu gửi thành công
-	 */
-	async sendContactEmail(contactForm: ContactFormDto): Promise<boolean> {
-		try {
-			const { name, email, phone, subject, message } = contactForm;
+  /**
+   * Gửi email liên hệ từ form đến admin
+   * @param contactForm - Dữ liệu từ form liên hệ
+   * @returns true nếu gửi thành công
+   */
+  async sendContactEmail(contactForm: ContactFormDto): Promise<boolean> {
+    try {
+      const { name, email, phone, subject, message } = contactForm;
 
-			const htmlContent = this.buildContactEmailHtml({
-				name,
-				email,
-				phone,
-				subject,
-				message,
-				timestamp: new Date().toLocaleString('vi-VN', {
-					timeZone: 'Asia/Ho_Chi_Minh',
-				}),
-			});
+      const htmlContent = this.buildContactEmailHtml({
+        name,
+        email,
+        phone,
+        subject,
+        message,
+        timestamp: new Date().toLocaleString('vi-VN', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+        }),
+      });
 
-			const mailOptions = {
-				from: `StockDN Contact Form <${this.configService.getOrThrow<string>('EMAIL_USER')}>`,
-				to: this.adminEmail,
-				subject: `[Liên Hệ StockDN] ${subject} - ${name}`,
-				html: htmlContent,
-				replyTo: email,
-			};
+      const mailOptions = {
+        from: `StockDN Contact Form <${this.configService.getOrThrow<string>('EMAIL_USER')}>`,
+        to: this.adminEmail,
+        subject: `[Liên Hệ StockDN] ${subject} - ${name}`,
+        html: htmlContent,
+        replyTo: email,
+      };
 
-			const info = await this.transporter.sendMail(mailOptions);
-			const success = !!(
-				info &&
-				(Array.isArray(info.accepted)
-					? info.accepted.length > 0
-					: info.messageId)
-			);
+      const info = await this.transporter.sendMail(mailOptions);
+      const success = !!(
+        info &&
+        (Array.isArray(info.accepted)
+          ? info.accepted.length > 0
+          : info.messageId)
+      );
 
-			if (success) {
-				this.logger.log(`Contact email sent successfully from: ${email}`);
-				// Gửi email xác nhận cho người gửi
-				await this.sendConfirmationEmail(email, name);
-			}
+      if (success) {
+        this.logger.log(`Contact email sent successfully from: ${email}`);
+        // Gửi email xác nhận cho người gửi
+        await this.sendConfirmationEmail(email, name);
+      }
 
-			return success;
-		} catch (error) {
-			this.logger.error('Failed to send contact email:', error);
-			return false;
-		}
-	}
+      return success;
+    } catch (error) {
+      this.logger.error('Failed to send contact email:', error);
+      return false;
+    }
+  }
 
-	/**
-	 * Gửi email xác nhận cho người dùng đã gửi form liên hệ
-	 */
-	private async sendConfirmationEmail(
-		toEmail: string,
-		userName: string,
-	): Promise<void> {
-		try {
-			const htmlContent = this.buildConfirmationEmailHtml(userName);
+  /**
+   * Gửi email xác nhận cho người dùng đã gửi form liên hệ
+   */
+  private async sendConfirmationEmail(
+    toEmail: string,
+    userName: string,
+  ): Promise<void> {
+    try {
+      const htmlContent = this.buildConfirmationEmailHtml(userName);
 
-			const mailOptions = {
-				from: `StockDN <${this.configService.getOrThrow<string>('EMAIL_USER')}>`,
-				to: toEmail,
-				subject: '[StockDN] Cảm ơn bạn đã liên hệ!',
-				html: htmlContent,
-			};
+      const mailOptions = {
+        from: `StockDN <${this.configService.getOrThrow<string>('EMAIL_USER')}>`,
+        to: toEmail,
+        subject: '[StockDN] Cảm ơn bạn đã liên hệ!',
+        html: htmlContent,
+      };
 
-			await this.transporter.sendMail(mailOptions);
-			this.logger.log(`Confirmation email sent to: ${toEmail}`);
-		} catch (error) {
-			this.logger.warn('Failed to send confirmation email:', error);
-		}
-	}
+      await this.transporter.sendMail(mailOptions);
+      this.logger.log(`Confirmation email sent to: ${toEmail}`);
+    } catch (error) {
+      this.logger.warn('Failed to send confirmation email:', error);
+    }
+  }
 
-	/**
-	 * Tạo HTML template cho email liên hệ gửi đến admin
-	 */
-	private buildContactEmailHtml(data: {
-		name: string;
-		email: string;
-		phone?: string;
-		subject: string;
-		message: string;
-		timestamp: string;
-	}): string {
-		return `
+  /**
+   * Tạo HTML template cho email liên hệ gửi đến admin
+   */
+  private buildContactEmailHtml(data: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject: string;
+    message: string;
+    timestamp: string;
+  }): string {
+    return `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -197,13 +197,13 @@ export class ContactService {
 </body>
 </html>
     `.trim();
-	}
+  }
 
-	/**
-	 * Tạo HTML template cho email xác nhận gửi đến người dùng
-	 */
-	private buildConfirmationEmailHtml(userName: string): string {
-		return `
+  /**
+   * Tạo HTML template cho email xác nhận gửi đến người dùng
+   */
+  private buildConfirmationEmailHtml(userName: string): string {
+    return `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -267,5 +267,5 @@ export class ContactService {
 </body>
 </html>
     `.trim();
-	}
+  }
 }
