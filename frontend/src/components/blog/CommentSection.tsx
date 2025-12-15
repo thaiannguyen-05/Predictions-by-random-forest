@@ -48,17 +48,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 					}
 				);
 
-				const data = await res.json();
+				const json = await res.json();
 
-				if (data.status) {
+				// Handle cả legacy (status) và new (success) format
+				const isSuccess = json.success ?? json.status;
+				const responseData = json.data;
+
+				if (isSuccess && responseData) {
 					if (reset) {
-						setComments(data.data.comments || []);
+						setComments(responseData.comments || []);
 					} else {
-						setComments((prev) => [...prev, ...(data.data.comments || [])]);
+						setComments((prev) => [...prev, ...(responseData.comments || [])]);
 					}
-					setHasMore(data.data.hasMore);
-					setCursor(data.data.cursor);
-					setPage(data.data.page);
+					setHasMore(responseData.hasMore);
+					setCursor(responseData.cursor);
+					setPage(responseData.page);
 				}
 			} catch (error) {
 				console.error("Failed to fetch comments:", error);
@@ -95,12 +99,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 				postId,
 			});
 
-			const data = await res.json();
+			const json = await res.json();
 
-			if (data.status) {
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+			const responseData = json.data;
+
+			if (isSuccess && responseData) {
 				// Add new comment to the list with user info
 				const createdComment: CommentData = {
-					...data.data.newComment,
+					...responseData.newComment,
 					user: {
 						id: user.id,
 						username: user.name,
@@ -112,7 +120,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 				setCommentCount((c) => c + 1);
 				toast.success("Đã thêm bình luận!");
 			} else {
-				toast.error(data.message || "Không thể thêm bình luận");
+				toast.error(json.message || "Không thể thêm bình luận");
 			}
 		} catch (error) {
 			console.error("Failed to create comment:", error);
@@ -127,14 +135,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 		try {
 			const res = await api.delete(`/comment/delete?commentId=${commentId}`);
-			const data = await res.json();
+			const json = await res.json();
 
-			if (data.status) {
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+
+			if (isSuccess) {
 				setComments((prev) => prev.filter((c) => c.id !== commentId));
 				setCommentCount((c) => c - 1);
 				toast.success("Đã xóa bình luận!");
 			} else {
-				toast.error(data.message || "Không thể xóa bình luận");
+				toast.error(json.message || "Không thể xóa bình luận");
 			}
 		} catch (error) {
 			console.error("Failed to delete comment:", error);

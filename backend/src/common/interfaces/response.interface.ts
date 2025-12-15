@@ -1,20 +1,43 @@
 /**
- * Generic API response interface
+ * Standard API Response Interfaces
+ * Được sử dụng bởi ResponseInterceptor để chuẩn hóa response format
  */
-export interface ApiResponse<T> {
-  status: boolean;
+
+/**
+ * Standard success response format
+ */
+export interface StandardResponse<T> {
+  success: boolean;
   data: T;
+  message: string;
+  timestamp: string;
 }
 
 /**
- * Paginated response interface
+ * Standard error response format
  */
-export interface PaginatedResponse<T> {
-  status: boolean;
-  data: {
-    items: T[];
-    cursor: string | null;
-    page: number;
-    hasMore: boolean;
+export interface StandardErrorResponse {
+  success: boolean;
+  error: {
+    code: string;
+    message: string;
+    details?: unknown;
   };
+  timestamp: string;
 }
+
+/**
+ * Paginated data wrapper
+ */
+export interface PaginatedData<T> {
+  items: T[];
+  cursor: string | null;
+  page: number;
+  hasMore: boolean;
+  total?: number;
+}
+
+/**
+ * Standard paginated response
+ */
+export type StandardPaginatedResponse<T> = StandardResponse<PaginatedData<T>>;

@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Request } from 'express';
 import { isUUID } from '../../../common/utils/uuid.utils';
 import { MyLogger } from '../../../logger/logger.service';
 import { PrismaService } from '../../../prisma/prisma.service';
@@ -77,17 +76,16 @@ export class PostService {
 
   /**
    * Tạo bài post mới
-   * @param req - Request object chứa thông tin user
+   * @param userId - ID của user đang đăng nhập
    * @param data - Dữ liệu bài post
    * @returns Post được tạo
    */
   async createPost(
-    req: Request,
+    userId: string,
     data: CreatePostDto,
   ): Promise<PostResponse<{ post: unknown }>> {
-    const userId = req.user?.id;
     this.logger.log(`Creating post for userId: ${userId}`, CONTEXT);
-    const availableUser = await this.getAvailableUser(userId as string);
+    const availableUser = await this.getAvailableUser(userId);
 
     const post = await this.prismaService.post.create({
       data: {
@@ -107,19 +105,18 @@ export class PostService {
 
   /**
    * Cập nhật bài post
-   * @param req - Request object
+   * @param userId - ID của user đang đăng nhập
    * @param postId - ID của post cần update
    * @param data - Dữ liệu cập nhật
    * @returns Post sau khi update
    */
   async updatePost(
-    req: Request,
+    userId: string,
     postId: string,
     data: CreatePostDto,
   ): Promise<PostResponse<{ post: unknown }>> {
-    const userId = req.user?.id;
     this.logger.log(`Updating post: ${postId} by userId: ${userId}`, CONTEXT);
-    const availableUser = await this.getAvailableUser(userId as string);
+    const availableUser = await this.getAvailableUser(userId);
 
     const availablePost = await this.prismaService.post.findUnique({
       where: { id: postId },
@@ -148,17 +145,16 @@ export class PostService {
 
   /**
    * Xóa bài post
-   * @param req - Request object
+   * @param userId - ID của user đang đăng nhập
    * @param postId - ID của post cần xóa
    * @returns Post đã xóa
    */
   async deletePost(
-    req: Request,
+    userId: string,
     postId: string,
   ): Promise<PostResponse<{ post: unknown }>> {
-    const userId = req.user?.id;
     this.logger.log(`Deleting post: ${postId} by userId: ${userId}`, CONTEXT);
-    const availableUser = await this.getAvailableUser(userId as string);
+    const availableUser = await this.getAvailableUser(userId);
 
     const availablePost = await this.prismaService.post.findUnique({
       where: { id: postId },
@@ -325,13 +321,12 @@ export class PostService {
     };
   }
 
-  async likePost(req: Request, postId: string) {
-    const userId = req.user?.id;
+  async likePost(userId: string, postId: string) {
     this.logger.log(
       `Like/Unlike post: ${postId} by userId: ${userId}`,
       CONTEXT,
     );
-    const availableUser = await this.getAvailableUser(userId as string);
+    const availableUser = await this.getAvailableUser(userId);
 
     const availablePost = await this.prismaService.post.findUnique({
       where: { id: postId },

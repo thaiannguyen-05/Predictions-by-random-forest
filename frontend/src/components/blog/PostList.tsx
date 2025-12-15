@@ -48,10 +48,14 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 
 		try {
 			const res = await api.post(`${API_ENDPOINTS.POST.VIEW_INCREMENT}?postId=${postId}`, {});
-			const data = await res.json();
+			const json = await res.json();
 
-			if (data.status && data.postId) {
-				const viewData = data as ViewCountResponse;
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+			const responseData = json.data || json;
+
+			if (isSuccess && responseData.postId) {
+				const viewData = responseData as ViewCountResponse;
 				setViewCounts((prev) => ({
 					...prev,
 					[viewData.postId]: viewData.viewCount,
@@ -76,10 +80,14 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 				cursor: currentCursor,
 			});
 
-			const data = await res.json();
+			const json = await res.json();
 
-			if (data.status) {
-				const newPosts = data.data.post;
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+			const responseData = json.data;
+
+			if (isSuccess && responseData) {
+				const newPosts = responseData.post;
 
 				if (reset) {
 					setPosts(newPosts);
@@ -108,9 +116,9 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 					...newViewCounts,
 				}));
 
-				setHasMore(data.data.hasMore);
-				setCursor(data.data.cursor);
-				setPage(data.data.page);
+				setHasMore(responseData.hasMore);
+				setCursor(responseData.cursor);
+				setPage(responseData.page);
 			}
 		} catch (error) {
 			console.error("Failed to fetch posts:", error);
@@ -144,9 +152,12 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 
 		try {
 			const res = await api.post(`${API_ENDPOINTS.POST.LIKE}?postId=${postId}`, {});
-			const data = await res.json();
+			const json = await res.json();
 
-			if (!data.status) {
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+
+			if (!isSuccess) {
 				// Revert on error
 				setLikeStates((prev) => ({
 					...prev,

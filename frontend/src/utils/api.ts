@@ -1,6 +1,9 @@
 /**
  * API Utility with automatic token refresh on 401
+ * Hỗ trợ cả legacy format và StandardResponse format mới
  */
+
+import type { StandardResponse } from '@/types/api.types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -10,14 +13,14 @@ let refreshSubscribers: Array<(token: string) => void> = [];
 /**
  * Subscribe to token refresh completion
  */
-function subscribeTokenRefresh(cb: (token: string) => void) {
+function subscribeTokenRefresh(cb: (token: string) => void): void {
 	refreshSubscribers.push(cb);
 }
 
 /**
  * Notify all subscribers with new token
  */
-function onTokenRefreshed(token: string) {
+function onTokenRefreshed(token: string): void {
 	refreshSubscribers.forEach((cb) => cb(token));
 	refreshSubscribers = [];
 }
@@ -29,7 +32,7 @@ async function refreshAccessToken(): Promise<string | null> {
 	try {
 		const response = await fetch(`${API_BASE}/auth/refresh-token`, {
 			method: 'PATCH',
-			credentials: 'include', // Important: send cookies (session_id, refresh_token)
+			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -41,9 +44,11 @@ async function refreshAccessToken(): Promise<string | null> {
 
 		const data = await response.json();
 
-		if (data.tokens?.accessToken) {
-			localStorage.setItem('accessToken', data.tokens.accessToken);
-			return data.tokens.accessToken;
+		// Handle cả legacy và new format
+		const tokens = data.data?.tokens || data.tokens;
+		if (tokens?.accessToken) {
+			localStorage.setItem('accessToken', tokens.accessToken);
+			return tokens.accessToken;
 		}
 
 		return null;
@@ -63,10 +68,8 @@ export async function apiFetch(
 	const token = localStorage.getItem('accessToken');
 	const fullUrl = url.startsWith('/') ? `${API_BASE}${url}` : url;
 
-	// Check if body is FormData - don't set Content-Type for FormData
 	const isFormData = options.body instanceof FormData;
 
-	// Add authorization header if token exists
 	const headers: Record<string, string> = {
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(options.headers as Record<string, string>),
@@ -76,14 +79,12 @@ export async function apiFetch(
 		headers['Authorization'] = `Bearer ${token}`;
 	}
 
-	// Make the initial request
 	let response = await fetch(fullUrl, {
 		...options,
 		headers,
-		credentials: 'include', // Important for cookies
+		credentials: 'include',
 	});
 
-	// If 401 and not already refreshing, try to refresh token
 	if (response.status === 401 && token) {
 		if (!isRefreshing) {
 			isRefreshing = true;
@@ -91,11 +92,9 @@ export async function apiFetch(
 			const newToken = await refreshAccessToken();
 
 			if (newToken) {
-				// Token refreshed successfully
 				isRefreshing = false;
 				onTokenRefreshed(newToken);
 
-				// Retry the original request with new token
 				headers['Authorization'] = `Bearer ${newToken}`;
 				response = await fetch(fullUrl, {
 					...options,
@@ -103,21 +102,18 @@ export async function apiFetch(
 					credentials: 'include',
 				});
 			} else {
-				// Refresh failed - logout user
 				isRefreshing = false;
 				localStorage.removeItem('accessToken');
 				window.location.href = '/auth/login';
 				throw new Error('Session expired. Please login again.');
 			}
 		} else {
-			// Already refreshing, wait for it to complete
 			const newToken = await new Promise<string>((resolve) => {
-				subscribeTokenRefresh((token: string) => {
-					resolve(token);
+				subscribeTokenRefresh((refreshedToken: string) => {
+					resolve(refreshedToken);
 				});
 			});
 
-			// Retry with new token
 			headers['Authorization'] = `Bearer ${newToken}`;
 			response = await fetch(fullUrl, {
 				...options,
@@ -131,13 +127,82 @@ export async function apiFetch(
 }
 
 /**
+ * Parse API response và chuẩn hóa về format thống nhất
+ * Hỗ trợ cả legacy { status, data } và new { success, data }
+ */
+export async function parseApiResponse<T>(
+	response: Response
+): Promise<{ success: boolean; data: T; message: string }> {
+	const json = await response.json();
+
+	// New format: { success, data, message, timestamp }
+	if (typeof json.success === 'boolean') {
+		return {
+			success: json.success,
+			data: json.data as T,
+			message: json.message || '',
+		};
+	}
+
+	// Legacy format: { status, data, message }
+	if (typeof json.status === 'boolean') {
+		return {
+			success: json.status,
+			data: json.data as T,
+			message: json.message || '',
+		};
+	}
+
+	// Direct data (no wrapper)
+	return {
+		success: response.ok,
+		data: json as T,
+		message: '',
+	};
+}
+
+/**
+ * Typed API fetch with automatic response parsing
+ */
+export async function apiRequest<T>(
+	url: string,
+	options: RequestInit = {}
+): Promise<StandardResponse<T>> {
+	const response = await apiFetch(url, options);
+	const json = await response.json();
+
+	// Nếu đã có format chuẩn
+	if (typeof json.success === 'boolean' && 'timestamp' in json) {
+		return json as StandardResponse<T>;
+	}
+
+	// Chuyển đổi legacy format
+	if (typeof json.status === 'boolean') {
+		return {
+			success: json.status,
+			data: json.data as T,
+			message: json.message || (json.status ? 'Success' : 'Failed'),
+			timestamp: new Date().toISOString(),
+		};
+	}
+
+	// Wrap direct data
+	return {
+		success: response.ok,
+		data: json as T,
+		message: response.ok ? 'Success' : 'Failed',
+		timestamp: new Date().toISOString(),
+	};
+}
+
+/**
  * Convenience methods
  */
 export const api = {
-	get: (url: string, options?: RequestInit) =>
+	get: (url: string, options?: RequestInit): Promise<Response> =>
 		apiFetch(url, { ...options, method: 'GET' }),
 
-	post: (url: string, body?: unknown, options?: RequestInit) => {
+	post: (url: string, body?: unknown, options?: RequestInit): Promise<Response> => {
 		const isFormData = body instanceof FormData;
 		return apiFetch(url, {
 			...options,
@@ -147,22 +212,54 @@ export const api = {
 		});
 	},
 
-	put: (url: string, body?: unknown, options?: RequestInit) =>
+	put: (url: string, body?: unknown, options?: RequestInit): Promise<Response> =>
 		apiFetch(url, {
 			...options,
 			method: 'PUT',
 			body: body ? JSON.stringify(body) : undefined,
 		}),
 
-	patch: (url: string, body?: unknown, options?: RequestInit) =>
+	patch: (url: string, body?: unknown, options?: RequestInit): Promise<Response> =>
 		apiFetch(url, {
 			...options,
 			method: 'PATCH',
 			body: body ? JSON.stringify(body) : undefined,
 		}),
 
-	delete: (url: string, options?: RequestInit) =>
+	delete: (url: string, options?: RequestInit): Promise<Response> =>
 		apiFetch(url, { ...options, method: 'DELETE' }),
+};
+
+/**
+ * Typed API methods với automatic parsing
+ */
+export const typedApi = {
+	get: <T>(url: string, options?: RequestInit): Promise<StandardResponse<T>> =>
+		apiRequest<T>(url, { ...options, method: 'GET' }),
+
+	post: <T>(url: string, body?: unknown, options?: RequestInit): Promise<StandardResponse<T>> =>
+		apiRequest<T>(url, {
+			...options,
+			method: 'POST',
+			body: body ? JSON.stringify(body) : undefined,
+		}),
+
+	put: <T>(url: string, body?: unknown, options?: RequestInit): Promise<StandardResponse<T>> =>
+		apiRequest<T>(url, {
+			...options,
+			method: 'PUT',
+			body: body ? JSON.stringify(body) : undefined,
+		}),
+
+	patch: <T>(url: string, body?: unknown, options?: RequestInit): Promise<StandardResponse<T>> =>
+		apiRequest<T>(url, {
+			...options,
+			method: 'PATCH',
+			body: body ? JSON.stringify(body) : undefined,
+		}),
+
+	delete: <T>(url: string, options?: RequestInit): Promise<StandardResponse<T>> =>
+		apiRequest<T>(url, { ...options, method: 'DELETE' }),
 };
 
 export default api;

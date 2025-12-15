@@ -36,15 +36,18 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 				file: [], // Hiện tại chưa làm upload file thực tế
 			});
 
-			const data = await res.json();
+			const json = await res.json();
 
-			if (data.status) {
+			// Handle cả legacy (status) và new (success) format
+			const isSuccess = json.success ?? json.status;
+
+			if (isSuccess) {
 				toast.success("Đăng bài thành công!");
 				setContent("");
 				setTitle("");
 				onPostCreated(); // Refresh list
 			} else {
-				toast.error(data.message || "Có lỗi xảy ra");
+				toast.error(json.message || "Có lỗi xảy ra");
 			}
 		} catch (error) {
 			console.error(error);
