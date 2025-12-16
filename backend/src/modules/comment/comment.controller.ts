@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -17,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import type { Request } from 'express';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
 import { IsAuthorCommentGuard } from './isAuthorComment.guard';
 import { TIME_LIMIT_POST } from '../../common/type/common.type';
+import { User } from '../../common/decorator/user.decorator';
 
 /**
  * Controller xử lý các request liên quan đến Comment
@@ -45,8 +44,8 @@ export class CommentController {
   @ApiResponse({ status: 400, description: 'Bad request - validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Post not found' })
-  create(@Req() req: Request, @Body() dto: CreateCommentDto) {
-    return this.commentService.create(req, dto);
+  create(@User('id') userId: string, @Body() dto: CreateCommentDto) {
+    return this.commentService.create(userId, dto);
   }
 
   /**
@@ -72,8 +71,8 @@ export class CommentController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
   @ApiResponse({ status: 404, description: 'Comment not found' })
-  update(@Req() req: Request, @Body() dto: UpdateCommentDto) {
-    return this.commentService.update(req, dto);
+  update(@User('id') userId: string, @Body() dto: UpdateCommentDto) {
+    return this.commentService.update(userId, dto);
   }
 
   /**
@@ -87,8 +86,8 @@ export class CommentController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
   @ApiResponse({ status: 404, description: 'Comment not found' })
-  delete(@Req() req: Request, @Query('commentId') commentId: string) {
-    return this.commentService.remove(req, commentId);
+  delete(@User('id') userId: string, @Query('commentId') commentId: string) {
+    return this.commentService.remove(userId, commentId);
   }
 
   /**

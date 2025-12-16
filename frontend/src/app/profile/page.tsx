@@ -108,18 +108,21 @@ export default function ProfilePage() {
 				formData.append('originalName', originalName);
 
 				const res = await api.post('/user/upload-avatar-chunk', formData);
-				const data = await res.json();
+				const rawData = await res.json();
 
 				if (!res.ok) {
-					throw new Error(data.message || `Upload chunk ${i} thất bại`);
+					throw new Error(rawData.message || `Upload chunk ${i} thất bại`);
 				}
+
+				// Parse response: StandardResponse { data: { status, url } } hoặc direct { status, url }
+				const responseData = rawData.data || rawData;
 
 				// Update progress
 				setStatus({ type: null, message: `Đang tải ảnh (${i + 1}/${totalChunks})...` });
 
 				// Check if all chunks merged and complete
-				if (data.status === 'complete' && data.url) {
-					finalUrl = data.url;
+				if (responseData.status === 'complete' && responseData.url) {
+					finalUrl = responseData.url;
 				}
 			}
 
@@ -139,12 +142,14 @@ export default function ProfilePage() {
 		setStatus({ type: null, message: '' });
 
 		try {
-			const res = await api.put('/user/change-detail-user', {
-				firstName: formData.firstName,
-				lastName: formData.lastName,
-				phoneNumber: formData.phoneNumber,
-				avtUrl: formData.avtUrl
-			});
+			// Build payload, chỉ gửi field có giá trị (filter empty string)
+			const payload: Record<string, string> = {};
+			if (formData.firstName.trim()) payload.firstName = formData.firstName.trim();
+			if (formData.lastName.trim()) payload.lastName = formData.lastName.trim();
+			if (formData.phoneNumber.trim()) payload.phoneNumber = formData.phoneNumber.trim();
+			if (formData.avtUrl.trim()) payload.avtUrl = formData.avtUrl.trim();
+
+			const res = await api.put('/user/change-detail-user', payload);
 
 			if (res.ok) {
 				await refreshUser();

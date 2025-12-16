@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Request } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MyLogger } from '../../logger/logger.service';
 import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
@@ -86,15 +85,14 @@ export class CommentService {
 
   /**
    * Tạo comment mới cho một post
-   * @param req - Request object
+   * @param userId - ID của user
    * @param dto - DTO chứa content và postId
    * @returns Comment được tạo
    */
   async create(
-    req: Request,
+    userId: string,
     dto: CreateCommentDto,
   ): Promise<CommentResponse<{ newComment: unknown }>> {
-    const userId = req.user?.id as string;
     const availableUser = await this.getAvailableUser(userId);
 
     const availablePost = await this.prismaService.post.findUnique({
@@ -147,15 +145,14 @@ export class CommentService {
 
   /**
    * Cập nhật comment
-   * @param req - Request object
+   * @param userId - ID của user
    * @param updateCommentDto - DTO chứa thông tin cập nhật
    * @returns Comment sau khi update
    */
   async update(
-    req: Request,
+    userId: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<CommentResponse<{ updatedComment: unknown }>> {
-    const userId = req.user?.id as string;
     const availableUser = await this.getAvailableUser(userId);
 
     const availableComment = await this.prismaService.comment.findUnique({
@@ -187,15 +184,14 @@ export class CommentService {
 
   /**
    * Xóa comment
-   * @param req - Request object
+   * @param userId - ID của user
    * @param commentId - ID của comment cần xóa
    * @returns Comment đã xóa
    */
   async remove(
-    req: Request,
+    userId: string,
     commentId: string,
   ): Promise<CommentResponse<{ deletedComment: unknown }>> {
-    const userId = req.user?.id as string;
     await this.getAvailableUser(userId);
 
     const availableComment = await this.prismaService.comment.findUnique({

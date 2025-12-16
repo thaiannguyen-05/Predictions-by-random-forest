@@ -7,9 +7,9 @@ import { ContactService } from './contact.service';
  * Module xử lý liên hệ/contact form
  */
 @Module({
-	imports: [ConfigModule],
-	controllers: [ContactController],
-	providers: [ContactService],
-	exports: [ContactService],
+  imports: [ConfigModule],
+  controllers: [ContactController],
+  providers: [ContactService],
+  exports: [ContactService],
 })
-export class ContactModule { }
+export class ContactModule {}

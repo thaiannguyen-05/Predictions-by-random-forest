@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -17,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import type { Request } from 'express';
 import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
 import { PostService } from './service/post.service';
 import { ViewCountService } from './service/viewCount.service';
 import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { TIME_LIMIT_POST } from '../../common/type/common.type';
+import { User } from '../../common/decorator/user.decorator';
 
 /**
  * Controller xử lý các request liên quan đến Post
@@ -48,8 +47,8 @@ export class PostController {
   @ApiResponse({ status: 201, description: 'Post created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request - validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async createPost(@Req() req: Request, @Body() dto: CreatePostDto) {
-    return this.postService.createPost(req, dto);
+  async createPost(@User('id') userId: string, @Body() dto: CreatePostDto) {
+    return this.postService.createPost(userId, dto);
   }
 
   /**
@@ -66,11 +65,11 @@ export class PostController {
   @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   async updatePost(
-    @Req() req: Request,
+    @User('id') userId: string,
     @Query('postId') postId: string,
     @Body() dto: CreatePostDto,
   ) {
-    return this.postService.updatePost(req, postId, dto);
+    return this.postService.updatePost(userId, postId, dto);
   }
 
   /**
@@ -85,8 +84,11 @@ export class PostController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not the author' })
   @ApiResponse({ status: 404, description: 'Post not found' })
-  async deletePost(@Req() req: Request, @Query('postId') postId: string) {
-    return this.postService.deletePost(req, postId);
+  async deletePost(
+    @User('id') userId: string,
+    @Query('postId') postId: string,
+  ) {
+    return this.postService.deletePost(userId, postId);
   }
 
   /**
@@ -139,8 +141,8 @@ export class PostController {
   @ApiQuery({ name: 'postId', description: 'Post ID to like' })
   @ApiResponse({ status: 200, description: 'Post liked successfully' })
   @ApiResponse({ status: 404, description: 'Post not found' })
-  async likePost(@Req() req: Request, @Query('postId') postId: string) {
-    return this.postService.likePost(req, postId);
+  async likePost(@User('id') userId: string, @Query('postId') postId: string) {
+    return this.postService.likePost(userId, postId);
   }
 
   /**

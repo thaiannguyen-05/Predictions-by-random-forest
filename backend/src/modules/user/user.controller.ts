@@ -3,7 +3,6 @@ import {
   Controller,
   Post,
   Put,
-  Req,
   UploadedFile,
   UseInterceptors,
   BadRequestException,
@@ -18,8 +17,8 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import type { Request } from 'express';
 import { ChangeDetailDto } from './dto/change-detail.dto';
+import { User } from '../../common/decorator/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
@@ -210,8 +209,11 @@ export class UserController {
     status: 400,
     description: 'Bad request - validation error',
   })
-  async changeDetalUser(@Req() req: Request, @Body() dto: ChangeDetailDto) {
-    return this.userService.changeDetail(req, dto);
+  async changeDetalUser(
+    @User('id') userId: string,
+    @Body() dto: ChangeDetailDto,
+  ) {
+    return this.userService.changeDetail(userId, dto);
   }
 
   @Get('me')
@@ -251,7 +253,7 @@ export class UserController {
     status: 404,
     description: 'User not found or not active',
   })
-  async getMe(@Req() req: Request) {
-    return this.userService.me(req);
+  async getMe(@User('id') userId: string) {
+    return this.userService.me(userId);
   }
 }

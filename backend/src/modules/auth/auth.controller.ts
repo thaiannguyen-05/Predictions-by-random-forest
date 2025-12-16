@@ -30,6 +30,7 @@ import { FacebookOAuth2User, GoogleOAuth2User } from './auth.interface';
 import { Public } from '../../common/decorator/public.decorator';
 import { Cookies } from '../../common/decorator/cookie.decoratore';
 import { AUTH_CONSTANT } from './auth.constants';
+import { User } from '../../common/decorator/user.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -162,10 +163,10 @@ export class AuthController {
     description: 'Unauthorized - invalid or missing token',
   })
   async changePassword(
-    @Req() req: express.Request,
+    @User('id') userId: string,
     @Body() dto: ChangePasswordDto,
   ) {
-    return this.authService.changePassword(req, dto);
+    return this.authService.changePassword(userId, dto);
   }
 
   @Patch('refresh-token')
