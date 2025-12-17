@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNotEmpty, MaxLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class ResponseMessageDto {
   @ApiProperty({
     description: 'User prompt/question for AI',
@@ -29,7 +29,20 @@ export class ResponseMessageDto {
   @IsString()
   userId: string;
 
+  @ApiPropertyOptional({
+    description: 'Employee ID for employee chat sessions',
+    example: 'employee-uuid',
+  })
+  @IsOptional()
+  @IsString({ message: 'Employee ID must be a string' })
   employeeId?: string;
 
+  @ApiPropertyOptional({
+    description: 'Additional payload data for the message',
+    example: '{"action": "recommend", "productId": "123"}',
+    maxLength: 5000,
+  })
+  @IsOptional()
+  @IsString({ message: 'Payload must be a string' })
   payload?: string;
 }
