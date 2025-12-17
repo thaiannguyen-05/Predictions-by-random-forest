@@ -31,6 +31,7 @@ import { Public } from '../../common/decorator/public.decorator';
 import { Cookies } from '../../common/decorator/cookie.decoratore';
 import { User } from '../../common/decorator/user.decorator';
 import { AUTH_CONSTANT } from './auth.constants';
+import { User } from '../../common/decorator/user.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')

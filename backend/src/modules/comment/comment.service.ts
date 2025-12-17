@@ -85,7 +85,7 @@ export class CommentService {
 
   /**
    * Tạo comment mới cho một post
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param dto - DTO chứa content và postId
    * @returns Comment được tạo
    */
@@ -145,7 +145,7 @@ export class CommentService {
 
   /**
    * Cập nhật comment
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param updateCommentDto - DTO chứa thông tin cập nhật
    * @returns Comment sau khi update
    */
@@ -184,7 +184,7 @@ export class CommentService {
 
   /**
    * Xóa comment
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param commentId - ID của comment cần xóa
    * @returns Comment đã xóa
    */

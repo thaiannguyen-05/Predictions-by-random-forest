@@ -7,6 +7,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 /**
@@ -50,6 +51,7 @@ export class ChangeDetailDto {
     example: '+84901234567',
   })
   @IsOptional()
+  @ValidateIf((o) => o.phoneNumber !== '')
   @IsString()
   @IsPhoneNumber()
   phoneNumber?: string;
@@ -72,7 +74,15 @@ export class ChangeDetailDto {
     format: 'url',
   })
   @IsOptional()
+  @ValidateIf((o) => o.avtUrl !== '')
   @IsString()
-  @IsUrl()
+  @IsUrl(
+    {
+      protocols: ['http', 'https'],
+      require_protocol: true,
+      require_tld: false, // Cho phép localhost
+    },
+    { message: 'avtUrl must be a valid URL address' },
+  )
   avtUrl?: string;
 }

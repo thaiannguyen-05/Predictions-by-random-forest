@@ -11,34 +11,64 @@ export interface AuthenticatedUser {
 }
 
 /**
- * Custom decorator để lấy thông tin user đã xác thực
- * @param data - Optional: key cụ thể của user cần lấy (id, email, createdAt)
- * @returns Toàn bộ user object hoặc giá trị của field được chỉ định
+ * Các field có thể lấy từ AuthenticatedUser
+ */
+export type AuthenticatedUserKey = keyof AuthenticatedUser;
+
+/**
+ * Custom decorator để lấy thông tin user đã xác thực từ request
+ *
+ * @description
+ * Decorator này extract user từ request.user (được inject bởi JwtAuthGuard)
+ * Hỗ trợ lấy toàn bộ user object hoặc một field cụ thể
  *
  * @example
  * // Lấy toàn bộ user object
- * @User() user: AuthenticatedUser
+ * @Get('profile')
+ * getProfile(@User() user: AuthenticatedUser) {
+ *   return user;
+ * }
  *
  * @example
  * // Chỉ lấy userId
- * @User('id') userId: string
+ * @Post('create')
+ * create(@User('id') userId: string) {
+ *   return this.service.create(userId);
+ * }
  *
  * @example
  * // Lấy email
- * @User('email') email: string
+ * @Get('email')
+ * getEmail(@User('email') email: string) {
+ *   return { email };
+ * }
  */
 export const User = createParamDecorator(
-  <K extends keyof AuthenticatedUser>(
-    data: K | undefined,
+  <K extends AuthenticatedUserKey | undefined = undefined>(
+    data: K,
     ctx: ExecutionContext,
-  ): AuthenticatedUser | AuthenticatedUser[K] | undefined => {
-    const request = ctx.switchToHttp().getRequest();
-    const user = request.user as AuthenticatedUser | undefined;
+  ): K extends AuthenticatedUserKey
+    ? AuthenticatedUser[K]
+    : AuthenticatedUser => {
+    const request = ctx
+      .switchToHttp()
+      .getRequest<{ user?: AuthenticatedUser }>();
+    const user = request.user;
 
     if (!user) {
-      return undefined;
+      return undefined as K extends AuthenticatedUserKey
+        ? AuthenticatedUser[K]
+        : AuthenticatedUser;
     }
 
-    return data ? user[data] : user;
+    if (data) {
+      return user[data] as K extends AuthenticatedUserKey
+        ? AuthenticatedUser[K]
+        : AuthenticatedUser;
+    }
+
+    return user as K extends AuthenticatedUserKey
+      ? AuthenticatedUser[K]
+      : AuthenticatedUser;
   },
 );

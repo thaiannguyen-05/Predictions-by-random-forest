@@ -16,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { User } from '../../common/decorator/user.decorator';
-import { TIME_LIMIT_POST } from '../../common/type/common.type';
 import { CreatePostDto } from './dto/createPost.dto';
 import { LoadingPostDto } from './dto/loadingPosts.dto';
-import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { PostService } from './service/post.service';
 import { ViewCountService } from './service/viewCount.service';
+import { IsAuthorPostGuard } from './isAuthorPost.guard';
+import { TIME_LIMIT_POST } from '../../common/type/common.type';
+import { User } from '../../common/decorator/user.decorator';
 
 /**
  * Controller xử lý các request liên quan đến Post

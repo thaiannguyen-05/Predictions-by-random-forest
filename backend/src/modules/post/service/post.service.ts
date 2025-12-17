@@ -76,7 +76,7 @@ export class PostService {
 
   /**
    * Tạo bài post mới
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param data - Dữ liệu bài post
    * @returns Post được tạo
    */
@@ -105,7 +105,7 @@ export class PostService {
 
   /**
    * Cập nhật bài post
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param postId - ID của post cần update
    * @param data - Dữ liệu cập nhật
    * @returns Post sau khi update
@@ -145,7 +145,7 @@ export class PostService {
 
   /**
    * Xóa bài post
-   * @param userId - ID của user đang đăng nhập
+   * @param userId - ID của user
    * @param postId - ID của post cần xóa
    * @returns Post đã xóa
    */
