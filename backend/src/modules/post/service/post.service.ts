@@ -341,7 +341,7 @@ export class PostService {
       where: { id_userId: { id: postId, userId: availableUser.id } },
     });
 
-    if (likePost?.isLike) {
+    if (!likePost?.isLike) {
       const likePostData: LikePost = {
         postId,
         userId: availableUser.id,

@@ -46,7 +46,6 @@ import { ContactModule } from './modules/contact/contact.module';
   controllers: [AppController],
   providers: [
     AppService,
-    AppService,
     {
       provide: APP_GUARD,
       inject: [Reflector],

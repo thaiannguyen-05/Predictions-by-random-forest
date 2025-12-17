@@ -106,7 +106,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^chalk$": "<rootDir>/__mocks__/chalk.ts"
+    }
   },
   "prisma": {
     "schema": "./prisma/schema"
