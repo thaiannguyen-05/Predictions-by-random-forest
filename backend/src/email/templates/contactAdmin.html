@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liên Hệ Mới từ StockDN</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #121212; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1E1E1E; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">📬 Liên Hệ Mới từ StockDN</h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 30px;">
+              <!-- Info Cards -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                <tr>
+                  <td style="background-color: rgba(249, 115, 22, 0.1); border-radius: 12px; padding: 20px; border-left: 4px solid #F97316;">
+                    <p style="color: #9CA3AF; margin: 0 0 5px 0; font-size: 12px; text-transform: uppercase;">Người Gửi</p>
+                    <p style="color: #F3F4F6; margin: 0; font-size: 18px; font-weight: bold;">{SENDER_NAME}</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                <tr>
+                  <td width="48%" style="background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px;">
+                    <p style="color: #9CA3AF; margin: 0 0 5px 0; font-size: 12px;">📧 Email</p>
+                    <p style="color: #F97316; margin: 0; font-size: 14px;"><a href="mailto:{SENDER_EMAIL}" style="color: #F97316; text-decoration: none;">{SENDER_EMAIL}</a></p>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px;">
+                    <p style="color: #9CA3AF; margin: 0 0 5px 0; font-size: 12px;">📱 Điện Thoại</p>
+                    <p style="color: #F3F4F6; margin: 0; font-size: 14px;">{SENDER_PHONE}</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                <tr>
+                  <td style="background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px;">
+                    <p style="color: #9CA3AF; margin: 0 0 5px 0; font-size: 12px;">📋 Chủ Đề</p>
+                    <p style="color: #F3F4F6; margin: 0; font-size: 16px; font-weight: 600;">{CONTACT_SUBJECT}</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Message -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                <tr>
+                  <td style="background-color: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);">
+                    <p style="color: #9CA3AF; margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase;">💬 Nội Dung Tin Nhắn</p>
+                    <p style="color: #F3F4F6; margin: 0; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">{CONTACT_MESSAGE}</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Timestamp -->
+              <p style="color: #6B7280; font-size: 12px; text-align: center; margin: 0;">
+                ⏰ Thời gian gửi: {SENT_TIME}
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: rgba(255,255,255,0.02); padding: 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);">
+              <p style="color: #6B7280; font-size: 12px; margin: 0;">
+                Email này được gửi tự động từ form liên hệ trên StockDN
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
