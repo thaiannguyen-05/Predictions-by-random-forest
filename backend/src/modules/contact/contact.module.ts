@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { ContactController } from './contact.controller';
 import { ContactService } from './contact.service';
+import { EmailModule } from '../../email/email.module';
 
 /**
  * Module xử lý liên hệ/contact form
+ * Import EmailModule để sử dụng EmailService
  */
 @Module({
-  imports: [ConfigModule],
+  imports: [EmailModule],
   controllers: [ContactController],
   providers: [ContactService],
   exports: [ContactService],
 })
-export class ContactModule {}
+export class ContactModule { }
