@@ -137,10 +137,11 @@ export default function ContactPage(): React.ReactElement {
 
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/contact`,
+				`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/contact/sendContact`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
+					credentials: "include",
 					body: JSON.stringify(formData),
 				}
 			);

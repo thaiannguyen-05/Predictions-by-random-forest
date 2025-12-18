@@ -1,46 +1,49 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ContactFormDto } from './dto/contact-form.dto';
-import { EmailService } from '../../email/email.service';
+import { EmailProducer } from '../../email/emai.producer';
+import { PrismaService } from '../../prisma/prisma.service';
 
 /**
  * Service xử lý gửi email liên hệ
- * Sử dụng EmailService để xử lý việc gửi email
+ * Sử dụng EmailProducer để đẩy email vào queue (tuân thủ pattern Producer → Queue → Consumer)
  */
 @Injectable()
 export class ContactService {
   private readonly logger = new Logger(ContactService.name);
 
-  constructor(private readonly emailService: EmailService) { }
+  constructor(
+    private readonly emailProducer: EmailProducer,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   /**
-   * Gửi email liên hệ từ form đến admin
+   * Gửi email liên hệ từ form đến admin qua queue
    * @param contactForm - Dữ liệu từ form liên hệ
-   * @returns true nếu gửi thành công
    */
-  async sendContactEmail(contactForm: ContactFormDto): Promise<boolean> {
-    try {
-      const { name, email, phone, subject, message } = contactForm;
-
-      // Gửi email thông báo đến admin
-      const adminEmailSent = await this.emailService.sendContactToAdmin({
-        name,
-        email,
-        phone,
-        subject,
-        message,
-      });
-
-      if (adminEmailSent) {
-        this.logger.log(`Contact email sent successfully from: ${email}`);
-
-        // Gửi email xác nhận cho người gửi
-        await this.emailService.sendContactConfirmation(email, name);
-      }
-
-      return adminEmailSent;
-    } catch (error) {
-      this.logger.error('Failed to send contact email:', error);
-      return false;
+  async sendContactEmail(
+    userId: string,
+    contactForm: ContactFormDto,
+  ): Promise<void> {
+    // check available user
+    const availableUser = await this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
+    if (!availableUser) {
+      throw new Error('User not found');
     }
+
+    const { name, email, phone, subject, message } = contactForm;
+
+    // Gửi email thông báo đến admin (dev) qua queue
+    // Email sẽ được gửi về ADMIN_EMAIL với nội dung chứa thông tin liên hệ của user
+    this.emailProducer.sendContactToAdmin({
+      name,
+      email,
+      phone,
+      subject,
+      message,
+    });
+
+    this.logger.log(`Contact email queued to admin from user: ${email}`);
   }
 }
