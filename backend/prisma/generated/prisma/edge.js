@@ -311,7 +311,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/generated/prisma",
+      "value": "/home/andev/dev/projects/Predictions-by-random-forest/backend/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -329,7 +329,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/andev/work_space/Predictions-by-random-forest/backend/prisma/schema/schema.prisma",
+    "sourceFilePath": "/home/andev/dev/projects/Predictions-by-random-forest/backend/prisma/schema/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

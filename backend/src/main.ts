@@ -75,20 +75,24 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [
-        `amqp://${configService.getOrThrow<string>('ACCOUNT_RABBIT')}:${configService.getOrThrow<string>('PASSWORD_RABBIT')}@localhost:5672`,
-      ],
-      queue: QUEUE_EMAIL,
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
+  const enableMicroservices = configService.get<string>('ENABLE_MICROSERVICES') === 'true';
 
-  await app.startAllMicroservices();
+  if (enableMicroservices) {
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.RMQ,
+      options: {
+        urls: [
+          `amqp://${configService.getOrThrow<string>('ACCOUNT_RABBIT')}:${configService.getOrThrow<string>('PASSWORD_RABBIT')}@localhost:5672`,
+        ],
+        queue: QUEUE_EMAIL,
+        queueOptions: {
+          durable: true,
+        },
+      },
+    });
+
+    await app.startAllMicroservices();
+  }
   await app.listen(process.env.PORT ?? 4000);
 }
 void bootstrap();

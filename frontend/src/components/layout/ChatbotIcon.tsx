@@ -381,16 +381,14 @@ const ChatbotIcon: React.FC = () => {
         }
       );
 
-      const textData = await res.text();
-      let data: { result: string; sessionId?: string };
-      try {
-        data = JSON.parse(textData);
-      } catch {
-        data = { result: textData, sessionId: undefined };
-      }
+      const response = await res.json();
+      // init-chat returns { success, data: "message string", ... }
+      const welcomeText = typeof response.data === 'string'
+        ? response.data
+        : response.data?.result || response.data;
 
       // Thay thế userId bằng userName trong message chào mừng
-      let welcomeMessage = data.result;
+      let welcomeMessage = welcomeText;
       if (userName) {
         welcomeMessage = welcomeMessage.replace(
           new RegExp(userId, "g"),
@@ -404,7 +402,7 @@ const ChatbotIcon: React.FC = () => {
         }
       }
 
-      setSessionId(data.sessionId);
+      setSessionId(typeof response.data === 'object' ? response.data?.sessionId : undefined);
       setMessages([
         {
           sender: "bot",
@@ -450,7 +448,8 @@ const ChatbotIcon: React.FC = () => {
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data: { result: string; sessionId?: string } = await res.json();
+      const response = await res.json();
+      const data: { result: string; sessionId?: string } = response.data;
 
       // Thay thế userId bằng userName trong response từ AI
       let responseMessage = data.result;

@@ -31,12 +31,11 @@ import { Public } from '../../common/decorator/public.decorator';
 import { Cookies } from '../../common/decorator/cookie.decoratore';
 import { User } from '../../common/decorator/user.decorator';
 import { AUTH_CONSTANT } from './auth.constants';
-import { User } from '../../common/decorator/user.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('login')
@@ -200,7 +199,7 @@ export class AuthController {
     description: 'Initiate Google OAuth authentication flow',
   })
   @ApiExcludeEndpoint()
-  async googleAuth() {}
+  async googleAuth() { }
 
   @Public()
   @Get('google/callback')
@@ -235,7 +234,7 @@ export class AuthController {
     description: 'Initiate Facebook OAuth authentication flow',
   })
   @ApiExcludeEndpoint()
-  async facebookAuth() {}
+  async facebookAuth() { }
 
   @Public()
   @Get('facebook/callback')
