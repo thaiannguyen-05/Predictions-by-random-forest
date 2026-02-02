@@ -18,7 +18,7 @@ import { RedisModule } from '../modules/redis/redis.module';
           transport: Transport.RMQ,
           options: {
             urls: [
-              `amqp://${configService.getOrThrow<string>('ACCOUNT_RABBIT')}:${configService.getOrThrow<string>('PASSWORD_RABBIT')}@localhost:5672`,
+              `amqp://${configService.getOrThrow<string>('RABBITMQ_USER')}:${configService.getOrThrow<string>('RABBITMQ_PASS')}@localhost:5672`,
             ],
             queue: QUEUE_EMAIL,
             queueOptions: {

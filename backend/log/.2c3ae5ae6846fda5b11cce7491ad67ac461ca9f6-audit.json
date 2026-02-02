@@ -6,84 +6,14 @@
     "auditLog": "log/.2c3ae5ae6846fda5b11cce7491ad67ac461ca9f6-audit.json",
     "files": [
         {
-            "date": 1765552105134,
-            "name": "log/nest-log-2025-12-12-22.log",
-            "hash": "8b9fdd58e10a16a1788026b7c3c6c39681ef263ee7441b3408ef2f4ae86a4bc3"
+            "date": 1770039562118,
+            "name": "log/nest-log-2026-02-02-20.log",
+            "hash": "cd362cab112a617b07628165eafad53bfc6781d2190c74a38a103875dc4c164c"
         },
         {
-            "date": 1765583922433,
-            "name": "log/nest-log-2025-12-13-06.log",
-            "hash": "69f08d4fc7884974f3bfdd04aa885268d2c914ffe500be5db3f683a62223a80d"
-        },
-        {
-            "date": 1765584074385,
-            "name": "log/nest-log-2025-12-13-07.log",
-            "hash": "7fc1ca1ef085999c983d7cdb6bdb388d5e316cac08a7ef2b96b3c4e2e0bde83b"
-        },
-        {
-            "date": 1765683088430,
-            "name": "log/nest-log-2025-12-14-10.log",
-            "hash": "7029891fdace32768853108b046a45e236b6339c982c1e792cfcc72eb7cd71fc"
-        },
-        {
-            "date": 1765685338583,
-            "name": "log/nest-log-2025-12-14-11.log",
-            "hash": "479fc62cb36035490ad253f8e5f451454a0ddcc210666f57decb03f3105e6e61"
-        },
-        {
-            "date": 1765809793911,
-            "name": "log/nest-log-2025-12-15-21.log",
-            "hash": "b1a4b3268370e90b5881038d90b15628b4c76d608cafb400394990907ef6f2d2"
-        },
-        {
-            "date": 1765893291525,
-            "name": "log/nest-log-2025-12-16-20.log",
-            "hash": "001225409c748454c3e36bb7efc2e48947fbf767aaf508e040d4ad8c99ba2e0c"
-        },
-        {
-            "date": 1765894092943,
-            "name": "log/nest-log-2025-12-16-21.log",
-            "hash": "2f5d0c7e498b8aad8bcca378327e2782e99b0a2f9c29b03758f8305f7f94a3ec"
-        },
-        {
-            "date": 1765929297499,
-            "name": "log/nest-log-2025-12-17-06.log",
-            "hash": "f133a1e022063caca345e8a6ed0fbffa3dd26f0592e9b2fd5809a34f6361a09a"
-        },
-        {
-            "date": 1765929930185,
-            "name": "log/nest-log-2025-12-17-07.log",
-            "hash": "e85850677b6c0be7b43c92bfc7f40149741d3aaad8dee72362b8b9778203b857"
-        },
-        {
-            "date": 1766288728407,
-            "name": "log/nest-log-2025-12-21-10.log",
-            "hash": "53ab7601bc6a74e35fd7170686683c184ce6e349269c70f095655e46b0064035"
-        },
-        {
-            "date": 1766289724739,
-            "name": "log/nest-log-2025-12-21-11.log",
-            "hash": "2e66cbd6e983b1fea879250ff0253c18c3e41b56fa2ca33c30956500c1fa9a7a"
-        },
-        {
-            "date": 1766710196254,
-            "name": "log/nest-log-2025-12-26-07.log",
-            "hash": "3a9f3488e6e1e51e3c9b95e86c3e182e077905d455c207f9c77a3a219bcb0049"
-        },
-        {
-            "date": 1766713555965,
-            "name": "log/nest-log-2025-12-26-08.log",
-            "hash": "eeec814428cae3c70ffa80733a3e379bf47bae539c5059213ef87f406c08e7da"
-        },
-        {
-            "date": 1766729744997,
-            "name": "log/nest-log-2025-12-26-13.log",
-            "hash": "04009b54fb734777615f4e920de8c047299fb0512e6b4ff60fdd77459e08acf1"
-        },
-        {
-            "date": 1766735196913,
-            "name": "log/nest-log-2025-12-26-14.log",
-            "hash": "023f199e08702a291151161bed0abfeac8055410753eb55bed50f3ba1f535f2d"
+            "date": 1770040800721,
+            "name": "log/nest-log-2026-02-02-21.log",
+            "hash": "203d5de69cb46cd09af1e01517b123b3a70963535b8651f385d7494927e1df6f"
         }
     ],
     "hashType": "sha256"
