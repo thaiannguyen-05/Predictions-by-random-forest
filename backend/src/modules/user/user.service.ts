@@ -8,10 +8,6 @@ import type { UserResponse } from '.';
 
 const CONTEXT = 'UserService';
 
-/**
- * Service xử lý các nghiệp vụ liên quan đến User
- * @class UserService
- */
 @Injectable()
 export class UserService {
   constructor(
@@ -19,11 +15,6 @@ export class UserService {
     private readonly logger: MyLogger,
   ) {}
 
-  /**
-   * Lấy thông tin user active từ database
-   * @param userId - ID của user cần kiểm tra
-   * @returns User nếu tồn tại và active, null nếu không
-   */
   private async getActiveAccount(
     userId: string,
   ): Promise<import('../../../prisma/generated/prisma').User | null> {
@@ -35,13 +26,6 @@ export class UserService {
     });
   }
 
-  /**
-   * Cập nhật thông tin chi tiết của user
-   * @param userId - ID của user đang đăng nhập
-   * @param dto - DTO chứa các thông tin cần cập nhật
-   * @returns User data sau khi cập nhật (không bao gồm password)
-   * @throws UserNotFoundOrNotActiveException nếu user không tồn tại hoặc không active
-   */
   async changeDetail(
     userId: string,
     dto: ChangeDetailDto,
@@ -97,12 +81,6 @@ export class UserService {
     };
   }
 
-  /**
-   * Lấy thông tin profile của user hiện tại
-   * @param userId - ID của user đang đăng nhập
-   * @returns User data (không bao gồm password)
-   * @throws UserNotFoundOrNotActiveException nếu user không tồn tại hoặc không active
-   */
   async me(userId: string): Promise<UserResponse> {
     this.logger.debug(`Getting profile for userId: ${userId}`, CONTEXT);
 

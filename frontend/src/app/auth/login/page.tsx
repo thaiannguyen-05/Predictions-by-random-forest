@@ -13,7 +13,7 @@ export default function LoginPage() {
   const { refreshUser } = useAuth();
 
   const [formData, setFormData] = useState({
-    access: "", // email or username
+    access: "", 
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -33,8 +33,8 @@ export default function LoginPage() {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Backend dùng cookie httpOnly cho session/refresh token
-        // nhưng chúng ta vẫn nên gửi credential include để browser set cookie
+        
+        
         credentials: "include",
         body: JSON.stringify(formData),
       });
@@ -45,36 +45,36 @@ export default function LoginPage() {
         throw new Error(data.message || "Đăng nhập thất bại");
       }
 
-      // 🔴 CHECK ACTIVE STATE
-      // API trả về: { data: { isActive: boolean, ... }, tokens: ... }
+      
+      
       if (data.data && data.data.isActive === false) {
         setError("Tài khoản chưa được kích hoạt. Chuyển hướng xác thực...");
 
-        // Lấy email từ response data hoặc từ input form
+        
         const emailToVerify = data.data.email || (formData.access.includes("@") ? formData.access : "");
 
         setTimeout(() => {
           router.push(`/auth/verify-email?email=${encodeURIComponent(emailToVerify)}`);
         }, 1500);
-        return; // Dừng, không redirect home
+        return; 
       }
 
-      // Nếu Active -> Lưu token & Redirect Home
+      
       if (data.tokens?.accessToken) {
         localStorage.setItem("accessToken", data.tokens.accessToken);
       }
 
-      // Refresh Auth Context state
+      
       await refreshUser();
 
-      // Redirect to dashboard
+      
       router.push("/dashboard");
 
     } catch (err: any) {
       console.error("Login error:", err);
       const msg = err.message || "";
 
-      // Check for inactive account error
+      
       if (
         msg.toLowerCase().includes("active") ||
         msg.toLowerCase().includes("verify") ||
@@ -82,7 +82,7 @@ export default function LoginPage() {
       ) {
         setError("Tài khoản chưa kích hoạt. Đang chuyển đến trang xác thực...");
         setTimeout(() => {
-          // Basic check if input is email to pre-fill
+          
           const isEmail = formData.access.includes("@");
           const query = isEmail ? `?email=${encodeURIComponent(formData.access)}` : "";
           router.push(`/auth/verify-email${query}`);
@@ -97,7 +97,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Header Logo Area */}
+      {}
       <div className="text-center mb-8">
         <Link href="/" className="inline-block group">
           <span className="text-4xl font-extrabold text-white tracking-widest transition-transform duration-300 group-hover:scale-105 block">
@@ -109,9 +109,9 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Main Card */}
+      {}
       <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-        {/* Glow effect inside card */}
+        {}
         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-orange/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none"></div>
 
         <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
@@ -175,15 +175,15 @@ export default function LoginPage() {
             )}
           </button>
 
-          {/* Social Login Separator */}
+          {}
           <div className="relative flex items-center py-2">
             <div className="flex-grow border-t border-gray-700"></div>
             <span className="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase">Hoặc</span>
             <div className="flex-grow border-t border-gray-700"></div>
           </div>
 
-          {/* Social Icons (Placeholder) */}
-          {/* Social Icons */}
+          {}
+          {}
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"

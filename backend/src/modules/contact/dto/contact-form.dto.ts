@@ -7,9 +7,6 @@ import {
   MinLength,
 } from 'class-validator';
 
-/**
- * DTO cho form liên hệ từ frontend
- */
 export class ContactFormDto {
   @IsNotEmpty({ message: 'Họ tên không được để trống' })
   @IsString()

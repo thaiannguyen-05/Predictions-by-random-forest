@@ -9,9 +9,6 @@ interface ContainerProps {
 	as?: keyof JSX.IntrinsicElements;
 }
 
-/**
- * Size mappings
- */
 const sizeStyles: Record<ContainerProps["size"] & string, string> = {
 	sm: "max-w-3xl",
 	md: "max-w-4xl",
@@ -20,10 +17,6 @@ const sizeStyles: Record<ContainerProps["size"] & string, string> = {
 	full: "max-w-full",
 };
 
-/**
- * Reusable Container component với responsive padding
- * Provides consistent max-width và centered content
- */
 export function Container({
 	size = "xl",
 	children,

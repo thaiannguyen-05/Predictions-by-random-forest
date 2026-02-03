@@ -23,16 +23,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import * as fs from 'fs';
-import type {
-  ChunkUploadSession,
-  UploadChunkResponse,
-} from './interfaces';
+import type { ChunkUploadSession, UploadChunkResponse } from './interfaces';
 
-// Directories
 const UPLOAD_DIR = './upload';
 const TEMP_DIR = join(UPLOAD_DIR, 'temp');
 
-// Ensure directories exist
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
@@ -40,7 +35,6 @@ if (!fs.existsSync(TEMP_DIR)) {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
 
-// Storage for chunk uploads - save with temporary random name
 const chunkStorage = {
   storage: diskStorage({
     destination: TEMP_DIR,
@@ -51,7 +45,6 @@ const chunkStorage = {
   }),
 };
 
-// In-memory tracking of uploaded chunks per session
 const uploadSessions: Map<string, ChunkUploadSession> = new Map();
 
 @ApiTags('User')
@@ -78,16 +71,13 @@ export class UserController {
     const index = Number(indexStr);
     const totalChunks = Number(totalChunksStr);
 
-    // Validate inputs
     if (!sessionId || isNaN(index) || isNaN(totalChunks) || !originalName) {
-      // Cleanup uploaded file
       if (file.path && fs.existsSync(file.path)) {
         fs.unlinkSync(file.path);
       }
       throw new BadRequestException('Missing required fields');
     }
 
-    // Initialize or get session
     if (!uploadSessions.has(sessionId)) {
       uploadSessions.set(sessionId, {
         chunks: new Map(),
@@ -99,23 +89,19 @@ export class UserController {
     const session = uploadSessions.get(sessionId)!;
     session.chunks.set(index, file.path);
 
-    // Check if all chunks received
     if (session.chunks.size === session.total) {
-      // Merge chunks
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const ext = extname(session.originalName);
       const finalFilename = `avatar-${uniqueSuffix}${ext}`;
       const finalPath = join(UPLOAD_DIR, finalFilename);
 
-      // Create write stream
       const writeStream = fs.createWriteStream(finalPath);
 
-      // Write chunks in order
       for (let i = 0; i < session.total; i++) {
         const chunkPath = session.chunks.get(i);
         if (!chunkPath || !fs.existsSync(chunkPath)) {
           writeStream.close();
-          // Cleanup
+
           this.cleanupSession(sessionId);
           throw new BadRequestException(`Missing chunk ${i}`);
         }
@@ -125,13 +111,11 @@ export class UserController {
 
       writeStream.end();
 
-      // Wait for write to complete
       await new Promise<void>((resolve, reject) => {
         writeStream.on('finish', resolve);
         writeStream.on('error', reject);
       });
 
-      // Cleanup temp chunks
       this.cleanupSession(sessionId);
 
       return {

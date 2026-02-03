@@ -22,7 +22,7 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
   const { logout } = useAuth();
   const router = useRouter();
 
-  // Đóng menu khi click ra ngoài
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -33,28 +33,28 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Gọi API logout và clear AuthContext
+  
   const handleLogout = async () => {
     try {
-      // Call backend logout API để clear server-side session/cookies
+      
       await fetch('http://localhost:4000/auth/logout', {
         method: 'PATCH',
         credentials: 'include',
       });
     } catch (error) {
       console.error('Logout API error:', error);
-      // Continue with client-side logout even if API fails
+      
     } finally {
-      // Clear client-side state ngay lập tức
+      
       logout();
-      // Redirect to login
+      
       router.push('/auth/login');
     }
   };
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Avatar + Tên */}
+      {}
       <div
         onClick={() => setOpen(!open)}
         className="flex items-center space-x-3 cursor-pointer hover:opacity-90 transition"
@@ -69,7 +69,7 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
         <span className="text-white font-medium">{user.name}</span>
       </div>
 
-      {/* Dropdown Menu */}
+      {}
       {open && (
         <div className="absolute right-0 mt-3 w-52 bg-gray-800 text-white rounded-xl shadow-lg border border-gray-700 overflow-hidden animate-fade-in z-50">
           <div className="px-4 py-3 border-b border-gray-700">

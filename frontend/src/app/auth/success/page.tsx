@@ -16,7 +16,7 @@ function AuthSuccessContent(): JSX.Element {
   const hasProcessed = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple executions
+    
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
@@ -25,7 +25,7 @@ function AuthSuccessContent(): JSX.Element {
         const token = searchParams.get('token');
         const error = searchParams.get('error');
 
-        // Handle OAuth error
+        
         if (error) {
           setStatus('error');
           setErrorMessage(decodeURIComponent(error));
@@ -44,16 +44,16 @@ function AuthSuccessContent(): JSX.Element {
           return;
         }
 
-        // Save token to localStorage
+        
         localStorage.setItem('accessToken', token);
         console.log('✅ Token saved from OAuth callback');
 
-        // Refresh user data
+        
         await refreshUser();
 
         setStatus('success');
 
-        // Redirect to dashboard after a short delay
+        
         setTimeout(() => {
           router.push('/dashboard');
         }, 1500);
@@ -69,7 +69,7 @@ function AuthSuccessContent(): JSX.Element {
     }
 
     handleAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [searchParams]);
 
   return (

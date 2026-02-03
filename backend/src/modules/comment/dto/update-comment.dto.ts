@@ -8,9 +8,6 @@ import {
 } from 'class-validator';
 import { CreateCommentDto } from './create-comment.dto';
 
-/**
- * DTO cho việc cập nhật comment
- */
 export class UpdateCommentDto extends PartialType(CreateCommentDto) {
   @ApiProperty({
     description: 'ID của comment cần cập nhật',

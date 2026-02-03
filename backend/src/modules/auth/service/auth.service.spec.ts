@@ -227,7 +227,7 @@ describe('AuthService', () => {
         ...mockUser,
         isActive: false,
       });
-      mockRedisService.get.mockResolvedValue('654321'); // Different code
+      mockRedisService.get.mockResolvedValue('654321');
 
       await expect(service.verifyAccount(verifyDto)).rejects.toThrow(
         BadRequestException,

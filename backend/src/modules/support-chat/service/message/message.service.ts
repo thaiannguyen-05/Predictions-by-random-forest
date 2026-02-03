@@ -17,7 +17,6 @@ export class MessageService {
     private readonly messageProducer: MessageProducer,
   ) {}
 
-  // get user with id
   async getUserById(userId: string) {
     console.log(userId);
     return await this.prismaService.user.findUnique({
@@ -25,7 +24,6 @@ export class MessageService {
     });
   }
 
-  // get room with id
   async getRoomWithId(roomId: string) {
     return await this.prismaService.room.findUnique({
       where: { id: roomId },
@@ -38,7 +36,6 @@ export class MessageService {
     });
   }
 
-  // is auhtor message
   private async isAuthorMessage(userId: string, messageId: string) {
     const message = await this.findMessageById(messageId);
     if (!message) throw new NotFoundException('Message not found');
@@ -46,17 +43,13 @@ export class MessageService {
     return message.senderId !== userId ? false : true;
   }
 
-  // create message
   async createMessage(dto: CreateMessageDto) {
-    // check available user
     const sender = await this.getUserById(dto.senderId);
     if (!sender) throw new NotFoundException('User not found');
 
-    // check available room
     const room = await this.getRoomWithId(dto.roomId);
     if (!room) throw new NotFoundException('Room not found');
 
-    // create message queue
     const messageQueue: MessageQueue = {
       content: dto.content,
       roomId: dto.roomId,
@@ -65,24 +58,19 @@ export class MessageService {
       ...(dto.typeMessage && { typeMessage: dto.typeMessage }),
     };
 
-    // emit event
     await this.messageProducer.sendingMessage({ message: messageQueue });
 
     return messageQueue;
   }
 
-  // edit message
   async updateMessage(dto: UpdateMessageDto) {
-    // check avialable user
     const user = await this.getUserById(dto.senderId);
     if (!user) throw new NotFoundException('User not found');
 
-    // check is valid author message
     const isAuthorMessage = this.isAuthorMessage(user.id, dto.messageId);
     if (!isAuthorMessage)
       throw new UnauthorizedException('You are not author message');
 
-    // update new content
     const newMessage = await this.prismaService.message.update({
       where: { senderId_id: { id: dto.messageId, senderId: user.id } },
       data: { content: dto.newContent },
@@ -91,18 +79,14 @@ export class MessageService {
     return newMessage;
   }
 
-  // delete message
   async deleteMessage(dto: DeleteMessageDto) {
-    // check avialable user
     const user = await this.getUserById(dto.senderId);
     if (!user) throw new NotFoundException('User not found');
 
-    // check is valid author message
     const isAuthorMessage = this.isAuthorMessage(user.id, dto.messageId);
     if (!isAuthorMessage)
       throw new UnauthorizedException('You are not author message');
 
-    // remove
     return await this.prismaService.message.delete({
       where: { senderId_id: { id: dto.messageId, senderId: dto.senderId } },
     });

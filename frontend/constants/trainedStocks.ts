@@ -1,4 +1,4 @@
-// constants/trainedStocks.ts
+
 export const TRAINED_STOCKS = [
   "ACB",
   "BCM",
@@ -293,7 +293,7 @@ export const STOCK_DETAILS: { [key: string]: StockInfo } = {
   },
 };
 
-// === Helpers ===
+
 export const getStockInfo = (symbol: string): StockInfo => {
   return (
     STOCK_DETAILS[symbol] || {

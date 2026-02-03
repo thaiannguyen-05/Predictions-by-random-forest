@@ -24,18 +24,11 @@ import { IsAuthorCommentGuard } from './isAuthorComment.guard';
 import { TIME_LIMIT_POST } from '../../common/type';
 import { User } from '../../common/decorator';
 
-/**
- * Controller xử lý các request liên quan đến Comment
- * @class CommentController
- */
 @ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  /**
-   * Tạo comment mới cho một post
-   */
   @Post('create')
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @ApiOperation({ summary: 'Create a new comment' })
@@ -48,9 +41,6 @@ export class CommentController {
     return this.commentService.create(userId, dto);
   }
 
-  /**
-   * Lấy thông tin một comment theo ID
-   */
   @Get(':id')
   @ApiOperation({ summary: 'Get comment by ID' })
   @ApiParam({ name: 'id', description: 'Comment ID' })
@@ -60,9 +50,6 @@ export class CommentController {
     return this.commentService.findOne(commentId);
   }
 
-  /**
-   * Cập nhật comment (chỉ author mới được phép)
-   */
   @UseGuards(IsAuthorCommentGuard)
   @Post('update')
   @ApiOperation({ summary: 'Update a comment (author only)' })
@@ -75,9 +62,6 @@ export class CommentController {
     return this.commentService.update(userId, dto);
   }
 
-  /**
-   * Xóa comment (chỉ author mới được phép)
-   */
   @UseGuards(IsAuthorCommentGuard)
   @Delete('delete')
   @ApiOperation({ summary: 'Delete a comment (author only)' })
@@ -90,9 +74,6 @@ export class CommentController {
     return this.commentService.remove(userId, commentId);
   }
 
-  /**
-   * Load danh sách comments của một post với pagination
-   */
   @Post('loadingPostComments')
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @ApiOperation({ summary: 'Load comments for a post with pagination' })

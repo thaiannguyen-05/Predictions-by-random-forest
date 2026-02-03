@@ -3,18 +3,11 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ContactService } from './contact.service';
 import { ContactFormDto } from './dto/contact-form.dto';
 
-/**
- * Controller xử lý API liên hệ
- */
 @ApiTags('Contact')
 @Controller('contact')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
-  /**
-   * Gửi form liên hệ
-   * POST /api/contact
-   */
   @Post()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Gửi form liên hệ' })

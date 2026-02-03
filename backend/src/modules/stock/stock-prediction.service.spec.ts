@@ -75,7 +75,7 @@ describe('StockPredictionService', () => {
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
       expect(result.data[0].symbol).toBe('AAPL');
-      // BigInt should be converted to string
+
       expect(typeof result.data[0].currentPrice).toBe('string');
     });
 

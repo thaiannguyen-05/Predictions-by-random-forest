@@ -19,10 +19,6 @@ import { BatchInsertService } from './batchInsert.service';
 
 const CONTEXT = 'PostService';
 
-/**
- * Service xử lý các nghiệp vụ liên quan đến Post
- * @class PostService
- */
 @Injectable()
 export class PostService {
   constructor(
@@ -32,11 +28,6 @@ export class PostService {
     private readonly logger: MyLogger,
   ) {}
 
-  /**
-   * Tìm user theo các accessor khác nhau (id, email, username)
-   * @param accessor - ID, email hoặc username của user
-   * @returns User nếu tìm thấy, null nếu không
-   */
   private async findUserByAccessor(accessor: string) {
     if (isUUID(accessor)) {
       return await this.prismaService.user.findUnique({
@@ -53,13 +44,6 @@ export class PostService {
     });
   }
 
-  /**
-   * Lấy user và validate
-   * @param userId - ID của user
-   * @returns User active
-   * @throws UnauthorizedException nếu không có userId
-   * @throws UserNotFoundOrNotActiveException nếu user không tồn tại
-   */
   private async getAvailableUser(userId: string) {
     if (!userId) {
       throw new UnauthorizedException('User not found');
@@ -74,12 +58,6 @@ export class PostService {
     return availableUser;
   }
 
-  /**
-   * Tạo bài post mới
-   * @param userId - ID của user
-   * @param data - Dữ liệu bài post
-   * @returns Post được tạo
-   */
   async createPost(
     userId: string,
     data: CreatePostDto,
@@ -103,13 +81,6 @@ export class PostService {
     };
   }
 
-  /**
-   * Cập nhật bài post
-   * @param userId - ID của user
-   * @param postId - ID của post cần update
-   * @param data - Dữ liệu cập nhật
-   * @returns Post sau khi update
-   */
   async updatePost(
     userId: string,
     postId: string,
@@ -143,12 +114,6 @@ export class PostService {
     };
   }
 
-  /**
-   * Xóa bài post
-   * @param userId - ID của user
-   * @param postId - ID của post cần xóa
-   * @returns Post đã xóa
-   */
   async deletePost(
     userId: string,
     postId: string,
@@ -176,12 +141,6 @@ export class PostService {
     };
   }
 
-  /**
-   * Load danh sách posts của một user với pagination
-   * @param userId - ID của user
-   * @param dto - DTO chứa thông tin pagination
-   * @returns Danh sách posts với metadata pagination
-   */
   async loadingPosts(
     userId: string,
     dto: LoadingPostDto,
@@ -237,11 +196,6 @@ export class PostService {
     };
   }
 
-  /**
-   * Load một post theo ID
-   * @param postId - ID của post
-   * @returns Post data
-   */
   async loadingPostById(
     postId: string,
   ): Promise<PostResponse<{ post: unknown }>> {
@@ -256,7 +210,6 @@ export class PostService {
       throw new PostNotFoundException(postId);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { viewCount, ...postWithoutViewCount } = post;
 
     const responseData = {
@@ -270,11 +223,6 @@ export class PostService {
     };
   }
 
-  /**
-   * Load feed với pagination
-   * @param dto - DTO chứa thông tin pagination
-   * @returns Danh sách posts cho feed
-   */
   async loadingFeed(dto: LoadingPostDto): Promise<PaginatedPostResponse> {
     const skip = (dto.page - 1) * dto.limit;
 

@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 @Injectable()
 export class AuthOtherService {
-  // get hardware user
   getClientInfo(req: Request) {
-    // Fastest IP extraction with fallback chain
     const ip =
       req.ip ||
       req.socket.remoteAddress ||
@@ -13,7 +11,6 @@ export class AuthOtherService {
       (req.headers['x-real-ip'] as string) ||
       'unknown';
 
-    // Fastest User-Agent extraction
     const userAgent = req.headers['user-agent'] || 'unknown';
 
     return { ip, userAgent };

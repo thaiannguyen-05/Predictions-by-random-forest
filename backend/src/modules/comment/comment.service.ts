@@ -10,10 +10,6 @@ import { PostNotFoundException } from '../post/exceptions/post.exception';
 import { UserNotFoundOrNotActiveException } from '../user/exceptions/user.exception';
 import type { CommentResponse, PaginatedCommentsResponse } from '.';
 
-/**
- * Service xử lý các nghiệp vụ liên quan đến Comment
- * @class CommentService
- */
 @Injectable()
 export class CommentService {
   constructor(
@@ -21,11 +17,6 @@ export class CommentService {
     private readonly logger: MyLogger,
   ) {}
 
-  /**
-   * Tìm user theo các accessor khác nhau (id, email, username)
-   * @param accessor - ID, email hoặc username của user
-   * @returns User nếu tìm thấy, null nếu không
-   */
   private async findUserByAccessor(accessor: string) {
     if (isUUID(accessor)) {
       return await this.prismaService.user.findUnique({
@@ -42,13 +33,6 @@ export class CommentService {
     });
   }
 
-  /**
-   * Lấy user và validate
-   * @param userId - ID của user
-   * @returns User active
-   * @throws UnauthorizedException nếu không có userId
-   * @throws UserNotFoundOrNotActiveException nếu user không tồn tại
-   */
   private async getAvailableUser(userId: string) {
     if (!userId) {
       throw new UnauthorizedException('User not found');
@@ -63,12 +47,6 @@ export class CommentService {
     return availableUser;
   }
 
-  /**
-   * Tạo comment mới cho một post
-   * @param userId - ID của user
-   * @param dto - DTO chứa content và postId
-   * @returns Comment được tạo
-   */
   async create(
     userId: string,
     dto: CreateCommentDto,
@@ -101,11 +79,6 @@ export class CommentService {
     };
   }
 
-  /**
-   * Lấy một comment theo ID
-   * @param commentId - ID của comment
-   * @returns Comment data
-   */
   async findOne(
     commentId: string,
   ): Promise<CommentResponse<{ availableComment: unknown }>> {
@@ -123,12 +96,6 @@ export class CommentService {
     };
   }
 
-  /**
-   * Cập nhật comment
-   * @param userId - ID của user
-   * @param updateCommentDto - DTO chứa thông tin cập nhật
-   * @returns Comment sau khi update
-   */
   async update(
     userId: string,
     updateCommentDto: UpdateCommentDto,
@@ -162,12 +129,6 @@ export class CommentService {
     };
   }
 
-  /**
-   * Xóa comment
-   * @param userId - ID của user
-   * @param commentId - ID của comment cần xóa
-   * @returns Comment đã xóa
-   */
   async remove(
     userId: string,
     commentId: string,
@@ -196,12 +157,6 @@ export class CommentService {
     };
   }
 
-  /**
-   * Load danh sách comments của một post với pagination
-   * @param postId - ID của post
-   * @param dto - DTO chứa thông tin pagination
-   * @returns Danh sách comments với metadata pagination
-   */
   async loadingPostComments(
     postId: string,
     dto: LoadingPostCommentsDto,

@@ -20,7 +20,6 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly prismaService: PrismaService) {}
 
   onModuleInit() {
-    // Định kỳ flush để tránh message bị kẹt
     this.flushTimer = setInterval(() => {
       if (this.messageQueue.length > 0) {
         this.flushSafely();
@@ -32,7 +31,6 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
     if (this.flushTimer) clearInterval(this.flushTimer);
   }
 
-  // ✅ Thêm message an toàn
   async insertMessageInQueue(message: MessageQueue) {
     console.debug({ message: `Adding ${message} in queue` });
     this.messageQueue.push(message);
@@ -42,13 +40,12 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // ✅ Hàm flush có lock để tránh race condition
   private async flushSafely() {
-    if (this.isFlushing) return; // tránh chạy song song
+    if (this.isFlushing) return;
 
     this.isFlushing = true;
 
-    const batch = this.messageQueue.splice(0, MAX_INSERT); // lấy tối đa 1000 phần tử đầu
+    const batch = this.messageQueue.splice(0, MAX_INSERT);
 
     if (batch.length === 0) {
       this.isFlushing = false;
@@ -62,7 +59,6 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
     } catch (err) {
       this.logger.error('❌ Error batch insert, retrying later', err);
 
-      // Nếu lỗi, đưa batch trở lại đầu hàng đợi
       this.messageQueue.unshift(...batch);
     } finally {
       this.isFlushing = false;

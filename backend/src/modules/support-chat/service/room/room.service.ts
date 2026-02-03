@@ -6,9 +6,7 @@ import { PrismaService } from '../../../../prisma/prisma.service';
 export class RoomService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // create room
   async createRoom(dto: CreateRoomDto) {
-    // check available room
     let room = await this.prismaService.room.findUnique({
       where: { id: dto.sessionId },
     });
@@ -18,7 +16,6 @@ export class RoomService {
       return room;
     }
 
-    // create new room
     room = await this.prismaService.room.create({
       data: {
         id: dto.sessionId,

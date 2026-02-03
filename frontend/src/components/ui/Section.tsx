@@ -12,19 +12,12 @@ interface SectionProps {
 	id?: string;
 }
 
-/**
- * Padding mappings
- */
 const paddingStyles: Record<SectionProps["padding"] & string, string> = {
 	sm: "py-12",
 	md: "py-16",
 	lg: "py-20",
 };
 
-/**
- * Reusable Section component
- * Provides consistent section spacing and borders
- */
 export function Section({
 	children,
 	className = "",
@@ -50,9 +43,6 @@ export function Section({
 	);
 }
 
-/**
- * Section Header component
- */
 interface SectionHeaderProps {
 	title: string;
 	subtitle?: string;

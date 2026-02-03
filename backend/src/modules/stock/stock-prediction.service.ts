@@ -16,11 +16,7 @@ import {
   PREDICTION_CONFIG,
   getFallbackPriceUrl,
 } from '.';
-import {
-  MLServiceResponse,
-  FinancialData,
-  HistorySearchRecord,
-} from '.';
+import { MLServiceResponse, FinancialData, HistorySearchRecord } from '.';
 import {
   MLServiceConnectionException,
   MLServiceTimeoutException,
@@ -55,9 +51,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     this.logger.log('Shutting down ML Service connection');
   }
 
-  /**
-   * Test connection to ML Service on startup.
-   */
   private async testConnection(): Promise<void> {
     try {
       const result = await this.ping();
@@ -71,12 +64,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Send command to ML TCP server and get response.
-   * @param command - Command to send
-   * @param params - Additional parameters
-   * @returns ML Service response
-   */
   private async sendCommand(
     command: string,
     params: Record<string, unknown> = {},
@@ -135,9 +122,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  /**
-   * Ping ML service to check if it's alive.
-   */
   async ping(): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand(ML_COMMANDS.PING);
@@ -151,9 +135,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get current price for a ticker.
-   */
   async getCurrentPrice(ticker: string): Promise<MLServiceResponse> {
     try {
       const response = await this.sendCommand(ML_COMMANDS.GET_CURRENT_PRICE, {
@@ -161,7 +142,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       });
 
       if (!response.success) {
-        // Fallback to external API
         const data = await fetch(getFallbackPriceUrl(ticker));
         const json = await data.json();
         return {
@@ -184,9 +164,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get financial data for a ticker.
-   */
   async getFinancialData(ticker: string): Promise<MLServiceResponse> {
     try {
       const response = await this.sendCommand(ML_COMMANDS.GET_FINANCIAL_DATA, {
@@ -217,16 +194,11 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Save financial data to history search table.
-   * Implements duplicate prevention within a time window.
-   */
   private async saveHistorySearch(
     ticker: string,
     data: FinancialData,
   ): Promise<void> {
     try {
-      // Check for duplicate within time window
       const latestRecord = await this.prismaService.history_searching.findFirst(
         {
           where: {
@@ -240,7 +212,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         },
       );
 
-      // Only save if no recent record exists
       if (!latestRecord) {
         await this.prismaService.history_searching.create({
           data: {
@@ -265,13 +236,9 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       this.logger.error(
         `Failed to save history search for ${ticker}: ${errorMessage}`,
       );
-      // Don't fail the request if saving history fails
     }
   }
 
-  /**
-   * Get predictions for a single ticker.
-   */
   async getPredictionSingle(ticker: string): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand(ML_COMMANDS.PREDICT, { ticker });
@@ -286,9 +253,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get predictions for multiple hours (1,2,3,4 hours).
-   */
   async getPredictionsMultiHours(ticker: string): Promise<MLServiceResponse> {
     try {
       const response = await this.sendCommand(ML_COMMANDS.PREDICT_MULTI_HOURS, {
@@ -315,9 +279,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get predictions for all tickers.
-   */
   async getPredictionsAll(
     topN: number = PREDICTION_CONFIG.DEFAULT_TOP_N,
   ): Promise<MLServiceResponse> {
@@ -334,9 +295,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Train model for a single ticker.
-   */
   async trainModel(
     ticker: string,
     testSize: number = MODEL_TRAINING_CONFIG.DEFAULT_TEST_SIZE,
@@ -372,9 +330,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Train models for all tickers.
-   */
   async trainAllModels(
     testSize: number = MODEL_TRAINING_CONFIG.DEFAULT_TEST_SIZE,
     nEstimators: number = MODEL_TRAINING_CONFIG.DEFAULT_N_ESTIMATORS,
@@ -404,9 +359,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Update data for tickers.
-   */
   async updateData(
     tickers?: string[],
     forceUpdate: boolean = true,
@@ -436,9 +388,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get list of all available tickers.
-   */
   async getTickerList(): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand(ML_COMMANDS.GET_TICKER_LIST);
@@ -453,9 +402,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Get model status for all tickers.
-   */
   async getModelStatus(tickers?: string[]): Promise<MLServiceResponse> {
     try {
       return await this.sendCommand(ML_COMMANDS.GET_MODEL_STATUS, { tickers });
@@ -470,9 +416,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Run full pipeline: update data -> train models -> make predictions.
-   */
   async runFullPipeline(
     tickers?: string[],
     forceUpdate: boolean = true,
@@ -500,9 +443,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Load history search records.
-   */
   async loadingHistorySearch(): Promise<MLServiceResponse> {
     try {
       const response = await this.prismaService.history_searching.findMany({
@@ -512,7 +452,6 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         },
       });
 
-      // Convert BigInt to string for JSON serialization
       const serializedResponse: HistorySearchRecord[] = response.map(
         (item) => ({
           id: item.id,

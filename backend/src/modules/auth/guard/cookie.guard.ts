@@ -10,12 +10,10 @@ export class CookieGuard extends AuthGuard('cookie') {
   }
 
   canActivate(context: ExecutionContext) {
-    // check type request
     if (context.getType() !== 'http') {
       return true;
     }
 
-    // check public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),

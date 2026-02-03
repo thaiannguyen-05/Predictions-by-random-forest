@@ -1,4 +1,4 @@
-// components/stock/PredictionButton.tsx
+
 "use client";
 
 import React from 'react';

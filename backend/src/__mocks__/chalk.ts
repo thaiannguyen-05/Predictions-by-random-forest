@@ -1,7 +1,3 @@
-/**
- * Mock chalk module for Jest tests
- * chalk@5+ is ESM-only, so we need to mock it for CommonJS tests
- */
 import type { ChalkFunction } from '.';
 
 const handler: ProxyHandler<ChalkFunction> = {

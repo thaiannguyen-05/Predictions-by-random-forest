@@ -76,14 +76,14 @@ export default function ChangePasswordPage() {
 		<div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
 			<div className="w-full max-w-md mx-auto">
 
-				{/* Back Link */}
+				{}
 				<div className="mb-6">
 					<Link href="/dashboard" className="flex items-center text-gray-400 hover:text-brand-orange transition-colors">
 						<ArrowLeft size={18} className="mr-2" /> Quay lại Dashboard
 					</Link>
 				</div>
 
-				{/* Header Logo Area */}
+				{}
 				<div className="text-center mb-8">
 					<Link href="/" className="inline-block group">
 						<span className="text-4xl font-extrabold text-white tracking-widest transition-transform duration-300 group-hover:scale-105 block">
@@ -99,9 +99,9 @@ export default function ChangePasswordPage() {
 					</p>
 				</div>
 
-				{/* Main Card */}
+				{}
 				<div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-					{/* Glow effect inside card */}
+					{}
 					<div className="absolute top-0 right-0 w-32 h-32 bg-brand-orange/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none"></div>
 
 					{success && (
@@ -124,7 +124,7 @@ export default function ChangePasswordPage() {
 							</div>
 						)}
 
-						{/* Current Password */}
+						{}
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-gray-300 ml-1">Mật khẩu hiện tại</label>
 							<div className="relative group">
@@ -143,7 +143,7 @@ export default function ChangePasswordPage() {
 							</div>
 						</div>
 
-						{/* New Password */}
+						{}
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-gray-300 ml-1">Mật khẩu mới</label>
 							<div className="relative group">
@@ -162,7 +162,7 @@ export default function ChangePasswordPage() {
 							</div>
 						</div>
 
-						{/* Confirm New Password */}
+						{}
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-gray-300 ml-1">Xác nhận mật khẩu mới</label>
 							<div className="relative group">

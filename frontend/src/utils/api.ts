@@ -1,8 +1,3 @@
-/**
- * API Utility with automatic token refresh on 401
- * Hỗ trợ cả legacy format và StandardResponse format mới
- */
-
 import type { StandardResponse } from '@/types/api.types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -10,24 +5,15 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
-/**
- * Subscribe to token refresh completion
- */
 function subscribeTokenRefresh(cb: (token: string) => void): void {
 	refreshSubscribers.push(cb);
 }
 
-/**
- * Notify all subscribers with new token
- */
 function onTokenRefreshed(token: string): void {
 	refreshSubscribers.forEach((cb) => cb(token));
 	refreshSubscribers = [];
 }
 
-/**
- * Refresh access token using refresh token from cookies
- */
 async function refreshAccessToken(): Promise<string | null> {
 	try {
 		const response = await fetch(`${API_BASE}/auth/refresh-token`, {
@@ -44,7 +30,7 @@ async function refreshAccessToken(): Promise<string | null> {
 
 		const data = await response.json();
 
-		// Handle cả legacy và new format
+		
 		const tokens = data.data?.tokens || data.tokens;
 		if (tokens?.accessToken) {
 			localStorage.setItem('accessToken', tokens.accessToken);
@@ -58,9 +44,6 @@ async function refreshAccessToken(): Promise<string | null> {
 	}
 }
 
-/**
- * Enhanced fetch with automatic token refresh on 401
- */
 export async function apiFetch(
 	url: string,
 	options: RequestInit = {}
@@ -126,16 +109,12 @@ export async function apiFetch(
 	return response;
 }
 
-/**
- * Parse API response và chuẩn hóa về format thống nhất
- * Hỗ trợ cả legacy { status, data } và new { success, data }
- */
 export async function parseApiResponse<T>(
 	response: Response
 ): Promise<{ success: boolean; data: T; message: string }> {
 	const json = await response.json();
 
-	// New format: { success, data, message, timestamp }
+	
 	if (typeof json.success === 'boolean') {
 		return {
 			success: json.success,
@@ -144,7 +123,7 @@ export async function parseApiResponse<T>(
 		};
 	}
 
-	// Legacy format: { status, data, message }
+	
 	if (typeof json.status === 'boolean') {
 		return {
 			success: json.status,
@@ -153,7 +132,7 @@ export async function parseApiResponse<T>(
 		};
 	}
 
-	// Direct data (no wrapper)
+	
 	return {
 		success: response.ok,
 		data: json as T,
@@ -161,9 +140,6 @@ export async function parseApiResponse<T>(
 	};
 }
 
-/**
- * Typed API fetch with automatic response parsing
- */
 export async function apiRequest<T>(
 	url: string,
 	options: RequestInit = {}
@@ -171,12 +147,12 @@ export async function apiRequest<T>(
 	const response = await apiFetch(url, options);
 	const json = await response.json();
 
-	// Nếu đã có format chuẩn
+	
 	if (typeof json.success === 'boolean' && 'timestamp' in json) {
 		return json as StandardResponse<T>;
 	}
 
-	// Chuyển đổi legacy format
+	
 	if (typeof json.status === 'boolean') {
 		return {
 			success: json.status,
@@ -186,7 +162,7 @@ export async function apiRequest<T>(
 		};
 	}
 
-	// Wrap direct data
+	
 	return {
 		success: response.ok,
 		data: json as T,
@@ -195,9 +171,6 @@ export async function apiRequest<T>(
 	};
 }
 
-/**
- * Convenience methods
- */
 export const api = {
 	get: (url: string, options?: RequestInit): Promise<Response> =>
 		apiFetch(url, { ...options, method: 'GET' }),
@@ -230,9 +203,6 @@ export const api = {
 		apiFetch(url, { ...options, method: 'DELETE' }),
 };
 
-/**
- * Typed API methods với automatic parsing
- */
 export const typedApi = {
 	get: <T>(url: string, options?: RequestInit): Promise<StandardResponse<T>> =>
 		apiRequest<T>(url, { ...options, method: 'GET' }),

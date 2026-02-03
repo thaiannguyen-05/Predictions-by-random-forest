@@ -279,7 +279,6 @@ export class StockController {
     },
   })
   async getCompleteAnalysis(@Param('ticker') ticker: string) {
-    // Get both current price and predictions
     const [priceResult, predictionResult] = await Promise.all([
       this.stockService.getCurrentPrice(ticker),
       this.stockService.getPredictionsMultiHours(ticker),

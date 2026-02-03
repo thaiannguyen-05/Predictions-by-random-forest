@@ -29,7 +29,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   ): Promise<FacebookOAuth2User> {
     const { id, displayName, name, emails, photos } = profile;
 
-    // Match the FacebookOAuth2User interface
     const user: FacebookOAuth2User = {
       providerUserId: id,
       email: emails?.[0]?.value || '',

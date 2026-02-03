@@ -1,12 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PostNotFoundException } from '../exceptions/post.exception';
-import {
-  DisLikePost,
-  INTERVAL,
-  LikePost,
-  MAX_BATCH_INSERT,
-} from '..';
+import { DisLikePost, INTERVAL, LikePost, MAX_BATCH_INSERT } from '..';
 import { MyLogger } from '../../../logger/logger.service';
 
 const CONTEXT = 'BatchInsertService';
@@ -100,7 +95,6 @@ export class BatchInsertService implements OnModuleInit {
         CONTEXT,
       );
 
-      // Use Promise.all for proper async handling
       await Promise.all(
         this.dislikePostData.map((value) =>
           this.prismaService.likePost.delete({

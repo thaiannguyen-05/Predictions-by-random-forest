@@ -3,9 +3,6 @@ import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 import { PAGINATION_DEFAULTS } from '../../../common/type';
 
-/**
- * DTO cho việc load danh sách comments của một post với pagination
- */
 export class LoadingPostCommentsDto {
   @ApiPropertyOptional({
     description: 'Cursor ID cho cursor-based pagination',

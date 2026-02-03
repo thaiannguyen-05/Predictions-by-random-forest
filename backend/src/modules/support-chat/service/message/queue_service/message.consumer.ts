@@ -16,19 +16,15 @@ export class MessageConsumer {
   @EventPattern('send-message')
   async handleSendMessage(@Payload() data: MessageQueue) {
     try {
-      // 1️⃣ Lưu vào Redis (Realtime Layer) - Fast read
       await this.redisService.saveMessageToRedis(data);
 
-      // 2️⃣ Publish qua Redis Pub/Sub cho WebSocket
       await this.redisService.publishMessage(`room:${data.roomId}`, data);
 
-      // 3️⃣ Thêm vào batch queue để insert PostgreSQL
       await this.batchInSertService.insertMessageInQueue(data);
 
       this.logger.debug(`✅ Processed message: room=${data.roomId}`);
     } catch (error) {
       this.logger.error('❌ Error handling message', error);
-      // Có thể retry hoặc ghi vào dead letter queue
     }
   }
 }

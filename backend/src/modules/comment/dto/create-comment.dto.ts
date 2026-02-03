@@ -7,9 +7,6 @@ import {
   MinLength,
 } from 'class-validator';
 
-/**
- * DTO cho việc tạo comment mới
- */
 export class CreateCommentDto {
   @ApiProperty({
     description: 'Nội dung comment',

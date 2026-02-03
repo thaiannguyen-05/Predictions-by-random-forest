@@ -8,9 +8,6 @@ import {
   MinLength,
 } from 'class-validator';
 
-/**
- * DTO cho việc tạo bài post mới
- */
 export class CreatePostDto {
   @ApiProperty({
     description: 'Tiêu đề bài post',

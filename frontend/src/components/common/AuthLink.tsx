@@ -11,13 +11,6 @@ interface AuthLinkProps {
 	requireAuth?: boolean;
 }
 
-/**
- * Link component với xác thực - redirect đến trang login nếu chưa đăng nhập
- * @param href Đường dẫn đích
- * @param children Nội dung link
- * @param className CSS classes
- * @param requireAuth Yêu cầu đăng nhập (default: true)
- */
 const AuthLink: React.FC<AuthLinkProps> = ({
 	href,
 	children,
@@ -30,13 +23,13 @@ const AuthLink: React.FC<AuthLinkProps> = ({
 	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
 		e.preventDefault();
 
-		// Nếu yêu cầu auth và chưa đăng nhập -> redirect to login
+		
 		if (requireAuth && !loading && !user) {
 			router.push("/auth/login");
 			return;
 		}
 
-		// Đã đăng nhập hoặc không yêu cầu auth -> navigate bình thường
+		
 		router.push(href);
 	};
 

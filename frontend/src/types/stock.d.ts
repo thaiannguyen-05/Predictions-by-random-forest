@@ -1,10 +1,10 @@
-// frontend/src/types/stock.d.ts (hoặc đặt ngay trên đầu page.tsx nếu muốn nhanh)
 
-// === KIỂU DỮ LIỆU TỪ BACKEND ===
 
-// Dữ liệu lịch sử (historicalData)
+
+
+
 export interface HistoricalDataItem {
-  date: string; // YYYY-MM-DD
+  date: string; 
   open: number;
   high: number;
   low: number;
@@ -12,17 +12,17 @@ export interface HistoricalDataItem {
   volume: number;
 }
 
-// Thông tin chi tiết giá hiện tại
+
 export interface CurrentPriceData {
   symbol: string;
   price: number;
   currency: string;
-  // ... có thể có thêm các trường khác như change, changePercent
+  
 }
 
-// Các thống kê từ Yahoo Finance
+
 export interface KeyStatistics {
-  // Đây chỉ là một số ví dụ, bạn cần bổ sung dựa trên dữ liệu thực tế từ Yahoo Finance
+  
   forwardPE?: { raw: number };
   pegRatio?: { raw: number };
   trailingEps?: { raw: number };
@@ -30,7 +30,7 @@ export interface KeyStatistics {
   fiftyTwoWeekHigh?: { raw: number };
   fiftyTwoWeekLow?: { raw: number };
   marketCap?: { raw: number };
-  // ... và nhiều trường khác
+  
 }
 
 export interface SummaryDetail {
@@ -38,10 +38,10 @@ export interface SummaryDetail {
   open?: { raw: number };
   dayHigh?: { raw: number };
   dayLow?: { raw: number };
-  // ...
+  
 }
 
-// Cấu trúc dữ liệu mà service.ts trả về
+
 export interface BackendStockResponse {
   historicalData: HistoricalDataItem[];
   currentPrice: CurrentPriceData;
@@ -52,9 +52,6 @@ export interface BackendStockResponse {
   };
 }
 
-/**
- * Summary Profile từ Yahoo Finance
- */
 export interface SummaryProfile {
   longBusinessSummary?: string;
   industry?: string;
@@ -65,30 +62,30 @@ export interface SummaryProfile {
   city?: string;
 }
 
-// === KIỂU DỮ LIỆU CHÚNG TA SẼ SỬ DỤNG TRÊN FRONTEND (Đã tổng hợp) ===
+
 
 export interface FrontendStockData {
   symbol: string;
-  companyName: string; // Cần lấy từ summaryProfile hoặc tự đặt
+  companyName: string; 
   currentPrice: number;
   previousClose: number;
   change: number;
   changePercent: number;
-  marketCap: string; // Định dạng lại cho dễ đọc
-  volume: string; // Định dạng lại cho dễ đọc
+  marketCap: string; 
+  volume: string; 
   peRatio: string;
   eps: string;
   beta: string;
   openPrice: number;
   high52Week: number;
   low52Week: number;
-  lastUpdated: string; // Thời gian cập nhật
+  lastUpdated: string; 
 
-  chartData: HistoricalDataItem[]; // Dữ liệu cho biểu đồ
-  tradingHistory: HistoricalDataItem[]; // Dữ liệu cho bảng lịch sử giao dịch (thường là historicalData)
+  chartData: HistoricalDataItem[]; 
+  tradingHistory: HistoricalDataItem[]; 
 }
 
-// Dành cho dữ liệu thống kê
+
 export interface FormattedKeyStatistics {
-  [key: string]: string; // Ví dụ: 'P/E Ratio': '25.5x'
+  [key: string]: string; 
 }

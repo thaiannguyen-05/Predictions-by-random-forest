@@ -3,9 +3,6 @@ import {
   ResourceNotFoundException,
 } from '../../../common/exceptions';
 
-/**
- * Exception khi không tìm thấy Post
- */
 export class PostNotFoundException extends ResourceNotFoundException {
   constructor(postId?: string, metadata?: ExceptionMetadata) {
     super('Post', postId, metadata);

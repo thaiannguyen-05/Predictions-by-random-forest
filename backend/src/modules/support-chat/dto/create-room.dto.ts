@@ -1,9 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-/**
- * DTO cho việc tạo phòng chat hỗ trợ
- */
 export class CreateRoomDto {
   @ApiPropertyOptional({
     description: 'ID của nhân viên hỗ trợ',

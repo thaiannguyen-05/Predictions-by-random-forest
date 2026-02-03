@@ -27,7 +27,6 @@ export class EmailService {
     });
   }
 
-  // get template
   async getTemplate(templateFileName: string) {
     if (this.templateCache.has(templateFileName)) {
       return this.templateCache.get(templateFileName);
@@ -47,17 +46,13 @@ export class EmailService {
     }
   }
 
-  // send verification register
   async sendVerificationRegister(toEmail: string) {
     try {
-      // get template
       const template = await this.getTemplate(`verificationRegister`);
       const subject = 'Verify email';
 
-      // generate tokens and saving in redis
       const key = AUTH_CONSTANT.KEY_VERIFY_CODE(toEmail);
 
-      // check key is exist
       const existKey = await this.redisService.get(key);
       if (existKey) {
         this.logger.debug(`${key} have value: ${existKey} has been saved `);
@@ -79,7 +74,6 @@ export class EmailService {
         html,
       };
 
-      // send email
       const info = await this.transporter.sendMail(mailOptions);
       return !!(
         info &&
@@ -93,10 +87,8 @@ export class EmailService {
     }
   }
 
-  // send detect other device
   async detectdOtherDevice(toEmail: string, username: string) {
     try {
-      // get template
       const template = await this.getTemplate('detectOtherDevice');
       const subject = 'Detectec other device';
       const html = template
@@ -110,7 +102,6 @@ export class EmailService {
         html,
       };
 
-      // send email
       const info = await this.transporter.sendMail(mailOptions);
       return !!(
         info &&
@@ -124,10 +115,8 @@ export class EmailService {
     }
   }
 
-  // send notify change password
   async changePassword(toEmail: string, username: string) {
     try {
-      // get template
       const template = await this.getTemplate('notifyChangePassword');
       const subject = 'Notify Changepassword';
       const html = template
@@ -140,7 +129,6 @@ export class EmailService {
         html,
       };
 
-      // send email
       const info = await this.transporter.sendMail(mailOptions);
       return !!(
         info &&
@@ -154,11 +142,6 @@ export class EmailService {
     }
   }
 
-  /**
-   * Gửi email liên hệ đến admin
-   * @param contactData - Dữ liệu form liên hệ
-   * @returns true nếu gửi thành công
-   */
   async sendContactToAdmin(contactData: ContactEmailData): Promise<boolean> {
     try {
       const template = await this.getTemplate('contactAdmin');
@@ -203,12 +186,6 @@ export class EmailService {
     }
   }
 
-  /**
-   * Gửi email xác nhận cho người dùng sau khi submit form liên hệ
-   * @param toEmail - Email người dùng
-   * @param userName - Tên người dùng
-   * @returns true nếu gửi thành công
-   */
   async sendContactConfirmation(
     toEmail: string,
     userName: string,

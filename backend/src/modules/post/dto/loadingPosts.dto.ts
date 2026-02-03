@@ -3,9 +3,6 @@ import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 import { PAGINATION_DEFAULTS } from '../../../common/type';
 
-/**
- * DTO cho việc load danh sách posts với pagination
- */
 export class LoadingPostDto {
   @ApiProperty({
     description: 'Số trang hiện tại',

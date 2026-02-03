@@ -309,7 +309,7 @@ describe('PostService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockPrismaService.user.findFirst.mockResolvedValue(mockUser);
       mockPrismaService.post.findUnique.mockResolvedValue(mockPost);
-      mockPrismaService.likePost.findUnique.mockResolvedValue(null); // Not liked yet -> isLike is falsy
+      mockPrismaService.likePost.findUnique.mockResolvedValue(null);
 
       const result = await service.likePost(mockUser.id, mockPost.id);
 
@@ -324,7 +324,7 @@ describe('PostService', () => {
       mockPrismaService.likePost.findUnique.mockResolvedValue({
         id: mockPost.id,
         userId: mockUser.id,
-        isLike: true, // Already liked
+        isLike: true,
       });
 
       const result = await service.likePost(mockUser.id, mockPost.id);

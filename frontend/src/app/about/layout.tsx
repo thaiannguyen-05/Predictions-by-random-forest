@@ -1,8 +1,5 @@
 import { Metadata } from "next";
 
-/**
- * SEO Metadata cho trang Giới Thiệu
- */
 export const metadata: Metadata = {
 	title: "Giới Thiệu | StockDN - Nền Tảng Phân Tích Chứng Khoán AI",
 	description:

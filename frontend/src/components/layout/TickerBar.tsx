@@ -18,8 +18,8 @@ export default function TickerBar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // ✅ KHÔNG GỌI API NỮA - Chỉ dùng mock data để tránh spam API
-    // Lý do: TickerBar gọi API cho 40 mã cổ phiếu mỗi lần load trang
+    
+    
     const generateMockTickers = () => {
       const mockTickers = TRAINED_STOCKS.map(getFallbackTickerData);
       setTickers(mockTickers);
@@ -28,13 +28,13 @@ export default function TickerBar() {
 
     generateMockTickers();
 
-    // ✅ Tạo animation "thay đổi giá" nhẹ mỗi 10 giây (không gọi API)
+    
     const interval = setInterval(() => {
       setTickers(prevTickers =>
         prevTickers.map(ticker => {
-          const priceChange = (Math.random() - 0.5) * ticker.price * 0.005; // Thay đổi ±0.5%
+          const priceChange = (Math.random() - 0.5) * ticker.price * 0.005; 
           const newPrice = ticker.price + priceChange;
-          // Calculate previousClose based on current price and changePercent
+          
           const previousClose = newPrice / (1 + ticker.changePercent / 100);
           const change = newPrice - previousClose;
           return {
@@ -45,7 +45,7 @@ export default function TickerBar() {
           };
         })
       );
-    }, 10000); // 10 giây
+    }, 10000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -59,7 +59,7 @@ export default function TickerBar() {
 
   const handleStockClick = (symbol: string) => router.push(`/stocks/${symbol}`);
 
-  // Loading UI
+  
   if (isLoading)
     return (
       <div className="bg-brand-dark border-b border-gray-800 py-3 overflow-hidden">

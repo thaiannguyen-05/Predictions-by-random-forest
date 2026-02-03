@@ -37,9 +37,6 @@ interface ContactFormData {
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-/**
- * Contact info data
- */
 const contactInfo = [
 	{
 		icon: <Mail size={24} />,
@@ -67,9 +64,6 @@ const contactInfo = [
 	},
 ];
 
-/**
- * Subject options for form
- */
 const subjectOptions = [
 	{ value: "", label: "Chọn chủ đề" },
 	{ value: "Hỗ trợ kỹ thuật", label: "Hỗ trợ kỹ thuật" },
@@ -79,9 +73,6 @@ const subjectOptions = [
 	{ value: "Khác", label: "Khác" },
 ];
 
-/**
- * FAQ items
- */
 const faqItems = [
 	"Làm sao để bắt đầu sử dụng StockDN?",
 	"Thuật toán AI hoạt động như thế nào?",
@@ -89,9 +80,6 @@ const faqItems = [
 	"Tôi có thể yêu cầu tính năng mới không?",
 ];
 
-/**
- * Social links
- */
 const socialLinks = [
 	{
 		icon: <Facebook size={22} />,
@@ -110,10 +98,6 @@ const socialLinks = [
 	},
 ];
 
-/**
- * Trang Liên Hệ - Contact Page
- * Form liên hệ và thông tin hỗ trợ
- */
 export default function ContactPage(): React.ReactElement {
 	const [formData, setFormData] = useState<ContactFormData>({
 		name: "",
@@ -160,7 +144,7 @@ export default function ContactPage(): React.ReactElement {
 
 	return (
 		<MainLayout>
-			{/* Hero Section */}
+			{}
 			<PageHero
 				badge="LIÊN HỆ"
 				title={
@@ -172,16 +156,16 @@ export default function ContactPage(): React.ReactElement {
 				minHeight="sm"
 			/>
 
-			{/* Contact Info Cards */}
+			{}
 			<Section padding="md">
 				<InfoGrid items={contactInfo} columns={4} />
 			</Section>
 
-			{/* Contact Form Section */}
+			{}
 			<Section>
 				<div className="max-w-6xl mx-auto">
 					<div className="grid lg:grid-cols-5 gap-12">
-						{/* Form */}
+						{}
 						<div className="lg:col-span-3">
 							<Card variant="gradient" padding="lg" rounded="3xl">
 								<CardHeader
@@ -277,9 +261,9 @@ export default function ContactPage(): React.ReactElement {
 							</Card>
 						</div>
 
-						{/* Sidebar Info */}
+						{}
 						<div className="lg:col-span-2 space-y-8">
-							{/* FAQ Quick Links */}
+							{}
 							<Card padding="md">
 								<h3 className="text-lg font-semibold text-white mb-4">
 									Câu Hỏi Thường Gặp
@@ -296,7 +280,7 @@ export default function ContactPage(): React.ReactElement {
 								</ul>
 							</Card>
 
-							{/* Social Links */}
+							{}
 							<Card padding="md">
 								<h3 className="text-lg font-semibold text-white mb-4">
 									Kết Nối Với Chúng Tôi
@@ -316,7 +300,7 @@ export default function ContactPage(): React.ReactElement {
 								</div>
 							</Card>
 
-							{/* Support Hours */}
+							{}
 							<Card
 								variant="gradient"
 								padding="md"

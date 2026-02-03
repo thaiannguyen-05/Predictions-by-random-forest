@@ -12,10 +12,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	fullWidth?: boolean;
 }
 
-/**
- * Reusable Input component với label, error handling và icon support
- * Consistent styling cho tất cả form inputs trong app
- */
 export function Input({
 	label,
 	error,
@@ -103,9 +99,6 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 	fullWidth?: boolean;
 }
 
-/**
- * Reusable Textarea component
- */
 export function Textarea({
 	label,
 	error,
@@ -171,9 +164,6 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 	fullWidth?: boolean;
 }
 
-/**
- * Reusable Select component
- */
 export function Select({
 	label,
 	error,

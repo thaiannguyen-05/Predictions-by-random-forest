@@ -2,14 +2,8 @@
 
 import React from "react";
 
-/**
- * Badge variant types
- */
 type BadgeVariant = "default" | "success" | "warning" | "danger" | "info" | "orange";
 
-/**
- * Badge size types
- */
 type BadgeSize = "sm" | "md" | "lg";
 
 interface BadgeProps {
@@ -21,9 +15,6 @@ interface BadgeProps {
 	pulse?: boolean;
 }
 
-/**
- * Variant styles
- */
 const variantStyles: Record<BadgeVariant, string> = {
 	default: "bg-white/10 text-gray-300 border-white/10",
 	success: "bg-green-500/10 text-green-400 border-green-500/20",
@@ -33,18 +24,12 @@ const variantStyles: Record<BadgeVariant, string> = {
 	orange: "bg-brand-orange/10 text-brand-orange border-brand-orange/20",
 };
 
-/**
- * Size styles
- */
 const sizeStyles: Record<BadgeSize, string> = {
 	sm: "px-2 py-0.5 text-xs",
 	md: "px-3 py-1 text-xs",
 	lg: "px-4 py-1.5 text-sm",
 };
 
-/**
- * Reusable Badge component
- */
 export function Badge({
 	variant = "default",
 	size = "md",
@@ -85,9 +70,6 @@ export function Badge({
 	);
 }
 
-/**
- * Status indicator dot
- */
 interface StatusDotProps {
 	status: "online" | "offline" | "busy" | "away";
 	className?: string;

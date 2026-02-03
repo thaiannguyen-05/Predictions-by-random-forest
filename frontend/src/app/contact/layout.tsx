@@ -1,8 +1,5 @@
 import { Metadata } from "next";
 
-/**
- * SEO Metadata cho trang Liên Hệ
- */
 export const metadata: Metadata = {
 	title: "Liên Hệ | StockDN - Hỗ Trợ & Tư Vấn",
 	description:

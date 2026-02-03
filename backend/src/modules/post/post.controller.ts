@@ -24,10 +24,6 @@ import { IsAuthorPostGuard } from './isAuthorPost.guard';
 import { TIME_LIMIT_POST } from '../../common/type';
 import { User } from '../../common/decorator';
 
-/**
- * Controller xử lý các request liên quan đến Post
- * @class PostController
- */
 @ApiTags('Post')
 @ApiBearerAuth('JWT-auth')
 @Controller('post')
@@ -37,9 +33,6 @@ export class PostController {
     private readonly viewCountService: ViewCountService,
   ) {}
 
-  /**
-   * Tạo bài post mới
-   */
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Post('create')
   @ApiOperation({ summary: 'Create a new post' })
@@ -51,9 +44,6 @@ export class PostController {
     return this.postService.createPost(userId, dto);
   }
 
-  /**
-   * Cập nhật bài post (chỉ author mới được phép)
-   */
   @UseGuards(IsAuthorPostGuard)
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Post('update')
@@ -72,9 +62,6 @@ export class PostController {
     return this.postService.updatePost(userId, postId, dto);
   }
 
-  /**
-   * Xóa bài post (chỉ author mới được phép)
-   */
   @UseGuards(IsAuthorPostGuard)
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Delete('delete')
@@ -91,9 +78,6 @@ export class PostController {
     return this.postService.deletePost(userId, postId);
   }
 
-  /**
-   * Load danh sách posts của một user với pagination
-   */
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Post('loading')
   @ApiOperation({ summary: 'Load posts for a specific user with pagination' })
@@ -108,9 +92,6 @@ export class PostController {
     return this.postService.loadingPosts(userId, dto);
   }
 
-  /**
-   * Load một post theo ID
-   */
   @Throttle({ default: { limit: 10, ttl: TIME_LIMIT_POST } })
   @Get('loadingById')
   @ApiOperation({ summary: 'Load a single post by ID' })
@@ -121,9 +102,6 @@ export class PostController {
     return this.postService.loadingPostById(postId);
   }
 
-  /**
-   * Load feed posts với pagination
-   */
   @Throttle({ default: { limit: 20, ttl: TIME_LIMIT_POST } })
   @Post('feed')
   @ApiOperation({ summary: 'Load feed posts with pagination' })
@@ -145,10 +123,6 @@ export class PostController {
     return this.postService.likePost(userId, postId);
   }
 
-  /**
-   * Tăng view count cho một bài post
-   * Sử dụng batch sync: buffer trong Redis, định kỳ sync vào DB
-   */
   @Throttle({ default: { limit: 100, ttl: TIME_LIMIT_POST } })
   @Post('view')
   @ApiOperation({ summary: 'Increase view count for a post' })
@@ -162,9 +136,6 @@ export class PostController {
     return this.viewCountService.increaseViewCount(postId);
   }
 
-  /**
-   * Lấy view count hiện tại từ Redis
-   */
   @Throttle({ default: { limit: 100, ttl: TIME_LIMIT_POST } })
   @Get('view')
   @ApiOperation({ summary: 'Get current view count for a post' })

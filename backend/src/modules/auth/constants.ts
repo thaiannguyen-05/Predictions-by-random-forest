@@ -2,11 +2,11 @@ export const AUTH_CONSTANT = {
   KEY_VERIFY_CODE(accessor: string) {
     return `verify_code_${accessor}`;
   },
-  TIME_LIFE_CACHE: 10 * 24 * 60 * 60, // 10h
-  TIME_LIFE_SESSION: 10 * 365 * 24 * 60 * 60 * 1000, // 10 years
-  TIME_LIFE_ACCESS_TOKEN: 1000 * 60 * 60, // 1h
-  TIME_LIFE_REFRESH_TOKEN: 1000 * 24 * 60 * 60 * 7, // 7d (in milliseconds)
-  CODE_EXPIRED: 15 * 60, // 15 minutes (in seconds)
+  TIME_LIFE_CACHE: 10 * 24 * 60 * 60,
+  TIME_LIFE_SESSION: 10 * 365 * 24 * 60 * 60 * 1000,
+  TIME_LIFE_ACCESS_TOKEN: 1000 * 60 * 60,
+  TIME_LIFE_REFRESH_TOKEN: 1000 * 24 * 60 * 60 * 7,
+  CODE_EXPIRED: 15 * 60,
   COOKIE_CONFIG: {
     SESSION: {
       httpOnly: true,

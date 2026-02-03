@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface HistoryItem {
 	id: string;
 	symbol: string;
-	currentPrice: string; // BigInt serialized as string
+	currentPrice: string; 
 	previousClose: string;
 	open: string;
 	high: string;

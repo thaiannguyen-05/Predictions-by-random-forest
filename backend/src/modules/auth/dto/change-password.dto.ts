@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 
-/**
- * DTO cho việc thay đổi mật khẩu
- */
 export class ChangePasswordDto {
   @ApiProperty({
     description: 'Email, username hoặc ID người dùng',

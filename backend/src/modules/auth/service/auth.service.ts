@@ -11,11 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import {
-  FacebookOAuth2User,
-  GoogleOAuth2User,
-  Payload,
-} from '..';
+import { FacebookOAuth2User, GoogleOAuth2User, Payload } from '..';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -65,17 +61,13 @@ export class AuthService {
   }
 
   async register(dto: CreateAccountDto) {
-    // check available user
     const availableUser = await this.findUserByAccessor(dto.email);
     if (availableUser) throw new ConflictException('Account is available');
 
-    // hash password
     const hashedPassword = await hash(dto.password);
 
-    // trans dto
     const dateOfBirth = DateUtils.stringToBirthday(dto.dateOfBirth);
 
-    // create new record
     const newAccount = await this.prismaService.user.create({
       data: {
         email: dto.email,
@@ -88,7 +80,6 @@ export class AuthService {
       },
     });
 
-    // send verification code to email
     this.emailProducer.sendVerifyCodeRegister({ to: newAccount.email });
     this.logger.debug(`Verification code sent to ${newAccount.email}`);
 
@@ -100,9 +91,6 @@ export class AuthService {
     };
   }
 
-  // ===============================
-  // VERIFY ACCOUNT
-  // ===============================
   async verifyAccount(dto: VerifyAccount) {
     if (!dto.code) {
       throw new BadRequestException('Verification code is required');
@@ -111,7 +99,6 @@ export class AuthService {
     const availableUser = await this.findUserByAccessor(dto.to);
     if (!availableUser) throw new NotFoundException('User not found');
 
-    // check isActive
     if (availableUser.isActive) {
       throw new ConflictException('Account is already verified');
     }
@@ -127,7 +114,6 @@ export class AuthService {
       throw new BadRequestException('Verification code expired or not found');
     }
 
-    // validate code
     if (dto.code.localeCompare(storedCode) !== 0) {
       throw new BadRequestException('Invalid verification code');
     }
@@ -160,9 +146,6 @@ export class AuthService {
     };
   }
 
-  // ===============================
-  // LOGIN
-  // ===============================
   async login(dto: LoginDto, res: Response) {
     const user = await this.findUserByAccessor(dto.access);
     if (!user) throw new NotFoundException('User not found');
@@ -171,7 +154,6 @@ export class AuthService {
       throw new ForbiddenException('Invalid login credentials or method.');
     }
 
-    // check valid password
     const valid = await verify(user.hashedPassword, dto.password);
     if (!valid) throw new ForbiddenException('Password is not correct');
 
@@ -272,14 +254,12 @@ export class AuthService {
     username?: string;
     provider: Provider;
   }) {
-    // check user exitsing
     const user = await this.prismaService.user.findUnique({
       where: { email },
     });
 
     let _userOauth2;
 
-    // check if user doesnt exitsing
     if (!user) {
       const newUserId = randomUUID();
       const [user, _userOauth2] = await this.prismaService.$transaction([
@@ -336,10 +316,9 @@ export class AuthService {
         },
       });
     } else if (oauth2User && user) {
-      // Update existing OAuth2 user data
       _userOauth2 = await this.prismaService.oauth2User.update({
         where: { id: oauth2User?.id ?? '' },
-        // where: { id: user?.id },
+
         data: {
           providerUserId,
           fullname,
@@ -386,7 +365,6 @@ export class AuthService {
       id: validateUser,
     };
 
-    // get hardware
     const hardware = this.authOtherService.getClientInfo(res.req as Request);
 
     const oauth2User = {
@@ -411,26 +389,21 @@ export class AuthService {
 
   public async validate(accessToken: string) {
     try {
-      // 1. Verify the token using the secret key
       const payload = this.jwtService.verify(accessToken, {
         secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       });
 
-      // 2. Fetch the user from the database
       const user = await this.prismaService.user.findUnique({
         where: { id: payload.sub },
         omit: { hashedPassword: false },
       });
 
-      // 3. Return the user if found, otherwise return null/throw
       if (!user || !user.isActive) {
         throw new UnauthorizedException('Invalid or inactive user');
       }
 
-      // The returned value is what NestJS Passport injects into the request object (req.user)
       return user;
     } catch (_error) {
-      // Handle common JWT errors (e.g., expiration, invalid signature)
       throw new UnauthorizedException('Token validation failed');
     }
   }

@@ -17,7 +17,7 @@ interface StockDetailPageProps {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL_TICKET_LOAD || "http://localhost:4000/api";
 
-// ⚡ Giảm tần suất refresh từ 5s → 30s để tránh biểu đồ nhảy liên tục
+
 const REFRESH_INTERVAL = 30000;
 
 const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
@@ -32,18 +32,18 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
   const [isPredicting, setIsPredicting] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
 
-  // ✅ Cache historical data để không re-generate mỗi lần refresh
+  
   const historicalDataCache = useRef<any[]>([]);
   const isInitialLoad = useRef<boolean>(true);
 
   const formatSymbolForAPI = (symbol: string) => `${symbol}.VN`;
 
   useEffect(() => {
-    // Reset cache khi symbol thay đổi
+    
     isInitialLoad.current = true;
     historicalDataCache.current = [];
 
-    // ✅ CHỈ CALL 1 LẦN DUY NHẤT khi load trang, KHÔNG auto-refresh
+    
     fetchStockDetails(true);
   }, [symbol]);
 
@@ -78,27 +78,27 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       const change = currentPrice - previousClose;
       const changePercent = (change / previousClose) * 100;
 
-      // ✅ Lấy thông tin chi tiết từ STOCK_DETAILS
+      
       const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
         name: `Công ty ${symbol}`,
         sector: "Chưa phân loại",
         marketCap: 0,
       };
 
-      // ✅ CHỈ GENERATE DATA MỘT LẦN khi load lần đầu
+      
       let updatedChartData: any[];
       if (isInitialLoad.current) {
-        // Lần đầu tiên: Generate toàn bộ historical data
+        
         updatedChartData = await generateHistoricalData(symbol, currentPrice);
         historicalDataCache.current = updatedChartData;
         isInitialLoad.current = false;
       } else {
-        // Các lần sau: CHỈ UPDATE điểm cuối cùng với current price mới
+        
         if (historicalDataCache.current.length > 0) {
           updatedChartData = [...historicalDataCache.current];
           const lastIndex = updatedChartData.length - 1;
 
-          // Update chỉ điểm cuối cùng
+          
           updatedChartData[lastIndex] = {
             ...updatedChartData[lastIndex],
             close: currentPrice,
@@ -109,7 +109,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
 
           historicalDataCache.current = updatedChartData;
         } else {
-          // Fallback: nếu cache bị mất, generate lại
+          
           updatedChartData = await generateHistoricalData(symbol, currentPrice);
           historicalDataCache.current = updatedChartData;
         }
@@ -117,8 +117,8 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
 
       const updatedStockData = {
         symbol: symbol.toUpperCase(),
-        companyName: stockInfo.name, // ✅ Dùng tên thật
-        sector: stockInfo.sector, // ✅ Hiển thị ngành
+        companyName: stockInfo.name, 
+        sector: stockInfo.sector, 
         currentPrice,
         previousClose,
         change,
@@ -142,12 +142,12 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         lastUpdated:
           pricePayload?.time ||
           new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
-        chartData: updatedChartData, // ✅ Dùng cached data
+        chartData: updatedChartData, 
       };
 
       setStockData(updatedStockData);
       setFinancialData(financialData);
-      setChartData(updatedChartData); // ✅ Set cached chart data
+      setChartData(updatedChartData); 
       setError(null);
     } catch (err: any) {
       console.warn("⚠️ Lỗi khi tải dữ liệu:", err.message);
@@ -158,28 +158,28 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
     }
   };
 
-  // ✅ FUNCTION NÀY CHỈ ĐƯỢC GỌI 1 LẦN DUY NHẤT khi load trang đầu tiên
-  // Sau đó data sẽ được cache và chỉ update điểm cuối cùng
+  
+  
   const generateHistoricalData = async (symbol: string, currentPrice: number) => {
-    // Generate data cho 5 năm (khoảng 1825 ngày) để hỗ trợ chart 5Y/MAX
+    
     const days = 365 * 5;
     const data = [];
     let price = currentPrice;
 
-    // Generate ngược từ hôm nay về quá khứ để đảm bảo giá cuối cùng khớp currentPrice
+    
     for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
 
-      // Bỏ qua Thứ 7, Chủ Nhật để giống thị trường chứng khoán hơn (tùy chọn)
-      // const day = date.getDay();
-      // if (day === 0 || day === 6) continue;
+      
+      
+      
 
-      const volatility = 0.025; // Độ biến động
+      const volatility = 0.025; 
       const changePercent = (Math.random() - 0.5) * 2 * volatility;
 
-      // Giá ngày hôm trước = Giá ngày hôm nay / (1 + % thay đổi)
-      // (Tính ngược lại của: Giá hôm nay = Giá hôm trước * (1 + % thay đổi))
+      
+      
       const prevPrice = price / (1 + changePercent);
 
       data.unshift({
@@ -213,7 +213,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       const predictionPayload = predictionData?.data ?? predictionData;
       console.log("📊 API trả về:", predictionData);
 
-      // ✅ Lấy phần tử đầu tiên trong mảng predictions
+      
       const firstPrediction = predictionPayload?.predictions?.[0];
 
       if (!firstPrediction) {
@@ -297,7 +297,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       : "N/A",
     Beta: financialData?.beta ? financialData.beta.toFixed(2) : "N/A",
     "Vốn hóa": stockData.marketCap,
-    Ngành: stockData.sector, // ✅ thêm hiển thị ngành
+    Ngành: stockData.sector, 
   };
 
   return (
@@ -323,7 +323,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            {/* Thẻ Xu hướng */}
+            {}
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Xu hướng</div>
               <div
@@ -336,7 +336,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
               </div>
             </div>
 
-            {/* Thẻ Độ tin cậy */}
+            {}
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Độ tin cậy</div>
               <div className="text-3xl font-black text-brand-orange drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]">
@@ -344,7 +344,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
               </div>
             </div>
 
-            {/* Thẻ Giá dự đoán */}
+            {}
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Giá mục tiêu</div>
               <div className="text-3xl font-black text-white">

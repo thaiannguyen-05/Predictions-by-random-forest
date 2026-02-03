@@ -10,25 +10,16 @@ export interface DisLikePost {
   isLike: false;
 }
 
-/**
- * Interface cho dữ liệu view count response
- */
 export interface ViewCountData {
   postId: string;
   viewCount: number;
 }
 
-/**
- * Post response interface
- */
 export interface PostResponse<T> {
   status: boolean;
   data: T;
 }
 
-/**
- * Paginated response interface
- */
 export interface PaginatedPostResponse {
   status: boolean;
   data: {

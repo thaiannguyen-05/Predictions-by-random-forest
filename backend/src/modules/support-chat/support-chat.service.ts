@@ -71,7 +71,6 @@ export class SupportChatService {
         });
         this.chatSessions[sessionIdToUse] = result;
 
-        // create room (use the actual sessionIdToUse)
         const room: CreateRoomDto = {
           ...(employeeId && { employeeId }),
           customerId,
@@ -166,13 +165,11 @@ export class SupportChatService {
     );
     this.logger.log(`Sending prompt to Gemini AI for session: ${sessionId}`);
 
-    // Quick numeric menu handling: support real actions. Accept "1" or "2 AAPL" (option + optional arg)
     const parts = data.prompt.trim().split(/\s+/);
     const opt = parts[0].toLowerCase();
     const arg = parts[1]?.toUpperCase();
 
     if (['1', '2', '3', '4', '5'].includes(opt)) {
-      // Save the user's selection message
       const userMessage = {
         content: data.prompt,
         roomId: sessionId,
@@ -269,7 +266,6 @@ export class SupportChatService {
       senderId: data.userId,
     };
 
-    // saving message
     await this.messageService.createMessage(messageQueue);
 
     if (!response) {

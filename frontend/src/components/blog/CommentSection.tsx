@@ -50,7 +50,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 				const json = await res.json();
 
-				// Handle cả legacy (status) và new (success) format
+				
 				const isSuccess = json.success ?? json.status;
 				const responseData = json.data;
 
@@ -101,12 +101,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 			const responseData = json.data;
 
 			if (isSuccess && responseData) {
-				// Add new comment to the list with user info
+				
 				const createdComment: CommentData = {
 					...responseData.newComment,
 					user: {
@@ -137,7 +137,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 			const res = await api.delete(`/comment/delete?commentId=${commentId}`);
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 
 			if (isSuccess) {
@@ -159,7 +159,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 	return (
 		<div className="mt-4 border-t border-white/5 pt-4">
-			{/* Toggle Button */}
+			{}
 			<button
 				onClick={toggleExpanded}
 				className="text-sm text-gray-400 hover:text-brand-orange transition-colors mb-3"
@@ -169,7 +169,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
 			{expanded && (
 				<>
-					{/* Comment Form */}
+					{}
 					{user && (
 						<form onSubmit={handleSubmitComment} className="flex gap-3 mb-4">
 							<img
@@ -201,7 +201,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 						</form>
 					)}
 
-					{/* Comments List */}
+					{}
 					<div className="space-y-3 max-h-80 overflow-y-auto">
 						{comments.map((comment) => (
 							<div key={comment.id} className="flex gap-3 group">

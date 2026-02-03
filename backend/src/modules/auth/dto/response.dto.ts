@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * User data trong response (không bao gồm sensitive data)
- */
 export class UserResponseDto {
   @ApiProperty({
     description: 'User unique identifier',
@@ -65,9 +62,6 @@ export class UserResponseDto {
   provider?: string;
 }
 
-/**
- * Session information
- */
 export class SessionResponseDto {
   @ApiProperty({
     description: 'Session unique identifier',
@@ -94,9 +88,6 @@ export class SessionResponseDto {
   loginedAt: Date;
 }
 
-/**
- * Authentication tokens
- */
 export class TokensResponseDto {
   @ApiProperty({
     description: 'JWT access token',
@@ -117,9 +108,6 @@ export class TokensResponseDto {
   expiresIn: number;
 }
 
-/**
- * Login response
- */
 export class LoginResponseDto {
   @ApiProperty({
     description: 'User data without sensitive information',
@@ -140,9 +128,6 @@ export class LoginResponseDto {
   tokens: TokensResponseDto;
 }
 
-/**
- * Register response
- */
 export class RegisterResponseDto {
   @ApiProperty({
     description: 'Operation status',
@@ -166,9 +151,6 @@ export class RegisterResponseDto {
   };
 }
 
-/**
- * Verify account response
- */
 export class VerifyAccountResponseDto {
   @ApiProperty({
     description: 'Verification status',
@@ -177,9 +159,6 @@ export class VerifyAccountResponseDto {
   status: boolean;
 }
 
-/**
- * Logout response
- */
 export class LogoutResponseDto {
   @ApiProperty({
     description: 'Logout status',
@@ -188,9 +167,6 @@ export class LogoutResponseDto {
   status: boolean;
 }
 
-/**
- * Change password response
- */
 export class ChangePasswordResponseDto {
   @ApiProperty({
     description: 'Password change status',
@@ -199,9 +175,6 @@ export class ChangePasswordResponseDto {
   status: boolean;
 }
 
-/**
- * Get me response
- */
 export class GetMeResponseDto {
   @ApiProperty({
     description: 'Login status',

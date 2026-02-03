@@ -1,4 +1,4 @@
-// components/sections/Watchlist.tsx
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -28,10 +28,10 @@ export default function Watchlist() {
       if (saved) {
         const pinnedStocks: WatchlistStock[] = JSON.parse(saved);
         
-        // Cập nhật giá mới nhất cho các cổ phiếu đã ghim
+        
         const updatedWatchlist = pinnedStocks.map(stock => ({
           ...stock,
-          price: stock.price * (1 + (Math.random() - 0.5) * 0.02), // Giả lập biến động giá
+          price: stock.price * (1 + (Math.random() - 0.5) * 0.02), 
           change: stock.change * (1 + (Math.random() - 0.5) * 0.1),
           changePercent: stock.changePercent * (1 + (Math.random() - 0.5) * 0.1)
         }));

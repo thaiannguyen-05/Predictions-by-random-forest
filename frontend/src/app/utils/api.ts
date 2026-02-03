@@ -1,4 +1,4 @@
-// utils/api.ts
+
 export interface CurrentPrice {
   ticker: string;
   price: number;

@@ -45,7 +45,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastname: name?.familyName,
       fullname:
         displayName ||
-        `${name?.givenName || ''} ${name?.familyName || ''}`.trim(), // THÊM DÒNG NÀY
+        `${name?.givenName || ''} ${name?.familyName || ''}`.trim(),
       avatarUrl: picture,
       provider: 'GOOGLE',
       accessToken,

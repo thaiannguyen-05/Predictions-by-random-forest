@@ -27,9 +27,6 @@ import {
 	Lightbulb,
 } from "lucide-react";
 
-/**
- * Core values data
- */
 const coreValues = [
 	{
 		icon: <Brain size={24} />,
@@ -65,9 +62,6 @@ const coreValues = [
 	},
 ];
 
-/**
- * Technology features list
- */
 const techFeatures = [
 	"Phân tích hơn 50+ chỉ số kỹ thuật và cơ bản",
 	"Huấn luyện trên dữ liệu lịch sử 10+ năm",
@@ -75,9 +69,6 @@ const techFeatures = [
 	"Cross-validation để đảm bảo tính ổn định",
 ];
 
-/**
- * Stats data
- */
 const stats = [
 	{ label: "Độ chính xác", value: "94.8%", icon: <TrendingUp size={20} className="text-brand-orange" /> },
 	{ label: "Mã cổ phiếu", value: "1,000+", icon: <BarChart3 size={20} className="text-brand-orange" /> },
@@ -85,14 +76,10 @@ const stats = [
 	{ label: "Cập nhật", value: "Real-time", icon: <Zap size={20} className="text-brand-orange" /> },
 ];
 
-/**
- * Trang Giới Thiệu - About Page
- * Giới thiệu về StockDN, sứ mệnh, tầm nhìn và đội ngũ
- */
 export default function AboutPage(): React.ReactElement {
 	return (
 		<MainLayout>
-			{/* Hero Section */}
+			{}
 			<PageHero
 				badge="VỀ CHÚNG TÔI"
 				title={
@@ -103,10 +90,10 @@ export default function AboutPage(): React.ReactElement {
 				subtitle="StockDN là nền tảng phân tích và dự đoán chứng khoán tiên tiến, ứng dụng công nghệ AI và Machine Learning để mang đến những insights có giá trị cho nhà đầu tư Việt Nam."
 			/>
 
-			{/* Mission & Vision Section */}
+			{}
 			<Section>
 				<div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-					{/* Mission Card */}
+					{}
 					<Card
 						variant="gradient"
 						hover
@@ -130,7 +117,7 @@ export default function AboutPage(): React.ReactElement {
 						</div>
 					</Card>
 
-					{/* Vision Card */}
+					{}
 					<Card
 						variant="gradient"
 						hover
@@ -156,7 +143,7 @@ export default function AboutPage(): React.ReactElement {
 				</div>
 			</Section>
 
-			{/* Core Values Section */}
+			{}
 			<Section>
 				<SectionHeader
 					title="Giá Trị Cốt Lõi"
@@ -177,11 +164,11 @@ export default function AboutPage(): React.ReactElement {
 				</div>
 			</Section>
 
-			{/* Technology Stack Section */}
+			{}
 			<Section>
 				<div className="max-w-6xl mx-auto">
 					<div className="grid lg:grid-cols-2 gap-12 items-center">
-						{/* Content */}
+						{}
 						<div className="space-y-8">
 							<div>
 								<span className="inline-block px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange text-xs font-semibold tracking-wider mb-4">
@@ -212,12 +199,12 @@ export default function AboutPage(): React.ReactElement {
 							</Button>
 						</div>
 
-						{/* Visual - Stats Grid */}
+						{}
 						<Card variant="gradient" padding="lg" rounded="3xl" className="relative overflow-hidden">
 							<BackgroundGlow variant="subtle" />
 
 							<div className="relative z-10 space-y-6">
-								{/* Stats Grid */}
+								{}
 								<div className="grid grid-cols-2 gap-4">
 									{stats.map((stat, index) => (
 										<Card
@@ -236,7 +223,7 @@ export default function AboutPage(): React.ReactElement {
 									))}
 								</div>
 
-								{/* Accuracy Bar */}
+								{}
 								<Card variant="outline" padding="md" rounded="xl" className="bg-white/5">
 									<div className="flex justify-between items-center mb-2">
 										<span className="text-gray-400 text-sm">Model Accuracy</span>
@@ -255,7 +242,7 @@ export default function AboutPage(): React.ReactElement {
 				</div>
 			</Section>
 
-			{/* CTA Section */}
+			{}
 			<CTASection />
 		</MainLayout>
 	);

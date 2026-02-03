@@ -1,4 +1,4 @@
-// components/stock/StockSummary.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -33,10 +33,10 @@ const StockSummary: React.FC<{ data: any }> = ({ data }) => {
       let pinnedStocks = saved ? JSON.parse(saved) : [];
 
       if (isPinned) {
-        // Bỏ ghim
+        
         pinnedStocks = pinnedStocks.filter((stock: any) => stock.symbol !== data.symbol);
       } else {
-        // Thêm vào danh sách ghim
+        
         const stockToPin = {
           symbol: data.symbol,
           name: data.companyName,
@@ -81,7 +81,7 @@ const StockSummary: React.FC<{ data: any }> = ({ data }) => {
       </div>
 
       <div className="mt-5 flex items-end space-x-6 border-t border-gray-700 pt-5">
-        {/* Giá Hiện tại */}
+        {}
         <div className="flex flex-col">
           <span className="text-5xl font-bold text-white leading-none">
             {data.currentPrice.toFixed(2)}
@@ -89,7 +89,7 @@ const StockSummary: React.FC<{ data: any }> = ({ data }) => {
           <span className="text-lg text-gray-400 mt-1">VND/Cổ phiếu</span>
         </div>
 
-        {/* Thay đổi */}
+        {}
         <div
           className={`flex items-center ${colorClass} text-2xl font-semibold`}
         >
@@ -100,7 +100,7 @@ const StockSummary: React.FC<{ data: any }> = ({ data }) => {
           </span>
         </div>
 
-        {/* Chỉ số Khác */}
+        {}
         <div className="text-sm space-y-1 ml-auto">
           <p className="text-gray-400">
             Vốn hóa:{" "}

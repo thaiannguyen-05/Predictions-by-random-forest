@@ -1,10 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import type { ExceptionMetadata } from './types';
 
-/**
- * Base exception class với metadata support
- * @class BaseApplicationException
- */
 export abstract class BaseApplicationException extends HttpException {
   public readonly metadata?: ExceptionMetadata;
 
@@ -17,9 +13,6 @@ export abstract class BaseApplicationException extends HttpException {
     this.metadata = metadata;
   }
 
-  /**
-   * Lấy thông tin lỗi chi tiết kèm metadata
-   */
   public getDetailedError(): Record<string, unknown> {
     return {
       message: this.message,
@@ -30,9 +23,6 @@ export abstract class BaseApplicationException extends HttpException {
   }
 }
 
-/**
- * Exception khi không tìm thấy resource
- */
 export class ResourceNotFoundException extends BaseApplicationException {
   constructor(
     resource: string,
@@ -46,18 +36,12 @@ export class ResourceNotFoundException extends BaseApplicationException {
   }
 }
 
-/**
- * Exception khi user không có quyền
- */
 export class UnauthorizedAccessException extends BaseApplicationException {
   constructor(message = 'Unauthorized access', metadata?: ExceptionMetadata) {
     super(message, HttpStatus.UNAUTHORIZED, metadata);
   }
 }
 
-/**
- * Exception khi user không cho phép thực hiện action
- */
 export class ForbiddenActionException extends BaseApplicationException {
   constructor(action: string, metadata?: ExceptionMetadata) {
     super(
@@ -68,9 +52,6 @@ export class ForbiddenActionException extends BaseApplicationException {
   }
 }
 
-/**
- * Exception khi validation thất bại
- */
 export class ValidationFailedException extends BaseApplicationException {
   constructor(field: string, reason: string, metadata?: ExceptionMetadata) {
     super(
@@ -81,9 +62,6 @@ export class ValidationFailedException extends BaseApplicationException {
   }
 }
 
-/**
- * Exception khi resource đã tồn tại (conflict)
- */
 export class ResourceConflictException extends BaseApplicationException {
   constructor(
     resource: string,

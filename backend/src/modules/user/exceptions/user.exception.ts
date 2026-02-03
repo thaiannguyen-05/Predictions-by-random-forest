@@ -4,9 +4,6 @@ import {
   ExceptionMetadata,
 } from '../../../common/exceptions';
 
-/**
- * Exception khi không tìm thấy User hoặc User không active
- */
 export class UserNotFoundOrNotActiveException extends BaseApplicationException {
   constructor(userId?: string, metadata?: ExceptionMetadata) {
     const message = userId

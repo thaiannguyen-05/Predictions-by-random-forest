@@ -3,7 +3,7 @@
 import React from 'react';
 import { Newspaper, ChevronRight } from 'lucide-react';
 
-// Giả định kiểu dữ liệu tin tức
+
 interface NewsItem {
   id: number;
   title: string;
@@ -12,7 +12,7 @@ interface NewsItem {
   timeAgo: string;
 }
 
-// Dữ liệu giả lập
+
 const DUMMY_NEWS: NewsItem[] = [
   {
     id: 1,
@@ -38,13 +38,13 @@ const DUMMY_NEWS: NewsItem[] = [
 ];
 
 const NewsFeed: React.FC = () => {
-  // TẠI ĐÂY: Sử dụng useEffect để gọi API tới Backend NestJS lấy danh sách tin tức
-  // const [news, setNews] = useState([]);
+  
+  
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700">
 
-      {/* Tiêu đề */}
+      {}
       <h2 className="flex items-center text-xl font-bold text-brand-orange mb-5 border-b border-gray-700 pb-3">
         <Newspaper size={24} className="mr-2" />
         Tin tức Mới nhất
@@ -54,7 +54,7 @@ const NewsFeed: React.FC = () => {
         {DUMMY_NEWS.map((item) => (
           <a
             key={item.id}
-            href="#" // Liên kết đến trang chi tiết tin tức
+            href="#" 
             className="block p-4 rounded-lg bg-gray-900 hover:bg-gray-700 transition-colors duration-200 cursor-pointer group"
           >
             <h3 className="text-white font-semibold mb-1 group-hover:text-brand-orange transition-colors">

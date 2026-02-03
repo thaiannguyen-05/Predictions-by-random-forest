@@ -4,14 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
-/**
- * Button variant types
- */
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
-/**
- * Button size types
- */
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonBaseProps {
@@ -42,9 +36,6 @@ interface ButtonAsLinkProps extends ButtonBaseProps {
 
 type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 
-/**
- * Style variants cho button
- */
 const variantStyles: Record<ButtonVariant, string> = {
 	primary:
 		"bg-brand-orange hover:bg-brand-orange-hover text-white shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40",
@@ -56,19 +47,12 @@ const variantStyles: Record<ButtonVariant, string> = {
 		"bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20",
 };
 
-/**
- * Size styles cho button
- */
 const sizeStyles: Record<ButtonSize, string> = {
 	sm: "px-4 py-2 text-sm rounded-lg",
 	md: "px-6 py-3 text-sm rounded-xl",
 	lg: "px-8 py-4 text-base rounded-xl",
 };
 
-/**
- * Reusable Button component với multiple variants
- * Hỗ trợ render as button hoặc Link
- */
 export function Button({
 	variant = "primary",
 	size = "md",

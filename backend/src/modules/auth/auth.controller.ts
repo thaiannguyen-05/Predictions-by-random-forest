@@ -210,17 +210,14 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // Ép kiểu đúng cách: trung gian qua unknown để tránh cảnh báo TS
     const result = await this.authService.oauth2Login(
       req.user as unknown as GoogleOAuth2User,
       res,
     );
 
-    // Lấy token từ trường tokens
     const accessToken = result.tokens.accessToken;
-    // Redirect về FE với token
+
     return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
-    // return this.authService.oauth2Login(req.user as any as GoogleOAuth2User, res)
   }
 
   @Public()

@@ -35,22 +35,18 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 	const [viewCounts, setViewCounts] = useState<ViewCountState>({});
 	const [viewedPosts, setViewedPosts] = useState<Set<string>>(new Set());
 
-	/**
-	 * Tăng view count cho post khi được hiển thị
-	 * Chỉ call 1 lần cho mỗi post trong session
-	 */
 	const incrementViewCount = useCallback(async (postId: string): Promise<void> => {
-		// Đã view rồi thì không call nữa
+		
 		if (viewedPosts.has(postId)) return;
 
-		// Mark là đã view
+		
 		setViewedPosts((prev) => new Set(prev).add(postId));
 
 		try {
 			const res = await api.post(`${API_ENDPOINTS.POST.VIEW_INCREMENT}?postId=${postId}`, {});
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 			const responseData = json.data || json;
 
@@ -82,7 +78,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 			const responseData = json.data;
 
@@ -95,7 +91,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 					setPosts((prev) => [...prev, ...newPosts]);
 				}
 
-				// Initialize like states and view counts for new posts
+				
 				const newLikeStates: LikeState = {};
 				const newViewCounts: ViewCountState = {};
 				newPosts.forEach((post: PostData) => {
@@ -128,20 +124,20 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 	};
 
 	const handleLike = async (postId: string): Promise<void> => {
-		// Prevent double-clicking
+		
 		if (likingPosts.has(postId)) return;
 
-		// Add to liking set
+		
 		setLikingPosts((prev) => new Set(prev).add(postId));
 
-		// Get current state
+		
 		const currentState = likeStates[postId] || { isLiked: false, likeCount: 0 };
 		const newIsLiked = !currentState.isLiked;
 		const newLikeCount = newIsLiked
 			? currentState.likeCount + 1
 			: Math.max(0, currentState.likeCount - 1);
 
-		// Optimistic update
+		
 		setLikeStates((prev) => ({
 			...prev,
 			[postId]: {
@@ -154,11 +150,11 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 			const res = await api.post(`${API_ENDPOINTS.POST.LIKE}?postId=${postId}`, {});
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 
 			if (!isSuccess) {
-				// Revert on error
+				
 				setLikeStates((prev) => ({
 					...prev,
 					[postId]: currentState,
@@ -166,14 +162,14 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 				console.error("Failed to like post");
 			}
 		} catch (error) {
-			// Revert on error
+			
 			setLikeStates((prev) => ({
 				...prev,
 				[postId]: currentState,
 			}));
 			console.error("Failed to like post:", error);
 		} finally {
-			// Remove from liking set
+			
 			setLikingPosts((prev) => {
 				const newSet = new Set(prev);
 				newSet.delete(postId);
@@ -190,7 +186,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 		refresh: () => fetchPosts(true),
 	}));
 
-	// Infinite Scroll Logic
+	
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastPostElementRef = useCallback(
 		(node: HTMLElement | null) => {
@@ -208,14 +204,11 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 		[loading, hasMore]
 	);
 
-	/**
-	 * Component hiển thị một Post với view tracking
-	 */
 	const PostItem = ({ post, isLast }: { post: PostData; isLast: boolean }) => {
 		const postRef = useRef<HTMLElement | null>(null);
 		const hasTriggeredView = useRef(false);
 
-		// Track khi post xuất hiện trong viewport
+		
 		useEffect(() => {
 			const currentRef = postRef.current;
 			if (!currentRef || hasTriggeredView.current) return;
@@ -227,7 +220,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 						void incrementViewCount(post.id);
 					}
 				},
-				{ threshold: 0.5 } // 50% của post hiển thị mới count
+				{ threshold: 0.5 } 
 			);
 
 			viewObserver.observe(currentRef);
@@ -252,7 +245,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 				}}
 				className="bg-[#1E1E1E] border border-white/10 rounded-xl p-6 hover:border-brand-orange/30 transition-all duration-300 shadow-sm hover:shadow-md"
 			>
-				{/* Header: User Info */}
+				{}
 				<div className="flex items-center gap-3 mb-4">
 					<div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-orange to-red-500 flex items-center justify-center text-white font-bold text-sm overflow-hidden">
 						{avatarUrl ? (
@@ -272,20 +265,20 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 							})}
 						</p>
 					</div>
-					{/* View Count Badge */}
+					{}
 					<div className="flex items-center gap-1 text-gray-500 text-xs">
 						<FaEye className="text-gray-600" />
 						<span>{currentViewCount}</span>
 					</div>
 				</div>
 
-				{/* Content */}
+				{}
 				<div className="mb-4">
 					<h3 className="text-lg font-bold text-gray-100 mb-2">{post.title}</h3>
 					<p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
 				</div>
 
-				{/* Footer: Actions */}
+				{}
 				<div className="flex items-center gap-6 pt-4 border-t border-white/5">
 					<button
 						onClick={() => handleLike(post.id)}
@@ -316,7 +309,7 @@ const PostList = forwardRef<PostListHandle>((props, ref) => {
 					</button>
 				</div>
 
-				{/* Comment Section */}
+				{}
 				<CommentSection
 					postId={post.id}
 					initialCommentCount={post._count?.comments || 0}

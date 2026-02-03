@@ -27,7 +27,7 @@ const AboutUs: React.FC = () => {
             </a>
           </li>
         ))}
-        {/* Chatbot icon sẽ được đặt cố định trong Layout, không nằm trong box này */}
+        {}
       </ul>
     </div>
   );

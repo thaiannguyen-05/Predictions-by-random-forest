@@ -20,7 +20,7 @@ const VerifyEmailPage: React.FC = () => {
   const [success, setSuccess] = useState("");
   const [countdown, setCountdown] = useState(0);
 
-  // Countdown timer cho resend code
+  
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -67,7 +67,7 @@ const VerifyEmailPage: React.FC = () => {
       if (response.ok) {
         setSuccess("Xác thực thành công! Đang chuyển đến trang đăng nhập...");
 
-        // Redirect đến login page sau 1.5 giây
+        
         setTimeout(() => {
           router.push("/auth/login");
         }, 1500);
@@ -111,14 +111,14 @@ const VerifyEmailPage: React.FC = () => {
   };
 
   const handleCodeChange = (value: string) => {
-    // Chỉ cho phép nhập số và giới hạn 6 ký tự
+    
     const numericValue = value.replace(/\D/g, "").slice(0, 6);
     setCode(numericValue);
   };
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Header */}
+      {}
       <div className="text-center mb-8">
         <Link href="/" className="inline-block group">
           <span className="text-3xl font-extrabold text-white tracking-widest block">

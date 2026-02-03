@@ -20,16 +20,13 @@ export class AuthTokenService {
     private readonly emailProducer: EmailProducer,
   ) {}
 
-  // generate tokens
   async generateTokens(user: { id: string; email: string; createdAt: Date }) {
-    // payload
     const payload: Payload = {
       sub: user.id,
       email: user.email,
       createdAt: user.createdAt,
     };
 
-    // generate accessToken and refreshToken
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.getOrThrow<string>('JWT_SECRET'),
@@ -48,14 +45,12 @@ export class AuthTokenService {
     return { accessToken, refreshToken };
   }
 
-  // create session
   async storeSession(
     user: { id: string; email: string; username: string },
     userIp: string,
     userDevice: string,
     hashedRefreshToken: string,
   ) {
-    // check sesison
     const device = await this.prismaService.userDevice.findUnique({
       where: { nameDevice_userId: { nameDevice: userDevice, userId: user.id } },
     });
@@ -69,8 +64,6 @@ export class AuthTokenService {
       : null;
 
     if (!session) {
-      // check if session is not available -> create userdevice and new session
-      // new device notification
       this.emailProducer.sendDetectOtherDevice({
         to: user.email,
         username: user.username,
@@ -95,7 +88,6 @@ export class AuthTokenService {
       return session;
     }
 
-    // if sesison is available -> update new refresh token and user ip
     return await this.prismaService.session.update({
       where: { id: session.id },
       data: {
@@ -105,7 +97,6 @@ export class AuthTokenService {
     });
   }
 
-  // create session
   async createSession(
     user: { id: string; email: string; username: string; createdAt: Date },
     ip: string,
@@ -123,7 +114,6 @@ export class AuthTokenService {
 
     console.log('hera');
 
-    // set config
     res
       .cookie('session_id', session.id, {
         maxAge: AUTH_CONSTANT.TIME_LIFE_SESSION,
@@ -141,7 +131,6 @@ export class AuthTokenService {
     return { session, tokens };
   }
 
-  // refresh tokens
   async refreshToken(
     sessionId: string,
     refreshToken: string,
@@ -150,7 +139,6 @@ export class AuthTokenService {
     res: Response,
   ) {
     try {
-      // validate session
       const session = await this.prismaService.session.findUnique({
         where: { id: sessionId },
         include: {
@@ -159,7 +147,6 @@ export class AuthTokenService {
       });
       if (!session) throw new UnauthorizedException('Invalid session');
 
-      // verify refresh token
       if (!session.hashedRefreshToken)
         throw new UnauthorizedException('Invalid session');
       const isValidToken = await verify(
@@ -169,38 +156,31 @@ export class AuthTokenService {
       if (!isValidToken)
         throw new UnauthorizedException('Invalid refreshtoken');
 
-      // verify jwt token
       let payload: Payload;
       try {
         payload = await this.jwtService.verifyAsync(refreshToken, {
           secret: this.configService.getOrThrow<string>('JWT_SECRET'),
         });
       } catch (_error) {
-        // delete expired/invalid session
         await this.prismaService.session.delete({ where: { id: sessionId } });
         throw new UnauthorizedException('Refresh token expired or invalid');
       }
 
-      // security checks
       if (payload.sub !== session.userId) {
         await this.prismaService.session.delete({ where: { id: sessionId } });
         throw new UnauthorizedException('Token user mismatch');
       }
 
-      // check available user
       const user = await this.prismaService.user.findUnique({
         where: { id: session.userId, isActive: true },
       });
       if (!user) throw new NotFoundException('User not found or active');
 
-      // update device info or create session
       await this.storeSession(user, ip, userAgent, session.hashedRefreshToken);
 
-      // generate new tokens
       const newTokens = await this.generateTokens(user);
       const newHashedRefreshToken = await hash(newTokens.refreshToken);
 
-      // update new sesison
       const newSesison = await this.prismaService.session.update({
         where: { id: sessionId },
         data: {
@@ -209,7 +189,6 @@ export class AuthTokenService {
         },
       });
 
-      // set new cookie
       res
         .cookie('session_id', session.id, {
           maxAge: AUTH_CONSTANT.TIME_LIFE_SESSION,
@@ -234,7 +213,6 @@ export class AuthTokenService {
         },
       };
     } catch (error) {
-      // Log security events
       console.error('Refresh token error:', {
         sessionId,
         ip,

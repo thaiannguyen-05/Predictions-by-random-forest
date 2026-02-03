@@ -8,7 +8,6 @@ export class TaskScheduleService {
 
   constructor(private readonly stockService: StockPredictionService) {}
 
-  // running when time in server get the new day
   @Cron('0 0 0 * * *')
   async trainAllModel() {
     await this.stockService.trainAllModels();

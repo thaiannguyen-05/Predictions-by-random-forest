@@ -2,7 +2,7 @@ import React from "react";
 import { Info, Gauge } from "lucide-react";
 import { FormattedKeyStatistics, HistoricalDataItem } from "@/types/stock";
 
-// Định nghĩa type cho statistics: key là string, value là number hoặc string
+
 type Statistics = {
   [key: string]: string | number;
 };

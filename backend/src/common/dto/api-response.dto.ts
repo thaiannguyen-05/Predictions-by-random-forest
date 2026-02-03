@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Standard success response wrapper
- * Sử dụng cho tất cả API responses để đảm bảo consistency
- */
 export class ApiSuccessResponse<T = unknown> {
   @ApiProperty({
     description: 'Indicates if the request was successful',
@@ -33,10 +29,6 @@ export class ApiSuccessResponse<T = unknown> {
   timestamp?: string;
 }
 
-/**
- * Standard error response
- * Sử dụng cho tất cả error responses
- */
 export class ApiErrorResponse {
   @ApiProperty({
     description: 'HTTP status code',
@@ -81,10 +73,6 @@ export class ApiErrorResponse {
   path?: string;
 }
 
-/**
- * Paginated response wrapper
- * Sử dụng cho các API trả về danh sách có phân trang
- */
 export class ApiPaginatedResponse<T = unknown> {
   @ApiProperty({
     description: 'Array of items for current page',

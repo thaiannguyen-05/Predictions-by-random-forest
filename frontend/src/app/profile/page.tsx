@@ -64,22 +64,22 @@ export default function ProfilePage() {
 		const file = e.target.files?.[0];
 		if (!file) return;
 
-		// Validate file type
+		
 		if (!file.type.startsWith('image/')) {
 			setStatus({ type: 'error', message: 'Chỉ chấp nhận file ảnh.' });
 			return;
 		}
 
-		// Validate file size (max 10MB)
+		
 		if (file.size > 10 * 1024 * 1024) {
 			setStatus({ type: 'error', message: 'File quá lớn. Tối đa 10MB.' });
 			return;
 		}
 
-		const CHUNK_SIZE = 140 * 1024; // 140KB per chunk
+		const CHUNK_SIZE = 140 * 1024; 
 		const chunks: Blob[] = [];
 
-		// Split file into chunks
+		
 		let start = 0;
 		while (start < file.size) {
 			chunks.push(file.slice(start, start + CHUNK_SIZE));
@@ -88,7 +88,7 @@ export default function ProfilePage() {
 
 		if (!chunks.length) return;
 
-		// Generate unique session ID
+		
 		const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
 		const originalName = file.name;
 		const totalChunks = chunks.length;
@@ -98,7 +98,7 @@ export default function ProfilePage() {
 		try {
 			let finalUrl = '';
 
-			// Upload chunks sequentially to ensure order
+			
 			for (let i = 0; i < totalChunks; i++) {
 				const formData = new FormData();
 				formData.append('file', chunks[i], originalName);
@@ -114,13 +114,13 @@ export default function ProfilePage() {
 					throw new Error(rawData.message || `Upload chunk ${i} thất bại`);
 				}
 
-				// Parse response: StandardResponse { data: { status, url } } hoặc direct { status, url }
+				
 				const responseData = rawData.data || rawData;
 
-				// Update progress
+				
 				setStatus({ type: null, message: `Đang tải ảnh (${i + 1}/${totalChunks})...` });
 
-				// Check if all chunks merged and complete
+				
 				if (responseData.status === 'complete' && responseData.url) {
 					finalUrl = responseData.url;
 				}
@@ -142,7 +142,7 @@ export default function ProfilePage() {
 		setStatus({ type: null, message: '' });
 
 		try {
-			// Build payload, chỉ gửi field có giá trị (filter empty string)
+			
 			const payload: Record<string, string> = {};
 			if (formData.firstName.trim()) payload.firstName = formData.firstName.trim();
 			if (formData.lastName.trim()) payload.lastName = formData.lastName.trim();
@@ -156,7 +156,7 @@ export default function ProfilePage() {
 				setIsEditing(false);
 				setStatus({ type: 'success', message: 'Cập nhật hồ sơ thành công!' });
 
-				// Clear success message after 3 seconds
+				
 				setTimeout(() => setStatus({ type: null, message: '' }), 3000);
 			} else {
 				const errorData = await res.json();
@@ -184,12 +184,12 @@ export default function ProfilePage() {
 	return (
 		<div className="min-h-screen bg-brand-dark text-white p-6 md:p-12 pt-28">
 			<div className="max-w-4xl mx-auto">
-				{/* Profile Header */}
+				{}
 				<div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-8 mb-8 relative overflow-hidden group hover:border-brand-orange/30 transition-all duration-300 animate-fade-in">
 					<div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-orange-900/20 to-brand-dark/0 pointer-events-none"></div>
 
 					<div className="relative flex flex-col md:flex-row items-center md:items-start gap-8">
-						{/* Avatar */}
+						{}
 						<div className="relative animate-pop-in group/avatar">
 							<div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-brand-orange to-orange-900 shadow-2xl shadow-brand-orange/20 relative">
 								<img
@@ -198,7 +198,7 @@ export default function ProfilePage() {
 									className="w-full h-full rounded-full object-cover bg-gray-900 border-4 border-gray-900"
 								/>
 
-								{/* Camera Overlay for Editing */}
+								{}
 								{isEditing && (
 									<div
 										onClick={() => fileInputRef.current?.click()}
@@ -217,7 +217,7 @@ export default function ProfilePage() {
 							</div>
 						</div>
 
-						{/* Info */}
+						{}
 						<div
 							className="flex-1 text-center md:text-left mt-4 md:mt-2 opacity-0 animate-slide-in-right"
 							style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
@@ -233,7 +233,7 @@ export default function ProfilePage() {
 								{user.email}
 							</p>
 
-							{/* Status Message */}
+							{}
 							{status.message && (
 								<div className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-sm max-w-md md:max-w-none mx-auto md:mx-0 ${status.type === 'success' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'
 									} `}>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
 					</div>
 				</div>
 
-				{/* Details Grid */}
+				{}
 				<div
 					className="grid md:grid-cols-2 gap-6 opacity-0 animate-fade-in"
 					style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
@@ -301,7 +301,7 @@ export default function ProfilePage() {
 						</h3>
 
 						<div className="space-y-4">
-							{/* Display or Edit First Name */}
+							{}
 							<div className="group">
 								<label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Họ (Last Name)</label>
 								{isEditing ? (
@@ -321,7 +321,7 @@ export default function ProfilePage() {
 								)}
 							</div>
 
-							{/* Display or Edit Last Name */}
+							{}
 							<div className="group">
 								<label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Tên (First Name)</label>
 								{isEditing ? (

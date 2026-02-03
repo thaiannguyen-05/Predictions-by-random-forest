@@ -32,7 +32,7 @@ export default function TrainPage(): React.ReactElement {
 	const [trainHistory, setTrainHistory] = useState<TrainHistoryItem[]>([]);
 	const logContainerRef = useRef<HTMLDivElement>(null);
 
-	// Auto scroll to bottom when new log added
+	
 	useEffect(() => {
 		if (logContainerRef.current) {
 			logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
@@ -57,7 +57,7 @@ export default function TrainPage(): React.ReactElement {
 
 		const symbol = trainSymbol.toUpperCase().trim();
 		setIsTraining(true);
-		setLogs([]); // Clear previous logs
+		setLogs([]); 
 
 		const historyItem: TrainHistoryItem = {
 			id: Date.now().toString(),
@@ -71,7 +71,7 @@ export default function TrainPage(): React.ReactElement {
 		addLog('info', '📊 Đang tải dữ liệu lịch sử từ Yahoo Finance...');
 
 		try {
-			// Simulate training steps with real API call
+			
 			await new Promise(resolve => setTimeout(resolve, 1000));
 			addLog('success', '✅ Tải dữ liệu thành công');
 
@@ -82,7 +82,7 @@ export default function TrainPage(): React.ReactElement {
 			addLog('info', '🤖 Đang huấn luyện Random Forest model...');
 			await new Promise(resolve => setTimeout(resolve, 1500));
 
-			// Call actual train API
+			
 			const response = await fetch(`${API_BASE}/stock/train`, {
 				method: 'POST',
 				headers: {
@@ -102,7 +102,7 @@ export default function TrainPage(): React.ReactElement {
 			addLog('info', `📈 Độ chính xác: ${result.accuracy ? (result.accuracy * 100).toFixed(2) : '94.5'}%`);
 			addLog('success', `🎉 Model cho ${symbol} đã sẵn sàng sử dụng!`);
 
-			// Update history
+			
 			setTrainHistory(prev =>
 				prev.map(item =>
 					item.id === historyItem.id
@@ -113,7 +113,7 @@ export default function TrainPage(): React.ReactElement {
 		} catch (error) {
 			addLog('error', `❌ Lỗi: ${error instanceof Error ? error.message : 'Có lỗi xảy ra khi train model'}`);
 
-			// Update history with failed status
+			
 			setTrainHistory(prev =>
 				prev.map(item =>
 					item.id === historyItem.id
@@ -187,7 +187,7 @@ export default function TrainPage(): React.ReactElement {
 	return (
 		<MainLayout>
 			<div className="min-h-screen px-4 py-6 max-w-6xl mx-auto">
-				{/* Header */}
+				{}
 				<div className="mb-8 animate-fade-in">
 					<h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
 						<Zap className="text-brand-orange" size={36} />
@@ -198,7 +198,7 @@ export default function TrainPage(): React.ReactElement {
 					</p>
 				</div>
 
-				{/* Tab Buttons */}
+				{}
 				<div className="flex gap-4 mb-8">
 					<button
 						onClick={() => setActiveTab('train')}
@@ -222,10 +222,10 @@ export default function TrainPage(): React.ReactElement {
 					</button>
 				</div>
 
-				{/* Content */}
+				{}
 				{activeTab === 'train' ? (
 					<div className="space-y-6 animate-fade-in">
-						{/* Train Controls */}
+						{}
 						<div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
 							<h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
 								<Terminal className="text-brand-orange" size={24} />
@@ -269,7 +269,7 @@ export default function TrainPage(): React.ReactElement {
 							)}
 						</div>
 
-						{/* Log Output */}
+						{}
 						<div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
 							<h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
 								<Terminal className="text-brand-orange" size={24} />
@@ -304,7 +304,7 @@ export default function TrainPage(): React.ReactElement {
 					</div>
 				) : (
 					<div className="animate-fade-in">
-						{/* Train History Table */}
+						{}
 						<div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
 							<h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
 								<Clock className="text-brand-orange" size={24} />

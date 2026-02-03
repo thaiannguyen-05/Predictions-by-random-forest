@@ -1,4 +1,4 @@
-// components/common/SearchBar.tsx
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -20,7 +20,7 @@ const SearchBar: React.FC = () => {
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
 
-  // Định nghĩa basePrices với index signature
+  
   const basePrices: { [key: string]: number } = {
     'FPT': 80000, 'VNM': 75000, 'VCB': 30000, 'VIC': 45000, 'HPG': 28000,
     'TCB': 35000, 'VPB': 25000, 'MSN': 90000, 'MWG': 120000, 'GAS': 85000,
@@ -32,15 +32,15 @@ const SearchBar: React.FC = () => {
     'BSI': 22000, 'CTS': 19000, 'FTS': 28000, 'VIX': 17000, 'WSS': 16000,
   };
 
-  // Hàm tìm kiếm trong danh sách cổ phiếu đã train
+  
   const fetchSuggestions = async (query: string): Promise<StockSuggestion[]> => {
     if (query.length < 1) return [];
 
-    // Tìm trong danh sách cổ phiếu đã train
+    
     const filteredStocks = TRAINED_STOCKS.filter(stock =>
       stock.toLowerCase().includes(query.toLowerCase()) ||
       (STOCK_DETAILS[stock as keyof typeof STOCK_DETAILS]?.name.toLowerCase().includes(query.toLowerCase()))
-    ).slice(0, 10); // Giới hạn 10 kết quả
+    ).slice(0, 10); 
 
     return filteredStocks.map(symbol => ({
       symbol,
@@ -50,7 +50,7 @@ const SearchBar: React.FC = () => {
     }));
   };
 
-  // Hàm tạo giá mock
+  
   const getMockPrice = (symbol: string) => {
     const basePrice = basePrices[symbol] || 40000;
     return basePrice * (0.9 + Math.random() * 0.2);

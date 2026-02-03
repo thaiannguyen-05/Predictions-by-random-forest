@@ -7,10 +7,6 @@ interface BackgroundGlowProps {
 	className?: string;
 }
 
-/**
- * Reusable Background Glow effect component
- * Được sử dụng cho Hero sections và page backgrounds
- */
 export function BackgroundGlow({
 	variant = "default",
 	className = "",

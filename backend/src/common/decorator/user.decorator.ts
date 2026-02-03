@@ -1,34 +1,6 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import type { AuthenticatedUser, AuthenticatedUserKey } from './types';
 
-/**
- * Custom decorator để lấy thông tin user đã xác thực từ request
- *
- * @description
- * Decorator này extract user từ request.user (được inject bởi JwtAuthGuard)
- * Hỗ trợ lấy toàn bộ user object hoặc một field cụ thể
- *
- * @example
- * // Lấy toàn bộ user object
- * @Get('profile')
- * getProfile(@User() user: AuthenticatedUser) {
- *   return user;
- * }
- *
- * @example
- * // Chỉ lấy userId
- * @Post('create')
- * create(@User('id') userId: string) {
- *   return this.service.create(userId);
- * }
- *
- * @example
- * // Lấy email
- * @Get('email')
- * getEmail(@User('email') email: string) {
- *   return { email };
- * }
- */
 export const User = createParamDecorator(
   <K extends AuthenticatedUserKey | undefined = undefined>(
     data: K,

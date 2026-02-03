@@ -13,9 +13,6 @@ interface ChatMessage {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL_AUTH || "http://localhost:4000";
 
-/**
- * Component hiển thị nội dung tin nhắn với Markdown cơ bản
- */
 const MessageContent: React.FC<{ text: string }> = ({ text }) => {
   return (
     <div className="whitespace-pre-line text-[14px] leading-relaxed">
@@ -45,9 +42,6 @@ const MessageContent: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-/**
- * Component hiển thị animation typing
- */
 const TypingIndicator: React.FC = () => (
   <div className="flex items-center gap-2">
     <div className="flex items-center gap-1 px-4 py-3">
@@ -80,9 +74,6 @@ interface ChatWindowProps {
   isMobile: boolean;
 }
 
-/**
- * Component cửa sổ chat
- */
 const ChatWindow: React.FC<ChatWindowProps> = ({
   messages,
   input,
@@ -109,12 +100,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     left: number;
   } | null>(null);
 
-  // Cuộn xuống dưới khi có tin nhắn mới
+  
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Auto-resize textarea
+  
   useEffect(() => {
     if (textareaRef.current) {
       const textarea = textareaRef.current;
@@ -129,7 +120,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     onInputChange(e.target.value);
   };
 
-  // Dragging logic
+  
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (isMobile || !chatWindowRef.current) return;
 
@@ -168,7 +159,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  // Styles based on state
+  
   const containerStyle: React.CSSProperties = isMobile
     ? { top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%" }
     : position
@@ -195,18 +186,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           : containerStyle
       }
     >
-      {/* Header với gradient đẹp */}
+      {}
       <div
         className={`relative overflow-hidden z-10 flex-shrink-0 ${isMobile ? "" : "cursor-move rounded-t-2xl"}`}
         onMouseDown={!isMobile ? handleMouseDown : undefined}
       >
-        {/* Background gradient */}
+        {}
         <div className="absolute inset-0 bg-gradient-to-r from-brand-orange via-orange-500 to-yellow-500" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00eiIvPjwvZ24+PC9nPg==')] opacity-30" />
 
         <div className="relative p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            {/* Bot Avatar */}
+            {}
             <div className="relative">
               <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                 <Bot size={22} className="text-white" />
@@ -244,14 +235,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
       </div>
 
-      {/* Messages Area */}
+      {}
       <div className="flex-grow p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-brand-dark to-gray-900/50">
         {messages.map((m, i) => (
           <div
             key={i}
             className={`flex items-end gap-2 ${m.sender === "user" ? "flex-row-reverse" : "flex-row"}`}
           >
-            {/* Avatar */}
+            {}
             <div
               className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${m.sender === "user"
                 ? "bg-brand-orange/20 text-brand-orange"
@@ -261,7 +252,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               {m.sender === "user" ? <User size={16} /> : <Bot size={16} />}
             </div>
 
-            {/* Message Bubble */}
+            {}
             <div
               className={`relative max-w-[75%] ${m.sender === "user"
                 ? "bg-gradient-to-br from-brand-orange to-orange-600 text-white rounded-2xl rounded-br-md"
@@ -270,7 +261,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             >
               <MessageContent text={m.text} />
 
-              {/* Timestamp */}
+              {}
               {m.timestamp && (
                 <span
                   className={`text-[10px] mt-1 block ${m.sender === "user" ? "text-white/60" : "text-gray-500"}`}
@@ -285,7 +276,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           </div>
         ))}
 
-        {/* Typing Indicator */}
+        {}
         {isLoading && (
           <div className="flex items-end gap-2">
             <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center text-gray-300">
@@ -300,7 +291,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {}
       <div className="p-4 border-t border-white/5 bg-brand-dark/95 backdrop-blur-sm">
         <div className="flex items-end gap-3">
           <div className="flex-1 relative">
@@ -338,9 +329,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   );
 };
 
-/**
- * Component chính - Icon chatbot và quản lý trạng thái
- */
 const ChatbotIcon: React.FC = () => {
   const { user } = useAuth();
   const userId = user?.id;
@@ -352,7 +340,7 @@ const ChatbotIcon: React.FC = () => {
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check for mobile screen
+  
   useEffect(() => {
     const checkMobile = (): void => {
       setIsMobile(window.innerWidth < 768);
@@ -362,7 +350,7 @@ const ChatbotIcon: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Khi mở chat lần đầu, gọi init-chat
+  
   useEffect(() => {
     if (isOpen && messages.length === 0 && userId) {
       fetchInitialMessage();
@@ -382,12 +370,12 @@ const ChatbotIcon: React.FC = () => {
       );
 
       const response = await res.json();
-      // init-chat returns { success, data: "message string", ... }
+      
       const welcomeText = typeof response.data === 'string'
         ? response.data
         : response.data?.result || response.data;
 
-      // Thay thế userId bằng userName trong message chào mừng
+      
       let welcomeMessage = welcomeText;
       if (userName) {
         welcomeMessage = welcomeMessage.replace(
@@ -451,7 +439,7 @@ const ChatbotIcon: React.FC = () => {
       const response = await res.json();
       const data: { result: string; sessionId?: string } = response.data;
 
-      // Thay thế userId bằng userName trong response từ AI
+      
       let responseMessage = data.result;
       if (userName) {
         responseMessage = responseMessage.replace(
@@ -519,7 +507,7 @@ const ChatbotIcon: React.FC = () => {
         />
       )}
 
-      {/* Floating Action Button */}
+      {}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`group relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none cursor-pointer ${isOpen
@@ -529,19 +517,19 @@ const ChatbotIcon: React.FC = () => {
         type="button"
         aria-label={isOpen ? "Đóng chat" : "Mở chat"}
       >
-        {/* Ripple effect */}
+        {}
         {!isOpen && (
           <div className="absolute inset-0 rounded-full bg-brand-orange animate-ping opacity-25" />
         )}
 
-        {/* Icon */}
+        {}
         <div
           className={`transition-transform duration-300 ${isOpen ? "rotate-0" : "rotate-0"}`}
         >
           {isOpen ? <X size={26} /> : <MessageCircle size={26} />}
         </div>
 
-        {/* Tooltip */}
+        {}
         {!isOpen && (
           <div className="absolute right-full mr-3 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap shadow-lg">
             Chat với AI

@@ -10,9 +10,6 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-/**
- * DTO cho việc cập nhật thông tin user profile
- */
 export class ChangeDetailDto {
   @ApiPropertyOptional({
     description: 'Username for the user account',
@@ -80,7 +77,7 @@ export class ChangeDetailDto {
     {
       protocols: ['http', 'https'],
       require_protocol: true,
-      require_tld: false, // Cho phép localhost
+      require_tld: false,
     },
     { message: 'avtUrl must be a valid URL address' },
   )

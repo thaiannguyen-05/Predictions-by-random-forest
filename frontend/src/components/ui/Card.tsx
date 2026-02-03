@@ -3,9 +3,6 @@
 import React from "react";
 import Link from "next/link";
 
-/**
- * Card variant types
- */
 type CardVariant = "default" | "elevated" | "gradient" | "outline";
 
 interface CardProps {
@@ -19,9 +16,6 @@ interface CardProps {
 	href?: string;
 }
 
-/**
- * Variant styles
- */
 const variantStyles: Record<CardVariant, string> = {
 	default: "bg-brand-card/80 backdrop-blur-xl border border-white/10",
 	elevated: "bg-brand-card/80 backdrop-blur-xl border border-white/10 shadow-xl",
@@ -29,14 +23,8 @@ const variantStyles: Record<CardVariant, string> = {
 	outline: "bg-transparent border border-white/10",
 };
 
-/**
- * Hover styles
- */
 const hoverStyles = "hover:border-brand-orange/30 hover:-translate-y-1 cursor-pointer";
 
-/**
- * Padding styles
- */
 const paddingStyles: Record<"none" | "sm" | "md" | "lg", string> = {
 	none: "",
 	sm: "p-4",
@@ -44,9 +32,6 @@ const paddingStyles: Record<"none" | "sm" | "md" | "lg", string> = {
 	lg: "p-8",
 };
 
-/**
- * Rounded styles
- */
 const roundedStyles: Record<"md" | "lg" | "xl" | "2xl" | "3xl", string> = {
 	md: "rounded-md",
 	lg: "rounded-lg",
@@ -55,10 +40,6 @@ const roundedStyles: Record<"md" | "lg" | "xl" | "2xl" | "3xl", string> = {
 	"3xl": "rounded-3xl",
 };
 
-/**
- * Reusable Card component với multiple variants
- * Có thể render as div, button hoặc link
- */
 export function Card({
 	variant = "default",
 	hover = false,
@@ -80,7 +61,7 @@ export function Card({
     ${className}
   `.trim();
 
-	// Render as Link
+	
 	if (href) {
 		return (
 			<Link href={href} className={combinedClassName}>
@@ -89,7 +70,7 @@ export function Card({
 		);
 	}
 
-	// Render as clickable div
+	
 	if (onClick) {
 		return (
 			<div
@@ -104,13 +85,10 @@ export function Card({
 		);
 	}
 
-	// Render as plain div
+	
 	return <div className={combinedClassName}>{children}</div>;
 }
 
-/**
- * Card Header component
- */
 interface CardHeaderProps {
 	icon?: React.ReactNode;
 	iconColor?: string;
@@ -150,9 +128,6 @@ export function CardHeader({
 	);
 }
 
-/**
- * Feature Card - Card với icon hover effect
- */
 interface FeatureCardProps {
 	icon: React.ReactNode;
 	iconBgColor?: string;
@@ -187,9 +162,6 @@ export function FeatureCard({
 	);
 }
 
-/**
- * Stat Card - Card hiển thị statistics
- */
 interface StatCardProps {
 	icon: React.ReactNode;
 	value: string;

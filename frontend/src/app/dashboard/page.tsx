@@ -35,7 +35,7 @@ export default function DashboardPage() {
   const [mlServiceStatus, setMlServiceStatus] = useState<'online' | 'offline' | 'checking'>('checking');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Check ML Service status on mount
+  
   useEffect(() => {
     checkMLService();
   }, []);
@@ -120,7 +120,7 @@ export default function DashboardPage() {
   return (
     <MainLayout>
       <div className="min-h-screen px-4 py-6 max-w-7xl mx-auto">
-        {/* Welcome Section */}
+        {}
         <div className="mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Xin chào, <span className="text-brand-orange">{user?.name || 'Investor'}</span>! 👋
@@ -130,7 +130,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Quick Stats */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in">
           {quickStats.map((stat, idx) => (
             <div
@@ -153,7 +153,7 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Search Bar */}
+        {}
         <div className="mb-8 animate-fade-in">
           <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
             <input
@@ -175,9 +175,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Quick Actions */}
+          {}
           <div className="lg:col-span-2 space-y-6">
-            {/* Quick Actions */}
+            {}
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Activity className="text-brand-orange" size={24} />
@@ -201,7 +201,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Top Stocks */}
+            {}
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -240,9 +240,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Right Column - Info & Tips */}
+          {}
           <div className="space-y-6">
-            {/* ML Service Status */}
+            {}
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-lg font-bold text-white mb-4">ML Service Status</h2>
               <div className="flex items-center gap-3 mb-4">
@@ -264,7 +264,7 @@ export default function DashboardPage() {
               </button>
             </div>
 
-            {/* Tips */}
+            {}
             <div className="bg-gradient-to-br from-brand-orange/10 to-transparent border border-brand-orange/20 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                 <Sparkles className="text-brand-orange" size={20} />

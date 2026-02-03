@@ -1,12 +1,3 @@
-/**
- * API Response Types cho Frontend
- * Tương ứng với backend StandardResponse format
- */
-
-/**
- * Standard API response wrapper (mới)
- * Đây là format chuẩn từ ResponseInterceptor
- */
 export interface StandardResponse<T> {
 	success: boolean;
 	data: T;
@@ -14,19 +5,12 @@ export interface StandardResponse<T> {
 	timestamp: string;
 }
 
-/**
- * Legacy API response wrapper (cũ - để tương thích ngược)
- * @deprecated Sử dụng StandardResponse thay thế
- */
 export interface ApiResponse<T> {
 	status: boolean;
 	data: T;
 	message?: string;
 }
 
-/**
- * Paginated data wrapper
- */
 export interface PaginatedData<T> {
 	items: T[];
 	cursor: string | null;
@@ -35,15 +19,8 @@ export interface PaginatedData<T> {
 	total?: number;
 }
 
-/**
- * Standard paginated response
- */
 export type StandardPaginatedResponse<T> = StandardResponse<PaginatedData<T>>;
 
-/**
- * Legacy paginated response (cũ)
- * @deprecated Sử dụng StandardPaginatedResponse thay thế
- */
 export interface PaginatedResponse<T> {
 	status: boolean;
 	data: {
@@ -54,9 +31,6 @@ export interface PaginatedResponse<T> {
 	};
 }
 
-/**
- * User data từ API
- */
 export interface UserData {
 	id: string;
 	username: string;
@@ -70,9 +44,6 @@ export interface UserData {
 	isActive?: boolean;
 }
 
-/**
- * Post data từ API
- */
 export interface PostData {
 	id: string;
 	title: string;
@@ -91,17 +62,11 @@ export interface PostData {
 	};
 }
 
-/**
- * View count response từ /post/view API
- */
 export interface ViewCountResponse {
 	postId: string;
 	viewCount: number;
 }
 
-/**
- * Post author info
- */
 export interface PostAuthor {
 	id: string;
 	username: string;
@@ -109,9 +74,6 @@ export interface PostAuthor {
 	avtUrl?: string | null;
 }
 
-/**
- * Comment data từ API
- */
 export interface CommentData {
 	id: string;
 	content: string;
@@ -125,9 +87,6 @@ export interface CommentData {
 	};
 }
 
-/**
- * Feed response data
- */
 export interface FeedResponseData {
 	post: PostData[];
 	cursor: string | null;
@@ -135,9 +94,6 @@ export interface FeedResponseData {
 	hasMore: boolean;
 }
 
-/**
- * Comments response data
- */
 export interface CommentsResponseData {
 	comments: CommentData[];
 	cursor: string | null;
@@ -145,9 +101,6 @@ export interface CommentsResponseData {
 	hasMore: boolean;
 }
 
-/**
- * Auth me response
- */
 export interface AuthMeResponse {
 	loggedIn: boolean;
 	user: {

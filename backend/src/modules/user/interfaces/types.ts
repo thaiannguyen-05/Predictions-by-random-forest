@@ -12,9 +12,6 @@ export interface ChunkCompleteResponse {
   fileUrl: string;
 }
 
-/**
- * Union type cho response của upload chunk
- */
 export type UploadChunkResponse = ChunkReceivedResponse | ChunkCompleteResponse;
 
 export interface ChunkUploadSession {

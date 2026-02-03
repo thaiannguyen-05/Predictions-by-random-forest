@@ -53,8 +53,8 @@ describe('ViewCountService', () => {
     const postId = 'post-123';
 
     it('should increment both total and pending keys', async () => {
-      mockRedisService.increase.mockResolvedValueOnce(101); // total
-      mockRedisService.increase.mockResolvedValueOnce(1); // pending
+      mockRedisService.increase.mockResolvedValueOnce(101);
+      mockRedisService.increase.mockResolvedValueOnce(1);
 
       const result = await service.increaseViewCount(postId);
 
@@ -64,8 +64,8 @@ describe('ViewCountService', () => {
     });
 
     it('should not sync when pending is below threshold', async () => {
-      mockRedisService.increase.mockResolvedValueOnce(50); // total
-      mockRedisService.increase.mockResolvedValueOnce(5); // pending = below threshold
+      mockRedisService.increase.mockResolvedValueOnce(50);
+      mockRedisService.increase.mockResolvedValueOnce(5);
 
       await service.increaseViewCount(postId);
 

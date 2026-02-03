@@ -15,19 +15,12 @@ interface PageHeroProps {
 	className?: string;
 }
 
-/**
- * Min height mappings
- */
 const minHeightStyles: Record<PageHeroProps["minHeight"] & string, string> = {
 	sm: "min-h-[50vh]",
 	md: "min-h-[60vh]",
 	lg: "min-h-[90vh]",
 };
 
-/**
- * Reusable Page Hero section component
- * Sử dụng cho tất cả các page headers với consistent styling
- */
 export function PageHero({
 	badge,
 	title,
@@ -90,9 +83,6 @@ export function PageHero({
 	);
 }
 
-/**
- * Gradient text wrapper for hero titles
- */
 interface GradientTextProps {
 	children: React.ReactNode;
 	className?: string;

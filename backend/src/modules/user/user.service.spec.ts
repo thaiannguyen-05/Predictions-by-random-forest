@@ -108,7 +108,6 @@ describe('UserService', () => {
         isActive: false,
       });
 
-      // findFirst with isActive: true filter will return null
       mockPrismaService.user.findFirst.mockResolvedValue(null);
 
       await expect(service.me(mockUser.id)).rejects.toThrow(

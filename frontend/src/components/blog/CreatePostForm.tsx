@@ -13,7 +13,7 @@ interface CreatePostFormProps {
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 	const { user } = useAuth();
 	const [content, setContent] = useState("");
-	const [title, setTitle] = useState(""); // Title is required by backend DTO
+	const [title, setTitle] = useState(""); 
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -33,19 +33,19 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 			const res = await api.post("/post/create", {
 				title,
 				content,
-				file: [], // Hiện tại chưa làm upload file thực tế
+				file: [], 
 			});
 
 			const json = await res.json();
 
-			// Handle cả legacy (status) và new (success) format
+			
 			const isSuccess = json.success ?? json.status;
 
 			if (isSuccess) {
 				toast.success("Đăng bài thành công!");
 				setContent("");
 				setTitle("");
-				onPostCreated(); // Refresh list
+				onPostCreated(); 
 			} else {
 				toast.error(json.message || "Có lỗi xảy ra");
 			}
@@ -69,7 +69,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 			</h3>
 
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-				{/* Title Input */}
+				{}
 				<input
 					type="text"
 					value={title}
@@ -78,7 +78,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 					className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange/50 focus:ring-1 focus:ring-brand-orange/50 transition-all font-medium"
 				/>
 
-				{/* Content Input */}
+				{}
 				<textarea
 					value={content}
 					onChange={(e) => setContent(e.target.value)}
@@ -87,7 +87,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onPostCreated }) => {
 				/>
 
 
-				{/* Actions */}
+				{}
 				<div className="flex justify-between items-center pt-2">
 					<div className="flex gap-2">
 						<button type="button" className="p-2 text-gray-400 hover:text-brand-orange hover:bg-white/5 rounded-full transition-colors" title="Thêm ảnh">

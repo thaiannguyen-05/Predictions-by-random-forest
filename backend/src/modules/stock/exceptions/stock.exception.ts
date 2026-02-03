@@ -1,8 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-/**
- * Base exception cho Stock module.
- */
 export class StockException extends HttpException {
   constructor(
     message: string,
@@ -12,9 +9,6 @@ export class StockException extends HttpException {
   }
 }
 
-/**
- * Exception khi không thể kết nối ML Service.
- */
 export class MLServiceConnectionException extends StockException {
   constructor(ticker?: string) {
     const message = ticker
@@ -24,9 +18,6 @@ export class MLServiceConnectionException extends StockException {
   }
 }
 
-/**
- * Exception khi ML Service trả về lỗi.
- */
 export class MLServiceErrorException extends StockException {
   constructor(operation: string, errorMessage: string) {
     super(
@@ -36,18 +27,12 @@ export class MLServiceErrorException extends StockException {
   }
 }
 
-/**
- * Exception khi không tìm thấy dữ liệu giá.
- */
 export class PriceDataNotFoundException extends StockException {
   constructor(ticker: string) {
     super(`Price data not found for ticker ${ticker}`, HttpStatus.NOT_FOUND);
   }
 }
 
-/**
- * Exception khi không tìm thấy dữ liệu tài chính.
- */
 export class FinancialDataNotFoundException extends StockException {
   constructor(ticker: string) {
     super(
@@ -57,9 +42,6 @@ export class FinancialDataNotFoundException extends StockException {
   }
 }
 
-/**
- * Exception khi train model thất bại.
- */
 export class ModelTrainingException extends StockException {
   constructor(ticker: string, reason?: string) {
     const message = reason
@@ -69,9 +51,6 @@ export class ModelTrainingException extends StockException {
   }
 }
 
-/**
- * Exception khi prediction thất bại.
- */
 export class PredictionException extends StockException {
   constructor(ticker: string, reason?: string) {
     const message = reason
@@ -81,18 +60,12 @@ export class PredictionException extends StockException {
   }
 }
 
-/**
- * Exception khi ticker không hợp lệ.
- */
 export class InvalidTickerException extends StockException {
   constructor(ticker: string) {
     super(`Invalid ticker: ${ticker}`, HttpStatus.BAD_REQUEST);
   }
 }
 
-/**
- * Exception khi request timeout.
- */
 export class MLServiceTimeoutException extends StockException {
   constructor(command: string) {
     super(

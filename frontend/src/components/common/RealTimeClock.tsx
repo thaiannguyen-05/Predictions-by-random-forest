@@ -1,4 +1,4 @@
-// components/common/RealTimeClock.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -15,7 +15,7 @@ const RealTimeClock: React.FC = () => {
     const updateTime = () => {
       const now = new Date();
 
-      // Format time: HH:MM:SS
+      
       const timeString = now.toLocaleTimeString("vi-VN", {
         hour: "2-digit",
         minute: "2-digit",
@@ -24,7 +24,7 @@ const RealTimeClock: React.FC = () => {
         timeZone: "Asia/Ho_Chi_Minh",
       });
 
-      // Format date: Thứ, ngày/tháng/năm
+      
       const dateString = now.toLocaleDateString("vi-VN", {
         weekday: "long",
         year: "numeric",
@@ -37,17 +37,17 @@ const RealTimeClock: React.FC = () => {
       setCurrentDate(dateString);
     };
 
-    // Update immediately
+    
     updateTime();
 
-    // Update every second
+    
     const interval = setInterval(updateTime, 1000);
 
-    // Cleanup
+    
     return () => clearInterval(interval);
   }, []);
 
-  // Prevent hydration mismatch
+  
   if (!isClient) {
     return (
       <div className="flex items-center space-x-3 bg-gray-800 px-4 py-3 rounded-lg border border-gray-700 min-w-[280px]">
@@ -61,7 +61,7 @@ const RealTimeClock: React.FC = () => {
 
   return (
     <div className="flex items-center gap-4 px-4 py-2.5 rounded-xl border border-white/10 bg-brand-card/50 backdrop-blur-sm">
-      {/* Time + Timezone */}
+      {}
       <div className="flex items-center gap-2">
         <Clock size={16} className="text-brand-orange" />
         <span className="text-white font-mono text-base font-semibold tracking-wide">
@@ -72,15 +72,15 @@ const RealTimeClock: React.FC = () => {
         </span>
       </div>
 
-      {/* Separator */}
+      {}
       <div className="w-px h-5 bg-white/10" />
 
-      {/* Date */}
+      {}
       <span className="text-gray-400 text-sm font-medium capitalize">
         {currentDate}
       </span>
 
-      {/* Live Indicator */}
+      {}
       <div className="flex items-center gap-1.5 ml-1">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50" />
         <span className="text-green-400 text-xs font-semibold">LIVE</span>

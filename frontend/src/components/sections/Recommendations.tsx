@@ -3,13 +3,13 @@
 import React from 'react';
 import { Zap, TrendingUp, TrendingDown, Plus } from 'lucide-react';
 
-// Kiểu dữ liệu cho cổ phiếu đề xuất
+
 interface RecommendedStock {
   symbol: string;
   reason: string;
   targetPrice: number;
   currentPrice: number;
-  isBullish: boolean; // Tăng hay Giảm
+  isBullish: boolean; 
 }
 
 const DUMMY_RECS: RecommendedStock[] = [

@@ -1,11 +1,3 @@
-/**
- * Interfaces cho Stock module.
- * Định nghĩa types cho ML Service responses và internal data.
- */
-
-/**
- * Response từ ML Service.
- */
 export interface MLServiceResponse {
   success: boolean;
   error?: string;
@@ -25,9 +17,6 @@ export interface MLServiceResponse {
   features_count?: number;
 }
 
-/**
- * Dữ liệu prediction.
- */
 export interface PredictionData {
   current_price?: number;
   prediction?: string;
@@ -37,9 +26,6 @@ export interface PredictionData {
   hours_ahead?: number;
 }
 
-/**
- * Item trong danh sách predictions.
- */
 export interface PredictionItem {
   hour: number;
   hours_ahead: number;
@@ -50,9 +36,6 @@ export interface PredictionItem {
   prediction_time: string;
 }
 
-/**
- * Metrics của model.
- */
 export interface ModelMetrics {
   features_count?: number;
   accuracy?: number;
@@ -60,9 +43,6 @@ export interface ModelMetrics {
   recall?: number;
 }
 
-/**
- * Dữ liệu tài chính từ ML Service.
- */
 export interface FinancialData {
   ticker: string;
   previous_close: number | null;
@@ -77,9 +57,6 @@ export interface FinancialData {
   yahoo_price: number | null;
 }
 
-/**
- * History search record.
- */
 export interface HistorySearchRecord {
   id: string;
   symbol: string;
@@ -97,9 +74,6 @@ export interface HistorySearchRecord {
   createdAt: Date;
 }
 
-/**
- * Config cho Stock Prediction Service.
- */
 export interface StockServiceConfig {
   mlHost: string;
   mlPort: number;

@@ -1,11 +1,3 @@
-/**
- * Standard API Response Interfaces
- * Được sử dụng bởi ResponseInterceptor để chuẩn hóa response format
- */
-
-/**
- * Standard success response format
- */
 export interface StandardResponse<T> {
   success: boolean;
   data: T;
@@ -13,9 +5,6 @@ export interface StandardResponse<T> {
   timestamp: string;
 }
 
-/**
- * Standard error response format
- */
 export interface StandardErrorResponse {
   success: boolean;
   error: {
@@ -26,9 +15,6 @@ export interface StandardErrorResponse {
   timestamp: string;
 }
 
-/**
- * Paginated data wrapper
- */
 export interface PaginatedData<T> {
   items: T[];
   cursor: string | null;
@@ -37,7 +23,4 @@ export interface PaginatedData<T> {
   total?: number;
 }
 
-/**
- * Standard paginated response
- */
 export type StandardPaginatedResponse<T> = StandardResponse<PaginatedData<T>>;

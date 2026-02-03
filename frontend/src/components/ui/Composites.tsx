@@ -21,10 +21,6 @@ interface CTASectionProps {
 	className?: string;
 }
 
-/**
- * Reusable CTA (Call-to-Action) Section component
- * Sử dụng cho các page endings với consistent styling
- */
 export function CTASection({
 	title = "Sẵn Sàng Bắt Đầu?",
 	subtitle = "Tham gia cùng hàng trăm nhà đầu tư đã tin tưởng sử dụng StockDN để đón đầu xu hướng thị trường.",
@@ -69,10 +65,6 @@ interface InfoGridProps {
 	className?: string;
 }
 
-/**
- * Reusable Info Grid component
- * Displays information cards in a responsive grid
- */
 export function InfoGrid({
 	items,
 	columns = 4,
@@ -114,9 +106,6 @@ interface ListWithIconsProps {
 	className?: string;
 }
 
-/**
- * Reusable List with Icons component
- */
 export function ListWithIcons({
 	items,
 	icon,
@@ -137,9 +126,6 @@ export function ListWithIcons({
 	);
 }
 
-/**
- * Avatar Stack component - hiển thị multiple avatars stacked
- */
 interface AvatarStackProps {
 	count?: number;
 	label?: string;

@@ -35,21 +35,21 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError(null);
 
-    // Basic Validation Frontend
+    
     if (formData.password !== formData.confirmPassword) {
       setError("Mật khẩu xác nhận không khớp.");
       setIsLoading(false);
       return;
     }
 
-    // Password regex check (optional if backend handles it well, but nice to simple check)
+    
     if (formData.password.length < 8) {
       setError("Mật khẩu phải có ít nhất 8 ký tự.");
       setIsLoading(false);
       return;
     }
 
-    // Construct Payload for Backend DTO
+    
     const payload = {
       email: formData.email,
       username: formData.username,
@@ -57,7 +57,7 @@ export default function RegisterPage() {
       lastName: formData.lastName,
       password: formData.password,
       phoneNumber: formData.phoneNumber,
-      dateOfBirth: formData.dateOfBirth, // YYYY-MM-DD from input[type=date]
+      dateOfBirth: formData.dateOfBirth, 
     };
 
     try {
@@ -70,12 +70,12 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        // Backend có thể trả về message dạng array hoặc string
+        
         const msg = Array.isArray(data.message) ? data.message[0] : (data.message || "Đăng ký thất bại");
         throw new Error(msg);
       }
 
-      // Redirect to Verify Page
+      
       router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`);
 
     } catch (err: any) {
@@ -86,10 +86,10 @@ export default function RegisterPage() {
     }
   };
 
-  // FORM UI
+  
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* Header */}
+      {}
       <div className="text-center mb-8">
         <Link href="/" className="inline-block group">
           <span className="text-3xl font-extrabold text-white tracking-widest block">
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
-          {/* Row 1: Names */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300 ml-1">Họ & Tên đệm</label>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Row 2: Username & Email */}
+          {}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300 ml-1">Tên đăng nhập (Username)</label>
             <input type="text" name="username" required minLength={3} className="w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all" placeholder="nguyenvana123" value={formData.username} onChange={handleChange} />
@@ -141,7 +141,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Row 3: Phone & DOB */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300 ml-1">Số điện thoại</label>
@@ -159,7 +159,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Row 4: Passwords */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300 ml-1">Mật khẩu</label>

@@ -1,4 +1,4 @@
-// components/stock/StockChart.tsx
+
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { BarChart2, TrendingUp, TrendingDown } from "lucide-react";
 
@@ -44,7 +44,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
   });
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Cập nhật kích thước container
+  
   useEffect(() => {
     const updateSize = () => {
       if (chartRef.current) {
@@ -61,7 +61,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  // Lọc dữ liệu theo khoảng thời gian selected
+  
   const filteredData = useMemo(() => {
     if (!chartData || chartData.length === 0) return [];
 
@@ -85,7 +85,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     });
   }, [chartData, selectedRange]);
 
-  // Tính toán các giá trị cho biểu đồ
+  
   const chartValues = useMemo(() => {
     if (!filteredData.length)
       return {
@@ -143,7 +143,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     );
   };
 
-  // Tìm điểm dữ liệu gần vị trí chuột nhất
+  
   const findNearestDataPoint = (mouseX: number) => {
     if (!filteredData.length) return null;
 
@@ -199,7 +199,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     setCrosshair(null);
   };
 
-  // Format thời gian theo khoảng thời gian được chọn
+  
   const formatTimeByRange = (
     dateString: string,
     index: number,
@@ -251,7 +251,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     }
   };
 
-  // Lấy các điểm để hiển thị trên trục X
+  
   const getXAxisLabels = (): AxisLabel[] => {
     if (!filteredData.length) return [];
 
@@ -291,7 +291,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     return labels;
   };
 
-  // Lấy các điểm để hiển thị trên trục Y
+  
   const getYAxisLabels = (): AxisLabel[] => {
     if (maxPrice === minPrice || !filteredData.length) return [];
 
@@ -314,7 +314,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
     return labels;
   };
 
-  // Tạo path cho area gradient
+  
   const getAreaPath = () => {
     if (!filteredData.length) return "";
 
@@ -369,7 +369,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
         </div>
       </div>
 
-      {/* Biểu đồ */}
+      {}
       <div
         ref={chartRef}
         className="relative w-full h-[400px] min-h-[300px] bg-gray-900 rounded-lg border border-gray-600 cursor-crosshair overflow-hidden"
@@ -382,7 +382,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
           viewBox={`0 0 ${chartWidth} ${chartHeight}`}
           className="absolute inset-0"
         >
-          {/* Gradient definition */}
+          {}
           <defs>
             <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#F97316" stopOpacity="0.6" />
@@ -396,7 +396,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
             </linearGradient>
           </defs>
 
-          {/* Grid lines */}
+          {}
           {yAxisLabels.map((label, index) => (
             <line
               key={`h-grid-${index}`}
@@ -423,10 +423,10 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
             />
           ))}
 
-          {/* Area under line */}
+          {}
           <path d={areaPath} fill="url(#priceGradient)" fillOpacity="0.8" />
 
-          {/* Price line */}
+          {}
           <polyline
             fill="none"
             stroke="url(#lineGradient)"
@@ -441,7 +441,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
               .join(" ")}
           />
 
-          {/* Crosshair */}
+          {}
           {crosshair && (
             <g>
               <line
@@ -473,7 +473,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
             </g>
           )}
 
-          {/* X-axis labels */}
+          {}
           {xAxisLabels.map((label, index) => (
             <text
               key={`x-label-${index}`}
@@ -488,7 +488,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
             </text>
           ))}
 
-          {/* Y-axis labels */}
+          {}
           {yAxisLabels.map((label, index) => (
             <text
               key={`y-label-${index}`}
@@ -504,7 +504,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
           ))}
         </svg>
 
-        {/* TOOLTIP BÊN CẠNH CHUỘT */}
+        {}
         {crosshair && (
           <div
             className="absolute bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-xl min-w-[200px] z-20 pointer-events-none"
@@ -576,10 +576,10 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
           </div>
         )}
 
-        {/* Crosshair info boxes */}
+        {}
         {crosshair && (
           <>
-            {/* Price label */}
+            {}
             <div
               className="absolute bg-gray-800 border border-gray-600 text-white text-xs font-medium px-3 py-2 rounded pointer-events-none z-20 shadow-lg"
               style={{
@@ -598,7 +598,7 @@ const StockChart: React.FC<StockChartProps> = ({ symbol, chartData = [] }) => {
               </div>
             </div>
 
-            {/* Time label */}
+            {}
             <div
               className="absolute bg-gray-800 border border-gray-600 text-white text-xs font-medium px-3 py-2 rounded pointer-events-none z-20 shadow-lg"
               style={{

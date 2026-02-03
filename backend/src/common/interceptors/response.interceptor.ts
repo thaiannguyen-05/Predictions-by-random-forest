@@ -9,23 +9,6 @@ import { map } from 'rxjs/operators';
 import { StandardResponse } from '../interfaces';
 import type { LegacyResponse } from './types';
 
-/**
- * Global Response Interceptor
- * Chuẩn hóa tất cả response về format StandardResponse
- *
- * Input có thể là:
- * - Legacy format: { status: true, data: {...} }
- * - Direct data: { post: {...} }
- * - Plain value: "message" hoặc { user: {...} }
- *
- * Output luôn là:
- * {
- *   success: boolean,
- *   data: T,
- *   message: string,
- *   timestamp: string
- * }
- */
 @Injectable()
 export class ResponseInterceptor<T>
   implements NestInterceptor<T, StandardResponse<T>>
@@ -36,25 +19,19 @@ export class ResponseInterceptor<T>
   ): Observable<StandardResponse<T>> {
     return next.handle().pipe(
       map((response) => {
-        // Nếu response đã có format chuẩn (success field), trả về luôn
         if (this.isStandardResponse(response)) {
           return response as StandardResponse<T>;
         }
 
-        // Chuyển đổi legacy format { status: true, data: {...} }
         if (this.isLegacyResponse(response)) {
           return this.transformLegacyResponse(response);
         }
 
-        // Response là data trực tiếp
         return this.wrapData(response as T);
       }),
     );
   }
 
-  /**
-   * Kiểm tra xem response đã có format chuẩn chưa
-   */
   private isStandardResponse(response: unknown): boolean {
     if (typeof response !== 'object' || response === null) {
       return false;
@@ -67,9 +44,6 @@ export class ResponseInterceptor<T>
     );
   }
 
-  /**
-   * Kiểm tra legacy response format
-   */
   private isLegacyResponse(response: unknown): response is LegacyResponse {
     if (typeof response !== 'object' || response === null) {
       return false;
@@ -78,9 +52,6 @@ export class ResponseInterceptor<T>
     return typeof obj['status'] === 'boolean';
   }
 
-  /**
-   * Chuyển đổi legacy format sang standard format
-   */
   private transformLegacyResponse(
     response: LegacyResponse,
   ): StandardResponse<T> {
@@ -92,9 +63,6 @@ export class ResponseInterceptor<T>
     };
   }
 
-  /**
-   * Wrap data trực tiếp vào standard format
-   */
   private wrapData(data: T): StandardResponse<T> {
     return {
       success: true,

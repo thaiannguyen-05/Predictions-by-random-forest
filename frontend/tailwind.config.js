@@ -1,20 +1,18 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: [
-		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/pages*.{js,ts,jsx,tsx,mdx}",
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
 		extend: {
 			colors: {
 				brand: {
-					dark: "#121212",      // Nền chính
-					card: "#1E1E1E",      // Nền card/section
-					orange: "#F97316",    // Màu chủ đạo (Orange-500)
-					"orange-hover": "#EA580C", // Orange-600
-					text: "#F3F4F6",      // Màu chữ chính
-					muted: "#9CA3AF",     // Màu chữ phụ
+					dark: "#121212",      
+					card: "#1E1E1E",      
+					orange: "#F97316",    
+					"orange-hover": "#EA580C", 
+					text: "#F3F4F6",      
+					muted: "#9CA3AF",     
 				}
 			},
 			backgroundImage: {
