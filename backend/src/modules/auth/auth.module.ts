@@ -12,6 +12,7 @@ import { PassportModule } from '@nestjs/passport';
 import { SessionSerializer } from './strategy/session.serializer';
 import { AuthTokenService } from './service/auth.token.service';
 import { RedisModule } from '../redis/redis.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RedisModule } from '../redis/redis.module';
     }),
     EmailModule,
     RedisModule,
+    UserModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

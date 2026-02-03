@@ -11,7 +11,12 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import { FacebookOAuth2User, GoogleOAuth2User, Payload } from '..';
+import {
+  AUTH_CONSTANT,
+  FacebookOAuth2User,
+  GoogleOAuth2User,
+  Payload,
+} from '..';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -20,12 +25,11 @@ import { AuthOtherService } from './auth.other.service';
 import { AuthTokenService } from './auth.token.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { DateUtils } from '../../../common/utils/string-to-date.utils';
-import { isUUID } from '../../../common/utils/uuid.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
 import { RedisService } from '../../redis/redis.service';
 import { MyLogger } from '../../../logger/logger.service';
-import { AUTH_CONSTANT } from '..';
 import { EmailProducer } from '../../../email/emai.producer';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -38,30 +42,11 @@ export class AuthService {
     private readonly redisService: RedisService,
     private readonly logger: MyLogger,
     private readonly emailProducer: EmailProducer,
+    private readonly userService: UserService,
   ) {}
 
-  private async findUserByAccessor(accessor: string) {
-    if (isUUID(accessor)) {
-      const availableUser = await this.prismaService.user.findUnique({
-        where: { id: accessor },
-        omit: { hashedPassword: false },
-      });
-
-      return availableUser;
-    }
-
-    const userLoginWithoutUuid = await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email: accessor }, { username: accessor }],
-      },
-      omit: { hashedPassword: false },
-    });
-
-    return userLoginWithoutUuid;
-  }
-
   async register(dto: CreateAccountDto) {
-    const availableUser = await this.findUserByAccessor(dto.email);
+    const availableUser = await this.userService.findUserByEmail(dto.email);
     if (availableUser) throw new ConflictException('Account is available');
 
     const hashedPassword = await hash(dto.password);
@@ -96,7 +81,7 @@ export class AuthService {
       throw new BadRequestException('Verification code is required');
     }
 
-    const availableUser = await this.findUserByAccessor(dto.to);
+    const availableUser = await this.userService.findUserByEmail(dto.to);
     if (!availableUser) throw new NotFoundException('User not found');
 
     if (availableUser.isActive) {
@@ -147,7 +132,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto, res: Response) {
-    const user = await this.findUserByAccessor(dto.access);
+    const user = await this.userService.findUserByEmail(dto.access);
     if (!user) throw new NotFoundException('User not found');
 
     if (!user.hashedPassword) {
@@ -192,7 +177,7 @@ export class AuthService {
   async changePassword(userId: string, dto: ChangePasswordDto) {
     if (!userId) throw new UnauthorizedException('Unauthorized');
 
-    const account = await this.findUserByAccessor(userId);
+    const account = await this.userService.findUserById(userId);
     if (!account) throw new NotFoundException('User not found');
 
     if (!account.hashedPassword) {
@@ -210,7 +195,7 @@ export class AuthService {
       data: { hashedPassword: newHashedPassword },
     });
 
-    this.emailProducer.sendNotifiCaitonChangePassword({
+    this.emailProducer.sendNotificationChangePassword({
       to: account.email,
       username: account.username,
     });
@@ -413,7 +398,7 @@ export class AuthService {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
     });
 
-    const user = await this.findUserByAccessor(payload.sub);
+    const user = await this.userService.findUserById(payload.sub);
 
     if (!user) throw new UnauthorizedException('User not found');
     if (!user.isActive) throw new UnauthorizedException('User inactive');

@@ -9,19 +9,18 @@ import { MessageProducer } from './queue_service/message.producer';
 import { UpdateMessageDto } from '../../dto/update-message.dto';
 import { DeleteMessageDto } from '../../dto/delete-message.dto';
 import { PrismaService } from '../../../../prisma/prisma.service';
+import { UserService } from '../../../user/user.service';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly messageProducer: MessageProducer,
+    private readonly userService: UserService,
   ) {}
 
   async getUserById(userId: string) {
-    console.log(userId);
-    return await this.prismaService.user.findUnique({
-      where: { id: userId },
-    });
+    return await this.userService.findUserById(userId);
   }
 
   async getRoomWithId(roomId: string) {

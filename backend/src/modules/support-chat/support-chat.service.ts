@@ -17,9 +17,9 @@ import { MessageQueue } from './interfaces';
 import { MessageService } from './service/message/message.service';
 import { RoomService } from './service/room/room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
-import { PrismaService } from '../../prisma/prisma.service';
 import { FaqService } from './service/FAQ-service/Faq.service';
 import { StockPredictionService } from '../stock/stock-prediction.service';
+import { UserService } from '../user/user.service';
 @Injectable()
 export class SupportChatService {
   private readonly googleAi: GoogleGenerativeAI;
@@ -29,11 +29,11 @@ export class SupportChatService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
     private readonly messageService: MessageService,
     private readonly roomService: RoomService,
     private readonly faqService: FaqService,
     private readonly stockService: StockPredictionService,
+    private readonly userService: UserService,
   ) {
     const geminiApikey = configService.getOrThrow<string>('GENEMI_API_KEY');
     const geminiVersion = configService.getOrThrow<string>('GENEMI_MODEL');
@@ -93,9 +93,7 @@ export class SupportChatService {
   }
 
   private async firstResponse(userId: string) {
-    const availableUser = await this.prismaService.user.findUnique({
-      where: { id: userId },
-    });
+    const availableUser = await this.userService.findUserById(userId);
     if (!availableUser) throw new NotFoundException('User not found');
 
     try {

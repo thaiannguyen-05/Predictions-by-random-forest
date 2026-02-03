@@ -15,6 +15,20 @@ export class UserService {
     private readonly logger: MyLogger,
   ) {}
 
+  public async findUserByEmail(email: string) {
+    return this.prismaService.user.findUnique({
+      where: { email },
+      omit: { hashedPassword: false },
+    });
+  }
+
+  public async findUserById(id: string) {
+    return this.prismaService.user.findUnique({
+      where: { id },
+      omit: { hashedPassword: false },
+    });
+  }
+
   private async getActiveAccount(
     userId: string,
   ): Promise<import('../../../prisma/generated/prisma').User | null> {

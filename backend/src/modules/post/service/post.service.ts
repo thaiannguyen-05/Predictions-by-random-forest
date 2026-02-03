@@ -4,6 +4,7 @@ import { MyLogger } from '../../../logger/logger.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { RedisService } from '../../redis/redis.service';
 import { UserNotFoundOrNotActiveException } from '../../user/exceptions/user.exception';
+import { UserService } from '../../user/user.service';
 import { CreatePostDto } from '../dto/createPost.dto';
 import { LoadingPostDto } from '../dto/loadingPosts.dto';
 import { PostNotFoundException } from '../exceptions/post.exception';
@@ -26,22 +27,15 @@ export class PostService {
     private readonly batchInsertService: BatchInsertService,
     private readonly redisService: RedisService,
     private readonly logger: MyLogger,
+    private readonly userService: UserService,
   ) {}
 
   private async findUserByAccessor(accessor: string) {
     if (isUUID(accessor)) {
-      return await this.prismaService.user.findUnique({
-        where: { id: accessor },
-        omit: { hashedPassword: false },
-      });
+      return await this.userService.findUserById(accessor);
     }
 
-    return await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email: accessor }, { username: accessor }],
-      },
-      omit: { hashedPassword: false },
-    });
+    return await this.userService.findUserByEmail(accessor);
   }
 
   private async getAvailableUser(userId: string) {

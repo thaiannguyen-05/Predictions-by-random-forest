@@ -4,41 +4,26 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MyLogger } from '../../logger/logger.service';
 import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
-import { isUUID } from '../../common/utils/uuid.utils';
 import { CommentNotFoundException } from './exceptions/comment.exception';
 import { PostNotFoundException } from '../post/exceptions/post.exception';
 import { UserNotFoundOrNotActiveException } from '../user/exceptions/user.exception';
 import type { CommentResponse, PaginatedCommentsResponse } from '.';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class CommentService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly logger: MyLogger,
+    private readonly userService: UserService,
   ) {}
-
-  private async findUserByAccessor(accessor: string) {
-    if (isUUID(accessor)) {
-      return await this.prismaService.user.findUnique({
-        where: { id: accessor },
-        omit: { hashedPassword: false },
-      });
-    }
-
-    return await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email: accessor }, { username: accessor }],
-      },
-      omit: { hashedPassword: false },
-    });
-  }
 
   private async getAvailableUser(userId: string) {
     if (!userId) {
       throw new UnauthorizedException('User not found');
     }
 
-    const availableUser = await this.findUserByAccessor(userId);
+    const availableUser = await this.userService.findUserById(userId);
 
     if (!availableUser) {
       throw new UserNotFoundOrNotActiveException(userId);

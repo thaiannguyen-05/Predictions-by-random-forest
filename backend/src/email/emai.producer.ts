@@ -13,7 +13,7 @@ export class EmailProducer {
     this.client.emit('send-detect-other-device', data);
   }
 
-  sendNotifiCaitonChangePassword(data: { to: string; username: string }) {
+  sendNotificationChangePassword(data: { to: string; username: string }) {
     this.client.emit('send-notification-password', data);
   }
 }

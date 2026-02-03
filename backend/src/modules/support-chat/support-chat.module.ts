@@ -12,10 +12,12 @@ import { RoomService } from './service/room/room.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SupportChatController } from './suport-chat.controller';
 import { FaqService } from './service/FAQ-service/Faq.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     StockModule,
+    UserModule,
     ClientsModule.register([
       {
         name: 'MESSAGE_QUEUE',
