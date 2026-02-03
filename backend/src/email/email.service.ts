@@ -201,7 +201,9 @@ export class EmailService {
       );
 
       if (success) {
-        this.logger.log(`Contact email sent to admin from: ${contactData.email}`);
+        this.logger.log(
+          `Contact email sent to admin from: ${contactData.email}`,
+        );
       }
 
       return success;
@@ -217,7 +219,10 @@ export class EmailService {
    * @param userName - Tên người dùng
    * @returns true nếu gửi thành công
    */
-  async sendContactConfirmation(toEmail: string, userName: string): Promise<boolean> {
+  async sendContactConfirmation(
+    toEmail: string,
+    userName: string,
+  ): Promise<boolean> {
     try {
       const template = await this.getTemplate('contactConfirmation');
       const html = template?.replace(/{USER_NAME}/g, userName);

@@ -1,4 +1,4 @@
-#!/home/andev/work_space/Predictions-by-random-forest/ml-service/.venv/bin/python3
+#!/home/andev/dev/projects/Predictions-by-random-forest/ml-service/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -62,16 +62,18 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         throw new Error(`Không tìm thấy dữ liệu cho ${symbol}`);
 
       const priceData = await priceResponse.json();
+      const pricePayload = priceData?.data ?? priceData;
 
       const financialResponse = await fetch(
         `${API_BASE_URL}/stock/financial/${apiSymbol}`,
         { cache: "no-store" }
       );
-      const financialData = financialResponse.ok
+      const financialRaw = financialResponse.ok
         ? await financialResponse.json()
         : {};
+      const financialData = financialRaw?.data ?? financialRaw;
 
-      const currentPrice = priceData.price || 0;
+      const currentPrice = pricePayload?.price || 0;
       const previousClose = financialData.previousClose || currentPrice * 0.95;
       const change = currentPrice - previousClose;
       const changePercent = (change / previousClose) * 100;
@@ -138,7 +140,8 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         high52Week: financialData.high || currentPrice * 1.2,
         low52Week: financialData.low || currentPrice * 0.8,
         lastUpdated:
-          priceData.time || new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
+          pricePayload?.time ||
+          new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
         chartData: updatedChartData, // ✅ Dùng cached data
       };
 
@@ -207,10 +210,11 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       }
 
       const predictionData = await response.json();
+      const predictionPayload = predictionData?.data ?? predictionData;
       console.log("📊 API trả về:", predictionData);
 
       // ✅ Lấy phần tử đầu tiên trong mảng predictions
-      const firstPrediction = predictionData.predictions?.[0];
+      const firstPrediction = predictionPayload?.predictions?.[0];
 
       if (!firstPrediction) {
         console.error("Không có dữ liệu dự đoán trong predictions");

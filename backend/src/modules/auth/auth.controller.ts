@@ -35,7 +35,7 @@ import { AUTH_CONSTANT } from './auth.constants';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('login')
@@ -199,7 +199,7 @@ export class AuthController {
     description: 'Initiate Google OAuth authentication flow',
   })
   @ApiExcludeEndpoint()
-  async googleAuth() { }
+  async googleAuth() {}
 
   @Public()
   @Get('google/callback')
@@ -234,7 +234,7 @@ export class AuthController {
     description: 'Initiate Facebook OAuth authentication flow',
   })
   @ApiExcludeEndpoint()
-  async facebookAuth() { }
+  async facebookAuth() {}
 
   @Public()
   @Get('facebook/callback')
@@ -253,7 +253,6 @@ export class AuthController {
       res,
     );
 
-    // Lấy token từ trường tokens và redirect về FE
     const accessToken = result.tokens.accessToken;
     return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
   }

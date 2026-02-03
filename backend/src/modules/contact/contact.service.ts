@@ -10,7 +10,7 @@ import { EmailService } from '../../email/email.service';
 export class ContactService {
   private readonly logger = new Logger(ContactService.name);
 
-  constructor(private readonly emailService: EmailService) { }
+  constructor(private readonly emailService: EmailService) {}
 
   /**
    * Gửi email liên hệ từ form đến admin

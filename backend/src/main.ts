@@ -16,7 +16,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.use(cookieParser());
 
-  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Stock Prediction API')
     .setDescription(
@@ -43,7 +42,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  // Configure Helmet - allow images from self and disable CORP for static files
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -75,7 +73,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const enableMicroservices = configService.get<string>('ENABLE_MICROSERVICES') === 'true';
+  const enableMicroservices =
+    configService.get<string>('ENABLE_MICROSERVICES') === 'true';
 
   if (enableMicroservices) {
     app.connectMicroservice<MicroserviceOptions>({
