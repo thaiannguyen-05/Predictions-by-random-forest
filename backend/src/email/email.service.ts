@@ -4,18 +4,8 @@ import * as nodemailer from 'nodemailer';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { RedisService } from '../modules/redis/redis.service';
-import { AUTH_CONSTANT } from '../modules/auth/auth.constants';
-
-/**
- * Interface cho dữ liệu email liên hệ
- */
-interface ContactEmailData {
-  name: string;
-  email: string;
-  phone?: string;
-  subject: string;
-  message: string;
-}
+import { AUTH_CONSTANT } from '../modules/auth';
+import type { ContactEmailData } from '.';
 
 @Injectable()
 export class EmailService {

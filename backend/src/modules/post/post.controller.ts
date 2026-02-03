@@ -21,8 +21,8 @@ import { LoadingPostDto } from './dto/loadingPosts.dto';
 import { PostService } from './service/post.service';
 import { ViewCountService } from './service/viewCount.service';
 import { IsAuthorPostGuard } from './isAuthorPost.guard';
-import { TIME_LIMIT_POST } from '../../common/type/common.type';
-import { User } from '../../common/decorator/user.decorator';
+import { TIME_LIMIT_POST } from '../../common/type';
+import { User } from '../../common/decorator';
 
 /**
  * Controller xử lý các request liên quan đến Post

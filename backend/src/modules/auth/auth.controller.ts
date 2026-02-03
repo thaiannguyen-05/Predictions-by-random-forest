@@ -26,11 +26,8 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyAccount } from './dto/verify-account.dto';
 import { AuthService } from './service/auth.service';
-import { FacebookOAuth2User, GoogleOAuth2User } from './auth.interface';
-import { Public } from '../../common/decorator/public.decorator';
-import { Cookies } from '../../common/decorator/cookie.decoratore';
-import { User } from '../../common/decorator/user.decorator';
-import { AUTH_CONSTANT } from './auth.constants';
+import { FacebookOAuth2User, GoogleOAuth2User, AUTH_CONSTANT } from '.';
+import { Public, Cookies, User } from '../../common/decorator';
 
 @ApiTags('Auth')
 @Controller('auth')

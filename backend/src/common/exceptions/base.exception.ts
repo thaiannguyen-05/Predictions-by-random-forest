@@ -1,13 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-
-/**
- * Exception metadata interface
- */
-export interface ExceptionMetadata {
-  userId?: string;
-  action?: string;
-  params?: Record<string, unknown>;
-}
+import type { ExceptionMetadata } from './types';
 
 /**
  * Base exception class với metadata support

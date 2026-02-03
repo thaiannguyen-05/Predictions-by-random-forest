@@ -15,7 +15,7 @@ import {
   FacebookOAuth2User,
   GoogleOAuth2User,
   Payload,
-} from '../auth.interface';
+} from '..';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -28,7 +28,7 @@ import { isUUID } from '../../../common/utils/uuid.utils';
 import { Provider } from '../../../../prisma/generated/prisma';
 import { RedisService } from '../../redis/redis.service';
 import { MyLogger } from '../../../logger/logger.service';
-import { AUTH_CONSTANT } from '../auth.constants';
+import { AUTH_CONSTANT } from '..';
 import { EmailProducer } from '../../../email/emai.producer';
 
 @Injectable()

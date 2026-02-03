@@ -1,21 +1,8 @@
-import { GoogleOAuth2User } from '../auth.interface';
+import { GoogleOAuth2User } from '..';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
-
-interface _GoogleUser {
-  id: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  displayName?: string;
-  fullName?: string;
-  picture: string;
-  provider: string;
-  accessToken: string;
-  refreshToken: string;
-}
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {

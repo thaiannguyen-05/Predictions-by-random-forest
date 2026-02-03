@@ -1,7 +1,7 @@
 import {
   ExceptionMetadata,
   ResourceNotFoundException,
-} from '../../../common/exceptions/base.exception';
+} from '../../../common/exceptions';
 
 /**
  * Exception khi không tìm thấy Post

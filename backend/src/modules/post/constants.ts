@@ -25,45 +25,5 @@ export const viewCountPendingKey = (postId: string): string =>
  * Interval để batch sync viewCount vào database (5 phút)
  */
 export const VIEW_COUNT_INTERVAL = 1000 * 60 * 5;
-export interface LikePost {
-  postId: string;
-  userId: string;
-  isLike: true;
-}
-
-export interface DisLikePost {
-  postId: string;
-  userId: string;
-  isLike: false;
-}
-
-/**
- * Interface cho dữ liệu view count response
- */
-export interface ViewCountData {
-  postId: string;
-  viewCount: number;
-}
 
 export const INTERVAL = 1000 * 60 * 5; // 5 minutes
-
-/**
- * Post response interface
- */
-export interface PostResponse<T> {
-  status: boolean;
-  data: T;
-}
-
-/**
- * Paginated response interface
- */
-export interface PaginatedPostResponse {
-  status: boolean;
-  data: {
-    post: unknown[];
-    cursor: string | null;
-    page: number;
-    hasMore: boolean;
-  };
-}

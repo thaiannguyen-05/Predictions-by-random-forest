@@ -14,7 +14,7 @@ import {
   PostResponse,
   likeCount,
   viewCountTotalKey,
-} from '../post.constant';
+} from '..';
 import { BatchInsertService } from './batchInsert.service';
 
 const CONTEXT = 'PostService';

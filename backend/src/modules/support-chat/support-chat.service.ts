@@ -13,7 +13,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { ResponseMessageDto } from './dto/response-message.dto';
-import { MessageQueue } from './interfaces/support-chat.interface';
+import { MessageQueue } from './interfaces';
 import { MessageService } from './service/message/message.service';
 import { RoomService } from './service/room/room.service';
 import { CreateRoomDto } from './dto/create-room.dto';

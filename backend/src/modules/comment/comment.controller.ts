@@ -21,8 +21,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LoadingPostCommentsDto } from './dto/loading-post-comments.dto';
 import { IsAuthorCommentGuard } from './isAuthorComment.guard';
-import { TIME_LIMIT_POST } from '../../common/type/common.type';
-import { User } from '../../common/decorator/user.decorator';
+import { TIME_LIMIT_POST } from '../../common/type';
+import { User } from '../../common/decorator';
 
 /**
  * Controller xử lý các request liên quan đến Comment

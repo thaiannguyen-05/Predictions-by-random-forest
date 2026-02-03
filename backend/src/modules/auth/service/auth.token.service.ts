@@ -8,8 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from 'argon2';
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { AUTH_CONSTANT } from '../auth.constants';
-import { Payload } from '../auth.interface';
+import { AUTH_CONSTANT, Payload } from '..';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { EmailProducer } from '../../../email/emai.producer';
 @Injectable()

@@ -2,10 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-custom';
-import { User } from '../../../../prisma/generated/prisma';
 import { AuthService } from '../service/auth.service';
 
-type _UserWithoutPassword = Omit<User, 'hashedPassword'>;
 @Injectable()
 export class CookieStrategy extends PassportStrategy(Strategy, 'cookie') {
   constructor(private readonly authService: AuthService) {

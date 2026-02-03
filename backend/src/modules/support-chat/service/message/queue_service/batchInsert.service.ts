@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { MessageQueue } from '../../../interfaces/support-chat.interface';
+import { MessageQueue } from '../../../interfaces';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 
 const MAX_INSERT = 1000;

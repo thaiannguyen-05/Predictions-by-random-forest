@@ -6,17 +6,8 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { StandardResponse } from '../interfaces/response.interface';
-
-/**
- * Response wrapper types
- * Cho phép service trả về các format khác nhau
- */
-interface LegacyResponse {
-  status: boolean;
-  data?: unknown;
-  message?: string;
-}
+import { StandardResponse } from '../interfaces';
+import type { LegacyResponse } from './types';
 
 /**
  * Global Response Interceptor

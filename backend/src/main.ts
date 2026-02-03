@@ -9,8 +9,8 @@ import { join } from 'path';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { QUEUE_EMAIL } from './common/type/common.type';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { QUEUE_EMAIL } from './common/type';
+import { ResponseInterceptor } from './common/interceptors';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);

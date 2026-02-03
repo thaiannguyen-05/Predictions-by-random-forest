@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
-import { TypeMessage } from '../types/message.types';
+import { TypeMessage } from '../types';
 
 export class CreateMessageDto {
   @IsString()

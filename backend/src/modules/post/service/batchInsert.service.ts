@@ -6,7 +6,7 @@ import {
   INTERVAL,
   LikePost,
   MAX_BATCH_INSERT,
-} from '../post.constant';
+} from '..';
 import { MyLogger } from '../../../logger/logger.service';
 
 const CONTEXT = 'BatchInsertService';

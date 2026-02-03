@@ -2,10 +2,7 @@
  * Mock chalk module for Jest tests
  * chalk@5+ is ESM-only, so we need to mock it for CommonJS tests
  */
-
-type ChalkFunction = ((...args: unknown[]) => string) & {
-  [key: string]: ChalkFunction;
-};
+import type { ChalkFunction } from '.';
 
 const handler: ProxyHandler<ChalkFunction> = {
   get(_target: ChalkFunction, prop: string): ChalkFunction {

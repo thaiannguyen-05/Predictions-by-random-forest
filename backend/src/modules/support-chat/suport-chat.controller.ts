@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { SupportChatService } from './support-chat.service';
 import { ResponseMessageDto } from './dto/response-message.dto';
-import { Public } from '../../common/decorator/public.decorator';
+import { Public } from '../../common/decorator';
 
 @ApiTags('Support Chat')
 @Public()

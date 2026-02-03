@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { ChangeDetailDto } from './dto/change-detail.dto';
-import { User } from '../../common/decorator/user.decorator';
+import { User } from '../../common/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
@@ -26,7 +26,7 @@ import * as fs from 'fs';
 import type {
   ChunkUploadSession,
   UploadChunkResponse,
-} from './interfaces/chunk-upload.interface';
+} from './interfaces';
 
 // Directories
 const UPLOAD_DIR = './upload';

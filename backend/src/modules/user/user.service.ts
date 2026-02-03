@@ -4,16 +4,9 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { DateUtils } from '../../common/utils/string-to-date.utils';
 import { UserNotFoundOrNotActiveException } from './exceptions/user.exception';
 import { MyLogger } from '../../logger/logger.service';
+import type { UserResponse } from '.';
 
 const CONTEXT = 'UserService';
-
-/**
- * Response interface cho user data
- */
-export interface UserResponse {
-  status: boolean;
-  data: Omit<import('../../../prisma/generated/prisma').User, 'hashedPassword'>;
-}
 
 /**
  * Service xử lý các nghiệp vụ liên quan đến User

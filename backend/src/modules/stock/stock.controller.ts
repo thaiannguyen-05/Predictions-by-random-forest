@@ -15,7 +15,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { StockPredictionService } from './stock-prediction.service';
-import { Public } from '../../common/decorator/public.decorator';
+import { Public } from '../../common/decorator';
 
 @ApiTags('Stock')
 @Public()

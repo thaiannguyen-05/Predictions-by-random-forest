@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { MessageQueue } from '../../interfaces/support-chat.interface';
+import { MessageQueue } from '../../interfaces';
 
 const REDIS_MESSAGE_TTL = 86400; // 24 hours
 const REDIS_ROOM_PREFIX = 'room:messages:';

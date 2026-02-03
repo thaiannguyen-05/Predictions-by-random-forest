@@ -8,7 +8,7 @@ import {
   viewCountTotalKey,
   viewCountPendingKey,
   ViewCountData,
-} from '../post.constant';
+} from '..';
 
 const CONTEXT = 'ViewCountService';
 

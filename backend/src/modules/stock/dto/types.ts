@@ -15,6 +15,6 @@ export interface FinancialDataDto {
 
 export interface FinancialDataResponse {
   success: boolean;
+  message?: string;
   data?: FinancialDataDto;
-  error?: string;
 }

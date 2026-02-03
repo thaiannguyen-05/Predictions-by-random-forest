@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { QUEUE_EMAIL } from '../common/type/common.type';
+import { QUEUE_EMAIL } from '../common/type';
 import { EmailConsumer } from './email.consumer';
 import { EmailProducer } from './emai.producer';
 import { EmailController } from './email.controller';

@@ -15,12 +15,12 @@ import {
   MODEL_TRAINING_CONFIG,
   PREDICTION_CONFIG,
   getFallbackPriceUrl,
-} from './stock.constants';
+} from '.';
 import {
   MLServiceResponse,
   FinancialData,
   HistorySearchRecord,
-} from './interfaces/stock.interface';
+} from '.';
 import {
   MLServiceConnectionException,
   MLServiceTimeoutException,

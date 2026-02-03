@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import {
   BaseApplicationException,
   ExceptionMetadata,
-} from '../../../common/exceptions/base.exception';
+} from '../../../common/exceptions';
 
 /**
  * Exception khi không tìm thấy User hoặc User không active

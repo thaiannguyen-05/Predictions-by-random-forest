@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { EmailProducer } from './emai.producer';
 import { VerifyAccount } from '../modules/auth/dto/verify-account.dto';
-import { Public } from '../common/decorator/public.decorator';
+import { Public } from '../common/decorator';
 
 @Controller('email')
 export class EmailController {

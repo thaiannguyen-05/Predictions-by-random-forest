@@ -8,27 +8,7 @@ import { isUUID } from '../../common/utils/uuid.utils';
 import { CommentNotFoundException } from './exceptions/comment.exception';
 import { PostNotFoundException } from '../post/exceptions/post.exception';
 import { UserNotFoundOrNotActiveException } from '../user/exceptions/user.exception';
-
-/**
- * Comment response interface
- */
-export interface CommentResponse<T> {
-  status: boolean;
-  data: T;
-}
-
-/**
- * Paginated comments response interface
- */
-export interface PaginatedCommentsResponse {
-  status: boolean;
-  data: {
-    comments: unknown[];
-    cursor: string | null;
-    page: number;
-    hasMore: boolean;
-  };
-}
+import type { CommentResponse, PaginatedCommentsResponse } from '.';
 
 /**
  * Service xử lý các nghiệp vụ liên quan đến Comment

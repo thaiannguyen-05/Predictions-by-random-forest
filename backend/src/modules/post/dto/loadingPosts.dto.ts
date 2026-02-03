@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
-import { PAGINATION_DEFAULTS } from '../../../common/type/common.type';
+import { PAGINATION_DEFAULTS } from '../../../common/type';
 
 /**
  * DTO cho việc load danh sách posts với pagination

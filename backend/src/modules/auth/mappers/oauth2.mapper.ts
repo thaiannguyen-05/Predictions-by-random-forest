@@ -1,30 +1,5 @@
-import { GoogleOAuth2User, FacebookOAuth2User } from '../auth.interface';
-
-interface GoogleStrategyUser {
-  id: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  displayName?: string;
-  fullName?: string;
-  picture: string;
-  provider: string;
-  accessToken: string;
-  refreshToken: string;
-}
-
-interface FacebookStrategyUser {
-  id: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  displayName?: string;
-  fullName?: string;
-  picture?: string;
-  provider: string;
-  accessToken: string;
-  refreshToken?: string;
-}
+import { GoogleOAuth2User, FacebookOAuth2User } from '..';
+import type { GoogleStrategyUser, FacebookStrategyUser } from '.';
 
 export class OAuth2Mapper {
   static mapGoogleUser(strategyUser: GoogleStrategyUser): GoogleOAuth2User {
