@@ -58,3 +58,8 @@ out/
 *.pfx
 secrets/
 credentials/
+
+
+
+data/
+models/
