@@ -38,13 +38,34 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
 
   const formatSymbolForAPI = (symbol: string) => `${symbol}.VN`;
 
+  const toFiniteNumber = (value: any): number | null => {
+    if (typeof value === "number") {
+      return Number.isFinite(value) ? value : null;
+    }
+
+    if (typeof value === "string") {
+      const normalized = value.replace(/,/g, "").replace("%", "").trim();
+      if (!normalized) return null;
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
   useEffect(() => {
-    
     isInitialLoad.current = true;
     historicalDataCache.current = [];
-
-    
     fetchStockDetails(true);
+
+    const intervalId = setInterval(() => {
+      fetchStockDetails(false);
+    }, REFRESH_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [symbol]);
 
   const fetchStockDetails = async (firstLoad = false) => {
@@ -73,10 +94,24 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
         : {};
       const financialData = financialRaw?.data ?? financialRaw;
 
-      const currentPrice = pricePayload?.price || 0;
-      const previousClose = financialData.previousClose || currentPrice * 0.95;
-      const change = currentPrice - previousClose;
-      const changePercent = (change / previousClose) * 100;
+      const yahooPrice = toFiniteNumber(financialData?.yahooPrice);
+      const fallbackPrice = toFiniteNumber(pricePayload?.price);
+      const canonicalCurrentPrice = yahooPrice ?? fallbackPrice;
+
+      const previousClose = toFiniteNumber(financialData?.previousClose);
+      const openPrice = toFiniteNumber(financialData?.open);
+      const highPrice = toFiniteNumber(financialData?.high);
+      const lowPrice = toFiniteNumber(financialData?.low);
+
+      const fallbackChangePercent = toFiniteNumber(pricePayload?.change);
+      const change =
+        canonicalCurrentPrice !== null && previousClose !== null
+          ? canonicalCurrentPrice - previousClose
+          : null;
+      const changePercent =
+        canonicalCurrentPrice !== null && previousClose !== null && previousClose !== 0
+          ? (change! / previousClose) * 100
+          : fallbackChangePercent;
 
       
       const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
@@ -86,40 +121,44 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       };
 
       
+      const chartCurrentPrice = canonicalCurrentPrice ?? previousClose ?? 0;
+
       let updatedChartData: any[];
       if (isInitialLoad.current) {
-        
-        updatedChartData = await generateHistoricalData(symbol, currentPrice);
+        updatedChartData = await generateHistoricalData(symbol, chartCurrentPrice);
         historicalDataCache.current = updatedChartData;
         isInitialLoad.current = false;
       } else {
-        
         if (historicalDataCache.current.length > 0) {
           updatedChartData = [...historicalDataCache.current];
           const lastIndex = updatedChartData.length - 1;
 
-          
           updatedChartData[lastIndex] = {
             ...updatedChartData[lastIndex],
-            close: currentPrice,
-            high: Math.max(updatedChartData[lastIndex].high || currentPrice, currentPrice),
-            low: Math.min(updatedChartData[lastIndex].low || currentPrice, currentPrice),
+            close: chartCurrentPrice,
+            high: Math.max(
+              updatedChartData[lastIndex].high || chartCurrentPrice,
+              chartCurrentPrice
+            ),
+            low: Math.min(
+              updatedChartData[lastIndex].low || chartCurrentPrice,
+              chartCurrentPrice
+            ),
             date: new Date().toISOString().split("T")[0],
           };
 
           historicalDataCache.current = updatedChartData;
         } else {
-          
-          updatedChartData = await generateHistoricalData(symbol, currentPrice);
+          updatedChartData = await generateHistoricalData(symbol, chartCurrentPrice);
           historicalDataCache.current = updatedChartData;
         }
       }
 
       const updatedStockData = {
         symbol: symbol.toUpperCase(),
-        companyName: stockInfo.name, 
-        sector: stockInfo.sector, 
-        currentPrice,
+        companyName: stockInfo.name,
+        sector: stockInfo.sector,
+        currentPrice: canonicalCurrentPrice,
         previousClose,
         change,
         changePercent,
@@ -136,13 +175,13 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
           ? financialData.eps.toLocaleString("vi-VN") + " VND"
           : "N/A",
         beta: financialData.beta ? financialData.beta.toFixed(2) : "N/A",
-        openPrice: financialData.open || previousClose,
-        high52Week: financialData.high || currentPrice * 1.2,
-        low52Week: financialData.low || currentPrice * 0.8,
+        openPrice,
+        high52Week: highPrice,
+        low52Week: lowPrice,
         lastUpdated:
           pricePayload?.time ||
           new Date().toLocaleTimeString("vi-VN") + " (GMT+7)",
-        chartData: updatedChartData, 
+        chartData: updatedChartData,
       };
 
       setStockData(updatedStockData);
@@ -222,13 +261,13 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       }
 
       const rawPrediction = firstPrediction.prediction || "GIẢM";
+      const predictedPrice = toFiniteNumber(firstPrediction.predicted_price) ?? stockData.currentPrice;
 
       setPrediction({
         symbol,
         prediction: rawPrediction.toUpperCase(),
         confidence: (firstPrediction.confidence ?? 0.75) * 100,
-        predictedPrice:
-          firstPrediction.predicted_price ?? stockData.currentPrice,
+        predictedPrice,
         predictionDate: new Date(
           firstPrediction.prediction_time
         ).toLocaleDateString("vi-VN"),
@@ -348,7 +387,9 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Giá mục tiêu</div>
               <div className="text-3xl font-black text-white">
-                {prediction.predictedPrice.toLocaleString("vi-VN")}₫
+                {Number.isFinite(prediction.predictedPrice)
+                  ? `${prediction.predictedPrice.toLocaleString("vi-VN")}₫`
+                  : "N/A"}
               </div>
             </div>
           </div>

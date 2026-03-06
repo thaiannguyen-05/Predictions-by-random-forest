@@ -45,6 +45,12 @@ export default function DashboardPage() {
   useEffect(() => {
     checkMLService();
     fetchTopStocks();
+
+    const intervalId = setInterval(() => {
+      fetchTopStocks();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const checkMLService = async () => {
@@ -60,6 +66,8 @@ export default function DashboardPage() {
     }
   };
 
+  const formatSymbolForApi = (symbol: string) => `${symbol}.VN`;
+
   const fetchTopStocks = async () => {
     const symbols = ['VCB', 'FPT', 'VNM', 'HPG'];
     const names: Record<string, string> = {
@@ -72,23 +80,29 @@ export default function DashboardPage() {
     const updatedStocks = await Promise.all(
       symbols.map(async (sym) => {
         try {
-          const res = await fetch(`${API_BASE}/stock/current-price/${sym}`);
+          const apiSymbol = formatSymbolForApi(sym);
+          const res = await fetch(`${API_BASE}/stock/current-price/${apiSymbol}`, {
+            cache: 'no-store',
+          });
           const data = await res.json();
 
-          if (data?.data) {
-            const priceStr = data.data.price
-              ? Math.round(data.data.price).toLocaleString('vi-VN').replace(/,/g, '.')
+          const payload = data?.data ?? data;
+
+          if (payload) {
+            const priceNumber = Number(payload.price ?? 0);
+            const priceStr = Number.isFinite(priceNumber)
+              ? Math.round(priceNumber).toLocaleString('vi-VN')
               : '0';
 
-            const changeStr = data.data.change || '0';
-            const changeVal = parseFloat(changeStr);
-            const isPos = changeVal >= 0;
+            const changeVal = parseFloat(String(payload.change ?? '0'));
+            const normalizedChange = Number.isFinite(changeVal) ? changeVal : 0;
+            const isPos = normalizedChange >= 0;
 
             return {
               symbol: sym,
               name: names[sym],
               price: priceStr,
-              change: `${Math.abs(changeVal)}%`,
+              change: `${Math.abs(normalizedChange).toFixed(2)}%`,
               isPositive: isPos,
             };
           }

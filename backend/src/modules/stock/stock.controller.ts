@@ -22,7 +22,7 @@ import { Public } from '../../common/decorator';
 @Public()
 @Controller('api/stock')
 export class StockController {
-  constructor(private readonly stockService: StockPredictionService) { }
+  constructor(private readonly stockService: StockPredictionService) {}
 
   @Get('health')
   @ApiOperation({
@@ -67,7 +67,8 @@ export class StockController {
   @Get('current-prices')
   @ApiOperation({
     summary: 'Get current prices for multiple stocks',
-    description: 'Retrieve current market prices and change percentages for a list of stock tickers from fallback API',
+    description:
+      'Retrieve current market prices and change percentages for a list of stock tickers from fallback API',
   })
   @ApiResponse({
     status: 200,
@@ -120,11 +121,22 @@ export class StockController {
       );
     }
 
+    const price = Number(result.price ?? result.current_price ?? 0);
+    const rawChange = (result as any).change;
+    const change =
+      typeof rawChange === 'number'
+        ? rawChange
+        : parseFloat(
+            String(rawChange ?? '0')
+              .replace('%', '')
+              .trim(),
+          ) || 0;
+
     return {
       ticker: result.ticker || ticker,
-      price: result.price || 0,
-      change: (result as any).change || '0',
-      time: result.time || new Date().toISOString(),
+      price: Number.isFinite(price) ? price : 0,
+      change,
+      time: result.time || result.current_time || new Date().toISOString(),
       timestamp: Date.now(),
     };
   }

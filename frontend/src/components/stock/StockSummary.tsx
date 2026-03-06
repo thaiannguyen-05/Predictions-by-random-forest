@@ -6,7 +6,11 @@ import { ArrowUpRight, ArrowDownRight, Star } from "lucide-react";
 
 const StockSummary: React.FC<{ data: any }> = ({ data }) => {
   const [isPinned, setIsPinned] = useState(false);
-  const isPositive = data.changePercent > 0;
+
+  const hasCurrentPrice = Number.isFinite(data?.currentPrice);
+  const hasChange = Number.isFinite(data?.change);
+  const hasChangePercent = Number.isFinite(data?.changePercent);
+  const isPositive = hasChangePercent ? data.changePercent >= 0 : false;
   const colorClass = isPositive ? "text-green-400" : "text-red-500";
   const Icon = isPositive ? ArrowUpRight : ArrowDownRight;
 
@@ -81,26 +85,23 @@ const StockSummary: React.FC<{ data: any }> = ({ data }) => {
       </div>
 
       <div className="mt-5 flex items-end space-x-6 border-t border-gray-700 pt-5">
-        {}
         <div className="flex flex-col">
           <span className="text-5xl font-bold text-white leading-none">
-            {data.currentPrice.toFixed(2)}
+            {hasCurrentPrice ? data.currentPrice.toFixed(2) : "N/A"}
           </span>
           <span className="text-lg text-gray-400 mt-1">VND/Cổ phiếu</span>
         </div>
 
-        {}
         <div
-          className={`flex items-center ${colorClass} text-2xl font-semibold`}
+          className={`flex items-center ${hasChangePercent ? colorClass : "text-gray-400"} text-2xl font-semibold`}
         >
-          <Icon size={24} className="mr-2" />
-          <span>{data.change.toFixed(2)}</span>
+          {hasChangePercent && <Icon size={24} className="mr-2" />}
+          <span>{hasChange ? data.change.toFixed(2) : "N/A"}</span>
           <span className="text-xl ml-2">
-            ({data.changePercent.toFixed(2)}%)
+            ({hasChangePercent ? `${data.changePercent.toFixed(2)}%` : "N/A"})
           </span>
         </div>
 
-        {}
         <div className="text-sm space-y-1 ml-auto">
           <p className="text-gray-400">
             Vốn hóa:{" "}

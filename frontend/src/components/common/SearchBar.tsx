@@ -38,7 +38,7 @@ const SearchBar: React.FC = () => {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
       const res = await fetch(`${API_BASE}/stock/current-prices?tickers=${tickersQuery}`);
       const jsonRes = await res.json();
-      const priceData = jsonRes.data || {};
+      const priceData = jsonRes?.data ?? jsonRes ?? {};
 
       return filteredStocks.map(symbol => {
         const data = priceData[symbol];

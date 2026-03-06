@@ -135,31 +135,93 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  private normalizeTickerForFallback(ticker: string): string {
+    return ticker.replace(/\.VN$/i, '').toUpperCase();
+  }
+
+  private parseChangePercent(change: unknown): number | null {
+    if (typeof change === 'number' && Number.isFinite(change)) {
+      return change;
+    }
+
+    if (typeof change === 'string') {
+      const parsed = parseFloat(change.replace('%', '').trim());
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
   async getCurrentPrice(ticker: string): Promise<MLServiceResponse> {
+    const fallbackTicker = this.normalizeTickerForFallback(ticker);
+
+    const fetchFallback = async (): Promise<{
+      price: number;
+      change: number;
+    } | null> => {
+      const data = await fetch(getFallbackPriceUrl(fallbackTicker));
+      const json = await data.json();
+
+      if (json && json.length > 0 && json[0].lastPrice) {
+        return {
+          price: Number(json[0].lastPrice) * 1000,
+          change: this.parseChangePercent(json[0].changePc) ?? 0,
+        };
+      }
+
+      return null;
+    };
+
     try {
       let response: MLServiceResponse | null = null;
       try {
         response = await this.sendCommand(ML_COMMANDS.GET_CURRENT_PRICE, {
           ticker,
         });
-      } catch (err) {
-        this.logger.warn(`ML Service unavailable or failed for ${ticker}, using fallback.`);
+      } catch (_err) {
+        this.logger.warn(
+          `ML Service unavailable or failed for ${ticker}, using fallback.`,
+        );
       }
 
       if (!response || !response.success) {
-        const data = await fetch(getFallbackPriceUrl(ticker));
-        const json = await data.json();
-        if (json && json.length > 0 && json[0].lastPrice) {
+        const fallbackData = await fetchFallback();
+        if (fallbackData) {
           return {
             success: true,
-            price: json[0].lastPrice * 1000,
-            change: json[0].changePc,
+            ticker,
+            price: fallbackData.price,
+            change: fallbackData.change,
           };
         }
+
         throw new Error('Fallback API returned empty or invalid data');
       }
 
-      return response;
+      const normalizedChange = this.parseChangePercent(response.change);
+      if (normalizedChange !== null) {
+        return {
+          ...response,
+          change: normalizedChange,
+        };
+      }
+
+      const fallbackData = await fetchFallback();
+      if (fallbackData) {
+        return {
+          ...response,
+          ticker: response.ticker || ticker,
+          price:
+            Number(response.price ?? response.current_price) ||
+            fallbackData.price,
+          change: fallbackData.change,
+        };
+      }
+
+      return {
+        ...response,
+        change: 0,
+      };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -175,23 +237,43 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 
   async getCurrentPrices(
     tickers: string[],
-  ): Promise<Record<string, { price: number; change: string }>> {
+  ): Promise<Record<string, { price: number; change: number }>> {
     try {
       if (!tickers || tickers.length === 0) return {};
 
-      const tickersString = tickers.join(',');
+      const normalizedToRequested: Record<string, string[]> = {};
+      const normalizedTickers = tickers.map((ticker) => {
+        const normalized = this.normalizeTickerForFallback(ticker);
+        if (!normalizedToRequested[normalized]) {
+          normalizedToRequested[normalized] = [];
+        }
+        normalizedToRequested[normalized].push(ticker.toUpperCase());
+        return normalized;
+      });
+
+      const tickersString = normalizedTickers.join(',');
       const data = await fetch(getFallbackPriceUrl(tickersString));
       const json = await data.json();
 
-      const results: Record<string, { price: number; change: string }> = {};
+      const results: Record<string, { price: number; change: number }> = {};
 
       if (Array.isArray(json)) {
         json.forEach((item) => {
           if (item.sym && item.lastPrice) {
-            results[item.sym] = {
-              price: item.lastPrice * 1000,
-              change: item.changePc || '0',
+            const normalizedSymbol = String(item.sym).toUpperCase();
+            const stockData = {
+              price: Number(item.lastPrice) * 1000,
+              change: this.parseChangePercent(item.changePc) ?? 0,
             };
+
+            const requestedSymbols = normalizedToRequested[normalizedSymbol];
+            if (requestedSymbols?.length) {
+              requestedSymbols.forEach((requestedSymbol) => {
+                results[requestedSymbol] = stockData;
+              });
+            } else {
+              results[normalizedSymbol] = stockData;
+            }
           }
         });
       }
