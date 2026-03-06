@@ -33,7 +33,7 @@ export function PageHero({
 	return (
 		<section
 			className={`
-        relative flex items-center bg-brand-dark overflow-hidden pt-24
+        relative flex items-center bg-brand-dark overflow-hidden pt-10
         ${minHeightStyles[minHeight]}
         ${className}
       `}

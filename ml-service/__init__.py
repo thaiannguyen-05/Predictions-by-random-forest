@@ -1,16 +1,4 @@
-"""
-ML Service - Stock Prediction using Random Forest.
 
-Modules:
-- config: Configuration và constants
-- data_loader: Load và update dữ liệu từ yfinance
-- features: Feature engineering
-- model: Model training và prediction
-- real_time_prediction: Real-time prediction service
-- tcp_server: TCP server để phục vụ predictions
-- exceptions: Custom exception classes
-- type_defs: Type definitions
-"""
 from config import TICKERS, standardize_ticker, get_csv_path, get_model_path
 from data_loader import load_data, update_all_data
 from features import add_features

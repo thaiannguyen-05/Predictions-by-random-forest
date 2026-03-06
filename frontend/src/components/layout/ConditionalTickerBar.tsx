@@ -8,11 +8,13 @@ export default function ConditionalTickerBar() {
 	const pathname = usePathname();
 	const { user, loading } = useAuth();
 
-	
 	const isAuthPage = pathname?.startsWith("/auth");
+	const hiddenTickerRoutes = ["/profile", "/settings"];
+	const isHiddenRoute = hiddenTickerRoutes.some((route) =>
+		pathname?.startsWith(route),
+	);
 
-	
-	if (isAuthPage || !user || loading) {
+	if (isAuthPage || isHiddenRoute || !user || loading) {
 		return null;
 	}
 

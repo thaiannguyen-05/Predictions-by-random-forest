@@ -137,17 +137,26 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
 
   async getCurrentPrice(ticker: string): Promise<MLServiceResponse> {
     try {
-      const response = await this.sendCommand(ML_COMMANDS.GET_CURRENT_PRICE, {
-        ticker,
-      });
+      let response: MLServiceResponse | null = null;
+      try {
+        response = await this.sendCommand(ML_COMMANDS.GET_CURRENT_PRICE, {
+          ticker,
+        });
+      } catch (err) {
+        this.logger.warn(`ML Service unavailable or failed for ${ticker}, using fallback.`);
+      }
 
-      if (!response.success) {
+      if (!response || !response.success) {
         const data = await fetch(getFallbackPriceUrl(ticker));
         const json = await data.json();
-        return {
-          success: true,
-          data: json.taggedSymbols[0].price,
-        };
+        if (json && json.length > 0 && json[0].lastPrice) {
+          return {
+            success: true,
+            price: json[0].lastPrice * 1000,
+            change: json[0].changePc,
+          };
+        }
+        throw new Error('Fallback API returned empty or invalid data');
       }
 
       return response;
@@ -161,6 +170,36 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         success: false,
         error: errorMessage,
       };
+    }
+  }
+
+  async getCurrentPrices(
+    tickers: string[],
+  ): Promise<Record<string, { price: number; change: string }>> {
+    try {
+      if (!tickers || tickers.length === 0) return {};
+
+      const tickersString = tickers.join(',');
+      const data = await fetch(getFallbackPriceUrl(tickersString));
+      const json = await data.json();
+
+      const results: Record<string, { price: number; change: string }> = {};
+
+      if (Array.isArray(json)) {
+        json.forEach((item) => {
+          if (item.sym && item.lastPrice) {
+            results[item.sym] = {
+              price: item.lastPrice * 1000,
+              change: item.changePc || '0',
+            };
+          }
+        });
+      }
+
+      return results;
+    } catch (error) {
+      this.logger.error(`Error fetching batch prices: ${error}`);
+      return {};
     }
   }
 

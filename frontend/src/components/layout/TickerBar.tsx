@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import RealTimeClock from "@/components/common/RealTimeClock";
 import { TRAINED_STOCKS } from "../../../constants/trainedStocks";
 
 interface StockTicker {
@@ -58,6 +57,7 @@ export default function TickerBar() {
   };
 
   const handleStockClick = (symbol: string) => router.push(`/stocks/${symbol}`);
+  const duplicatedTickers = [...tickers, ...tickers];
 
   
   if (isLoading)
@@ -75,10 +75,13 @@ export default function TickerBar() {
     );
 
   return (
-    <div className="bg-brand-dark border-b border-white/5 py-3 overflow-hidden relative">
+    <div
+      className="bg-brand-dark border-b border-white/5 py-3 overflow-hidden relative"
+      style={{ zIndex: 10 }}
+    >
       <div className="relative overflow-hidden">
-        <div className="animate-ticker whitespace-nowrap">
-          {tickers.map((stock, i) => (
+        <div className="animate-ticker flex w-max whitespace-nowrap">
+          {duplicatedTickers.map((stock, i) => (
             <button
               key={`${stock.symbol}-${i}`}
               onClick={() => handleStockClick(stock.symbol)}
@@ -106,8 +109,8 @@ export default function TickerBar() {
             </button>
           ))}
         </div>
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-brand-dark to-transparent pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-brand-dark to-transparent pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 z-10 w-28 bg-gradient-to-r from-brand-dark via-brand-dark to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 z-10 w-28 bg-gradient-to-l from-brand-dark via-brand-dark to-transparent pointer-events-none"></div>
       </div>
 
       <style jsx>{`
@@ -120,8 +123,7 @@ export default function TickerBar() {
           }
         }
         .animate-ticker {
-          animation: ticker-scroll 120s linear infinite;
-          display: inline-block;
+          animation: ticker-scroll 140s linear infinite;
         }
         .animate-ticker:hover {
           animation-play-state: paused;

@@ -208,16 +208,15 @@ export class AuthController {
   @ApiExcludeEndpoint()
   async googleAuthRedirect(
     @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+    @Res() res: Response,
+  ): Promise<void> {
     const result = await this.authService.oauth2Login(
       req.user as unknown as GoogleOAuth2User,
       res,
     );
 
     const accessToken = result.tokens.accessToken;
-
-    return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
+    res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
   }
 
   @Public()
@@ -240,15 +239,15 @@ export class AuthController {
   @ApiExcludeEndpoint()
   async facebookAuthRedirect(
     @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+    @Res() res: Response,
+  ): Promise<void> {
     const result = await this.authService.oauth2Login(
       req.user as unknown as FacebookOAuth2User,
       res,
     );
 
     const accessToken = result.tokens.accessToken;
-    return res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
+    res.redirect(AUTH_CONSTANT.REDIRECT_LINK(accessToken));
   }
 
   @Get('me')

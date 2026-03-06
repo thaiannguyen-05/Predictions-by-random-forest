@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import SearchBar from '@/components/common/SearchBar';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -33,11 +34,17 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [mlServiceStatus, setMlServiceStatus] = useState<'online' | 'offline' | 'checking'>('checking');
-  const [searchQuery, setSearchQuery] = useState('');
 
-  
+  const [topStocks, setTopStocks] = useState([
+    { symbol: 'VCB', name: 'Vietcombank', price: '0', change: '0%', isPositive: true },
+    { symbol: 'FPT', name: 'FPT Corp', price: '0', change: '0%', isPositive: true },
+    { symbol: 'VNM', name: 'Vinamilk', price: '0', change: '0%', isPositive: false },
+    { symbol: 'HPG', name: 'Hòa Phát', price: '0', change: '0%', isPositive: true },
+  ]);
+
   useEffect(() => {
     checkMLService();
+    fetchTopStocks();
   }, []);
 
   const checkMLService = async () => {
@@ -51,6 +58,53 @@ export default function DashboardPage() {
     } catch {
       setMlServiceStatus('offline');
     }
+  };
+
+  const fetchTopStocks = async () => {
+    const symbols = ['VCB', 'FPT', 'VNM', 'HPG'];
+    const names: Record<string, string> = {
+      VCB: 'Vietcombank',
+      FPT: 'FPT Corp',
+      VNM: 'Vinamilk',
+      HPG: 'Hòa Phát'
+    };
+
+    const updatedStocks = await Promise.all(
+      symbols.map(async (sym) => {
+        try {
+          const res = await fetch(`${API_BASE}/stock/current-price/${sym}`);
+          const data = await res.json();
+
+          if (data?.data) {
+            const priceStr = data.data.price
+              ? Math.round(data.data.price).toLocaleString('vi-VN').replace(/,/g, '.')
+              : '0';
+
+            const changeStr = data.data.change || '0';
+            const changeVal = parseFloat(changeStr);
+            const isPos = changeVal >= 0;
+
+            return {
+              symbol: sym,
+              name: names[sym],
+              price: priceStr,
+              change: `${Math.abs(changeVal)}%`,
+              isPositive: isPos,
+            };
+          }
+          throw new Error('No data');
+        } catch {
+          return {
+            symbol: sym,
+            name: names[sym],
+            price: 'N/A',
+            change: '0%',
+            isPositive: true,
+          };
+        }
+      })
+    );
+    setTopStocks(updatedStocks);
   };
 
   const quickStats: QuickStat[] = [
@@ -82,13 +136,6 @@ export default function DashboardPage() {
     },
   ];
 
-  const topStocks = [
-    { symbol: 'VCB', name: 'Vietcombank', price: '98,500', change: '+3.2%', isPositive: true },
-    { symbol: 'FPT', name: 'FPT Corp', price: '125,000', change: '+1.8%', isPositive: true },
-    { symbol: 'VNM', name: 'Vinamilk', price: '78,200', change: '-0.5%', isPositive: false },
-    { symbol: 'HPG', name: 'Hòa Phát', price: '28,500', change: '+2.1%', isPositive: true },
-  ];
-
   const quickActions = [
     {
       title: 'Tìm kiếm cổ phiếu',
@@ -110,17 +157,10 @@ export default function DashboardPage() {
     },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/stocks/${searchQuery.toUpperCase()}`);
-    }
-  };
-
   return (
     <MainLayout>
       <div className="min-h-screen px-4 py-6 max-w-7xl mx-auto">
-        {}
+        { }
         <div className="mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Xin chào, <span className="text-brand-orange">{user?.name || 'Investor'}</span>! 👋
@@ -130,7 +170,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {}
+        { }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in">
           {quickStats.map((stat, idx) => (
             <div
@@ -153,31 +193,17 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {}
-        <div className="mb-8 animate-fade-in">
-          <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-            <input
-              id="search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Nhập mã cổ phiếu (VD: FPT, VCB, VNM)..."
-              className="w-full px-6 py-4 pl-14 bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
-            />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold px-6 py-2 rounded-xl transition-all"
-            >
-              Tìm kiếm
-            </button>
-          </form>
+        { }
+        <div className="mb-8 animate-fade-in relative z-50">
+          <div className="max-w-2xl mx-auto">
+            <SearchBar />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {}
+          { }
           <div className="lg:col-span-2 space-y-6">
-            {}
+            { }
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Activity className="text-brand-orange" size={24} />
@@ -201,7 +227,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {}
+            { }
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -229,8 +255,10 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-bold">{stock.price}đ</p>
-                      <p className={`text-sm font-semibold ${stock.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                      <p className={`font-bold ${stock.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                        {stock.price}đ
+                      </p>
+                      <p className={`text-sm font-semibold flex items-center justify-end gap-1 ${stock.isPositive ? 'text-green-400' : 'text-red-400'}`}>
                         {stock.isPositive ? '▲' : '▼'} {stock.change}
                       </p>
                     </div>
@@ -240,9 +268,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {}
+          { }
           <div className="space-y-6">
-            {}
+            { }
             <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-lg font-bold text-white mb-4">ML Service Status</h2>
               <div className="flex items-center gap-3 mb-4">
@@ -264,7 +292,7 @@ export default function DashboardPage() {
               </button>
             </div>
 
-            {}
+            { }
             <div className="bg-gradient-to-br from-brand-orange/10 to-transparent border border-brand-orange/20 rounded-2xl p-6 animate-fade-in">
               <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                 <Sparkles className="text-brand-orange" size={20} />

@@ -1,18 +1,19 @@
 module.exports = {
 	content: [
-		"./src/pages*.{js,ts,jsx,tsx,mdx}",
+		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
 		extend: {
 			colors: {
 				brand: {
-					dark: "#121212",      
-					card: "#1E1E1E",      
-					orange: "#F97316",    
-					"orange-hover": "#EA580C", 
-					text: "#F3F4F6",      
-					muted: "#9CA3AF",     
+					dark: "#121212",
+					card: "#1E1E1E",
+					orange: "#F97316",
+					"orange-hover": "#EA580C",
+					text: "#F3F4F6",
+					muted: "#9CA3AF",
 				}
 			},
 			backgroundImage: {

@@ -1,22 +1,19 @@
 export interface ChunkReceivedResponse {
-  status: boolean;
-  message: string;
-  receivedChunk: number;
-  totalChunks: number;
+  status: 'chunk_received';
+  index: number;
+  received: number;
+  total: number;
 }
 
 export interface ChunkCompleteResponse {
-  status: boolean;
-  message: string;
-  fileName: string;
-  fileUrl: string;
+  status: 'complete';
+  url: string;
 }
 
 export type UploadChunkResponse = ChunkReceivedResponse | ChunkCompleteResponse;
 
 export interface ChunkUploadSession {
-  uploadId: string;
-  chunksReceived: number;
-  totalChunks: number;
-  createdAt: Date;
+  chunks: Map<number, string>;
+  total: number;
+  originalName: string;
 }

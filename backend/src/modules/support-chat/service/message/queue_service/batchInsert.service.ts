@@ -26,7 +26,6 @@ export class BatchInsertService implements OnModuleInit, OnModuleDestroy {
       }
     }, FLUSH_INTERVAL_MS);
   }
-
   onModuleDestroy() {
     if (this.flushTimer) clearInterval(this.flushTimer);
   }

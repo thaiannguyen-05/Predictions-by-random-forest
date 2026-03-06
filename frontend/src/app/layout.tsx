@@ -1,7 +1,6 @@
 import './globals.css';
 import MainLayout from '@/app/main-layout';
 import Header from '@/components/layout/Header';
-import ConditionalTickerBar from '@/components/layout/ConditionalTickerBar';
 import Providers from './providers';
 import { Toaster } from 'react-hot-toast';
 
@@ -20,7 +19,6 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          <ConditionalTickerBar />
           {children}
           <Toaster position="top-right" />
         </Providers>

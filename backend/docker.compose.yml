@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: order-cinema-db
+    container_name: predict-db
     env_file:
       - .env
     environment:
@@ -22,7 +22,7 @@ services:
 
   rabbit:
     image: rabbitmq:3-management-alpine
-    container_name: order-cinema-rabbitmq
+    container_name: predict-rabbitmq
     env_file:
       - .env
     environment:
@@ -44,7 +44,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: order-cinema-redis
+    container_name: predict-redis
     env_file:
       - .env
     command: ["redis-server", "--appendonly", "yes"]

@@ -26,12 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 def create_model() -> RandomForestClassifier:
-    """
-    Khởi tạo mô hình Random Forest với configuration chuẩn.
-    
-    Returns:
-        RandomForestClassifier đã được cấu hình
-    """
     return RandomForestClassifier(
         n_estimators=MODEL_CONFIG["n_estimators"],
         min_samples_split=MODEL_CONFIG["min_samples_split"],

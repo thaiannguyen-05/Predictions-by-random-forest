@@ -20,47 +20,47 @@ const SearchBar: React.FC = () => {
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
 
-  
-  const basePrices: { [key: string]: number } = {
-    'FPT': 80000, 'VNM': 75000, 'VCB': 30000, 'VIC': 45000, 'HPG': 28000,
-    'TCB': 35000, 'VPB': 25000, 'MSN': 90000, 'MWG': 120000, 'GAS': 85000,
-    'PLX': 55000, 'SAB': 150000, 'BID': 40000, 'CTG': 32000, 'MBB': 28000,
-    'ACB': 30000, 'HDB': 27000, 'STB': 22000, 'TPB': 18000, 'EIB': 20000,
-    'VHM': 50000, 'VRE': 35000, 'NVL': 30000, 'KDH': 25000, 'PDR': 20000,
-    'DGC': 40000, 'DPM': 35000, 'GVR': 30000, 'REE': 40000, 'SSI': 35000,
-    'VND': 30000, 'HCM': 25000, 'VCI': 20000, 'VDS': 15000, 'VXR': 18000,
-    'BSI': 22000, 'CTS': 19000, 'FTS': 28000, 'VIX': 17000, 'WSS': 16000,
-  };
 
-  
   const fetchSuggestions = async (query: string): Promise<StockSuggestion[]> => {
-    if (query.length < 1) return [];
+    let filteredStocks = TRAINED_STOCKS;
 
-    
-    const filteredStocks = TRAINED_STOCKS.filter(stock =>
-      stock.toLowerCase().includes(query.toLowerCase()) ||
-      (STOCK_DETAILS[stock as keyof typeof STOCK_DETAILS]?.name.toLowerCase().includes(query.toLowerCase()))
-    ).slice(0, 10); 
+    if (query.trim().length > 0) {
+      filteredStocks = TRAINED_STOCKS.filter(stock =>
+        stock.toLowerCase().includes(query.toLowerCase()) ||
+        (STOCK_DETAILS[stock as keyof typeof STOCK_DETAILS]?.name.toLowerCase().includes(query.toLowerCase()))
+      );
+    }
 
-    return filteredStocks.map(symbol => ({
-      symbol,
-      companyName: STOCK_DETAILS[symbol as keyof typeof STOCK_DETAILS]?.name || `Công ty ${symbol}`,
-      currentPrice: getMockPrice(symbol),
-      changePercent: (Math.random() - 0.5) * 10
-    }));
-  };
+    if (filteredStocks.length === 0) return [];
 
-  
-  const getMockPrice = (symbol: string) => {
-    const basePrice = basePrices[symbol] || 40000;
-    return basePrice * (0.9 + Math.random() * 0.2);
+    try {
+      const tickersQuery = filteredStocks.join(',');
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+      const res = await fetch(`${API_BASE}/stock/current-prices?tickers=${tickersQuery}`);
+      const jsonRes = await res.json();
+      const priceData = jsonRes.data || {};
+
+      return filteredStocks.map(symbol => {
+        const data = priceData[symbol];
+        return {
+          symbol,
+          companyName: STOCK_DETAILS[symbol as keyof typeof STOCK_DETAILS]?.name || `Công ty ${symbol}`,
+          currentPrice: data ? data.price : undefined,
+          changePercent: data ? parseFloat(data.change) : undefined,
+        };
+      });
+    } catch (error) {
+      console.error("Error fetching suggestions prices:", error);
+      return filteredStocks.map(symbol => ({
+        symbol,
+        companyName: STOCK_DETAILS[symbol as keyof typeof STOCK_DETAILS]?.name || `Công ty ${symbol}`,
+        currentPrice: undefined,
+        changePercent: undefined,
+      }));
+    }
   };
 
   const searchStocks = useCallback(async (query: string) => {
-    if (!query) {
-      setSuggestions([]);
-      return;
-    }
     setIsLoading(true);
     try {
       const results = await fetchSuggestions(query);
@@ -103,12 +103,12 @@ const SearchBar: React.FC = () => {
 
   return (
     <div className="relative w-full max-w-4xl mx-auto my-6 px-4">
-      <div className="relative flex items-center bg-gray-800 rounded-lg border border-gray-700 focus-within:border-brand-orange transition-all shadow-xl">
-        <Search size={20} className="text-gray-400 ml-4 absolute" />
+      <div className="relative flex items-center bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl focus-within:border-brand-orange focus-within:ring-2 focus-within:ring-brand-orange/20 transition-all shadow-xl">
+        <Search size={20} className="text-gray-500 ml-6 absolute" />
         <input
           type="text"
           placeholder="Tìm kiếm mã cổ phiếu (VD: FPT, VNM, VIC)..."
-          className="w-full py-3 pl-12 pr-4 bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg"
+          className="w-full py-4 pl-14 pr-6 bg-transparent text-white placeholder-gray-500 focus:outline-none text-lg"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -121,7 +121,7 @@ const SearchBar: React.FC = () => {
       </div>
 
       {showDropdown && (
-        <div className="absolute z-10 w-full mt-2 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-2 bg-brand-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-80 overflow-y-auto custom-scrollbar">
           {isLoading ? (
             <div className="p-4 text-center text-gray-400 flex items-center justify-center">
               <Loader2 size={18} className="animate-spin mr-2" />
@@ -131,7 +131,7 @@ const SearchBar: React.FC = () => {
             suggestions.map((stock) => (
               <div
                 key={stock.symbol}
-                className="p-3 hover:bg-gray-700 cursor-pointer transition-colors border-b border-gray-700 last:border-b-0"
+                className="p-4 hover:bg-brand-dark cursor-pointer transition-colors border-b border-white/5 last:border-b-0"
                 onMouseDown={() => handleSelectSuggestion(stock.symbol)}
               >
                 <div className="flex justify-between items-center">

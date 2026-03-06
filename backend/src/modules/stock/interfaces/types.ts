@@ -15,6 +15,7 @@ export interface MLServiceResponse {
   trained_models?: number;
   updated_tickers?: number;
   features_count?: number;
+  change?: string;
 }
 
 export interface PredictionData {

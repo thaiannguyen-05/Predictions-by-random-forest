@@ -22,7 +22,6 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
   const { logout } = useAuth();
   const router = useRouter();
 
-  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -33,28 +32,27 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  
+
   const handleLogout = async () => {
     try {
-      
+
       await fetch('http://localhost:4000/auth/logout', {
         method: 'PATCH',
         credentials: 'include',
       });
     } catch (error) {
       console.error('Logout API error:', error);
-      
+
     } finally {
-      
+
       logout();
-      
+
       router.push('/auth/login');
     }
   };
 
   return (
-    <div className="relative" ref={menuRef}>
-      {}
+    <div className="relative" style={{ zIndex: 9999 }} ref={menuRef}>
       <div
         onClick={() => setOpen(!open)}
         className="flex items-center space-x-3 cursor-pointer hover:opacity-90 transition"
@@ -69,9 +67,8 @@ const UserDropdown: React.FC<Props> = ({ user }) => {
         <span className="text-white font-medium">{user.name}</span>
       </div>
 
-      {}
       {open && (
-        <div className="absolute right-0 mt-3 w-52 bg-gray-800 text-white rounded-xl shadow-lg border border-gray-700 overflow-hidden animate-fade-in z-50">
+        <div className="absolute right-0 mt-3 w-52 bg-gray-800 text-white rounded-xl shadow-lg border border-gray-700 overflow-hidden animate-fade-in" style={{ zIndex: 10000 }}>
           <div className="px-4 py-3 border-b border-gray-700">
             <p className="font-semibold">{user.name}</p>
             {user.email && (

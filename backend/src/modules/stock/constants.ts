@@ -36,7 +36,7 @@ export const ML_COMMANDS = {
 } as const;
 
 export function getFallbackPriceUrl(symbol: string): string {
-  return `https://restv2.fireant.vn/posts?symbol=${symbol}`;
+  return `https://bgapidatafeed.vps.com.vn/getliststockdata/${symbol}`;
 }
 
 export const fallBackPrice = getFallbackPriceUrl;

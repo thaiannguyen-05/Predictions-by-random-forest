@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,7 +22,7 @@ import { Public } from '../../common/decorator';
 @Public()
 @Controller('api/stock')
 export class StockController {
-  constructor(private readonly stockService: StockPredictionService) {}
+  constructor(private readonly stockService: StockPredictionService) { }
 
   @Get('health')
   @ApiOperation({
@@ -60,6 +61,24 @@ export class StockController {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
+  }
+
+  @Public()
+  @Get('current-prices')
+  @ApiOperation({
+    summary: 'Get current prices for multiple stocks',
+    description: 'Retrieve current market prices and change percentages for a list of stock tickers from fallback API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Current prices retrieved successfully',
+  })
+  async getCurrentPrices(@Query('tickers') tickers: string) {
+    if (!tickers) {
+      return {};
+    }
+    const tickerList = tickers.split(',').map((t) => t.trim().toUpperCase());
+    return this.stockService.getCurrentPrices(tickerList);
   }
 
   @Get('current-price/:ticker')
@@ -104,6 +123,7 @@ export class StockController {
     return {
       ticker: result.ticker || ticker,
       price: result.price || 0,
+      change: (result as any).change || '0',
       time: result.time || new Date().toISOString(),
       timestamp: Date.now(),
     };
