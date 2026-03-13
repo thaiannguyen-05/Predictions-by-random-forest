@@ -8,6 +8,10 @@ import signal
 import sys
 
 from real_time_prediction import RealTimePrediction
+from model_training_orchestrator import (
+    train_all_models_recent,
+    SUPPORTED_MODEL_TYPES,
+)
 from config import (
     SERVER_HOST,
     SERVER_PORT,
@@ -290,6 +294,27 @@ class StockPredictionTCPServer:
             logger.error(f"Error training model: {e}")
             return {"success": False, "error": str(e)}
 
+    def handle_train_all_models_recent(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handler cho lệnh train tất cả model với dữ liệu 1 hoặc 2 tuần gần nhất."""
+        try:
+            recent_weeks = int(data.get("recent_weeks", 1))
+            tickers = data.get("tickers")
+            model_types = data.get("model_types")
+
+            result = train_all_models_recent(
+                recent_weeks=recent_weeks,
+                model_types=model_types,
+                tickers=tickers,
+            )
+
+            if not result.get("success"):
+                result.setdefault("supported_model_types", SUPPORTED_MODEL_TYPES)
+
+            return result
+        except Exception as e:
+            logger.error(f"Error training all recent models: {e}")
+            return {"success": False, "error": str(e)}
+
     def handle_prediction_report(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handler cho lệnh lấy báo cáo dự đoán nhiều khung thời gian"""
         try:
@@ -385,6 +410,8 @@ class StockPredictionTCPServer:
                     response = self.handle_predict_multi_hours(request)
                 elif command == "train" or command == "train_single":
                     response = self.handle_train_model(request)
+                elif command == "train_all" or command == "train_all_models_recent":
+                    response = self.handle_train_all_models_recent(request)
                 elif command == "prediction_report":
                     response = self.handle_prediction_report(request)
                 elif command == "update_data":
