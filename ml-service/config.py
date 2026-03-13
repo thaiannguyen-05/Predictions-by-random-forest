@@ -42,9 +42,9 @@ RETURN_WINDOWS: List[int] = [5, 20]
 # Prediction Configuration
 # ========================
 TRADING_HOURS_PER_DAY: int = 8
-DEFAULT_HOURS_AHEAD: int = 1
-PREDICTION_INTERVALS: List[int] = [1, 2, 4, 8, 24]
-MULTI_HOUR_PREDICTIONS: List[int] = [1, 2, 3, 4]
+DEFAULT_HOURS_AHEAD: int = 24
+PREDICTION_INTERVALS: List[int] = [1, 2, 3, 24]
+MULTI_HOUR_PREDICTIONS: List[int] = [1, 2, 3]
 
 # For price prediction fallback
 DEFAULT_HOURLY_PRICE_CHANGE: float = 0.02  # 2% per hour

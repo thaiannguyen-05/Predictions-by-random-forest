@@ -207,9 +207,9 @@ export class StockController {
 
   @Get('predictions/:ticker')
   @ApiOperation({
-    summary: 'Get stock price predictions',
+    summary: 'Get stock price predictions (1, 2, 3 hours ahead)',
     description:
-      'Get multi-hour stock price predictions using Random Forest ML model',
+      'Get stock price predictions for the next 1, 2, and 3 hours using Random Forest ML model',
   })
   @ApiParam({
     name: 'ticker',
@@ -219,7 +219,7 @@ export class StockController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Stock predictions retrieved successfully',
+    description: 'Multi-hour stock predictions retrieved successfully',
     schema: {
       type: 'object',
       properties: {
@@ -244,7 +244,7 @@ export class StockController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request - prediction failed or invalid ticker',
+    description: 'Bad request - multi-hour prediction failed or invalid ticker',
   })
   async getPredictions(@Param('ticker') ticker: string) {
     const result = await this.stockService.getPredictionsMultiHours(ticker);
@@ -262,6 +262,136 @@ export class StockController {
       current_price: result.current_price || 0,
       current_time: result.current_time || new Date().toISOString(),
       predictions: result.predictions || [],
+      timestamp: result.timestamp || Date.now(),
+    };
+  }
+
+  @Get('predictions-next-hours/:ticker')
+  @ApiOperation({
+    summary: 'Get stock predictions for next 1, 2, 3 hours',
+    description:
+      'Get stock price predictions for the next 1, 2, and 3 hours using Random Forest ML model',
+  })
+  @ApiParam({
+    name: 'ticker',
+    description: 'Stock ticker symbol for predictions',
+    type: 'string',
+    example: 'AAPL',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Next-hours stock predictions retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        ticker: { type: 'string', example: 'AAPL' },
+        current_price: { type: 'number', example: 150.25 },
+        current_time: { type: 'string', example: '2023-10-09 14:30:00' },
+        predictions: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              hour: { type: 'number', example: 1 },
+              predicted_price: { type: 'number', example: 151.5 },
+              confidence: { type: 'number', example: 0.85 },
+            },
+          },
+        },
+        timestamp: { type: 'number', example: 1696858200 },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - next-hours prediction failed or invalid ticker',
+  })
+  async getPredictionsNextHours(@Param('ticker') ticker: string) {
+    const result = await this.stockService.getPredictionsMultiHours(ticker);
+
+    if (!result.success) {
+      throw new HttpException(
+        {
+          message: 'Failed to get next-hours predictions',
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      ticker: result.ticker || ticker,
+      current_price: result.current_price || 0,
+      current_time: result.current_time || new Date().toISOString(),
+      predictions: result.predictions || [],
+      timestamp: result.timestamp || Date.now(),
+    };
+  }
+
+  @Get('prediction-tomorrow/:ticker')
+  @ApiOperation({
+    summary: 'Get stock prediction for tomorrow',
+    description:
+      'Get stock prediction for the next trading day (24 hours ahead) using Random Forest ML model',
+  })
+  @ApiParam({
+    name: 'ticker',
+    description: 'Stock ticker symbol for tomorrow prediction',
+    type: 'string',
+    example: 'AAPL',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Tomorrow stock prediction retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        ticker: { type: 'string', example: 'AAPL' },
+        current_price: { type: 'number', example: 150.25 },
+        current_time: { type: 'string', example: '2023-10-09 14:30:00' },
+        prediction_time: { type: 'string', example: '2023-10-10 14:30:00' },
+        hours_ahead: { type: 'number', example: 24 },
+        prediction: { type: 'string', example: 'TĂNG' },
+        probability: { type: 'number', example: 0.61 },
+        confidence: { type: 'number', example: 0.61 },
+        predicted_price: { type: 'number', example: 152.8, nullable: true },
+        timestamp: { type: 'number', example: 1696858200 },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - tomorrow prediction failed or invalid ticker',
+  })
+  async getPredictionTomorrow(@Param('ticker') ticker: string) {
+    const result = await this.stockService.getPredictionSingle(ticker);
+
+    if (!result.success) {
+      throw new HttpException(
+        { message: 'Failed to get tomorrow prediction', error: result.error },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const predictionData = result.prediction ?? {};
+
+    return {
+      ticker: result.ticker || ticker,
+      current_price: result.current_price ?? predictionData.current_price ?? 0,
+      current_time: result.current_time || new Date().toISOString(),
+      prediction_time: (result as any).prediction_time || null,
+      hours_ahead:
+        (result as any).hours_ahead ?? predictionData.hours_ahead ?? 24,
+      prediction:
+        (result as any).prediction ?? predictionData.prediction ?? null,
+      probability:
+        (result as any).probability ?? predictionData.probability ?? null,
+      confidence:
+        (result as any).confidence ?? predictionData.confidence ?? null,
+      predicted_price:
+        (result as any).predicted_price ??
+        predictionData.predicted_price ??
+        null,
       timestamp: result.timestamp || Date.now(),
     };
   }

@@ -13,6 +13,8 @@ from config import (
     SERVER_PORT,
     SOCKET_BUFFER_SIZE,
     MAX_CONNECTIONS,
+    DEFAULT_HOURS_AHEAD,
+    MULTI_HOUR_PREDICTIONS,
     standardize_ticker,
     get_csv_path,
     get_model_path,
@@ -126,13 +128,22 @@ class StockPredictionTCPServer:
             return {"success": False, "error": str(e)}
 
     def handle_predict(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Handler cho lệnh dự đoán"""
+        """Handler cho lệnh dự đoán giá ngày mai."""
         try:
             ticker = data.get("ticker")
-            hours_ahead = data.get("hours_ahead", 1)
+            hours_ahead = data.get("hours_ahead", DEFAULT_HOURS_AHEAD)
 
             if not ticker:
                 return {"success": False, "error": "Missing ticker parameter"}
+
+            if int(hours_ahead) != DEFAULT_HOURS_AHEAD:
+                return {
+                    "success": False,
+                    "error": (
+                        f"'predict' only supports next-day prediction "
+                        f"(hours_ahead={DEFAULT_HOURS_AHEAD})"
+                    ),
+                }
 
             predictor = self.get_prediction_instance(ticker)
 
@@ -175,7 +186,7 @@ class StockPredictionTCPServer:
             return {"success": False, "error": str(e)}
 
     def handle_predict_multi_hours(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Handler cho dự đoán nhiều khung thời gian (1,2,3,4 giờ)"""
+        """Handler cho dự đoán nhiều khung thời gian (1,2,3 giờ)."""
         try:
             ticker = data.get("ticker")
             if not ticker:
@@ -194,12 +205,12 @@ class StockPredictionTCPServer:
                             "error": f"Model for {ticker} is not trained and training failed",
                         }
 
-            # Make predictions for 1, 2, 3, 4 hours
+            # Make predictions for 1, 2, 3 hours
             predictions = []
             current_price = None
             current_time = None
 
-            for hours in [1, 2, 3, 4]:
+            for hours in MULTI_HOUR_PREDICTIONS:
                 result = predictor.predict_next_hours(hours)
                 if result:
                     # Store current price and time from first prediction

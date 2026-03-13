@@ -15,7 +15,7 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const API_ENDPOINTS = {
-	
+
 	AUTH: {
 		LOGIN: '/auth/login',
 		REGISTER: '/auth/register',
@@ -25,13 +25,13 @@ export const API_ENDPOINTS = {
 		VERIFY: '/auth/verify',
 		CHANGE_PASSWORD: '/auth/change-password',
 	},
-	
+
 	USER: {
 		ME: '/user/me',
 		UPDATE_PROFILE: '/user/change-detail-user',
 		UPLOAD_AVATAR: '/user/upload-avatar-chunk',
 	},
-	
+
 	POST: {
 		CREATE: '/post/create',
 		UPDATE: '/post/update',
@@ -43,16 +43,18 @@ export const API_ENDPOINTS = {
 		VIEW_INCREMENT: '/post/view',
 		VIEW_GET: '/post/view',
 	},
-	
+
 	COMMENT: {
 		CREATE: '/comment/create',
 		UPDATE: '/comment/update',
 		DELETE: '/comment/delete',
 		BY_POST: '/comment/loadingPostComments',
 	},
-	
+
 	STOCK: {
 		PREDICTIONS: '/api/stock/predictions',
+		PREDICTION_TOMORROW: '/api/stock/prediction-tomorrow',
+		PREDICTIONS_NEXT_HOURS: '/api/stock/predictions-next-hours',
 		CURRENT_PRICE: '/api/stock/current-price',
 		FINANCIAL: '/api/stock/financial',
 		ANALYSIS: '/api/stock/analysis',

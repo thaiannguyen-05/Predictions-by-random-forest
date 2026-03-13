@@ -6,7 +6,7 @@ import StockSummary from "@/components/stock/StockSummary";
 import StockChart from "@/components/stock/StockChart";
 import KeyStatistics from "@/components/stock/KeyStatistics";
 import PredictionButton from "@/components/stock/PredictionButton";
-import { STOCK_DETAILS } from "../../../../constants/trainedStocks";
+import { STOCK_DETAILS, TRAINED_STOCKS } from "../../../../constants/trainedStocks";
 
 interface StockDetailPageProps {
   params: {
@@ -31,8 +31,10 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
   const [prediction, setPrediction] = useState<any>(null);
   const [isPredicting, setIsPredicting] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
+  const [nextHoursPredictions, setNextHoursPredictions] = useState<any[]>([]);
+  const [isPredictingNextHours, setIsPredictingNextHours] = useState(false);
 
-  
+
   const historicalDataCache = useRef<any[]>([]);
   const isInitialLoad = useRef<boolean>(true);
 
@@ -113,14 +115,14 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
           ? (change! / previousClose) * 100
           : fallbackChangePercent;
 
-      
+
       const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
         name: `Công ty ${symbol}`,
         sector: "Chưa phân loại",
         marketCap: 0,
       };
 
-      
+
       const chartCurrentPrice = canonicalCurrentPrice ?? previousClose ?? 0;
 
       let updatedChartData: any[];
@@ -186,7 +188,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
 
       setStockData(updatedStockData);
       setFinancialData(financialData);
-      setChartData(updatedChartData); 
+      setChartData(updatedChartData);
       setError(null);
     } catch (err: any) {
       console.warn("⚠️ Lỗi khi tải dữ liệu:", err.message);
@@ -197,28 +199,28 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
     }
   };
 
-  
-  
+
+
   const generateHistoricalData = async (symbol: string, currentPrice: number) => {
-    
+
     const days = 365 * 5;
     const data = [];
     let price = currentPrice;
 
-    
+
     for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
 
-      
-      
-      
 
-      const volatility = 0.025; 
+
+
+
+      const volatility = 0.025;
       const changePercent = (Math.random() - 0.5) * 2 * volatility;
 
-      
-      
+
+
       const prevPrice = price / (1 + changePercent);
 
       data.unshift({
@@ -240,7 +242,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
     try {
       const apiSymbol = formatSymbolForAPI(symbol);
       const response = await fetch(
-        `${API_BASE_URL}/stock/predictions/${apiSymbol}`
+        `${API_BASE_URL}/stock/prediction-tomorrow/${apiSymbol}`
       );
 
       if (!response.ok) {
@@ -249,30 +251,28 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       }
 
       const predictionData = await response.json();
-      const predictionPayload = predictionData?.data ?? predictionData;
-      console.log("📊 API trả về:", predictionData);
+      const payload = predictionData?.data ?? predictionData;
+      console.log("📊 API tomorrow trả về:", predictionData);
 
-      
-      const firstPrediction = predictionPayload?.predictions?.[0];
+      const rawPrediction = payload.prediction;
 
-      if (!firstPrediction) {
-        console.error("Không có dữ liệu dự đoán trong predictions");
+      if (!rawPrediction) {
+        console.error("Không có dữ liệu dự đoán từ API");
         return;
       }
 
-      const rawPrediction = firstPrediction.prediction || "GIẢM";
-      const predictedPrice = toFiniteNumber(firstPrediction.predicted_price) ?? stockData.currentPrice;
+      const predictedPrice = toFiniteNumber(payload.predicted_price) ?? stockData.currentPrice;
 
       setPrediction({
         symbol,
         prediction: rawPrediction.toUpperCase(),
-        confidence: (firstPrediction.confidence ?? 0.75) * 100,
+        confidence: (payload.confidence ?? 0.75) * 100,
         predictedPrice,
-        predictionDate: new Date(
-          firstPrediction.prediction_time
-        ).toLocaleDateString("vi-VN"),
+        predictionDate: payload.prediction_time ? new Date(
+          payload.prediction_time
+        ).toLocaleDateString("vi-VN") : "Ngày mai",
         reasoning: [
-          rawPrediction === "TĂNG"
+          rawPrediction.toUpperCase() === "TĂNG"
             ? "Mô hình AI dự đoán giá sẽ tăng dựa trên xu hướng tích cực."
             : "Mô hình AI dự đoán giá sẽ giảm do tín hiệu thị trường yếu.",
         ],
@@ -281,6 +281,35 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       console.error("Lỗi khi dự đoán:", err);
     } finally {
       setIsPredicting(false);
+    }
+  };
+
+  const handlePredictNextHours = async () => {
+    setIsPredictingNextHours(true);
+    try {
+      const apiSymbol = formatSymbolForAPI(symbol);
+      const response = await fetch(
+        `${API_BASE_URL}/stock/predictions-next-hours/${apiSymbol}`
+      );
+
+      if (!response.ok) {
+        console.error("Lỗi phản hồi API:", response.status);
+        return;
+      }
+
+      const predictionData = await response.json();
+      const payload = predictionData?.data ?? predictionData;
+      console.log("📊 API next hours trả về:", predictionData);
+
+      if (payload.predictions && payload.predictions.length > 0) {
+        setNextHoursPredictions(payload.predictions);
+      } else {
+        console.error("Không có dữ liệu dự đoán ngắn hạn");
+      }
+    } catch (err) {
+      console.error("Lỗi khi dự đoán ngắn hạn:", err);
+    } finally {
+      setIsPredictingNextHours(false);
     }
   };
 
@@ -336,18 +365,78 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       : "N/A",
     Beta: financialData?.beta ? financialData.beta.toFixed(2) : "N/A",
     "Vốn hóa": stockData.marketCap,
-    Ngành: stockData.sector, 
+    Ngành: stockData.sector,
   };
 
   return (
     <div className="min-h-screen p-4 max-w-7xl mx-auto">
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex flex-col sm:flex-row justify-end gap-4">
+        {TRAINED_STOCKS.includes(symbol) && (
+          <button
+            onClick={handlePredictNextHours}
+            disabled={isPredictingNextHours}
+            className={`
+              relative overflow-hidden group w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all duration-300
+              ${isPredictingNextHours
+                ? "bg-gray-700 cursor-not-allowed border border-white/5"
+                : "bg-blue-600 hover:bg-blue-500 border border-blue-500/30 transform hover:-translate-y-1 shadow-blue-500/20"
+              }
+            `}
+          >
+            {isPredictingNextHours ? (
+              <div className="flex items-center justify-center">
+                <span className="animate-spin h-5 w-5 mr-2 border-2 border-white border-t-transparent rounded-full"></span>
+                Đang dự báo...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <span className="mr-2">⚡</span>
+                Dự báo ngắn hạn (1-3h)
+              </div>
+            )}
+          </button>
+        )}
+
         <PredictionButton
           onPredict={handlePredict}
           isPredicting={isPredicting}
           symbol={symbol}
         />
       </div>
+
+      {nextHoursPredictions.length > 0 && (
+        <div className="mb-6 bg-gray-900/50 backdrop-blur-md p-6 rounded-2xl border border-gray-800 shadow-xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
+              Dự báo AI ngắn hạn (1-3 giờ tới)
+            </h3>
+            <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-semibold rounded-full border border-blue-500/20">
+              Random Forest
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            {nextHoursPredictions.map((pred: any, index: number) => {
+              const isUp = stockData.currentPrice !== null && pred.predicted_price > stockData.currentPrice;
+              return (
+                <div key={index} className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
+                  <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">
+                    Trong {pred.hour} giờ tới
+                  </div>
+                  <div className={`text-2xl font-black mb-2 ${isUp ? "text-emerald-500" : "text-rose-500"}`}>
+                    {Number.isFinite(pred.predicted_price)
+                      ? `${pred.predicted_price.toLocaleString("vi-VN")}₫`
+                      : "N/A"}
+                  </div>
+                  <div className="text-sm font-semibold text-brand-orange">
+                    Độ tin cậy: {pred.confidence ? (pred.confidence * 100).toFixed(1) : "N/A"}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {prediction && (
         <div className="mb-6 bg-gray-900/50 backdrop-blur-md p-6 rounded-2xl border border-gray-800 shadow-xl">
@@ -362,7 +451,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            {}
+            { }
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Xu hướng</div>
               <div
@@ -375,7 +464,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
               </div>
             </div>
 
-            {}
+            { }
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Độ tin cậy</div>
               <div className="text-3xl font-black text-brand-orange drop-shadow-[0_0_10px_rgba(249,115,22,0.3)]">
@@ -383,7 +472,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
               </div>
             </div>
 
-            {}
+            { }
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600 transition-colors group">
               <div className="text-sm text-gray-400 font-medium mb-2 uppercase tracking-wide">Giá mục tiêu</div>
               <div className="text-3xl font-black text-white">

@@ -42,26 +42,23 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     this.timeout = ML_SERVICE_CONFIG.TIMEOUT_MS;
   }
 
-  async onModuleInit(): Promise<void> {
+  onModuleInit(): Promise<void> {
     this.logger.log(`ML Service configured at ${this.mlHost}:${this.mlPort}`);
-    await this.testConnection();
+    this.testConnection();
+    return Promise.resolve();
   }
 
   onModuleDestroy(): void {
     this.logger.log('Shutting down ML Service connection');
   }
 
-  private async testConnection(): Promise<void> {
-    try {
-      const result = await this.ping();
-      if (result.success) {
-        this.logger.log('✅ ML Service connection successful');
-      } else {
-        this.logger.warn('⚠️ ML Service connection failed on startup');
+  private testConnection() {
+    setInterval(async () => {
+      const status = await this.ping();
+      if (status.success) {
+        this.logger.log('✅ ML Service is responsive');
       }
-    } catch (_error) {
-      this.logger.error('❌ Failed to connect to ML Service on startup');
-    }
+    }, ML_SERVICE_CONFIG.TIMEOUT_MS);
   }
 
   private async sendCommand(

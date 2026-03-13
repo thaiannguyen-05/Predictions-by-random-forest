@@ -40,3 +40,5 @@ export function getFallbackPriceUrl(symbol: string): string {
 }
 
 export const fallBackPrice = getFallbackPriceUrl;
+
+export const TIME_CHECK_INTERVAL_MS = 60 * 1000;
