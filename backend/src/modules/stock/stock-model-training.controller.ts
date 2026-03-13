@@ -21,7 +21,7 @@ export class StockModelTrainingController {
   @ApiOperation({
     summary: 'Train all model types on 40 tickers using recent 1 or 2 weeks',
     description:
-      'Train Random Forest, Extra Trees, Decision Tree, and Bagging models for all tickers using data from the most recent 1 or 2 weeks',
+      'Train Random Forest, Hist Gradient Boosting, Decision Tree, and Bagging models for all tickers using data from the most recent 1 or 2 weeks',
   })
   @ApiBody({
     schema: {

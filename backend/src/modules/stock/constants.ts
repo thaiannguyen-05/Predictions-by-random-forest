@@ -34,6 +34,7 @@ export const ML_COMMANDS = {
   GET_TICKER_LIST: 'get_ticker_list',
   GET_MODEL_STATUS: 'get_model_status',
   FULL_PIPELINE: 'full_pipeline',
+  COMPARE_MODELS: 'compare',
 } as const;
 
 export function getFallbackPriceUrl(symbol: string): string {
@@ -42,4 +43,53 @@ export function getFallbackPriceUrl(symbol: string): string {
 
 export const fallBackPrice = getFallbackPriceUrl;
 
+export const TRAIN_EVENT = 'train_event';
+
 export const TIME_CHECK_INTERVAL_MS = 60 * 1000;
+
+export const STOCK_COMPARE_CONFIG = {
+  RECENT_DAYS: 365,
+  CRON_EXPRESSION: '0 0 0 * * *',
+  TICKERS: [
+    'FPT.VN',
+    'VNM.VN',
+    'VCB.VN',
+    'VHM.VN',
+    'VIC.VN',
+    'HPG.VN',
+    'TCB.VN',
+    'VPB.VN',
+    'MSN.VN',
+    'MWG.VN',
+    'GAS.VN',
+    'PLX.VN',
+    'SAB.VN',
+    'BID.VN',
+    'CTG.VN',
+    'POW.VN',
+    'VRE.VN',
+    'SSI.VN',
+    'HDB.VN',
+    'MBB.VN',
+    'STB.VN',
+    'VJC.VN',
+    'GVR.VN',
+    'PDR.VN',
+    'VCG.VN',
+    'ACB.VN',
+    'TPB.VN',
+    'KDH.VN',
+    'NVL.VN',
+    'VCI.VN',
+    'BCM.VN',
+    'DPM.VN',
+    'DGC.VN',
+    'BAF.VN',
+    'PNJ.VN',
+    'REE.VN',
+    'SBT.VN',
+    'VGC.VN',
+    'VHC.VN',
+    'BVH.VN',
+  ] as const,
+} as const;

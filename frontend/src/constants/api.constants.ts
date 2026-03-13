@@ -73,6 +73,7 @@ export const ROUTES = {
 	STOCKS: '/stocks',
 	TRAIN: '/train',
 	HISTORY: '/history',
+	COMPARE: '/compare-models',
 	CHANGE_PASSWORD: '/change-password',
 } as const;
 

@@ -10,6 +10,7 @@ import sys
 from real_time_prediction import RealTimePrediction
 from model_training_orchestrator import (
     train_all_models_recent,
+    evaluate_models,
     SUPPORTED_MODEL_TYPES,
 )
 from config import (
@@ -322,6 +323,28 @@ class StockPredictionTCPServer:
             logger.error(f"Error training all recent models: {e}")
             return {"success": False, "error": str(e)}
 
+    def handle_compare_models(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handler cho lệnh compare models."""
+        try:
+            ticker = data.get("ticker")
+            recent_days = int(data.get("recent_days", 365))
+            if not ticker:
+                return {"success": False, "error": "Missing ticker parameter"}
+
+            result = evaluate_models(ticker, recent_days=recent_days)
+            if not result.get("success"):
+                return result
+
+            return {
+                **result,
+                "command": "compare",
+                "requested_recent_days": recent_days,
+                "timestamp": datetime.now().isoformat(),
+            }
+        except Exception as e:
+            logger.error(f"Error comparing models: {e}")
+            return {"success": False, "error": str(e)}
+
     def handle_prediction_report(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handler cho lệnh lấy báo cáo dự đoán nhiều khung thời gian"""
         try:
@@ -423,6 +446,8 @@ class StockPredictionTCPServer:
                     response = self.handle_prediction_report(request)
                 elif command == "update_data":
                     response = self.handle_update_data(request)
+                elif command == "compare":
+                    response = self.handle_compare_models(request)
                 elif command == "ping":
                     response = {
                         "success": True,

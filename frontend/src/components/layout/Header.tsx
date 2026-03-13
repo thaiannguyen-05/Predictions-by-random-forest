@@ -27,6 +27,7 @@ const Header: React.FC = () => {
 				{ }
 				<div className="hidden md:flex items-center space-x-8">
 					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Trang Chủ</AuthLink>
+					<AuthLink href="/compare-models" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>So Sánh Model</AuthLink>
 					<AuthLink href="/blog" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Blog</AuthLink>
 					<AuthLink href="/about" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Giới Thiệu</AuthLink>
 					<AuthLink href="/contact" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Liên Hệ</AuthLink>

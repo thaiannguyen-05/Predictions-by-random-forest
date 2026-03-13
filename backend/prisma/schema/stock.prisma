@@ -16,3 +16,17 @@ model history_searching {
 	createdAt     DateTime @default(now())
 	updatedAt     DateTime @updatedAt
 }
+
+model stock_compare_summary {
+    id             String   @id @default(uuid()) @db.Uuid
+    recentDays     Int
+    totalTickers   Int
+    successTickers Int
+    failedTickers  Int
+    models         Json
+    generatedAt    DateTime @default(now()) @db.Timestamptz(6)
+    createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+    @@index([generatedAt(sort: Desc)])
+    @@map("stock_compare_summaries")
+}

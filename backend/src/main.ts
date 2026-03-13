@@ -11,10 +11,26 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { QUEUE_EMAIL } from './common/type';
 import { ResponseInterceptor } from './common/interceptors';
+import { QUEUE_STOCK_MODEL_TRAINING } from './common/type/constants';
+
+function buildRabbitMqUrl(configService: ConfigService): string {
+  const user = configService.getOrThrow<string>('RABBITMQ_USER');
+  const pass = configService.getOrThrow<string>('RABBITMQ_PASS');
+  const host = configService.get<string>('RABBITMQ_HOST') || 'localhost';
+  const port = configService.get<string>('RABBITMQ_PORT') || '5672';
+  const vhost = configService.get<string>('RABBITMQ_VHOST');
+  const normalizedVhost = vhost?.replace(/^\/+/, '');
+  const vhostPath = normalizedVhost
+    ? `/${encodeURIComponent(normalizedVhost)}`
+    : '';
+
+  return `amqp://${user}:${pass}@${host}:${port}${vhostPath}`;
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const rabbitMqUrl = buildRabbitMqUrl(configService);
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
@@ -75,14 +91,26 @@ async function bootstrap() {
   });
 
   const enableMicroservices =
-    configService.get<string>('ENABLE_MICROSERVICES') === 'true';
+    configService.get<string>('ENABLE_MICROSERVICES') !== 'false';
 
   if (enableMicroservices) {
     app.connectMicroservice<MicroserviceOptions>({
       transport: Transport.RMQ,
       options: {
         urls: [
-          `amqp://${configService.getOrThrow<string>('RABBITMQ_USER')}:${configService.getOrThrow<string>('RABBITMQ_PASS')}@localhost:5672`,
+          rabbitMqUrl,
+        ],
+        queue: QUEUE_STOCK_MODEL_TRAINING,
+        queueOptions: {
+          durable: true,
+        },
+      },
+    });
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.RMQ,
+      options: {
+        urls: [
+          rabbitMqUrl,
         ],
         queue: QUEUE_EMAIL,
         queueOptions: {

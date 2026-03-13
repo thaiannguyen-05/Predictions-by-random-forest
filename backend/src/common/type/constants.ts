@@ -1,5 +1,5 @@
 export const QUEUE_EMAIL = 'email_queue';
-
+export const QUEUE_STOCK_MODEL_TRAINING = 'stock_model_training_queue';
 export const TIME_LIMIT_POST = 60 * 60 * 1000;
 
 export const PAGINATION_DEFAULTS = {

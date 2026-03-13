@@ -219,6 +219,17 @@ exports.Prisma.History_searchingScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.Stock_compare_summaryScalarFieldEnum = {
+  id: 'id',
+  recentDays: 'recentDays',
+  totalTickers: 'totalTickers',
+  successTickers: 'successTickers',
+  failedTickers: 'failedTickers',
+  models: 'models',
+  generatedAt: 'generatedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   fullname: 'fullname',
@@ -267,6 +278,10 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -275,6 +290,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.TypeMessage = exports.$Enums.TypeMessage = {
   TEXT: 'TEXT',
@@ -312,6 +333,7 @@ exports.Prisma.ModelName = {
   Room: 'Room',
   MemberInRoom: 'MemberInRoom',
   history_searching: 'history_searching',
+  stock_compare_summary: 'stock_compare_summary',
   User: 'User',
   Oauth2User: 'Oauth2User'
 };

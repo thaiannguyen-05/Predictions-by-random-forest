@@ -16,13 +16,17 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { StockPredictionService } from './stock-prediction.service';
+import { StockCompareCacheService } from './stock-compare-cache.service';
 import { Public } from '../../common/decorator';
 
 @ApiTags('Stock')
 @Public()
 @Controller('api/stock')
 export class StockController {
-  constructor(private readonly stockService: StockPredictionService) {}
+  constructor(
+    private readonly stockService: StockPredictionService,
+    private readonly stockCompareCacheService: StockCompareCacheService,
+  ) {}
 
   @Get('health')
   @ApiOperation({
@@ -524,6 +528,133 @@ export class StockController {
       ticker: body.ticker,
       features_count: result.features_count || 0,
       timestamp: Date.now(),
+    };
+  }
+
+  @Post('compare-summary/trigger-refresh')
+  @ApiOperation({
+    summary: 'Trigger compare summary refresh event',
+    description:
+      'Emit training/compare refresh event to queue for rebuilding compare summary data',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh event trigger request processed',
+  })
+  async triggerCompareSummaryRefresh() {
+    const triggered =
+      this.stockCompareCacheService.triggerRefreshEvent(
+        'compare_summary_manual_trigger',
+      );
+
+    return {
+      message: triggered
+        ? 'Refresh event triggered'
+        : 'Refresh event skipped due to cooldown',
+      triggered,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('compare-summary')
+  @ApiOperation({
+    summary: 'Get aggregated compare results for all cached tickers',
+    description:
+      'Return aggregated model metrics (accuracy, MAE, RMSE, MAPE) across all cached tickers',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Aggregated compare summary retrieved successfully',
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Compare cache not ready',
+  })
+  async compareSummary() {
+    const summary = await this.stockCompareCacheService.getLatestSummaryFromDb();
+
+    if (!summary) {
+      const triggered = this.stockCompareCacheService.triggerRefreshEvent(
+        'compare_summary_api',
+      );
+      return {
+        success: true,
+        loading: true,
+        message: 'Đang lấy dữ liệu, vui lòng đợi cron train hoàn tất.',
+        results: [],
+        data: {
+          loading: true,
+          is_refreshing: true,
+          refresh_event_triggered: triggered,
+        },
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    return {
+      success: true,
+      loading: false,
+      message: 'Aggregated comparison loaded from database',
+      results: summary.models,
+      data: summary,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('compare/:ticker')
+  @ApiOperation({
+    summary: 'Get cached model comparison for stock',
+    description:
+      'Get comparison metrics from scheduled cache for a specific stock ticker (no manual training on request)',
+  })
+  @ApiParam({
+    name: 'ticker',
+    description: 'Stock ticker symbol to compare models for',
+    type: 'string',
+    example: 'AAPL',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cached model comparison retrieved successfully',
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Compare cache not ready',
+  })
+  async compareModels(@Param('ticker') ticker: string) {
+    if (!ticker) {
+      throw new HttpException(
+        { message: 'Ticker is required' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const result = await this.stockService.compareModels(ticker);
+    if (!result.success) {
+      throw new HttpException(
+        {
+          message: 'Failed to compare models',
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Keep compatibility with FE that reads `results` at root while still
+    // satisfying the global standard response shape.
+    return {
+      success: true,
+      message: 'Comparison completed',
+      ticker,
+      results: (result as any).results || [],
+      data: {
+        ticker,
+        results: (result as any).results || [],
+      },
+      timestamp:
+        typeof result.timestamp === 'string'
+          ? result.timestamp
+          : new Date().toISOString(),
     };
   }
 

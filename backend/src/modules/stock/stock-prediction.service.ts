@@ -639,4 +639,31 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
       };
     }
   }
+
+  async compareModels(
+    ticker: string,
+    recentDays: number = 30,
+  ): Promise<MLServiceResponse> {
+    try {
+      this.logger.log(`Comparing models for ${ticker}...`);
+      const response = await this.sendCommand(ML_COMMANDS.COMPARE_MODELS, {
+        ticker,
+        recent_days: recentDays,
+      });
+
+      if (!response.success && response.error) {
+        this.logger.error(`Error from ML compare models: ${response.error}`);
+      }
+
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error comparing models: ${errorMessage}`);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
 }

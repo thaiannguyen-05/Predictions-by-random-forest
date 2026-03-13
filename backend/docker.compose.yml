@@ -42,6 +42,30 @@ services:
       timeout: 5s
       retries: 20
 
+  rabbit-init:
+    image: curlimages/curl:8.12.1
+    container_name: predict-rabbitmq-init
+    env_file:
+      - .env
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    networks:
+      - public
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - >
+        set -e;
+        echo "Ensuring RabbitMQ vhost and permissions...";
+        curl -fsS -u "$${RABBITMQ_USER}:$${RABBITMQ_PASS}" -H "content-type:application/json"
+        -X PUT "http://rabbit:15672/api/vhosts/$${RABBITMQ_VHOST}";
+        curl -fsS -u "$${RABBITMQ_USER}:$${RABBITMQ_PASS}" -H "content-type:application/json"
+        -X PUT "http://rabbit:15672/api/permissions/$${RABBITMQ_VHOST}/$${RABBITMQ_USER}"
+        -d '{"configure":".*","write":".*","read":".*"}';
+        echo "RabbitMQ init completed.";
+
   redis:
     image: redis:7-alpine
     container_name: predict-redis

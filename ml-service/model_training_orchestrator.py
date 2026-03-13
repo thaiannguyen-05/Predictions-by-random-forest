@@ -12,8 +12,12 @@ from data_loader import load_data
 from features import add_features
 from model import create_model as create_random_forest_model
 from model import select_features as select_random_forest_features
-from extra_trees_model import create_model as create_extra_trees_model
-from extra_trees_model import select_features as select_extra_trees_features
+from hist_gradient_boosting_model import (
+    create_model as create_hist_gradient_boosting_model,
+)
+from hist_gradient_boosting_model import (
+    select_features as select_hist_gradient_boosting_features,
+)
 from decision_tree_model import create_model as create_decision_tree_model
 from decision_tree_model import select_features as select_decision_tree_features
 from bagging_model import create_model as create_bagging_model
@@ -26,7 +30,10 @@ FeatureSelector = Callable[[Any, List[str], float], Tuple[List[str], Any]]
 
 MODEL_REGISTRY: Dict[str, Tuple[ModelFactory, FeatureSelector]] = {
     "random_forest": (create_random_forest_model, select_random_forest_features),
-    "extra_trees": (create_extra_trees_model, select_extra_trees_features),
+    "hist_gradient_boosting": (
+        create_hist_gradient_boosting_model,
+        select_hist_gradient_boosting_features,
+    ),
     "decision_tree": (create_decision_tree_model, select_decision_tree_features),
     "bagging": (create_bagging_model, select_bagging_features),
 }
@@ -230,3 +237,115 @@ def train_all_models_recent(
         "model_summary": model_summary,
         "results": results,
     }
+
+
+def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
+    """
+    Evaluates all models in MODEL_REGISTRY on a recent window (default 30 days) and computes
+    classification and pseudo-regression metrics for dynamic comparison.
+    """
+    import numpy as np
+    from sklearn.metrics import accuracy_score
+
+    started_at = datetime.now()
+    standardized_ticker = standardize_ticker(ticker)
+
+    try:
+        raw_df = load_data(standardized_ticker)
+        featured_df, predictors = add_features(raw_df)
+
+        if featured_df.empty or len(featured_df) < 50:
+            raise ValueError(f"Not enough data to evaluate models for {ticker}")
+
+        if recent_days <= 0:
+            raise ValueError("recent_days must be greater than 0")
+
+        window_end = featured_df.index.max()
+        window_start = window_end - timedelta(days=recent_days)
+        window_df = featured_df[featured_df.index >= window_start].copy()
+
+        if len(window_df) < 10:
+            raise ValueError(
+                f"Not enough data in last {recent_days} days for {standardized_ticker}"
+            )
+
+        test_size = max(5, min(10, int(len(window_df) * 0.3)))
+        if len(window_df) <= test_size:
+            test_size = max(1, len(window_df) - 1)
+
+        train_df = window_df.iloc[:-test_size]
+        test_df = window_df.iloc[-test_size:]
+        if train_df.empty or test_df.empty:
+            raise ValueError(
+                f"Cannot split train/test in last {recent_days} days for {standardized_ticker}"
+            )
+
+        results = []
+        volatility = train_df["Close"].pct_change().std()
+
+        for model_type, (create_model_fn, select_features_fn) in MODEL_REGISTRY.items():
+            model = create_model_fn()
+            selected_predictors, _ = select_features_fn(
+                train_df, predictors, threshold=FEATURE_THRESHOLD
+            )
+            if not selected_predictors:
+                selected_predictors = predictors
+
+            model.fit(train_df[selected_predictors], train_df["Target"])
+
+            # Predict on test set
+            preds = model.predict(test_df[selected_predictors])
+            preds_proba = model.predict_proba(test_df[selected_predictors])[:, 1]
+            accuracy = float(accuracy_score(test_df["Target"], preds))
+
+            # Calculate pseudo continuous metrics simulating prediction
+            actual_prices = test_df["Close"].values
+            prev_prices = test_df["Open"].values
+
+            predicted_prices = []
+            for i, prob in enumerate(preds_proba):
+                prediction_val = int(prob >= 0.5)
+                direction = 1 if prediction_val == 1 else -1
+                confidence = max(prob, 1 - prob)
+                # hourly_volatility approximation logic from real_time_prediction
+                # using a multiplier to convert it to a daily scale approx
+                price_change_factor = direction * confidence * volatility * 2.0
+                pred_pr = prev_prices[i] * (1 + price_change_factor)
+                predicted_prices.append(pred_pr)
+
+            predicted_prices = np.array(predicted_prices)
+            errors = predicted_prices - actual_prices
+
+            mae = float(np.mean(np.abs(errors)))
+            rmse = float(np.sqrt(np.mean(errors ** 2)))
+            mape = float(np.mean(np.abs(errors / actual_prices)))
+
+            # Reference prediction date only (price output intentionally removed)
+            current_time = window_df.index[-1]
+            prediction_time = current_time + timedelta(days=1)
+
+            results.append(
+                {
+                    "name": model_type,
+                    "accuracy": accuracy,
+                    "mae": mae,
+                    "rmse": rmse,
+                    "mape": mape,
+                    "predictionDate": prediction_time.isoformat(),
+                }
+            )
+
+        return {
+            "success": True,
+            "ticker": standardized_ticker,
+            "recent_days": recent_days,
+            "window_start": window_start.isoformat(),
+            "window_end": window_end.isoformat(),
+            "train_rows": len(train_df),
+            "test_rows": len(test_df),
+            "results": results,
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Error evaluating models for {ticker}: {e}")
+        return {"success": False, "error": str(e)}
