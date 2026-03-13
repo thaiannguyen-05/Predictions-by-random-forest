@@ -16,6 +16,14 @@ export interface MLServiceResponse {
   updated_tickers?: number;
   features_count?: number;
   change?: number | string;
+  recent_weeks?: number;
+  model_types?: string[];
+  tickers_total?: number;
+  total_jobs?: number;
+  trained_jobs?: number;
+  failed_jobs?: number;
+  results?: unknown[];
+  supported_model_types?: string[];
 }
 
 export interface PredictionData {

@@ -477,6 +477,42 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  async trainAllModelsRecent(
+    recentWeeks: 1 | 2,
+    tickers?: string[],
+    modelTypes?: string[],
+  ): Promise<MLServiceResponse> {
+    try {
+      this.logger.log(
+        `Training all models for recent ${recentWeeks} week(s)...`,
+      );
+      const response = await this.sendCommand(
+        ML_COMMANDS.TRAIN_ALL_MODELS_RECENT,
+        {
+          recent_weeks: recentWeeks,
+          tickers,
+          model_types: modelTypes,
+        },
+      );
+
+      if (response.success) {
+        this.logger.log(
+          `✅ Trained ${response.trained_jobs ?? 0}/${response.total_jobs ?? 0} model jobs`,
+        );
+      }
+
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error training all recent models: ${errorMessage}`);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
+
   async updateData(
     tickers?: string[],
     forceUpdate: boolean = true,

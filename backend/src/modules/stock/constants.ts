@@ -17,7 +17,7 @@ export const MODEL_TRAINING_CONFIG = {
 
 export const PREDICTION_CONFIG = {
   DEFAULT_TOP_N: 5,
-  MULTI_HOUR_INTERVALS: [1, 2, 3, 4] as const,
+  MULTI_HOUR_INTERVALS: [1, 2, 3] as const,
 } as const;
 
 export const ML_COMMANDS = {
@@ -29,6 +29,7 @@ export const ML_COMMANDS = {
   PREDICT_ALL: 'predict_all',
   TRAIN_SINGLE: 'train_single',
   TRAIN_ALL: 'train_all',
+  TRAIN_ALL_MODELS_RECENT: 'train_all_models_recent',
   UPDATE_DATA: 'update_data',
   GET_TICKER_LIST: 'get_ticker_list',
   GET_MODEL_STATUS: 'get_model_status',
