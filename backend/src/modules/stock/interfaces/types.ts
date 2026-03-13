@@ -18,12 +18,22 @@ export interface MLServiceResponse {
   change?: number | string;
   recent_weeks?: number;
   model_types?: string[];
+  status?: 'completed' | 'completed_with_errors' | 'failed';
+  started_at?: string;
+  finished_at?: string;
+  duration_seconds?: number;
   tickers_total?: number;
   total_jobs?: number;
   trained_jobs?: number;
   failed_jobs?: number;
+  success_rate?: number;
+  model_summary?: Record<string, { trained_jobs: number; failed_jobs: number }>;
   results?: unknown[];
   supported_model_types?: string[];
+  command?: string;
+  requested_recent_weeks?: number;
+  requested_tickers?: string[] | null;
+  requested_model_types?: string[] | null;
 }
 
 export interface PredictionData {

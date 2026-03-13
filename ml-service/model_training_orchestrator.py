@@ -4,7 +4,7 @@ Train orchestrator cho nhiều model với cùng pipeline feature như Random Fo
 import os
 import pickle
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import FEATURE_THRESHOLD, MODELS_DIR, TICKERS, get_model_path, standardize_ticker
@@ -55,10 +55,14 @@ def train_all_models_recent(
     model_types: Optional[List[str]] = None,
     tickers: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
+    started_at = datetime.now()
+
     if recent_weeks not in (1, 2):
         return {
             "success": False,
             "error": "recent_weeks must be either 1 or 2",
+            "started_at": started_at.isoformat(),
+            "finished_at": datetime.now().isoformat(),
         }
 
     if model_types is not None and not isinstance(model_types, list):
@@ -66,12 +70,16 @@ def train_all_models_recent(
             "success": False,
             "error": "model_types must be a list when provided",
             "supported_model_types": SUPPORTED_MODEL_TYPES,
+            "started_at": started_at.isoformat(),
+            "finished_at": datetime.now().isoformat(),
         }
 
     if tickers is not None and not isinstance(tickers, list):
         return {
             "success": False,
             "error": "tickers must be a list when provided",
+            "started_at": started_at.isoformat(),
+            "finished_at": datetime.now().isoformat(),
         }
 
     requested_models = model_types or SUPPORTED_MODEL_TYPES
@@ -82,6 +90,8 @@ def train_all_models_recent(
             "success": False,
             "error": f"Unsupported model types: {invalid_models}",
             "supported_model_types": SUPPORTED_MODEL_TYPES,
+            "started_at": started_at.isoformat(),
+            "finished_at": datetime.now().isoformat(),
         }
 
     standardized_tickers = [standardize_ticker(str(t)) for t in (tickers or TICKERS)]
@@ -177,13 +187,46 @@ def train_all_models_recent(
     if trained_jobs > 0 and failed_jobs > 0:
         success = True
 
+    finished_at = datetime.now()
+    duration_seconds = round((finished_at - started_at).total_seconds(), 3)
+
+    model_summary: Dict[str, Dict[str, int]] = {}
+    for model_type in normalized_models:
+        model_summary[model_type] = {
+            "trained_jobs": 0,
+            "failed_jobs": 0,
+        }
+
+    for ticker_result in results:
+        for model_result in ticker_result.get("models", []):
+            model_type = model_result.get("model_type")
+            if model_type not in model_summary:
+                continue
+            if model_result.get("success"):
+                model_summary[model_type]["trained_jobs"] += 1
+            else:
+                model_summary[model_type]["failed_jobs"] += 1
+
     return {
         "success": success,
+        "status": (
+            "completed"
+            if failed_jobs == 0
+            else ("completed_with_errors" if trained_jobs > 0 else "failed")
+        ),
+        "started_at": started_at.isoformat(),
+        "finished_at": finished_at.isoformat(),
+        "duration_seconds": duration_seconds,
         "recent_weeks": recent_weeks,
         "model_types": normalized_models,
+        "supported_model_types": SUPPORTED_MODEL_TYPES,
         "tickers_total": len(standardized_tickers),
         "total_jobs": total_jobs,
         "trained_jobs": trained_jobs,
         "failed_jobs": failed_jobs,
+        "success_rate": round((trained_jobs / total_jobs) * 100, 2)
+        if total_jobs
+        else 0.0,
+        "model_summary": model_summary,
         "results": results,
     }

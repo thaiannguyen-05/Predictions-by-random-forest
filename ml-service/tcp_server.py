@@ -310,7 +310,14 @@ class StockPredictionTCPServer:
             if not result.get("success"):
                 result.setdefault("supported_model_types", SUPPORTED_MODEL_TYPES)
 
-            return result
+            return {
+                **result,
+                "command": "train_all_models_recent",
+                "requested_recent_weeks": recent_weeks,
+                "requested_tickers": tickers,
+                "requested_model_types": model_types,
+                "timestamp": datetime.now().isoformat(),
+            }
         except Exception as e:
             logger.error(f"Error training all recent models: {e}")
             return {"success": False, "error": str(e)}

@@ -66,12 +66,23 @@ export class StockModelTrainingController {
 
     return {
       message: 'Train all recent models completed',
+      command: result.command || 'train_all_models_recent',
+      status: result.status || 'completed',
       recent_weeks: result.recent_weeks ?? recentWeeks,
       model_types: result.model_types || [],
+      supported_model_types: result.supported_model_types || [],
+      requested_recent_weeks: result.requested_recent_weeks ?? recentWeeks,
+      requested_tickers: result.requested_tickers || null,
+      requested_model_types: result.requested_model_types || null,
+      started_at: result.started_at || null,
+      finished_at: result.finished_at || null,
+      duration_seconds: result.duration_seconds ?? null,
       tickers_total: result.tickers_total || 0,
       total_jobs: result.total_jobs || 0,
       trained_jobs: result.trained_jobs || 0,
       failed_jobs: result.failed_jobs || 0,
+      success_rate: result.success_rate ?? 0,
+      model_summary: result.model_summary || {},
       results: result.results || [],
       timestamp: Date.now(),
     };
