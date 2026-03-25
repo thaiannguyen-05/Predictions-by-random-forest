@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from config import ROLLING_HORIZONS, LAG_PERIODS, RETURN_WINDOWS
+from core.config import ROLLING_HORIZONS, LAG_PERIODS, RETURN_WINDOWS
 
 # Configure logging
 logger = logging.getLogger(__name__)

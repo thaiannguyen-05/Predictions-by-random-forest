@@ -1,6 +1,6 @@
 """
 Model module cho ML Service.
-Xử lý việc train, predict và backtest model Bagging.
+Xử lý việc train, predict và backtest model Random Forest.
 """
 import os
 import pickle
@@ -8,10 +8,9 @@ import logging
 from typing import List, Tuple, Optional
 
 import pandas as pd
-from sklearn.ensemble import BaggingClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
-from config import (
+from core.config import (
     MODEL_CONFIG,
     FEATURE_THRESHOLD,
     BACKTEST_START,
@@ -20,19 +19,16 @@ from config import (
     get_csv_path,
     get_model_path,
 )
-from exceptions import InsufficientDataException, ModelTrainingException
+from core.exceptions import InsufficientDataException, ModelTrainingException
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
-def create_model() -> BaggingClassifier:
-    return BaggingClassifier(
-        estimator=DecisionTreeClassifier(
-            min_samples_split=MODEL_CONFIG["min_samples_split"],
-            random_state=MODEL_CONFIG["random_state"],
-        ),
+def create_model() -> RandomForestClassifier:
+    return RandomForestClassifier(
         n_estimators=MODEL_CONFIG["n_estimators"],
+        min_samples_split=MODEL_CONFIG["min_samples_split"],
         random_state=MODEL_CONFIG["random_state"],
     )
 
@@ -41,7 +37,7 @@ def predict(
     train: pd.DataFrame,
     test: pd.DataFrame,
     predictors: List[str],
-    model: BaggingClassifier,
+    model: RandomForestClassifier,
 ) -> pd.Series:
     """
     Dự đoán xu hướng giá cổ phiếu.
@@ -69,7 +65,7 @@ def predict(
 
 def backtest(
     data: pd.DataFrame,
-    model: BaggingClassifier,
+    model: RandomForestClassifier,
     predictors: List[str],
     start: int = BACKTEST_START,
     step: int = BACKTEST_STEP,
@@ -142,18 +138,8 @@ def select_features(
     model = create_model()
     model.fit(df[predictors], df["Target"])
     
-    # BaggingClassifier không expose trực tiếp feature_importances_,
-    # nên lấy trung bình importance từ các estimator con (Decision Tree).
-    estimator_importances = [
-        estimator.feature_importances_
-        for estimator in model.estimators_
-        if hasattr(estimator, "feature_importances_")
-    ]
-    if not estimator_importances:
-        raise ModelTrainingException("Bagging estimators do not expose feature importances")
-
-    avg_importances = pd.Series(estimator_importances).mean(axis=0)
-    feat_importances = pd.Series(avg_importances, index=predictors)
+    # Lấy feature importances
+    feat_importances = pd.Series(model.feature_importances_, index=predictors)
     feat_importances = feat_importances.sort_values(ascending=False)
     
     # Giữ features có importance > threshold
@@ -166,9 +152,9 @@ def select_features(
 
 def train_all_models() -> None:
     """Train models cho tất cả tickers và lưu vào file .pkl."""
-    from config import TICKERS
-    from data_loader import load_data
-    from features import add_features
+    from core.config import TICKERS
+    from data_pipeline.data_loader import load_data
+    from data_pipeline.features import add_features
     
     os.makedirs(MODELS_DIR, exist_ok=True)
     

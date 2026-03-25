@@ -1,9 +1,9 @@
 
-from config import TICKERS, standardize_ticker, get_csv_path, get_model_path
-from data_loader import load_data, update_all_data
-from features import add_features
-from model import create_model, predict, backtest, select_features
-from real_time_prediction import RealTimePrediction
+from core.config import TICKERS, standardize_ticker, get_csv_path, get_model_path
+from data_pipeline.data_loader import load_data, update_all_data
+from data_pipeline.features import add_features
+from modeling.random_forest_model import create_model, predict, backtest, select_features
+from services.real_time_prediction import RealTimePrediction
 
 __version__ = "1.0.0"
 __author__ = "ML Service Team"

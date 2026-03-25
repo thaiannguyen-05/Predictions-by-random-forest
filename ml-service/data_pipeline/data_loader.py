@@ -9,14 +9,14 @@ from typing import Optional
 import pandas as pd
 import yfinance as yf
 
-from config import (
+from core.config import (
     TICKERS,
     DATA_DIR,
     DATA_START_DATE,
     get_csv_path,
     standardize_ticker,
 )
-from exceptions import DataLoadException
+from core.exceptions import DataLoadException
 
 # Configure logging
 logger = logging.getLogger(__name__)

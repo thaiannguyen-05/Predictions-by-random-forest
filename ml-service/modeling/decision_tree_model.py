@@ -1,6 +1,6 @@
 """
 Model module cho ML Service.
-Xử lý việc train, predict và backtest model Random Forest.
+Xử lý việc train, predict và backtest model Decision Tree.
 """
 import os
 import pickle
@@ -8,9 +8,9 @@ import logging
 from typing import List, Tuple, Optional
 
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 
-from config import (
+from core.config import (
     MODEL_CONFIG,
     FEATURE_THRESHOLD,
     BACKTEST_START,
@@ -19,15 +19,14 @@ from config import (
     get_csv_path,
     get_model_path,
 )
-from exceptions import InsufficientDataException, ModelTrainingException
+from core.exceptions import InsufficientDataException, ModelTrainingException
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
-def create_model() -> RandomForestClassifier:
-    return RandomForestClassifier(
-        n_estimators=MODEL_CONFIG["n_estimators"],
+def create_model() -> DecisionTreeClassifier:
+    return DecisionTreeClassifier(
         min_samples_split=MODEL_CONFIG["min_samples_split"],
         random_state=MODEL_CONFIG["random_state"],
     )
@@ -37,7 +36,7 @@ def predict(
     train: pd.DataFrame,
     test: pd.DataFrame,
     predictors: List[str],
-    model: RandomForestClassifier,
+    model: DecisionTreeClassifier,
 ) -> pd.Series:
     """
     Dự đoán xu hướng giá cổ phiếu.
@@ -65,7 +64,7 @@ def predict(
 
 def backtest(
     data: pd.DataFrame,
-    model: RandomForestClassifier,
+    model: DecisionTreeClassifier,
     predictors: List[str],
     start: int = BACKTEST_START,
     step: int = BACKTEST_STEP,
@@ -152,9 +151,9 @@ def select_features(
 
 def train_all_models() -> None:
     """Train models cho tất cả tickers và lưu vào file .pkl."""
-    from config import TICKERS
-    from data_loader import load_data
-    from features import add_features
+    from core.config import TICKERS
+    from data_pipeline.data_loader import load_data
+    from data_pipeline.features import add_features
     
     os.makedirs(MODELS_DIR, exist_ok=True)
     

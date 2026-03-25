@@ -2,8 +2,8 @@
 Chạy file này 1 lần đầu tiên để chuẩn bị data và train models
 """
 
-from data_loader import update_all_data, TICKERS
-from model import train_all_models
+from data_pipeline.data_loader import update_all_data
+from modeling.random_forest_model import train_all_models
 
 print("=" * 80)
 print("SETUP - Chuẩn bị dữ liệu và train models")
@@ -21,4 +21,4 @@ print("\n" + "=" * 80)
 print("✓ HOÀN TẤT! Server đã sẵn sàng để chạy")
 print("=" * 80)
 print("\nBây giờ bạn có thể chạy:")
-print("  python tcp_server.py")
+print("  python -m server.tcp_server")

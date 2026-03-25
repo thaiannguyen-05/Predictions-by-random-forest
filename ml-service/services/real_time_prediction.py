@@ -11,7 +11,7 @@ from typing import Optional, List, Dict, Any
 import pandas as pd
 import yfinance as yf
 
-from config import (
+from core.config import (
     TRADING_HOURS_PER_DAY,
     DEFAULT_HOURLY_PRICE_CHANGE,
     PREDICTION_INTERVALS,
@@ -19,15 +19,15 @@ from config import (
     get_csv_path,
     get_model_path,
 )
-from data_loader import load_data
-from features import add_features
-from model import create_model, select_features
-from exceptions import (
+from data_pipeline.data_loader import load_data
+from data_pipeline.features import add_features
+from modeling.random_forest_model import create_model, select_features
+from core.exceptions import (
     ModelNotTrainedException,
     PredictionException,
     PriceDataException,
 )
-from type_defs import PriceInfo, FinancialData, PredictionResult
+from core.type_defs import PriceInfo, FinancialData, PredictionResult
 
 # Configure logging
 logger = logging.getLogger(__name__)

@@ -4,8 +4,8 @@ Xử lý việc train model Hist Gradient Boosting với cùng pipeline feature.
 """
 from sklearn.ensemble import HistGradientBoostingClassifier
 
-from config import MODEL_CONFIG
-from model import select_features as select_features
+from core.config import MODEL_CONFIG
+from modeling.random_forest_model import select_features as select_features
 
 
 def create_model() -> HistGradientBoostingClassifier:

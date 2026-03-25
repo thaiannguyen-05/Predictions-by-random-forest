@@ -6,6 +6,7 @@ export interface MLServiceResponse {
   ticker?: string;
   current_price?: number;
   current_time?: string;
+  predicted_price?: number;
   price?: number;
   time?: string;
   prediction?: PredictionData;
