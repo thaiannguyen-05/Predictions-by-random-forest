@@ -14,18 +14,8 @@ const Header: React.FC = () => {
 		<header
 			className="sticky top-0 w-full overflow-visible bg-brand-dark/80 backdrop-blur-md border-b border-white/5 transition-all duration-300 z-[1000]"
 		>
-			<div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center overflow-visible">
-				{ }
-				<div className="flex items-center cursor-pointer">
-					<Link href="/" className="flex flex-col group">
-						<span className="text-2xl font-bold text-white tracking-wide group-hover:text-brand-orange transition-colors duration-300">
-							STOCK<span className="text-brand-orange">DN</span>
-						</span>
-					</Link>
-				</div>
-
-				{ }
-				<div className="hidden md:flex items-center space-x-8">
+			<div className="max-w-7xl mx-auto px-6 h-20 flex items-center overflow-visible">
+				<div className="hidden md:flex items-center space-x-8 mr-auto">
 					<AuthLink href="/dashboard" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>Trang Chủ</AuthLink>
 					<AuthLink href="/compare-models" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={true}>So Sánh Model</AuthLink>
 					<AuthLink href="/blog" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Blog</AuthLink>
@@ -33,8 +23,7 @@ const Header: React.FC = () => {
 					<AuthLink href="/contact" className="text-gray-300 hover:text-brand-orange transition-colors text-sm font-medium" requireAuth={false}>Liên Hệ</AuthLink>
 				</div>
 
-				{ }
-				<div className="flex items-center gap-6">
+				<div className="flex items-center gap-6 ml-auto">
 					<div className="hidden lg:block text-gray-400 text-sm">
 						<RealTimeClock />
 					</div>

@@ -5,10 +5,11 @@ Xử lý việc train, predict và backtest model Random Forest.
 import os
 import pickle
 import logging
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any
 
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
 from core.config import (
     MODEL_CONFIG,
@@ -16,6 +17,8 @@ from core.config import (
     BACKTEST_START,
     BACKTEST_STEP,
     MODELS_DIR,
+    RF_TUNING_GRID,
+    RF_THRESHOLD_GRID,
     get_csv_path,
     get_model_path,
 )
@@ -206,10 +209,10 @@ def train_all_models() -> None:
 def load_model_file(model_file: str) -> Optional[dict]:
     """
     Load model từ file.
-    
+
     Args:
         model_file: Đường dẫn file model
-        
+
     Returns:
         Dictionary chứa model data hoặc None nếu không tìm thấy
     """
@@ -221,3 +224,66 @@ def load_model_file(model_file: str) -> Optional[dict]:
     except Exception as e:
         logger.error(f"Error loading model from {model_file}: {e}")
         return None
+
+
+def tune_model_with_validation(
+    train_df: pd.DataFrame,
+    val_df: pd.DataFrame,
+    predictors: List[str],
+) -> Dict[str, Any]:
+    """
+    Tune RandomForest với grid nhỏ và chọn threshold tốt nhất theo accuracy.
+
+    Returns:
+        {
+            "model": fitted_model,
+            "threshold": best_threshold,
+            "best_params": {...},
+            "validation_accuracy": float,
+        }
+    """
+    if train_df.empty or val_df.empty:
+        raise ModelTrainingException("train_df and val_df must be non-empty for tuning")
+
+    if not predictors:
+        raise ModelTrainingException("predictors must be non-empty for tuning")
+
+    best_model: Optional[RandomForestClassifier] = None
+    best_threshold = 0.5
+    best_params: Dict[str, Any] = {
+        "n_estimators": MODEL_CONFIG["n_estimators"],
+        "min_samples_split": MODEL_CONFIG["min_samples_split"],
+    }
+    best_acc = -1.0
+
+    for n_estimators in RF_TUNING_GRID["n_estimators"]:
+        for min_samples_split in RF_TUNING_GRID["min_samples_split"]:
+            model = RandomForestClassifier(
+                n_estimators=n_estimators,
+                min_samples_split=min_samples_split,
+                random_state=MODEL_CONFIG["random_state"],
+            )
+            model.fit(train_df[predictors], train_df["Target"])
+            preds_proba = model.predict_proba(val_df[predictors])[:, 1]
+
+            for threshold in RF_THRESHOLD_GRID:
+                preds = (preds_proba >= threshold).astype(int)
+                acc = float(accuracy_score(val_df["Target"], preds))
+                if acc > best_acc:
+                    best_acc = acc
+                    best_threshold = float(threshold)
+                    best_model = model
+                    best_params = {
+                        "n_estimators": int(n_estimators),
+                        "min_samples_split": int(min_samples_split),
+                    }
+
+    if best_model is None:
+        raise ModelTrainingException("Failed to tune RandomForest model")
+
+    return {
+        "model": best_model,
+        "threshold": best_threshold,
+        "best_params": best_params,
+        "validation_accuracy": best_acc,
+    }

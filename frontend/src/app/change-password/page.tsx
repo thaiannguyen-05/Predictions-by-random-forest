@@ -85,12 +85,7 @@ export default function ChangePasswordPage() {
 
 				{}
 				<div className="text-center mb-8">
-					<Link href="/" className="inline-block group">
-						<span className="text-4xl font-extrabold text-white tracking-widest transition-transform duration-300 group-hover:scale-105 block">
-							STOCK<span className="text-brand-orange">DN</span>
-						</span>
-					</Link>
-					<h1 className="text-2xl font-bold mt-4 flex items-center justify-center gap-2">
+						<h1 className="text-2xl font-bold flex items-center justify-center gap-2">
 						<ShieldCheck className="text-brand-orange" />
 						Đổi Mật Khẩu
 					</h1>

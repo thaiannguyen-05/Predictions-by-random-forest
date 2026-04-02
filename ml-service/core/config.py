@@ -16,6 +16,21 @@ MODEL_CONFIG = {
 # Feature selection threshold
 FEATURE_THRESHOLD: float = 0.01
 
+# RandomForest threshold tuning range
+RF_THRESHOLD_GRID: List[float] = [0.45, 0.5, 0.55, 0.6]
+
+# RandomForest lightweight tuning grid
+RF_TUNING_GRID = {
+    "n_estimators": [100, 200, 300],
+    "min_samples_split": [10, 30, 50],
+}
+
+# Walk-forward evaluation configuration
+EVAL_MIN_FOLDS: int = 3
+EVAL_MAX_FOLDS: int = 8
+EVAL_MIN_TEST_SIZE: int = 5
+EVAL_MAX_TEST_SIZE: int = 20
+
 # Backtest configuration
 BACKTEST_START: int = 50
 BACKTEST_STEP: int = 20

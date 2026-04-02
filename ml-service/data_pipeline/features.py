@@ -35,17 +35,20 @@ def add_features(
     df["Target"] = (df["Tomorrow"] > df["Close"]).astype(int)
     
     # Rolling ratios & xu hướng (trend)
+    # Lưu ý: Trend phải chỉ dùng dữ liệu quá khứ (không dùng Target vì Target phụ thuộc giá tương lai).
+    historical_up = (df["Close"].diff() > 0).astype(int)
+
     for rolling_horizon in ROLLING_HORIZONS:
         rolling_averages = df.rolling(rolling_horizon).mean()
-        
+
         # Close ratio: tỷ lệ giá hiện tại so với trung bình
         ratio_col = f"Close_Ratio_{rolling_horizon}"
         df[ratio_col] = df["Close"] / rolling_averages["Close"]
         predictors.append(ratio_col)
-        
-        # Trend: tổng số ngày tăng trong rolling window
+
+        # Trend: tổng số phiên tăng trong rolling window trước đó
         trend_col = f"Trend_{rolling_horizon}"
-        df[trend_col] = df["Target"].shift(1).rolling(rolling_horizon).sum()
+        df[trend_col] = historical_up.shift(1).rolling(rolling_horizon).sum()
         predictors.append(trend_col)
     
     # Lag features (dùng giá quá khứ để dự đoán hiện tại)

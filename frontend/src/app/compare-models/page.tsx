@@ -20,6 +20,10 @@ export default function CompareModelsPage(): React.ReactElement {
     const [isWaitingData, setIsWaitingData] = useState(false);
     const [refreshRequested, setRefreshRequested] = useState(false);
     const [results, setResults] = useState<ModelResult[] | null>(null);
+    const [rfQualified, setRfQualified] = useState(false);
+    const [rfMeasuredAccuracy, setRfMeasuredAccuracy] = useState(0);
+    const [rfTargetThreshold, setRfTargetThreshold] = useState(0.7);
+    const [rfQualificationReason, setRfQualificationReason] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const loadAggregatedCompare = async (): Promise<void> => {
@@ -47,6 +51,11 @@ export default function CompareModelsPage(): React.ReactElement {
             }
 
             setIsWaitingData(false);
+            setRfQualified(Boolean(compareData?.data?.rf_qualified ?? compareData?.rf_qualified));
+            setRfMeasuredAccuracy(Number(compareData?.data?.rf_measured_accuracy ?? compareData?.rf_measured_accuracy ?? 0));
+            setRfTargetThreshold(Number(compareData?.data?.rf_target_threshold ?? compareData?.rf_target_threshold ?? 0.7));
+            setRfQualificationReason(String(compareData?.data?.rf_qualification_reason ?? compareData?.rf_qualification_reason ?? ''));
+
             const resultsPayload =
                 compareData.results ??
                 compareData?.data?.results ??
@@ -75,12 +84,8 @@ export default function CompareModelsPage(): React.ReactElement {
                 };
             });
 
-            // Sắp xếp tự động: RandomForest lên đầu (nếu có), còn lại xếp theo accuracy
-            mappedResults.sort((a, b) => {
-                if (a.name === 'RandomForest') return -1;
-                if (b.name === 'RandomForest') return 1;
-                return b.accuracy - a.accuracy;
-            });
+            // Sắp xếp trung thực theo accuracy thực tế
+            mappedResults.sort((a, b) => b.accuracy - a.accuracy);
 
             setResults(mappedResults);
 
@@ -140,6 +145,23 @@ export default function CompareModelsPage(): React.ReactElement {
                         </div>
                     </div>
                 )}
+                {results && !isLoading && (
+                    <div className="bg-brand-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 mb-6 animate-fade-in text-sm text-gray-300">
+                        {rfQualified ? (
+                            <div>
+                                RandomForest đạt điều kiện nổi trội: {(rfMeasuredAccuracy * 100).toFixed(2)}%
+                                (mục tiêu {(rfTargetThreshold * 100).toFixed(0)}%).
+                            </div>
+                        ) : (
+                            <div>
+                                RandomForest chưa đạt điều kiện nổi trội: {(rfMeasuredAccuracy * 100).toFixed(2)}%
+                                (mục tiêu {(rfTargetThreshold * 100).toFixed(0)}%).
+                                {rfQualificationReason ? ` Lý do: ${rfQualificationReason}.` : ''}
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* Bảng so sánh */}
                 {results && !isLoading && (
                     <div className="bg-brand-dark/90 border border-white/10 rounded-xl overflow-hidden shadow-2xl animate-fade-in">
@@ -163,7 +185,7 @@ export default function CompareModelsPage(): React.ReactElement {
                                     {results.map((item) => (
                                         <tr
                                             key={item.name}
-                                            className={`hover:bg-white/5 transition-colors ${item.name === 'RandomForest' ? 'bg-white/[0.02]' : ''}`}
+                                            className={`hover:bg-white/5 transition-colors ${item.name === 'RandomForest' && rfQualified ? 'bg-white/[0.02]' : ''}`}
                                         >
                                             <td className="px-6 py-4 font-medium text-gray-200">{item.name}</td>
                                             <td className="px-6 py-4 text-gray-400">{item.predictionDate}</td>

@@ -99,11 +99,6 @@ export default function LoginPage() {
     <div className="w-full max-w-md mx-auto">
       {}
       <div className="text-center mb-8">
-        <Link href="/" className="inline-block group">
-          <span className="text-4xl font-extrabold text-white tracking-widest transition-transform duration-300 group-hover:scale-105 block">
-            STOCK<span className="text-brand-orange">DN</span>
-          </span>
-        </Link>
         <p className="text-gray-400 mt-2 text-sm">
           Chào mừng trở lại! Đăng nhập để tiếp tục.
         </p>

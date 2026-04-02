@@ -125,6 +125,38 @@ export class StockCompareCacheService implements OnModuleInit {
       const failedTickers = STOCK_COMPARE_CONFIG.TICKERS.length - successTickers;
       const nowIso = new Date().toISOString();
 
+      const rfModel = models.find((model) => model.name === 'random_forest');
+      const rfMeasuredAccuracy = rfModel?.accuracy ?? 0;
+      const rfQualifiedByAccuracy =
+        rfMeasuredAccuracy >= STOCK_COMPARE_CONFIG.RF_TARGET_THRESHOLD;
+      const rfQualifiedBySamples =
+        successTickers >= STOCK_COMPARE_CONFIG.RF_MIN_ELIGIBLE_TICKERS;
+      const rfQualified = rfQualifiedByAccuracy && rfQualifiedBySamples;
+
+      const rfQualificationReason = rfQualified
+        ? 'qualified'
+        : !rfModel
+          ? 'random_forest_not_found'
+          : !rfQualifiedBySamples
+            ? `insufficient_eligible_tickers_${successTickers}`
+            : 'accuracy_below_threshold';
+
+      const modelsWithMeta = models.map((model) => {
+        if (model.name !== 'random_forest') {
+          return model;
+        }
+
+        return {
+          ...model,
+          rfTargetThreshold: STOCK_COMPARE_CONFIG.RF_TARGET_THRESHOLD,
+          rfMeasuredAccuracy,
+          rfQualified,
+          rfQualificationReason,
+          rfEligibleTickers: successTickers,
+          rfMinEligibleTickers: STOCK_COMPARE_CONFIG.RF_MIN_ELIGIBLE_TICKERS,
+        };
+      });
+
       await this.prismaService.$executeRawUnsafe(
         `INSERT INTO stock_compare_summaries
         ("id", "recentDays", "totalTickers", "successTickers", "failedTickers", "models", "generatedAt", "createdAt")
@@ -134,7 +166,7 @@ export class StockCompareCacheService implements OnModuleInit {
         STOCK_COMPARE_CONFIG.TICKERS.length,
         successTickers,
         failedTickers,
-        JSON.stringify(models),
+        JSON.stringify(modelsWithMeta),
         nowIso,
         nowIso,
       );
@@ -181,6 +213,21 @@ export class StockCompareCacheService implements OnModuleInit {
       return modelName.length > 0 && !REMOVED_MODEL_NAMES.has(modelName);
     });
 
+    const rfModel = sanitizedModels.find((model) => {
+      if (!model || typeof model !== 'object') return false;
+      const name = String((model as Record<string, unknown>).name || '').toLowerCase();
+      return name === 'random_forest';
+    }) as Record<string, unknown> | undefined;
+
+    const rfQualified = Boolean(rfModel?.rfQualified);
+    const rfMeasuredAccuracy = Number(rfModel?.rfMeasuredAccuracy ?? 0);
+    const rfTargetThreshold = Number(
+      rfModel?.rfTargetThreshold ?? STOCK_COMPARE_CONFIG.RF_TARGET_THRESHOLD,
+    );
+    const rfQualificationReason = String(
+      rfModel?.rfQualificationReason || 'random_forest_not_found',
+    );
+
     return {
       recent_days: latest.recentDays,
       total_tickers: latest.totalTickers,
@@ -188,6 +235,10 @@ export class StockCompareCacheService implements OnModuleInit {
       failed_tickers: latest.failedTickers,
       generated_at: latest.generatedAt.toISOString(),
       is_refreshing: this.isRefreshing,
+      rf_qualified: rfQualified,
+      rf_measured_accuracy: rfMeasuredAccuracy,
+      rf_target_threshold: rfTargetThreshold,
+      rf_qualification_reason: rfQualificationReason,
       models: sanitizedModels,
     };
   }
@@ -291,11 +342,7 @@ export class StockCompareCacheService implements OnModuleInit {
       samples: bucket.samples,
     }));
 
-    models.sort((a, b) => {
-      if (a.name === 'random_forest') return -1;
-      if (b.name === 'random_forest') return 1;
-      return b.accuracy - a.accuracy;
-    });
+    models.sort((a, b) => b.accuracy - a.accuracy);
 
     return models;
   }

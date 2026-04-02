@@ -91,12 +91,7 @@ export default function RegisterPage() {
     <div className="w-full max-w-2xl mx-auto">
       {}
       <div className="text-center mb-8">
-        <Link href="/" className="inline-block group">
-          <span className="text-3xl font-extrabold text-white tracking-widest block">
-            STOCK<span className="text-brand-orange">DN</span>
-          </span>
-        </Link>
-        <h1 className="text-2xl font-bold text-white mt-4">Tạo tài khoản mới</h1>
+        <h1 className="text-2xl font-bold text-white">Tạo tài khoản mới</h1>
         <p className="text-gray-400 text-sm mt-1">
           Bắt đầu hành trình đầu tư thông minh cùng AI
         </p>

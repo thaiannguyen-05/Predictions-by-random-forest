@@ -120,11 +120,6 @@ const VerifyEmailPage: React.FC = () => {
     <div className="w-full max-w-md mx-auto">
       {}
       <div className="text-center mb-8">
-        <Link href="/" className="inline-block group">
-          <span className="text-3xl font-extrabold text-white tracking-widest block">
-            STOCK<span className="text-brand-orange">DN</span>
-          </span>
-        </Link>
         <p className="text-gray-400 mt-2 text-sm">
           Xác thực tài khoản để bắt đầu
         </p>
