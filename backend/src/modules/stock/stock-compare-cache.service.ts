@@ -13,6 +13,8 @@ interface CompareModelRaw {
   mae?: number;
   rmse?: number;
   mape?: number;
+  f1?: number;
+  r2?: number;
   predictionDate?: string | null;
 }
 
@@ -24,6 +26,8 @@ export interface CompareModelAggregate {
   mae: number;
   rmse: number;
   mape: number;
+  f1?: number;
+  r2?: number;
   predictionDate: string | null;
   samples: number;
 }
@@ -31,9 +35,9 @@ export interface CompareModelAggregate {
 @Injectable()
 export class StockCompareCacheService implements OnModuleInit {
   private readonly logger = new Logger(StockCompareCacheService.name);
-  private isRefreshing = false;
+  private readonly refreshingRecentDays = new Set<number>();
   private tableEnsured = false;
-  private lastTriggerAt = 0;
+  private readonly lastTriggerAtByKey = new Map<string, number>();
   private readonly minTriggerIntervalMs = 60 * 1000;
 
   constructor(
@@ -44,28 +48,39 @@ export class StockCompareCacheService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    this.triggerRefreshEvent('module_init');
+    for (const recentDays of STOCK_COMPARE_CONFIG.RECENT_DAYS_OPTIONS) {
+      this.triggerRefreshEvent('module_init', recentDays);
+    }
   }
 
   @Cron(STOCK_COMPARE_CONFIG.CRON_EXPRESSION)
   refreshCompareByCron() {
-    this.triggerRefreshEvent('cron');
+    for (const recentDays of STOCK_COMPARE_CONFIG.RECENT_DAYS_OPTIONS) {
+      this.triggerRefreshEvent('cron', recentDays);
+    }
   }
 
-  triggerRefreshEvent(source: string): boolean {
+  triggerRefreshEvent(source: string, recentDays?: number): boolean {
     const now = Date.now();
-    if (now - this.lastTriggerAt < this.minTriggerIntervalMs) {
+    const effectiveRecentDays = Number.isFinite(recentDays)
+      ? Number(recentDays)
+      : STOCK_COMPARE_CONFIG.DEFAULT_RECENT_DAYS;
+    const cooldownKey = `${source}:${effectiveRecentDays}`;
+    const lastTriggerAt = this.lastTriggerAtByKey.get(cooldownKey) || 0;
+
+    if (now - lastTriggerAt < this.minTriggerIntervalMs) {
       this.logger.log(
-        `Skip refresh trigger (${source}) due to cooldown ${this.minTriggerIntervalMs}ms`,
+        `Skip refresh trigger (${source}) for recent_days=${effectiveRecentDays} due to cooldown ${this.minTriggerIntervalMs}ms`,
       );
       return false;
     }
 
-    this.lastTriggerAt = now;
+    this.lastTriggerAtByKey.set(cooldownKey, now);
     this.client
       .emit(TRAIN_EVENT, {
-      source,
-      requested_at: new Date(now).toISOString(),
+        source,
+        requested_at: new Date(now).toISOString(),
+        recent_days: recentDays,
       })
       .subscribe({
         next: () => undefined,
@@ -75,17 +90,25 @@ export class StockCompareCacheService implements OnModuleInit {
           ),
       });
 
-    this.logger.log(`Triggered ${TRAIN_EVENT} from source=${source}`);
+    this.logger.log(
+      `Triggered ${TRAIN_EVENT} from source=${source} recent_days=${effectiveRecentDays}`,
+    );
     return true;
   }
 
-  async refreshAllTickersCompare(): Promise<void> {
-    if (this.isRefreshing) {
-      this.logger.warn('Compare summary refresh is already running, skip');
+  async refreshAllTickersCompare(recentDays?: number): Promise<void> {
+    const effectiveRecentDays = Number.isFinite(recentDays)
+      ? Number(recentDays)
+      : STOCK_COMPARE_CONFIG.DEFAULT_RECENT_DAYS;
+
+    if (this.refreshingRecentDays.has(effectiveRecentDays)) {
+      this.logger.warn(
+        `Compare summary refresh is already running for recent_days=${effectiveRecentDays}, skip`,
+      );
       return;
     }
 
-    this.isRefreshing = true;
+    this.refreshingRecentDays.add(effectiveRecentDays);
     const startedAt = Date.now();
     let successTickers = 0;
     const modelBuckets = new Map<
@@ -96,6 +119,10 @@ export class StockCompareCacheService implements OnModuleInit {
         maeSum: number;
         rmseSum: number;
         mapeSum: number;
+        f1Sum: number;
+        f1Count: number;
+        r2Sum: number;
+        r2Count: number;
         latestPredictionDate: string | null;
       }
     >();
@@ -106,7 +133,7 @@ export class StockCompareCacheService implements OnModuleInit {
       for (const ticker of STOCK_COMPARE_CONFIG.TICKERS) {
         const response = await this.stockPredictionService.compareModels(
           ticker,
-          STOCK_COMPARE_CONFIG.RECENT_DAYS,
+          effectiveRecentDays,
         );
 
         if (!response.success) {
@@ -123,6 +150,14 @@ export class StockCompareCacheService implements OnModuleInit {
 
       const models = this.toAggregatedModels(modelBuckets);
       const failedTickers = STOCK_COMPARE_CONFIG.TICKERS.length - successTickers;
+
+      if (models.length === 0) {
+        this.logger.warn(
+          `Skip saving compare summary for recent_days=${effectiveRecentDays} because all tickers failed`,
+        );
+        return;
+      }
+
       const nowIso = new Date().toISOString();
 
       const rfModel = models.find((model) => model.name === 'random_forest');
@@ -162,7 +197,7 @@ export class StockCompareCacheService implements OnModuleInit {
         ("id", "recentDays", "totalTickers", "successTickers", "failedTickers", "models", "generatedAt", "createdAt")
         VALUES ($1::uuid, $2::int, $3::int, $4::int, $5::int, $6::jsonb, $7::timestamptz, $8::timestamptz)`,
         randomUUID(),
-        STOCK_COMPARE_CONFIG.RECENT_DAYS,
+        effectiveRecentDays,
         STOCK_COMPARE_CONFIG.TICKERS.length,
         successTickers,
         failedTickers,
@@ -172,15 +207,19 @@ export class StockCompareCacheService implements OnModuleInit {
       );
 
       this.logger.log(
-        `Compare summary saved to DB: ${successTickers}/${STOCK_COMPARE_CONFIG.TICKERS.length} tickers, ${Date.now() - startedAt}ms`,
+        `Compare summary saved to DB (recent_days=${effectiveRecentDays}): ${successTickers}/${STOCK_COMPARE_CONFIG.TICKERS.length} tickers, ${Date.now() - startedAt}ms`,
       );
     } finally {
-      this.isRefreshing = false;
+      this.refreshingRecentDays.delete(effectiveRecentDays);
     }
   }
 
-  async getLatestSummaryFromDb() {
+  async getLatestSummaryFromDb(recentDays?: number) {
     await this.ensureSummaryTable();
+    const effectiveRecentDays = Number.isFinite(recentDays)
+      ? Number(recentDays)
+      : STOCK_COMPARE_CONFIG.DEFAULT_RECENT_DAYS;
+
     const rows = await this.prismaService.$queryRawUnsafe<
       Array<{
         recentDays: number;
@@ -193,8 +232,14 @@ export class StockCompareCacheService implements OnModuleInit {
     >(
       `SELECT "recentDays", "totalTickers", "successTickers", "failedTickers", "generatedAt", "models"
        FROM stock_compare_summaries
+       WHERE "recentDays" = $1::int
+         AND CASE
+           WHEN jsonb_typeof("models") = 'array' THEN jsonb_array_length("models")
+           ELSE 0
+         END > 0
        ORDER BY "createdAt" DESC
        LIMIT 1`,
+      effectiveRecentDays,
     );
     const latest = rows[0];
 
@@ -234,7 +279,7 @@ export class StockCompareCacheService implements OnModuleInit {
       cached_tickers: latest.successTickers,
       failed_tickers: latest.failedTickers,
       generated_at: latest.generatedAt.toISOString(),
-      is_refreshing: this.isRefreshing,
+      is_refreshing: this.refreshingRecentDays.has(effectiveRecentDays),
       rf_qualified: rfQualified,
       rf_measured_accuracy: rfMeasuredAccuracy,
       rf_target_threshold: rfTargetThreshold,
@@ -276,6 +321,10 @@ export class StockCompareCacheService implements OnModuleInit {
         maeSum: number;
         rmseSum: number;
         mapeSum: number;
+        f1Sum: number;
+        f1Count: number;
+        r2Sum: number;
+        r2Count: number;
         latestPredictionDate: string | null;
       }
     >,
@@ -289,6 +338,8 @@ export class StockCompareCacheService implements OnModuleInit {
       const mae = Number(model.mae ?? 0);
       const rmse = Number(model.rmse ?? 0);
       const mape = Number(model.mape ?? 0);
+      const f1 = Number(model.f1);
+      const r2 = Number(model.r2);
       const predictionDateRaw =
         typeof model.predictionDate === 'string' ? model.predictionDate : null;
 
@@ -298,6 +349,10 @@ export class StockCompareCacheService implements OnModuleInit {
         maeSum: 0,
         rmseSum: 0,
         mapeSum: 0,
+        f1Sum: 0,
+        f1Count: 0,
+        r2Sum: 0,
+        r2Count: 0,
         latestPredictionDate: null,
       };
 
@@ -306,6 +361,16 @@ export class StockCompareCacheService implements OnModuleInit {
       bucket.maeSum += Number.isFinite(mae) ? mae : 0;
       bucket.rmseSum += Number.isFinite(rmse) ? rmse : 0;
       bucket.mapeSum += Number.isFinite(mape) ? mape : 0;
+
+      if (Number.isFinite(f1)) {
+        bucket.f1Sum += f1;
+        bucket.f1Count += 1;
+      }
+
+      if (Number.isFinite(r2)) {
+        bucket.r2Sum += r2;
+        bucket.r2Count += 1;
+      }
 
       if (
         predictionDateRaw &&
@@ -328,6 +393,10 @@ export class StockCompareCacheService implements OnModuleInit {
         maeSum: number;
         rmseSum: number;
         mapeSum: number;
+        f1Sum: number;
+        f1Count: number;
+        r2Sum: number;
+        r2Count: number;
         latestPredictionDate: string | null;
       }
     >,
@@ -338,6 +407,8 @@ export class StockCompareCacheService implements OnModuleInit {
       mae: bucket.samples ? bucket.maeSum / bucket.samples : 0,
       rmse: bucket.samples ? bucket.rmseSum / bucket.samples : 0,
       mape: bucket.samples ? bucket.mapeSum / bucket.samples : 0,
+      f1: bucket.f1Count ? bucket.f1Sum / bucket.f1Count : undefined,
+      r2: bucket.r2Count ? bucket.r2Sum / bucket.r2Count : undefined,
       predictionDate: bucket.latestPredictionDate,
       samples: bucket.samples,
     }));

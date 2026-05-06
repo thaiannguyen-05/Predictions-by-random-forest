@@ -256,7 +256,25 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
     + pseudo-regression metrics.
     """
     import numpy as np
-    from sklearn.metrics import accuracy_score
+    from sklearn.metrics import accuracy_score, f1_score, r2_score
+
+    def _positive_class_proba(predicted_proba, classes_) -> np.ndarray:
+        if predicted_proba.ndim != 2:
+            return np.zeros(predicted_proba.shape[0], dtype=float)
+
+        if predicted_proba.shape[1] == 1:
+            only_class = int(classes_[0]) if classes_ is not None and len(classes_) > 0 else 0
+            return predicted_proba[:, 0] if only_class == 1 else np.zeros(predicted_proba.shape[0], dtype=float)
+
+        if classes_ is None:
+            return predicted_proba[:, 1]
+
+        class_to_idx = {int(c): idx for idx, c in enumerate(classes_)}
+        positive_idx = class_to_idx.get(1)
+        if positive_idx is None:
+            return np.zeros(predicted_proba.shape[0], dtype=float)
+
+        return predicted_proba[:, positive_idx]
 
     started_at = datetime.now()
     standardized_ticker = standardize_ticker(ticker)
@@ -275,21 +293,24 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
         window_start = window_end - timedelta(days=recent_days)
         window_df = featured_df[featured_df.index >= window_start].copy()
 
-        if len(window_df) < 20:
+        min_rows_required = 5
+        if len(window_df) < min_rows_required:
             raise ValueError(
                 f"Not enough data in last {recent_days} days for {standardized_ticker}"
             )
 
         total_rows = len(window_df)
-        base_test_size = int(total_rows * 0.15)
-        test_size = max(EVAL_MIN_TEST_SIZE, min(EVAL_MAX_TEST_SIZE, base_test_size))
-        if total_rows <= test_size + 5:
+        adaptive_test_size = max(2, int(total_rows * 0.2))
+        test_size = min(EVAL_MAX_TEST_SIZE, adaptive_test_size)
+        test_size = min(test_size, max(2, total_rows // 2))
+
+        if total_rows <= test_size + 2:
             raise ValueError(
                 f"Insufficient rows to build walk-forward folds for {standardized_ticker}"
             )
 
         max_possible_folds = max(1, total_rows // test_size - 1)
-        folds = max(EVAL_MIN_FOLDS, min(EVAL_MAX_FOLDS, max_possible_folds))
+        folds = min(EVAL_MAX_FOLDS, max_possible_folds)
 
         model_metrics: Dict[str, Dict[str, Any]] = {
             model_type: {
@@ -297,10 +318,13 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
                 "maes": [],
                 "rmses": [],
                 "mapes": [],
+                "f1s": [],
+                "r2s": [],
                 "test_rows": 0,
                 "folds": 0,
                 "features_counts": [],
                 "rf_tuning": None,
+                "evaluation_modes": [],
             }
             for model_type in MODEL_REGISTRY.keys()
         }
@@ -333,65 +357,84 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
             tuning_val_df = train_df.iloc[-val_size:] if len(train_df) > val_size else test_df
 
             for model_type, (create_model_fn, select_features_fn) in MODEL_REGISTRY.items():
-                selected_predictors, _ = select_features_fn(
-                    train_df, predictors, threshold=FEATURE_THRESHOLD
-                )
-                if not selected_predictors:
-                    selected_predictors = predictors
-
-                threshold = 0.5
-                tuning_meta = None
-
-                if model_type == "random_forest":
-                    tuned = tune_model_with_validation(
-                        tuning_train_df,
-                        tuning_val_df,
-                        selected_predictors,
+                try:
+                    selected_predictors, _ = select_features_fn(
+                        train_df, predictors, threshold=FEATURE_THRESHOLD
                     )
-                    model = tuned["model"]
-                    threshold = float(tuned["threshold"])
-                    tuning_meta = {
-                        "best_params": tuned["best_params"],
-                        "best_threshold": threshold,
-                        "validation_accuracy": float(tuned["validation_accuracy"]),
-                    }
-                else:
-                    model = create_model_fn()
-                    model.fit(train_df[selected_predictors], train_df["Target"])
+                    if not selected_predictors:
+                        selected_predictors = predictors
 
-                preds_proba = model.predict_proba(test_df[selected_predictors])[:, 1]
-                preds = (preds_proba >= threshold).astype(int)
-                accuracy = float(accuracy_score(test_df["Target"], preds))
+                    threshold = 0.5
+                    tuning_meta = None
+                    evaluation_mode = "walk_forward_retrain"
 
-                actual_prices = test_df["Close"].values
-                prev_prices = test_df["Open"].values
-                predicted_prices = []
+                    if model_type == "random_forest":
+                        tuned = tune_model_with_validation(
+                            tuning_train_df,
+                            tuning_val_df,
+                            selected_predictors,
+                        )
+                        model = tuned["model"]
+                        threshold = float(tuned["threshold"])
+                        tuning_meta = {
+                            "best_params": tuned["best_params"],
+                            "best_threshold": threshold,
+                            "validation_accuracy": float(tuned["validation_accuracy"]),
+                        }
+                    else:
+                        model = create_model_fn()
+                        model.fit(train_df[selected_predictors], train_df["Target"])
 
-                for i, prob in enumerate(preds_proba):
-                    prediction_val = int(prob >= threshold)
-                    direction = 1 if prediction_val == 1 else -1
-                    confidence = max(prob, 1 - prob)
-                    price_change_factor = direction * confidence * volatility * 2.0
-                    pred_pr = prev_prices[i] * (1 + price_change_factor)
-                    predicted_prices.append(pred_pr)
+                    predicted_proba = model.predict_proba(test_df[selected_predictors])
+                    preds_proba = _positive_class_proba(predicted_proba, getattr(model, "classes_", None))
+                    preds = (preds_proba >= threshold).astype(int)
+                    accuracy = float(accuracy_score(test_df["Target"], preds))
+                    f1 = float(f1_score(test_df["Target"], preds, zero_division=0))
 
-                predicted_prices = np.array(predicted_prices)
-                errors = predicted_prices - actual_prices
+                    actual_prices = test_df["Close"].values
+                    prev_prices = test_df["Open"].values
+                    predicted_prices = []
 
-                mae = float(np.mean(np.abs(errors)))
-                rmse = float(np.sqrt(np.mean(errors ** 2)))
-                mape = float(np.mean(np.abs(errors / actual_prices)))
+                    for i, prob in enumerate(preds_proba):
+                        prediction_val = int(prob >= threshold)
+                        direction = 1 if prediction_val == 1 else -1
+                        confidence = max(prob, 1 - prob)
+                        price_change_factor = direction * confidence * volatility * 2.0
+                        pred_pr = prev_prices[i] * (1 + price_change_factor)
+                        predicted_prices.append(pred_pr)
 
-                model_metrics[model_type]["accuracies"].append(accuracy)
-                model_metrics[model_type]["maes"].append(mae)
-                model_metrics[model_type]["rmses"].append(rmse)
-                model_metrics[model_type]["mapes"].append(mape)
-                model_metrics[model_type]["test_rows"] += len(test_df)
-                model_metrics[model_type]["folds"] += 1
-                model_metrics[model_type]["features_counts"].append(len(selected_predictors))
+                    predicted_prices = np.array(predicted_prices)
+                    errors = predicted_prices - actual_prices
 
-                if model_type == "random_forest" and tuning_meta is not None:
-                    model_metrics[model_type]["rf_tuning"] = tuning_meta
+                    mae = float(np.mean(np.abs(errors)))
+                    rmse = float(np.sqrt(np.mean(errors ** 2)))
+                    mape = float(np.mean(np.abs(errors / actual_prices)))
+
+                    try:
+                        r2 = float(r2_score(actual_prices, predicted_prices))
+                        if not np.isfinite(r2):
+                            r2 = 0.0
+                    except Exception:
+                        r2 = 0.0
+
+                    model_metrics[model_type]["accuracies"].append(accuracy)
+                    model_metrics[model_type]["maes"].append(mae)
+                    model_metrics[model_type]["rmses"].append(rmse)
+                    model_metrics[model_type]["mapes"].append(mape)
+                    model_metrics[model_type]["f1s"].append(f1)
+                    model_metrics[model_type]["r2s"].append(r2)
+                    model_metrics[model_type]["test_rows"] += len(test_df)
+                    model_metrics[model_type]["folds"] += 1
+                    model_metrics[model_type]["features_counts"].append(len(selected_predictors))
+                    model_metrics[model_type]["evaluation_modes"].append(evaluation_mode)
+
+                    if model_type == "random_forest" and tuning_meta is not None:
+                        model_metrics[model_type]["rf_tuning"] = tuning_meta
+                except Exception as model_error:
+                    logger.warning(
+                        f"Skip model {model_type} at fold {fold_idx + 1} for {standardized_ticker}: {model_error}"
+                    )
+                    continue
 
         results = []
         for model_type, metrics in model_metrics.items():
@@ -410,14 +453,23 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
                 "mae": float(np.mean(metrics["maes"])),
                 "rmse": float(np.mean(metrics["rmses"])),
                 "mape": float(np.mean(metrics["mapes"])),
+                "f1": float(np.mean(metrics["f1s"])),
+                "r2": float(np.mean(metrics["r2s"])),
                 "predictionDate": prediction_time.isoformat(),
                 "folds": int(metrics["folds"]),
                 "oosSamples": int(metrics["test_rows"]),
                 "featuresCountMean": float(np.mean(metrics["features_counts"])),
             }
 
-            if model_type == "random_forest" and metrics["rf_tuning"]:
-                result_row["rfTuning"] = metrics["rf_tuning"]
+            if model_type == "random_forest":
+                distinct_modes = sorted(set(metrics["evaluation_modes"]))
+                result_row["evaluationMode"] = (
+                    distinct_modes[0] if len(distinct_modes) == 1 else "mixed"
+                )
+                result_row["evaluationModes"] = distinct_modes
+
+                if metrics["rf_tuning"]:
+                    result_row["rfTuning"] = metrics["rf_tuning"]
 
             results.append(result_row)
 

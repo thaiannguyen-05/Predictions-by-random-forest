@@ -6,6 +6,7 @@ import { StockCompareCacheService } from './stock-compare-cache.service';
 import { StockModelTrainingController } from './stock-model-training.controller';
 import { StockModelTrainingService } from './stock-model-training.service';
 import { StockPredictionService } from './stock-prediction.service';
+import { StockPredictionCacheService } from './stock-prediction-cache.service';
 import { StockController } from './stock.controller';
 import { StockTrainningEvent } from './stock-trainning-event';
 
@@ -45,6 +46,7 @@ function buildRabbitMqUrl(configService: ConfigService): string {
   ],
   providers: [
     StockPredictionService,
+    StockPredictionCacheService,
     StockModelTrainingService,
     StockCompareCacheService,
   ],
@@ -55,6 +57,7 @@ function buildRabbitMqUrl(configService: ConfigService): string {
   ],
   exports: [
     StockPredictionService,
+    StockPredictionCacheService,
     StockModelTrainingService,
     StockCompareCacheService,
   ],

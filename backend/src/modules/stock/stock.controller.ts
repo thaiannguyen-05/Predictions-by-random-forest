@@ -16,6 +16,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { StockPredictionService } from './stock-prediction.service';
+import { StockPredictionCacheService } from './stock-prediction-cache.service';
 import { StockCompareCacheService } from './stock-compare-cache.service';
 import { Public } from '../../common/decorator';
 
@@ -25,6 +26,7 @@ import { Public } from '../../common/decorator';
 export class StockController {
   constructor(
     private readonly stockService: StockPredictionService,
+    private readonly stockPredictionCacheService: StockPredictionCacheService,
     private readonly stockCompareCacheService: StockCompareCacheService,
   ) {}
 
@@ -251,7 +253,8 @@ export class StockController {
     description: 'Bad request - multi-hour prediction failed or invalid ticker',
   })
   async getPredictions(@Param('ticker') ticker: string) {
-    const result = await this.stockService.getPredictionsMultiHours(ticker);
+    const result =
+      await this.stockPredictionCacheService.getMultiHoursPrediction(ticker);
 
     if (!result.success) {
       throw new HttpException(
@@ -311,7 +314,8 @@ export class StockController {
     description: 'Bad request - next-hours prediction failed or invalid ticker',
   })
   async getPredictionsNextHours(@Param('ticker') ticker: string) {
-    const result = await this.stockService.getPredictionsMultiHours(ticker);
+    const result =
+      await this.stockPredictionCacheService.getMultiHoursPrediction(ticker);
 
     if (!result.success) {
       throw new HttpException(
@@ -368,7 +372,8 @@ export class StockController {
     description: 'Bad request - tomorrow prediction failed or invalid ticker',
   })
   async getPredictionTomorrow(@Param('ticker') ticker: string) {
-    const result = await this.stockService.getPredictionSingle(ticker);
+    const result =
+      await this.stockPredictionCacheService.getTomorrowPrediction(ticker);
 
     if (!result.success) {
       throw new HttpException(
@@ -447,7 +452,7 @@ export class StockController {
   async getCompleteAnalysis(@Param('ticker') ticker: string) {
     const [priceResult, predictionResult] = await Promise.all([
       this.stockService.getCurrentPrice(ticker),
-      this.stockService.getPredictionsMultiHours(ticker),
+      this.stockPredictionCacheService.getMultiHoursPrediction(ticker),
     ]);
 
     return {
@@ -541,17 +546,25 @@ export class StockController {
     status: 200,
     description: 'Refresh event trigger request processed',
   })
-  async triggerCompareSummaryRefresh() {
-    const triggered =
-      this.stockCompareCacheService.triggerRefreshEvent(
-        'compare_summary_manual_trigger',
-      );
+  async triggerCompareSummaryRefresh(
+    @Query('recent_days') recentDaysQuery?: string,
+  ) {
+    const requestedRecentDays = Number(recentDaysQuery);
+    const recentDays = Number.isFinite(requestedRecentDays)
+      ? requestedRecentDays
+      : 30;
+
+    const triggered = this.stockCompareCacheService.triggerRefreshEvent(
+      'compare_summary_manual_trigger',
+      recentDays,
+    );
 
     return {
       message: triggered
         ? 'Refresh event triggered'
         : 'Refresh event skipped due to cooldown',
       triggered,
+      recent_days: recentDays,
       timestamp: new Date().toISOString(),
     };
   }
@@ -560,7 +573,7 @@ export class StockController {
   @ApiOperation({
     summary: 'Get aggregated compare results for all cached tickers',
     description:
-      'Return aggregated model metrics (accuracy, MAE, RMSE, MAPE) across all cached tickers',
+      'Return aggregated model metrics (accuracy, MAE, RMSE, MAPE, F1, R²) across all cached tickers',
   })
   @ApiResponse({
     status: 200,
@@ -570,12 +583,19 @@ export class StockController {
     status: 503,
     description: 'Compare cache not ready',
   })
-  async compareSummary() {
-    const summary = await this.stockCompareCacheService.getLatestSummaryFromDb();
+  async compareSummary(@Query('recent_days') recentDaysQuery?: string) {
+    const requestedRecentDays = Number(recentDaysQuery);
+    const recentDays = Number.isFinite(requestedRecentDays)
+      ? requestedRecentDays
+      : 30;
+
+    const summary =
+      await this.stockCompareCacheService.getLatestSummaryFromDb(recentDays);
 
     if (!summary) {
       const triggered = this.stockCompareCacheService.triggerRefreshEvent(
         'compare_summary_api',
+        recentDays,
       );
       return {
         success: true,
@@ -585,6 +605,7 @@ export class StockController {
         data: {
           loading: true,
           is_refreshing: true,
+          recent_days: recentDays,
           refresh_event_triggered: triggered,
         },
         timestamp: new Date().toISOString(),

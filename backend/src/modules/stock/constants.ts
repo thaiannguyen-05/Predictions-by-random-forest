@@ -48,10 +48,12 @@ export const TRAIN_EVENT = 'train_event';
 export const TIME_CHECK_INTERVAL_MS = 60 * 1000;
 
 export const STOCK_COMPARE_CONFIG = {
-  RECENT_DAYS: 365,
   CRON_EXPRESSION: '0 0 0 * * *',
   RF_TARGET_THRESHOLD: 0.7,
   RF_MIN_ELIGIBLE_TICKERS: 30,
+  RECENT_DAYS_OPTIONS: [10, 20, 30] as const,
+  DEFAULT_RECENT_DAYS: 30,
+  PREDICTION_CRON_EXPRESSION: '0 */1 * * * *',
   TICKERS: [
     'FPT.VN',
     'VNM.VN',

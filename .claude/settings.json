@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nohup env *)",
+      "Bash(PYTHONPATH=\"/home/andev/dev/projects/Predictions-by-random-forest/ml-service\" python3 -c 'import json; from orchestration.model_training_orchestrator import evaluate_models; r=evaluate_models\\(\"FPT.VN\",30\\); rf=next\\(\\(m for m in r.get\\(\"results\",[]\\) if m.get\\(\"name\"\\)==\"random_forest\"\\), None\\); print\\(json.dumps\\({\"success\": r.get\\(\"success\"\\), \"rf\": rf}, ensure_ascii=False\\)\\)')",
+      "Bash(pnpm --dir /home/andev/dev/projects/Predictions-by-random-forest/backend build)"
+    ]
+  }
+}

@@ -60,15 +60,32 @@ def add_features(
     # Daily return (lợi suất hàng ngày)
     df["Return"] = df["Close"].pct_change()
     predictors.append("Return")
-    
+
+    # MA20 + MDA20 (Moving Average Distance)
+    df["MA20"] = df["Close"].rolling(20).mean()
+    predictors.append("MA20")
+
+    df["MDA_20"] = (df["Close"] - df["MA20"]) / df["MA20"]
+    predictors.append("MDA_20")
+
+    # RSI 14 (Wilder)
+    delta = df["Close"].diff()
+    gain = delta.clip(lower=0)
+    loss = (-delta).clip(lower=0)
+    avg_gain = gain.ewm(alpha=1 / 14, adjust=False).mean()
+    avg_loss = loss.ewm(alpha=1 / 14, adjust=False).mean()
+    rs = avg_gain / avg_loss
+    df["RSI_14"] = 100 - (100 / (1 + rs))
+    predictors.append("RSI_14")
+
     # Rolling mean/median return (xu hướng lợi suất ngắn hạn)
     for window in RETURN_WINDOWS:
         mean_col = f"RollingMeanRet_{window}"
         median_col = f"RollingMedianRet_{window}"
-        
+
         df[mean_col] = df["Return"].rolling(window).mean()
         df[median_col] = df["Return"].rolling(window).median()
-        
+
         predictors.append(mean_col)
         predictors.append(median_col)
     
@@ -110,6 +127,9 @@ def get_feature_description() -> dict:
         "Trend_X": "Số ngày giá tăng trong X ngày gần nhất",
         "Lag_X": "Giá đóng cửa X ngày trước",
         "Return": "Lợi suất ngày hôm nay",
+        "MA20": "Đường trung bình động 20 ngày của giá đóng cửa",
+        "MDA_20": "Khoảng cách giữa Close và MA20 theo tỷ lệ (Close - MA20) / MA20",
+        "RSI_14": "Relative Strength Index 14 phiên theo công thức Wilder",
         "RollingMeanRet_X": "Lợi suất trung bình X ngày",
         "RollingMedianRet_X": "Lợi suất trung vị X ngày",
         "Volatility_X": "Độ biến động X ngày (std của return)",

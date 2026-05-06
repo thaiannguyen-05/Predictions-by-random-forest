@@ -8,6 +8,20 @@ import { EmailProducer } from './emai.producer';
 import { EmailController } from './email.controller';
 import { RedisModule } from '../modules/redis/redis.module';
 
+function buildRabbitMqUrl(configService: ConfigService): string {
+  const user = configService.getOrThrow<string>('RABBITMQ_USER');
+  const pass = configService.getOrThrow<string>('RABBITMQ_PASS');
+  const host = configService.get<string>('RABBITMQ_HOST') || 'localhost';
+  const port = configService.get<string>('RABBITMQ_PORT') || '5672';
+  const vhost = configService.get<string>('RABBITMQ_VHOST');
+  const normalizedVhost = vhost?.replace(/^\/+/, '');
+  const vhostPath = normalizedVhost
+    ? `/${encodeURIComponent(normalizedVhost)}`
+    : '';
+
+  return `amqp://${user}:${pass}@${host}:${port}${vhostPath}`;
+}
+
 @Module({
   imports: [
     ClientsModule.registerAsync([
@@ -17,9 +31,7 @@ import { RedisModule } from '../modules/redis/redis.module';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
-            urls: [
-              `amqp://${configService.getOrThrow<string>('RABBITMQ_USER')}:${configService.getOrThrow<string>('RABBITMQ_PASS')}@localhost:5672`,
-            ],
+            urls: [buildRabbitMqUrl(configService)],
             queue: QUEUE_EMAIL,
             queueOptions: {
               durable: true,

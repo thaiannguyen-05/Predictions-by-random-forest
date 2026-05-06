@@ -16,7 +16,13 @@ export class StockTrainningEvent {
     this.logger.log(
       `Received ${TRAIN_EVENT} event${payload ? `: ${JSON.stringify(payload)}` : ''}`,
     );
-    await this.stockCompareCacheService.refreshAllTickersCompare();
+
+    const payloadRecentDays = Number(payload?.recent_days);
+    const recentDays = Number.isFinite(payloadRecentDays)
+      ? payloadRecentDays
+      : undefined;
+
+    await this.stockCompareCacheService.refreshAllTickersCompare(recentDays);
     this.logger.log(`Handled ${TRAIN_EVENT} event`);
   }
 }

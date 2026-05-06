@@ -13,22 +13,40 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { SupportChatController } from './suport-chat.controller';
 import { FaqService } from './service/FAQ-service/Faq.service';
 import { UserModule } from '../user/user.module';
+import { ConfigService } from '@nestjs/config';
+
+function buildRabbitMqUrl(configService: ConfigService): string {
+  const user = configService.getOrThrow<string>('RABBITMQ_USER');
+  const pass = configService.getOrThrow<string>('RABBITMQ_PASS');
+  const host = configService.get<string>('RABBITMQ_HOST') || 'localhost';
+  const port = configService.get<string>('RABBITMQ_PORT') || '5672';
+  const vhost = configService.get<string>('RABBITMQ_VHOST');
+  const normalizedVhost = vhost?.replace(/^\/+/, '');
+  const vhostPath = normalizedVhost
+    ? `/${encodeURIComponent(normalizedVhost)}`
+    : '';
+
+  return `amqp://${user}:${pass}@${host}:${port}${vhostPath}`;
+}
 
 @Module({
   imports: [
     StockModule,
     UserModule,
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'MESSAGE_QUEUE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://blog:Andev2005%40@localhost:5672'],
-          queue: 'message_queue',
-          queueOptions: {
-            durable: true,
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [buildRabbitMqUrl(configService)],
+            queue: 'message_queue',
+            queueOptions: {
+              durable: true,
+            },
           },
-        },
+        }),
       },
     ]),
   ],

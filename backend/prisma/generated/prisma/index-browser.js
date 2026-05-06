@@ -230,6 +230,15 @@ exports.Prisma.Stock_compare_summaryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.Stock_prediction_cacheScalarFieldEnum = {
+  id: 'id',
+  ticker: 'ticker',
+  predictionType: 'predictionType',
+  payload: 'payload',
+  generatedAt: 'generatedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   fullname: 'fullname',
@@ -334,6 +343,7 @@ exports.Prisma.ModelName = {
   MemberInRoom: 'MemberInRoom',
   history_searching: 'history_searching',
   stock_compare_summary: 'stock_compare_summary',
+  stock_prediction_cache: 'stock_prediction_cache',
   User: 'User',
   Oauth2User: 'Oauth2User'
 };

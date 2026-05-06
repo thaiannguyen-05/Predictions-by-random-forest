@@ -45,7 +45,8 @@ def load_data(ticker: str, csv_file: Optional[str] = None) -> pd.DataFrame:
         # Nếu file CSV đã tồn tại thì đọc trực tiếp
         if os.path.exists(csv_file):
             df = pd.read_csv(csv_file, index_col=0)
-            df.index = pd.to_datetime(df.index)
+            df.index = pd.to_datetime(df.index, format='mixed', errors='coerce')
+            df = df[~df.index.isna()]
             logger.debug(f"Loaded {len(df)} rows from {csv_file}")
         else:
             # Nếu chưa có file thì tải dữ liệu từ yfinance

@@ -64,6 +64,11 @@ export type history_searching = $Result.DefaultSelection<Prisma.$history_searchi
  */
 export type stock_compare_summary = $Result.DefaultSelection<Prisma.$stock_compare_summaryPayload>
 /**
+ * Model stock_prediction_cache
+ * 
+ */
+export type stock_prediction_cache = $Result.DefaultSelection<Prisma.$stock_prediction_cachePayload>
+/**
  * Model User
  * 
  */
@@ -377,6 +382,16 @@ export class PrismaClient<
     * ```
     */
   get stock_compare_summary(): Prisma.stock_compare_summaryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.stock_prediction_cache`: Exposes CRUD operations for the **stock_prediction_cache** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Stock_prediction_caches
+    * const stock_prediction_caches = await prisma.stock_prediction_cache.findMany()
+    * ```
+    */
+  get stock_prediction_cache(): Prisma.stock_prediction_cacheDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -847,6 +862,7 @@ export namespace Prisma {
     MemberInRoom: 'MemberInRoom',
     history_searching: 'history_searching',
     stock_compare_summary: 'stock_compare_summary',
+    stock_prediction_cache: 'stock_prediction_cache',
     User: 'User',
     Oauth2User: 'Oauth2User'
   };
@@ -867,7 +883,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userDevice" | "session" | "message" | "post" | "likePost" | "comment" | "room" | "memberInRoom" | "history_searching" | "stock_compare_summary" | "user" | "oauth2User"
+      modelProps: "userDevice" | "session" | "message" | "post" | "likePost" | "comment" | "room" | "memberInRoom" | "history_searching" | "stock_compare_summary" | "stock_prediction_cache" | "user" | "oauth2User"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1611,6 +1627,80 @@ export namespace Prisma {
           }
         }
       }
+      stock_prediction_cache: {
+        payload: Prisma.$stock_prediction_cachePayload<ExtArgs>
+        fields: Prisma.stock_prediction_cacheFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.stock_prediction_cacheFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.stock_prediction_cacheFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          findFirst: {
+            args: Prisma.stock_prediction_cacheFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.stock_prediction_cacheFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          findMany: {
+            args: Prisma.stock_prediction_cacheFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>[]
+          }
+          create: {
+            args: Prisma.stock_prediction_cacheCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          createMany: {
+            args: Prisma.stock_prediction_cacheCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.stock_prediction_cacheCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>[]
+          }
+          delete: {
+            args: Prisma.stock_prediction_cacheDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          update: {
+            args: Prisma.stock_prediction_cacheUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          deleteMany: {
+            args: Prisma.stock_prediction_cacheDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.stock_prediction_cacheUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.stock_prediction_cacheUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>[]
+          }
+          upsert: {
+            args: Prisma.stock_prediction_cacheUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$stock_prediction_cachePayload>
+          }
+          aggregate: {
+            args: Prisma.Stock_prediction_cacheAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStock_prediction_cache>
+          }
+          groupBy: {
+            args: Prisma.stock_prediction_cacheGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Stock_prediction_cacheGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.stock_prediction_cacheCountArgs<ExtArgs>
+            result: $Utils.Optional<Stock_prediction_cacheCountAggregateOutputType> | number
+          }
+        }
+      }
       User: {
         payload: Prisma.$UserPayload<ExtArgs>
         fields: Prisma.UserFieldRefs
@@ -1865,6 +1955,7 @@ export namespace Prisma {
     memberInRoom?: MemberInRoomOmit
     history_searching?: history_searchingOmit
     stock_compare_summary?: stock_compare_summaryOmit
+    stock_prediction_cache?: stock_prediction_cacheOmit
     user?: UserOmit
     oauth2User?: Oauth2UserOmit
   }
@@ -13281,6 +13372,1010 @@ export namespace Prisma {
 
 
   /**
+   * Model stock_prediction_cache
+   */
+
+  export type AggregateStock_prediction_cache = {
+    _count: Stock_prediction_cacheCountAggregateOutputType | null
+    _min: Stock_prediction_cacheMinAggregateOutputType | null
+    _max: Stock_prediction_cacheMaxAggregateOutputType | null
+  }
+
+  export type Stock_prediction_cacheMinAggregateOutputType = {
+    id: string | null
+    ticker: string | null
+    predictionType: string | null
+    generatedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type Stock_prediction_cacheMaxAggregateOutputType = {
+    id: string | null
+    ticker: string | null
+    predictionType: string | null
+    generatedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type Stock_prediction_cacheCountAggregateOutputType = {
+    id: number
+    ticker: number
+    predictionType: number
+    payload: number
+    generatedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type Stock_prediction_cacheMinAggregateInputType = {
+    id?: true
+    ticker?: true
+    predictionType?: true
+    generatedAt?: true
+    createdAt?: true
+  }
+
+  export type Stock_prediction_cacheMaxAggregateInputType = {
+    id?: true
+    ticker?: true
+    predictionType?: true
+    generatedAt?: true
+    createdAt?: true
+  }
+
+  export type Stock_prediction_cacheCountAggregateInputType = {
+    id?: true
+    ticker?: true
+    predictionType?: true
+    payload?: true
+    generatedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type Stock_prediction_cacheAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which stock_prediction_cache to aggregate.
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of stock_prediction_caches to fetch.
+     */
+    orderBy?: stock_prediction_cacheOrderByWithRelationInput | stock_prediction_cacheOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: stock_prediction_cacheWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` stock_prediction_caches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` stock_prediction_caches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned stock_prediction_caches
+    **/
+    _count?: true | Stock_prediction_cacheCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Stock_prediction_cacheMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Stock_prediction_cacheMaxAggregateInputType
+  }
+
+  export type GetStock_prediction_cacheAggregateType<T extends Stock_prediction_cacheAggregateArgs> = {
+        [P in keyof T & keyof AggregateStock_prediction_cache]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStock_prediction_cache[P]>
+      : GetScalarType<T[P], AggregateStock_prediction_cache[P]>
+  }
+
+
+
+
+  export type stock_prediction_cacheGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: stock_prediction_cacheWhereInput
+    orderBy?: stock_prediction_cacheOrderByWithAggregationInput | stock_prediction_cacheOrderByWithAggregationInput[]
+    by: Stock_prediction_cacheScalarFieldEnum[] | Stock_prediction_cacheScalarFieldEnum
+    having?: stock_prediction_cacheScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Stock_prediction_cacheCountAggregateInputType | true
+    _min?: Stock_prediction_cacheMinAggregateInputType
+    _max?: Stock_prediction_cacheMaxAggregateInputType
+  }
+
+  export type Stock_prediction_cacheGroupByOutputType = {
+    id: string
+    ticker: string
+    predictionType: string
+    payload: JsonValue
+    generatedAt: Date
+    createdAt: Date
+    _count: Stock_prediction_cacheCountAggregateOutputType | null
+    _min: Stock_prediction_cacheMinAggregateOutputType | null
+    _max: Stock_prediction_cacheMaxAggregateOutputType | null
+  }
+
+  type GetStock_prediction_cacheGroupByPayload<T extends stock_prediction_cacheGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Stock_prediction_cacheGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Stock_prediction_cacheGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Stock_prediction_cacheGroupByOutputType[P]>
+            : GetScalarType<T[P], Stock_prediction_cacheGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type stock_prediction_cacheSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticker?: boolean
+    predictionType?: boolean
+    payload?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["stock_prediction_cache"]>
+
+  export type stock_prediction_cacheSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticker?: boolean
+    predictionType?: boolean
+    payload?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["stock_prediction_cache"]>
+
+  export type stock_prediction_cacheSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticker?: boolean
+    predictionType?: boolean
+    payload?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["stock_prediction_cache"]>
+
+  export type stock_prediction_cacheSelectScalar = {
+    id?: boolean
+    ticker?: boolean
+    predictionType?: boolean
+    payload?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type stock_prediction_cacheOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticker" | "predictionType" | "payload" | "generatedAt" | "createdAt", ExtArgs["result"]["stock_prediction_cache"]>
+
+  export type $stock_prediction_cachePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "stock_prediction_cache"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      ticker: string
+      predictionType: string
+      payload: Prisma.JsonValue
+      generatedAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["stock_prediction_cache"]>
+    composites: {}
+  }
+
+  type stock_prediction_cacheGetPayload<S extends boolean | null | undefined | stock_prediction_cacheDefaultArgs> = $Result.GetResult<Prisma.$stock_prediction_cachePayload, S>
+
+  type stock_prediction_cacheCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<stock_prediction_cacheFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Stock_prediction_cacheCountAggregateInputType | true
+    }
+
+  export interface stock_prediction_cacheDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['stock_prediction_cache'], meta: { name: 'stock_prediction_cache' } }
+    /**
+     * Find zero or one Stock_prediction_cache that matches the filter.
+     * @param {stock_prediction_cacheFindUniqueArgs} args - Arguments to find a Stock_prediction_cache
+     * @example
+     * // Get one Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends stock_prediction_cacheFindUniqueArgs>(args: SelectSubset<T, stock_prediction_cacheFindUniqueArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Stock_prediction_cache that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {stock_prediction_cacheFindUniqueOrThrowArgs} args - Arguments to find a Stock_prediction_cache
+     * @example
+     * // Get one Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends stock_prediction_cacheFindUniqueOrThrowArgs>(args: SelectSubset<T, stock_prediction_cacheFindUniqueOrThrowArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Stock_prediction_cache that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheFindFirstArgs} args - Arguments to find a Stock_prediction_cache
+     * @example
+     * // Get one Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends stock_prediction_cacheFindFirstArgs>(args?: SelectSubset<T, stock_prediction_cacheFindFirstArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Stock_prediction_cache that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheFindFirstOrThrowArgs} args - Arguments to find a Stock_prediction_cache
+     * @example
+     * // Get one Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends stock_prediction_cacheFindFirstOrThrowArgs>(args?: SelectSubset<T, stock_prediction_cacheFindFirstOrThrowArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Stock_prediction_caches that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Stock_prediction_caches
+     * const stock_prediction_caches = await prisma.stock_prediction_cache.findMany()
+     * 
+     * // Get first 10 Stock_prediction_caches
+     * const stock_prediction_caches = await prisma.stock_prediction_cache.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const stock_prediction_cacheWithIdOnly = await prisma.stock_prediction_cache.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends stock_prediction_cacheFindManyArgs>(args?: SelectSubset<T, stock_prediction_cacheFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Stock_prediction_cache.
+     * @param {stock_prediction_cacheCreateArgs} args - Arguments to create a Stock_prediction_cache.
+     * @example
+     * // Create one Stock_prediction_cache
+     * const Stock_prediction_cache = await prisma.stock_prediction_cache.create({
+     *   data: {
+     *     // ... data to create a Stock_prediction_cache
+     *   }
+     * })
+     * 
+     */
+    create<T extends stock_prediction_cacheCreateArgs>(args: SelectSubset<T, stock_prediction_cacheCreateArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Stock_prediction_caches.
+     * @param {stock_prediction_cacheCreateManyArgs} args - Arguments to create many Stock_prediction_caches.
+     * @example
+     * // Create many Stock_prediction_caches
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends stock_prediction_cacheCreateManyArgs>(args?: SelectSubset<T, stock_prediction_cacheCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Stock_prediction_caches and returns the data saved in the database.
+     * @param {stock_prediction_cacheCreateManyAndReturnArgs} args - Arguments to create many Stock_prediction_caches.
+     * @example
+     * // Create many Stock_prediction_caches
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Stock_prediction_caches and only return the `id`
+     * const stock_prediction_cacheWithIdOnly = await prisma.stock_prediction_cache.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends stock_prediction_cacheCreateManyAndReturnArgs>(args?: SelectSubset<T, stock_prediction_cacheCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Stock_prediction_cache.
+     * @param {stock_prediction_cacheDeleteArgs} args - Arguments to delete one Stock_prediction_cache.
+     * @example
+     * // Delete one Stock_prediction_cache
+     * const Stock_prediction_cache = await prisma.stock_prediction_cache.delete({
+     *   where: {
+     *     // ... filter to delete one Stock_prediction_cache
+     *   }
+     * })
+     * 
+     */
+    delete<T extends stock_prediction_cacheDeleteArgs>(args: SelectSubset<T, stock_prediction_cacheDeleteArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Stock_prediction_cache.
+     * @param {stock_prediction_cacheUpdateArgs} args - Arguments to update one Stock_prediction_cache.
+     * @example
+     * // Update one Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends stock_prediction_cacheUpdateArgs>(args: SelectSubset<T, stock_prediction_cacheUpdateArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Stock_prediction_caches.
+     * @param {stock_prediction_cacheDeleteManyArgs} args - Arguments to filter Stock_prediction_caches to delete.
+     * @example
+     * // Delete a few Stock_prediction_caches
+     * const { count } = await prisma.stock_prediction_cache.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends stock_prediction_cacheDeleteManyArgs>(args?: SelectSubset<T, stock_prediction_cacheDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Stock_prediction_caches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Stock_prediction_caches
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends stock_prediction_cacheUpdateManyArgs>(args: SelectSubset<T, stock_prediction_cacheUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Stock_prediction_caches and returns the data updated in the database.
+     * @param {stock_prediction_cacheUpdateManyAndReturnArgs} args - Arguments to update many Stock_prediction_caches.
+     * @example
+     * // Update many Stock_prediction_caches
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Stock_prediction_caches and only return the `id`
+     * const stock_prediction_cacheWithIdOnly = await prisma.stock_prediction_cache.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends stock_prediction_cacheUpdateManyAndReturnArgs>(args: SelectSubset<T, stock_prediction_cacheUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Stock_prediction_cache.
+     * @param {stock_prediction_cacheUpsertArgs} args - Arguments to update or create a Stock_prediction_cache.
+     * @example
+     * // Update or create a Stock_prediction_cache
+     * const stock_prediction_cache = await prisma.stock_prediction_cache.upsert({
+     *   create: {
+     *     // ... data to create a Stock_prediction_cache
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Stock_prediction_cache we want to update
+     *   }
+     * })
+     */
+    upsert<T extends stock_prediction_cacheUpsertArgs>(args: SelectSubset<T, stock_prediction_cacheUpsertArgs<ExtArgs>>): Prisma__stock_prediction_cacheClient<$Result.GetResult<Prisma.$stock_prediction_cachePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Stock_prediction_caches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheCountArgs} args - Arguments to filter Stock_prediction_caches to count.
+     * @example
+     * // Count the number of Stock_prediction_caches
+     * const count = await prisma.stock_prediction_cache.count({
+     *   where: {
+     *     // ... the filter for the Stock_prediction_caches we want to count
+     *   }
+     * })
+    **/
+    count<T extends stock_prediction_cacheCountArgs>(
+      args?: Subset<T, stock_prediction_cacheCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Stock_prediction_cacheCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Stock_prediction_cache.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Stock_prediction_cacheAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Stock_prediction_cacheAggregateArgs>(args: Subset<T, Stock_prediction_cacheAggregateArgs>): Prisma.PrismaPromise<GetStock_prediction_cacheAggregateType<T>>
+
+    /**
+     * Group by Stock_prediction_cache.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {stock_prediction_cacheGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends stock_prediction_cacheGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: stock_prediction_cacheGroupByArgs['orderBy'] }
+        : { orderBy?: stock_prediction_cacheGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, stock_prediction_cacheGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStock_prediction_cacheGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the stock_prediction_cache model
+   */
+  readonly fields: stock_prediction_cacheFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for stock_prediction_cache.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__stock_prediction_cacheClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the stock_prediction_cache model
+   */
+  interface stock_prediction_cacheFieldRefs {
+    readonly id: FieldRef<"stock_prediction_cache", 'String'>
+    readonly ticker: FieldRef<"stock_prediction_cache", 'String'>
+    readonly predictionType: FieldRef<"stock_prediction_cache", 'String'>
+    readonly payload: FieldRef<"stock_prediction_cache", 'Json'>
+    readonly generatedAt: FieldRef<"stock_prediction_cache", 'DateTime'>
+    readonly createdAt: FieldRef<"stock_prediction_cache", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * stock_prediction_cache findUnique
+   */
+  export type stock_prediction_cacheFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter, which stock_prediction_cache to fetch.
+     */
+    where: stock_prediction_cacheWhereUniqueInput
+  }
+
+  /**
+   * stock_prediction_cache findUniqueOrThrow
+   */
+  export type stock_prediction_cacheFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter, which stock_prediction_cache to fetch.
+     */
+    where: stock_prediction_cacheWhereUniqueInput
+  }
+
+  /**
+   * stock_prediction_cache findFirst
+   */
+  export type stock_prediction_cacheFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter, which stock_prediction_cache to fetch.
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of stock_prediction_caches to fetch.
+     */
+    orderBy?: stock_prediction_cacheOrderByWithRelationInput | stock_prediction_cacheOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for stock_prediction_caches.
+     */
+    cursor?: stock_prediction_cacheWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` stock_prediction_caches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` stock_prediction_caches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of stock_prediction_caches.
+     */
+    distinct?: Stock_prediction_cacheScalarFieldEnum | Stock_prediction_cacheScalarFieldEnum[]
+  }
+
+  /**
+   * stock_prediction_cache findFirstOrThrow
+   */
+  export type stock_prediction_cacheFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter, which stock_prediction_cache to fetch.
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of stock_prediction_caches to fetch.
+     */
+    orderBy?: stock_prediction_cacheOrderByWithRelationInput | stock_prediction_cacheOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for stock_prediction_caches.
+     */
+    cursor?: stock_prediction_cacheWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` stock_prediction_caches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` stock_prediction_caches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of stock_prediction_caches.
+     */
+    distinct?: Stock_prediction_cacheScalarFieldEnum | Stock_prediction_cacheScalarFieldEnum[]
+  }
+
+  /**
+   * stock_prediction_cache findMany
+   */
+  export type stock_prediction_cacheFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter, which stock_prediction_caches to fetch.
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of stock_prediction_caches to fetch.
+     */
+    orderBy?: stock_prediction_cacheOrderByWithRelationInput | stock_prediction_cacheOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing stock_prediction_caches.
+     */
+    cursor?: stock_prediction_cacheWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` stock_prediction_caches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` stock_prediction_caches.
+     */
+    skip?: number
+    distinct?: Stock_prediction_cacheScalarFieldEnum | Stock_prediction_cacheScalarFieldEnum[]
+  }
+
+  /**
+   * stock_prediction_cache create
+   */
+  export type stock_prediction_cacheCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * The data needed to create a stock_prediction_cache.
+     */
+    data: XOR<stock_prediction_cacheCreateInput, stock_prediction_cacheUncheckedCreateInput>
+  }
+
+  /**
+   * stock_prediction_cache createMany
+   */
+  export type stock_prediction_cacheCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many stock_prediction_caches.
+     */
+    data: stock_prediction_cacheCreateManyInput | stock_prediction_cacheCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * stock_prediction_cache createManyAndReturn
+   */
+  export type stock_prediction_cacheCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * The data used to create many stock_prediction_caches.
+     */
+    data: stock_prediction_cacheCreateManyInput | stock_prediction_cacheCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * stock_prediction_cache update
+   */
+  export type stock_prediction_cacheUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * The data needed to update a stock_prediction_cache.
+     */
+    data: XOR<stock_prediction_cacheUpdateInput, stock_prediction_cacheUncheckedUpdateInput>
+    /**
+     * Choose, which stock_prediction_cache to update.
+     */
+    where: stock_prediction_cacheWhereUniqueInput
+  }
+
+  /**
+   * stock_prediction_cache updateMany
+   */
+  export type stock_prediction_cacheUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update stock_prediction_caches.
+     */
+    data: XOR<stock_prediction_cacheUpdateManyMutationInput, stock_prediction_cacheUncheckedUpdateManyInput>
+    /**
+     * Filter which stock_prediction_caches to update
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * Limit how many stock_prediction_caches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * stock_prediction_cache updateManyAndReturn
+   */
+  export type stock_prediction_cacheUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * The data used to update stock_prediction_caches.
+     */
+    data: XOR<stock_prediction_cacheUpdateManyMutationInput, stock_prediction_cacheUncheckedUpdateManyInput>
+    /**
+     * Filter which stock_prediction_caches to update
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * Limit how many stock_prediction_caches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * stock_prediction_cache upsert
+   */
+  export type stock_prediction_cacheUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * The filter to search for the stock_prediction_cache to update in case it exists.
+     */
+    where: stock_prediction_cacheWhereUniqueInput
+    /**
+     * In case the stock_prediction_cache found by the `where` argument doesn't exist, create a new stock_prediction_cache with this data.
+     */
+    create: XOR<stock_prediction_cacheCreateInput, stock_prediction_cacheUncheckedCreateInput>
+    /**
+     * In case the stock_prediction_cache was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<stock_prediction_cacheUpdateInput, stock_prediction_cacheUncheckedUpdateInput>
+  }
+
+  /**
+   * stock_prediction_cache delete
+   */
+  export type stock_prediction_cacheDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+    /**
+     * Filter which stock_prediction_cache to delete.
+     */
+    where: stock_prediction_cacheWhereUniqueInput
+  }
+
+  /**
+   * stock_prediction_cache deleteMany
+   */
+  export type stock_prediction_cacheDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which stock_prediction_caches to delete
+     */
+    where?: stock_prediction_cacheWhereInput
+    /**
+     * Limit how many stock_prediction_caches to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * stock_prediction_cache without action
+   */
+  export type stock_prediction_cacheDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the stock_prediction_cache
+     */
+    select?: stock_prediction_cacheSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the stock_prediction_cache
+     */
+    omit?: stock_prediction_cacheOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model User
    */
 
@@ -16171,6 +17266,18 @@ export namespace Prisma {
   export type Stock_compare_summaryScalarFieldEnum = (typeof Stock_compare_summaryScalarFieldEnum)[keyof typeof Stock_compare_summaryScalarFieldEnum]
 
 
+  export const Stock_prediction_cacheScalarFieldEnum: {
+    id: 'id',
+    ticker: 'ticker',
+    predictionType: 'predictionType',
+    payload: 'payload',
+    generatedAt: 'generatedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type Stock_prediction_cacheScalarFieldEnum = (typeof Stock_prediction_cacheScalarFieldEnum)[keyof typeof Stock_prediction_cacheScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     fullname: 'fullname',
@@ -17144,6 +18251,63 @@ export namespace Prisma {
     models?: JsonWithAggregatesFilter<"stock_compare_summary">
     generatedAt?: DateTimeWithAggregatesFilter<"stock_compare_summary"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"stock_compare_summary"> | Date | string
+  }
+
+  export type stock_prediction_cacheWhereInput = {
+    AND?: stock_prediction_cacheWhereInput | stock_prediction_cacheWhereInput[]
+    OR?: stock_prediction_cacheWhereInput[]
+    NOT?: stock_prediction_cacheWhereInput | stock_prediction_cacheWhereInput[]
+    id?: UuidFilter<"stock_prediction_cache"> | string
+    ticker?: StringFilter<"stock_prediction_cache"> | string
+    predictionType?: StringFilter<"stock_prediction_cache"> | string
+    payload?: JsonFilter<"stock_prediction_cache">
+    generatedAt?: DateTimeFilter<"stock_prediction_cache"> | Date | string
+    createdAt?: DateTimeFilter<"stock_prediction_cache"> | Date | string
+  }
+
+  export type stock_prediction_cacheOrderByWithRelationInput = {
+    id?: SortOrder
+    ticker?: SortOrder
+    predictionType?: SortOrder
+    payload?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type stock_prediction_cacheWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: stock_prediction_cacheWhereInput | stock_prediction_cacheWhereInput[]
+    OR?: stock_prediction_cacheWhereInput[]
+    NOT?: stock_prediction_cacheWhereInput | stock_prediction_cacheWhereInput[]
+    ticker?: StringFilter<"stock_prediction_cache"> | string
+    predictionType?: StringFilter<"stock_prediction_cache"> | string
+    payload?: JsonFilter<"stock_prediction_cache">
+    generatedAt?: DateTimeFilter<"stock_prediction_cache"> | Date | string
+    createdAt?: DateTimeFilter<"stock_prediction_cache"> | Date | string
+  }, "id">
+
+  export type stock_prediction_cacheOrderByWithAggregationInput = {
+    id?: SortOrder
+    ticker?: SortOrder
+    predictionType?: SortOrder
+    payload?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: stock_prediction_cacheCountOrderByAggregateInput
+    _max?: stock_prediction_cacheMaxOrderByAggregateInput
+    _min?: stock_prediction_cacheMinOrderByAggregateInput
+  }
+
+  export type stock_prediction_cacheScalarWhereWithAggregatesInput = {
+    AND?: stock_prediction_cacheScalarWhereWithAggregatesInput | stock_prediction_cacheScalarWhereWithAggregatesInput[]
+    OR?: stock_prediction_cacheScalarWhereWithAggregatesInput[]
+    NOT?: stock_prediction_cacheScalarWhereWithAggregatesInput | stock_prediction_cacheScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"stock_prediction_cache"> | string
+    ticker?: StringWithAggregatesFilter<"stock_prediction_cache"> | string
+    predictionType?: StringWithAggregatesFilter<"stock_prediction_cache"> | string
+    payload?: JsonWithAggregatesFilter<"stock_prediction_cache">
+    generatedAt?: DateTimeWithAggregatesFilter<"stock_prediction_cache"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"stock_prediction_cache"> | Date | string
   }
 
   export type UserWhereInput = {
@@ -18187,6 +19351,69 @@ export namespace Prisma {
     successTickers?: IntFieldUpdateOperationsInput | number
     failedTickers?: IntFieldUpdateOperationsInput | number
     models?: JsonNullValueInput | InputJsonValue
+    generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type stock_prediction_cacheCreateInput = {
+    id?: string
+    ticker: string
+    predictionType: string
+    payload: JsonNullValueInput | InputJsonValue
+    generatedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type stock_prediction_cacheUncheckedCreateInput = {
+    id?: string
+    ticker: string
+    predictionType: string
+    payload: JsonNullValueInput | InputJsonValue
+    generatedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type stock_prediction_cacheUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    predictionType?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type stock_prediction_cacheUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    predictionType?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type stock_prediction_cacheCreateManyInput = {
+    id?: string
+    ticker: string
+    predictionType: string
+    payload: JsonNullValueInput | InputJsonValue
+    generatedAt?: Date | string
+    createdAt?: Date | string
+  }
+
+  export type stock_prediction_cacheUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    predictionType?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type stock_prediction_cacheUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    predictionType?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
     generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19341,6 +20568,31 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedJsonFilter<$PrismaModel>
     _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type stock_prediction_cacheCountOrderByAggregateInput = {
+    id?: SortOrder
+    ticker?: SortOrder
+    predictionType?: SortOrder
+    payload?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type stock_prediction_cacheMaxOrderByAggregateInput = {
+    id?: SortOrder
+    ticker?: SortOrder
+    predictionType?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type stock_prediction_cacheMinOrderByAggregateInput = {
+    id?: SortOrder
+    ticker?: SortOrder
+    predictionType?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type EnumAccountTypeFilter<$PrismaModel = never> = {

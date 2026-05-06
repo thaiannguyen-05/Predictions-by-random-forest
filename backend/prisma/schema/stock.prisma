@@ -30,3 +30,16 @@ model stock_compare_summary {
     @@index([generatedAt(sort: Desc)])
     @@map("stock_compare_summaries")
 }
+
+model stock_prediction_cache {
+    id             String   @id @default(uuid()) @db.Uuid
+    ticker         String
+    predictionType String
+    payload        Json
+    generatedAt    DateTime @default(now()) @db.Timestamptz(6)
+    createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+    @@index([ticker, predictionType, createdAt(sort: Desc)])
+    @@index([predictionType, createdAt(sort: Desc)])
+    @@map("stock_prediction_caches")
+}
