@@ -47,6 +47,7 @@ class StockPredictionTCPServer:
         self.port = port
         self.socket: Optional[socket.socket] = None
         self.prediction_instances: Dict[str, RealTimePrediction] = {}
+        self.training_lock = threading.Lock()
         self.running = False
 
     def get_prediction_instance(self, ticker: str) -> RealTimePrediction:
@@ -155,13 +156,10 @@ class StockPredictionTCPServer:
             # Load model if not trained
             if not predictor.is_trained:
                 if not predictor.load_model():
-                    # Try to train if no model exists
-                    train_success = predictor.train_model()
-                    if not train_success:
-                        return {
-                            "success": False,
-                            "error": f"Model for {ticker} is not trained and training failed",
-                        }
+                    return {
+                        "success": False,
+                        "error": f"Model for {ticker} is not trained",
+                    }
 
             # Make prediction
             result = predictor.predict_next_hours(hours_ahead)
@@ -185,6 +183,11 @@ class StockPredictionTCPServer:
                 "threshold": result.get("threshold"),
                 "predicted_price": result.get("predicted_price"),
                 "hours_ahead": result["hours_ahead"],
+                "is_hourly_model": result.get("is_hourly_model"),
+                "model_horizon": result.get("model_horizon"),
+                "direction_source": result.get("direction_source"),
+                "price_estimate_method": result.get("price_estimate_method"),
+                "model_note": result.get("model_note"),
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -204,13 +207,10 @@ class StockPredictionTCPServer:
             # Load model if not trained
             if not predictor.is_trained:
                 if not predictor.load_model():
-                    # Try to train if no model exists
-                    train_success = predictor.train_model()
-                    if not train_success:
-                        return {
-                            "success": False,
-                            "error": f"Model for {ticker} is not trained and training failed",
-                        }
+                    return {
+                        "success": False,
+                        "error": f"Model for {ticker} is not trained",
+                    }
 
             # Make predictions for 1, 2, 3 hours
             predictions = []
@@ -235,6 +235,11 @@ class StockPredictionTCPServer:
                             "confidence": result["confidence"],
                             "threshold": result.get("threshold"),
                             "prediction_time": result["prediction_time"].isoformat(),
+                            "is_hourly_model": result.get("is_hourly_model"),
+                            "model_horizon": result.get("model_horizon"),
+                            "direction_source": result.get("direction_source"),
+                            "price_estimate_method": result.get("price_estimate_method"),
+                            "model_note": result.get("model_note"),
                         }
                     )
 
@@ -247,6 +252,14 @@ class StockPredictionTCPServer:
                 "current_price": current_price,
                 "current_time": current_time.isoformat() if current_time else None,
                 "predictions": predictions,
+                "is_hourly_model": False,
+                "model_horizon": "next_trading_day",
+                "direction_source": "daily_random_forest_classifier",
+                "price_estimate_method": "volatility_scaled_from_daily_direction",
+                "model_note": (
+                    "Direction is produced by the next-trading-day model; "
+                    "1h/2h/3h prices are volatility-scaled estimates, not hourly model outputs."
+                ),
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -263,7 +276,8 @@ class StockPredictionTCPServer:
 
             predictor = self.get_prediction_instance(ticker)
 
-            # Try to load existing model first
+            # Keep training endpoint fast for the current sync API contract:
+            # if an artifact already exists, load it and report readiness.
             if predictor.load_model():
                 return {
                     "success": True,
@@ -277,10 +291,20 @@ class StockPredictionTCPServer:
                     "timestamp": datetime.now().isoformat(),
                 }
 
-            # Train new model
-            success = predictor.train_model()
-            if not success:
-                return {"success": False, "error": "Failed to train model"}
+            # Train new model only when no artifact exists.
+            acquired = self.training_lock.acquire(blocking=False)
+            if not acquired:
+                return {
+                    "success": False,
+                    "error": "Another training job is already running",
+                }
+
+            try:
+                success = predictor.train_model()
+                if not success:
+                    return {"success": False, "error": "Failed to train model"}
+            finally:
+                self.training_lock.release()
 
             return {
                 "success": True,

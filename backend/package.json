@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:merge": "prisma-import prisma/schema.prisma -o prisma/schema.generated.prisma",
     "prisma:generate": "npm run prisma:merge && prisma generate --schema=prisma/schema.generated.prisma",
-    "prisma:migrate": "npm run prisma:merge && prisma migrate dev --schema=prisma/schema.generated.prisma"
+    "prisma:migrate": "npm run prisma:merge && prisma migrate dev --schema=prisma/schema.generated.prisma",
+    "seed:blog": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@google/gemini-cli": "^0.9.0",

@@ -7,6 +7,7 @@ import StockChart from "@/components/stock/StockChart";
 import KeyStatistics from "@/components/stock/KeyStatistics";
 import PredictionButton from "@/components/stock/PredictionButton";
 import { STOCK_DETAILS, TRAINED_STOCKS } from "../../../../constants/trainedStocks";
+import { FALLBACK_STOCK_QUOTES } from "@/constants/fallbackStockQuotes";
 
 interface StockDetailPageProps {
   params: {
@@ -75,16 +76,15 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
     else setIsRefreshing(true);
 
     try {
+      const normalizedSymbol = symbol.toUpperCase();
+      const fallbackQuote = FALLBACK_STOCK_QUOTES[normalizedSymbol];
       const apiSymbol = formatSymbolForAPI(symbol);
       const priceResponse = await fetch(
         `${API_BASE_URL}/stock/current-price/${apiSymbol}`,
         { cache: "no-store" }
       );
 
-      if (!priceResponse.ok)
-        throw new Error(`Không tìm thấy dữ liệu cho ${symbol}`);
-
-      const priceData = await priceResponse.json();
+      const priceData = priceResponse.ok ? await priceResponse.json() : {};
       const pricePayload = priceData?.data ?? priceData;
 
       const financialResponse = await fetch(
@@ -98,14 +98,18 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
 
       const yahooPrice = toFiniteNumber(financialData?.yahooPrice);
       const fallbackPrice = toFiniteNumber(pricePayload?.price);
-      const canonicalCurrentPrice = yahooPrice ?? fallbackPrice;
+      const canonicalCurrentPrice = yahooPrice ?? fallbackPrice ?? fallbackQuote?.price ?? null;
 
-      const previousClose = toFiniteNumber(financialData?.previousClose);
+      const fallbackPreviousClose =
+        fallbackQuote && fallbackQuote.changePercent !== -100
+          ? fallbackQuote.price / (1 + fallbackQuote.changePercent / 100)
+          : null;
+      const previousClose = toFiniteNumber(financialData?.previousClose) ?? fallbackPreviousClose;
       const openPrice = toFiniteNumber(financialData?.open);
       const highPrice = toFiniteNumber(financialData?.high);
       const lowPrice = toFiniteNumber(financialData?.low);
 
-      const fallbackChangePercent = toFiniteNumber(pricePayload?.change);
+      const fallbackChangePercent = toFiniteNumber(pricePayload?.change) ?? fallbackQuote?.changePercent ?? null;
       const change =
         canonicalCurrentPrice !== null && previousClose !== null
           ? canonicalCurrentPrice - previousClose
@@ -116,14 +120,14 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
           : fallbackChangePercent;
 
 
-      const stockInfo = STOCK_DETAILS[symbol.toUpperCase()] || {
+      const stockInfo = STOCK_DETAILS[normalizedSymbol] || {
         name: `Công ty ${symbol}`,
         sector: "Chưa phân loại",
         marketCap: 0,
       };
 
 
-      const chartCurrentPrice = canonicalCurrentPrice ?? previousClose ?? 0;
+      const chartCurrentPrice = canonicalCurrentPrice ?? previousClose ?? fallbackQuote?.price ?? 0;
 
       let updatedChartData: any[];
       if (isInitialLoad.current) {
@@ -157,7 +161,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ params }) => {
       }
 
       const updatedStockData = {
-        symbol: symbol.toUpperCase(),
+        symbol: normalizedSymbol,
         companyName: stockInfo.name,
         sector: stockInfo.sector,
         currentPrice: canonicalCurrentPrice,

@@ -10,7 +10,7 @@ import pandas as pd
 from core.config import ROLLING_HORIZONS, LAG_PERIODS, RETURN_WINDOWS
 
 # Minimum price change percentage to consider as meaningful signal
-MIN_CHANGE_PCT: float = 0.0  # Giữ toàn bộ data
+MIN_CHANGE_PCT: float = 0.0 
 
 # Default horizon: next-day prediction
 DEFAULT_HORIZON: int = 1

@@ -15,6 +15,7 @@ from core.config import (
     TRADING_HOURS_PER_DAY,
     DEFAULT_HOURLY_PRICE_CHANGE,
     DEFAULT_PROBABILITY_THRESHOLD,
+    DATA_START_DATE,
     FEATURE_THRESHOLD,
     PREDICTION_INTERVALS,
     standardize_ticker,
@@ -73,6 +74,11 @@ class RealTimePrediction:
         self.model = None
         self.selected_predictors: Optional[List[str]] = None
         self.threshold: float = DEFAULT_PROBABILITY_THRESHOLD
+        self.threshold_metrics: Optional[Dict[str, Any]] = None
+        self.best_params: Optional[Dict[str, Any]] = None
+        self.oob_score: Optional[float] = None
+        self.feature_importances: Optional[Dict[str, float]] = None
+        self.selected_feature_importances: Optional[Dict[str, float]] = None
         self.is_trained = False
 
     def get_current_price(self) -> Optional[Dict[str, Any]]:
@@ -195,10 +201,26 @@ class RealTimePrediction:
                 self.selected_predictors,
             )
             self.threshold = threshold_meta["threshold"]
+            self.threshold_metrics = threshold_meta
             
-            # Train model
+            # Train final production model on all available data.
             self.model = create_model()
             self.model.fit(df[self.selected_predictors], df["Target"])
+            self.best_params = {
+                key: self.model.get_params().get(key)
+                for key in [
+                    "n_estimators",
+                    "min_samples_split",
+                    "max_depth",
+                    "min_samples_leaf",
+                    "max_features",
+                ]
+            }
+            self.oob_score = float(getattr(self.model, "oob_score_", 0.0))
+            self.feature_importances = feat_importances.to_dict()
+            self.selected_feature_importances = feat_importances[
+                self.selected_predictors
+            ].to_dict()
             self.is_trained = True
             
             # Lưu model
@@ -220,6 +242,12 @@ class RealTimePrediction:
             "selected_predictors": self.selected_predictors,
             "ticker": self.ticker,
             "threshold": self.threshold,
+            "threshold_metrics": self.threshold_metrics,
+            "best_params": self.best_params,
+            "oob_score": self.oob_score,
+            "feature_importances": self.feature_importances,
+            "selected_feature_importances": self.selected_feature_importances,
+            "data_start_date": DATA_START_DATE,
         }
         
         os.makedirs(os.path.dirname(self.model_file), exist_ok=True)
@@ -245,6 +273,13 @@ class RealTimePrediction:
                 self.selected_predictors = model_data["selected_predictors"]
                 self.threshold = float(
                     model_data.get("threshold", DEFAULT_PROBABILITY_THRESHOLD)
+                )
+                self.threshold_metrics = model_data.get("threshold_metrics")
+                self.best_params = model_data.get("best_params")
+                self.oob_score = model_data.get("oob_score")
+                self.feature_importances = model_data.get("feature_importances")
+                self.selected_feature_importances = model_data.get(
+                    "selected_feature_importances"
                 )
                 self.is_trained = True
                 
@@ -318,6 +353,14 @@ class RealTimePrediction:
                 "predicted_price": predicted_price,
                 "hours_ahead": hours_ahead,
                 "symbol": self.ticker,
+                "is_hourly_model": False,
+                "model_horizon": "next_trading_day",
+                "direction_source": "daily_random_forest_classifier",
+                "price_estimate_method": "volatility_scaled_from_daily_direction",
+                "model_note": (
+                    "Direction is produced by the next-trading-day model; "
+                    "predicted_price is a volatility-scaled estimate for the requested hour."
+                ),
             }
             
         except Exception as e:
@@ -351,7 +394,13 @@ class RealTimePrediction:
         if len(df) <= 1:
             # Fallback với % thay đổi đơn giản
             direction = 1 if prediction == 1 else -1
-            price_change_pct = direction * confidence * DEFAULT_HOURLY_PRICE_CHANGE * hours_ahead
+            effective_hours = min(max(hours_ahead, 1), TRADING_HOURS_PER_DAY)
+            price_change_pct = (
+                direction
+                * confidence
+                * DEFAULT_HOURLY_PRICE_CHANGE
+                * effective_hours
+            )
             return current_price * (1 + price_change_pct)
         
         # Tính volatility từ 20 ngày gần nhất
@@ -364,7 +413,13 @@ class RealTimePrediction:
         
         # Tính % thay đổi
         direction = 1 if prediction == 1 else -1
-        price_change_factor = direction * confidence * hourly_volatility * (hours_ahead ** 0.5)
+        effective_hours = min(max(hours_ahead, 1), TRADING_HOURS_PER_DAY)
+        price_change_factor = (
+            direction
+            * confidence
+            * hourly_volatility
+            * (effective_hours ** 0.5)
+        )
         
         return current_price * (1 + price_change_factor)
 

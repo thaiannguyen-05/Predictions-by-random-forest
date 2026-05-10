@@ -11,6 +11,11 @@ export interface MLServiceResponse {
   time?: string;
   prediction?: PredictionData;
   predictions?: PredictionItem[];
+  is_hourly_model?: boolean;
+  model_horizon?: string;
+  direction_source?: string;
+  price_estimate_method?: string;
+  model_note?: string;
   timestamp?: string;
   metrics?: ModelMetrics;
   trained_models?: number;
@@ -44,6 +49,11 @@ export interface PredictionData {
   confidence?: number;
   predicted_price?: number;
   hours_ahead?: number;
+  is_hourly_model?: boolean;
+  model_horizon?: string;
+  direction_source?: string;
+  price_estimate_method?: string;
+  model_note?: string;
 }
 
 export interface PredictionItem {
@@ -54,6 +64,11 @@ export interface PredictionItem {
   probability: number;
   confidence: number;
   prediction_time: string;
+  is_hourly_model?: boolean;
+  model_horizon?: string;
+  direction_source?: string;
+  price_estimate_method?: string;
+  model_note?: string;
 }
 
 export interface ModelMetrics {

@@ -33,12 +33,14 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {
+    const configuredPort = Number(this.configService.get('ML_SERVICE_PORT'));
+
     this.mlHost =
       this.configService.get<string>('ML_SERVICE_HOST') ||
       ML_SERVICE_CONFIG.DEFAULT_HOST;
-    this.mlPort =
-      this.configService.get<number>('ML_SERVICE_PORT') ||
-      ML_SERVICE_CONFIG.DEFAULT_PORT;
+    this.mlPort = Number.isFinite(configuredPort) && configuredPort > 0
+      ? configuredPort
+      : ML_SERVICE_CONFIG.DEFAULT_PORT;
     this.timeout = ML_SERVICE_CONFIG.TIMEOUT_MS;
   }
 
@@ -435,7 +437,8 @@ export class StockPredictionService implements OnModuleInit, OnModuleDestroy {
         message: response.success
           ? `Model trained successfully for ${ticker}`
           : response.error,
-        features_count: response.metrics?.features_count || 0,
+        features_count:
+          response.features_count ?? response.metrics?.features_count ?? 0,
       };
     } catch (error) {
       const errorMessage =

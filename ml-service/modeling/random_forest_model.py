@@ -9,7 +9,7 @@ from typing import List, Tuple, Optional, Dict, Any
 
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
 from core.config import (
     MODEL_CONFIG,
@@ -100,11 +100,20 @@ def select_threshold_from_probabilities(
         "f1": -1.0,
     }
 
+    def binary_balanced_accuracy(y_true: pd.Series, y_pred: pd.Series) -> float:
+        cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+        supports = cm.sum(axis=1)
+        recalls = []
+        for idx, support in enumerate(supports):
+            if support > 0:
+                recalls.append(float(cm[idx, idx] / support))
+        return float(sum(recalls) / len(recalls)) if recalls else 0.0
+
     for threshold in thresholds:
         preds = (probabilities >= threshold).astype(int)
         metrics = {
             "accuracy": float(accuracy_score(targets, preds)),
-            "balanced_accuracy": float(balanced_accuracy_score(targets, preds)),
+            "balanced_accuracy": binary_balanced_accuracy(targets, preds),
             "f1": float(f1_score(targets, preds, zero_division=0)),
         }
         score = metrics.get(metric, metrics["f1"])

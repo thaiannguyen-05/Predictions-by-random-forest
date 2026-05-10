@@ -46,6 +46,11 @@ class PredictionResult(TypedDict):
     predicted_price: Optional[float]
     hours_ahead: int
     symbol: str
+    is_hourly_model: bool
+    model_horizon: str
+    direction_source: str
+    price_estimate_method: str
+    model_note: str
 
 
 class MultiHourPrediction(TypedDict):
@@ -58,6 +63,11 @@ class MultiHourPrediction(TypedDict):
     confidence: float
     threshold: float
     prediction_time: str  # ISO format
+    is_hourly_model: bool
+    model_horizon: str
+    direction_source: str
+    price_estimate_method: str
+    model_note: str
 
 
 class TCPResponse(TypedDict):

@@ -40,7 +40,7 @@ const coreValues = [
 		icon: <Shield size={24} />,
 		title: "Độ Tin Cậy Cao",
 		description:
-			"Độ chính xác lên đến 94.8% được kiểm chứng qua các bộ dữ liệu lịch sử thực tế",
+			"Độ chính xác khoảng 72% được kiểm chứng qua các bộ dữ liệu lịch sử thực tế",
 		iconBgColor: "bg-green-400/20",
 		iconColor: "text-green-400",
 	},
@@ -70,7 +70,7 @@ const techFeatures = [
 ];
 
 const stats = [
-	{ label: "Độ chính xác", value: "94.8%", icon: <TrendingUp size={20} className="text-brand-orange" /> },
+	{ label: "Độ chính xác", value: "72%", icon: <TrendingUp size={20} className="text-brand-orange" /> },
 	{ label: "Mã cổ phiếu", value: "1,000+", icon: <BarChart3 size={20} className="text-brand-orange" /> },
 	{ label: "Dữ liệu lịch sử", value: "10+ năm", icon: <Brain size={20} className="text-brand-orange" /> },
 	{ label: "Cập nhật", value: "Real-time", icon: <Zap size={20} className="text-brand-orange" /> },
@@ -227,12 +227,12 @@ export default function AboutPage(): React.ReactElement {
 								<Card variant="outline" padding="md" rounded="xl" className="bg-white/5">
 									<div className="flex justify-between items-center mb-2">
 										<span className="text-gray-400 text-sm">Model Accuracy</span>
-										<span className="text-brand-orange font-semibold">94.8%</span>
+										<span className="text-brand-orange font-semibold">72%</span>
 									</div>
 									<div className="h-2 bg-white/10 rounded-full overflow-hidden">
 										<div
 											className="h-full bg-gradient-to-r from-brand-orange to-yellow-500 rounded-full animate-[slideInRight_1s_ease-out]"
-											style={{ width: "94.8%" }}
+											style={{ width: "72%" }}
 										/>
 									</div>
 								</Card>

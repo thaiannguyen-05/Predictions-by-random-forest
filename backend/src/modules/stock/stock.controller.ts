@@ -213,9 +213,9 @@ export class StockController {
 
   @Get('predictions/:ticker')
   @ApiOperation({
-    summary: 'Get stock price predictions (1, 2, 3 hours ahead)',
+    summary: 'Get volatility-scaled 1h/2h/3h price estimates',
     description:
-      'Get stock price predictions for the next 1, 2, and 3 hours using Random Forest ML model',
+      'Return 1h/2h/3h price estimates scaled from a next-trading-day Random Forest direction model. These are not dedicated hourly model outputs.',
   })
   @ApiParam({
     name: 'ticker',
@@ -269,15 +269,23 @@ export class StockController {
       current_price: result.current_price || 0,
       current_time: result.current_time || new Date().toISOString(),
       predictions: result.predictions || [],
+      is_hourly_model: result.is_hourly_model ?? false,
+      model_horizon: result.model_horizon || 'next_trading_day',
+      direction_source:
+        result.direction_source || 'daily_random_forest_classifier',
+      price_estimate_method:
+        result.price_estimate_method ||
+        'volatility_scaled_from_daily_direction',
+      model_note: result.model_note || null,
       timestamp: result.timestamp || Date.now(),
     };
   }
 
   @Get('predictions-next-hours/:ticker')
   @ApiOperation({
-    summary: 'Get stock predictions for next 1, 2, 3 hours',
+    summary: 'Get volatility-scaled next 1, 2, 3 hour estimates',
     description:
-      'Get stock price predictions for the next 1, 2, and 3 hours using Random Forest ML model',
+      'Return 1h/2h/3h price estimates scaled from a next-trading-day Random Forest direction model. These are not dedicated hourly model outputs.',
   })
   @ApiParam({
     name: 'ticker',
@@ -332,6 +340,14 @@ export class StockController {
       current_price: result.current_price || 0,
       current_time: result.current_time || new Date().toISOString(),
       predictions: result.predictions || [],
+      is_hourly_model: result.is_hourly_model ?? false,
+      model_horizon: result.model_horizon || 'next_trading_day',
+      direction_source:
+        result.direction_source || 'daily_random_forest_classifier',
+      price_estimate_method:
+        result.price_estimate_method ||
+        'volatility_scaled_from_daily_direction',
+      model_note: result.model_note || null,
       timestamp: result.timestamp || Date.now(),
     };
   }

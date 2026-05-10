@@ -131,4 +131,27 @@ describe('StockPredictionService', () => {
       expect(result.data[0].marketCap).toBe('100000000000');
     });
   });
+
+  describe('trainModel', () => {
+    it('should preserve top-level features_count returned by ML service', async () => {
+      const sendCommand = jest
+        .spyOn(service as unknown as { sendCommand: jest.Mock }, 'sendCommand')
+        .mockResolvedValue({
+          success: true,
+          ticker: 'FPT',
+          features_count: 12,
+        });
+
+      const result = await service.trainModel('FPT');
+
+      expect(sendCommand).toHaveBeenCalledWith('train_single', {
+        ticker: 'FPT',
+        test_size: 0.2,
+        n_estimators: 100,
+      });
+      expect(result.success).toBe(true);
+      expect(result.features_count).toBe(12);
+      expect(result.message).toBe('Model trained successfully for FPT');
+    });
+  });
 });

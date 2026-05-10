@@ -3,7 +3,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
 	title: "Giới Thiệu | StockDN - Nền Tảng Phân Tích Chứng Khoán AI",
 	description:
-		"Tìm hiểu về StockDN - nền tảng phân tích và dự đoán chứng khoán hàng đầu Việt Nam. Ứng dụng công nghệ AI và thuật toán Random Forest với độ chính xác 94.8%.",
+		"Tìm hiểu về StockDN - nền tảng phân tích và dự đoán chứng khoán hàng đầu Việt Nam. Ứng dụng công nghệ AI và thuật toán Random Forest với độ chính xác khoảng 72%.",
 	keywords: [
 		"StockDN",
 		"phân tích chứng khoán",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: "Giới Thiệu | StockDN - Nền Tảng Phân Tích Chứng Khoán AI",
 		description:
-			"Nền tảng phân tích và dự đoán chứng khoán sử dụng AI với độ chính xác 94.8%. Tham gia cùng 500+ nhà đầu tư tin dùng.",
+			"Nền tảng phân tích và dự đoán chứng khoán sử dụng AI với độ chính xác khoảng 72%. Tham gia cùng 500+ nhà đầu tư tin dùng.",
 		type: "website",
 		locale: "vi_VN",
 		siteName: "StockDN",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: "Giới Thiệu | StockDN",
 		description:
-			"Nền tảng phân tích chứng khoán AI hàng đầu Việt Nam với độ chính xác 94.8%",
+			"Nền tảng phân tích chứng khoán AI hàng đầu Việt Nam với độ chính xác khoảng 72%",
 	},
 	robots: {
 		index: true,

@@ -107,7 +107,7 @@ export default function Home() {
 									<div className="bg-green-500/20 p-2 rounded-lg text-green-400"><ShieldCheck size={20} /></div>
 									<div>
 										<p className="text-xs text-gray-400">Độ chính xác</p>
-										<p className="text-white font-bold">94.8%</p>
+										<p className="text-white font-bold">72%</p>
 									</div>
 								</div>
 							</div>
