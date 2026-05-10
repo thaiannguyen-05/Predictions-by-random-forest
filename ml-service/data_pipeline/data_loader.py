@@ -61,7 +61,7 @@ def load_data(ticker: str, csv_file: Optional[str] = None) -> pd.DataFrame:
             df.to_csv(csv_file)
             logger.info(f"Saved {len(df)} rows to {csv_file}")
 
-        # Lọc dữ liệu từ năm 2015 để tránh dữ liệu quá ít
+        # Lọc dữ liệu theo mốc cấu hình để train nhanh hơn và bám regime gần đây.
         df = df.loc[DATA_START_DATE:].copy()
         
         if df.empty:

@@ -8,21 +8,37 @@ from typing import List
 # Model Configuration
 # ========================
 MODEL_CONFIG = {
-    "n_estimators": 200,
-    "min_samples_split": 50,
+    "n_estimators": 300,
+    "min_samples_split": 30,
+    "min_samples_leaf": 15,
+    "max_depth": 10,
+    "class_weight": "balanced_subsample",
+    "bootstrap": True,
+    "max_samples": None,
+    "n_jobs": -1,
     "random_state": 1,
 }
 
 # Feature selection threshold
-FEATURE_THRESHOLD: float = 0.01
+FEATURE_THRESHOLD: float = 0.005
 
-# RandomForest threshold tuning range
-RF_THRESHOLD_GRID: List[float] = [0.45, 0.5, 0.55, 0.6]
+# Threshold optimization metric for turning probability into TĂNG/GIẢM.
+# Balanced accuracy keeps TĂNG/GIẢM errors closer instead of over-favoring one side.
+THRESHOLD_OPTIMIZATION_METRIC: str = "balanced_accuracy"
 
-# RandomForest lightweight tuning grid
+# RandomForest threshold tuning range (finer granularity)
+RF_THRESHOLD_GRID: List[float] = [
+    0.35, 0.38, 0.40, 0.42, 0.45, 0.48,
+    0.50, 0.52, 0.55, 0.58, 0.60, 0.63, 0.65,
+]
+
+# RandomForest comprehensive tuning grid
 RF_TUNING_GRID = {
-    "n_estimators": [100, 200, 300],
-    "min_samples_split": [10, 30, 50],
+    "n_estimators": [200, 300],
+    "min_samples_split": [20, 30, 50],
+    "max_depth": [5, 8, 10, 12, 15, None],
+    "min_samples_leaf": [5, 10, 15, 20],
+    "max_features": ["sqrt", "log2", 0.3, 0.5],
 }
 
 # Walk-forward evaluation configuration
@@ -32,7 +48,7 @@ EVAL_MIN_TEST_SIZE: int = 5
 EVAL_MAX_TEST_SIZE: int = 20
 
 # Backtest configuration
-BACKTEST_START: int = 50
+BACKTEST_START: int = 250
 BACKTEST_STEP: int = 20
 
 # ========================
@@ -41,8 +57,8 @@ BACKTEST_STEP: int = 20
 DATA_DIR: str = "data"
 MODELS_DIR: str = "models"
 
-# Data start date
-DATA_START_DATE: str = "2015-01-01"
+# Data start date. Recent data keeps training practical and focuses on newer market regimes.
+DATA_START_DATE: str = "2020-01-01"
 
 # Rolling horizons for features
 ROLLING_HORIZONS: List[int] = [2, 5, 30, 90, 250]
@@ -57,6 +73,7 @@ RETURN_WINDOWS: List[int] = [5, 20]
 # Prediction Configuration
 # ========================
 TRADING_HOURS_PER_DAY: int = 8
+DEFAULT_PROBABILITY_THRESHOLD: float = 0.5
 DEFAULT_HOURS_AHEAD: int = 24
 PREDICTION_INTERVALS: List[int] = [1, 2, 3, 24]
 MULTI_HOUR_PREDICTIONS: List[int] = [1, 2, 3]

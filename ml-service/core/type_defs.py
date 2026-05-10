@@ -42,6 +42,7 @@ class PredictionResult(TypedDict):
     prediction: str  # "TĂNG" hoặc "GIẢM"
     probability: float
     confidence: float
+    threshold: float
     predicted_price: Optional[float]
     hours_ahead: int
     symbol: str
@@ -55,6 +56,7 @@ class MultiHourPrediction(TypedDict):
     prediction: str
     probability: float
     confidence: float
+    threshold: float
     prediction_time: str  # ISO format
 
 

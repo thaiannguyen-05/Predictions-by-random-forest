@@ -277,8 +277,9 @@ Luồng:
 3. Lấy dòng mới nhất theo `selected_predictors`.
 4. `predict_proba` để lấy xác suất tăng (`probability`).
 5. Quy đổi nhãn dự đoán:
-   - `>= 0.5` -> `TĂNG`
-   - `< 0.5` -> `GIẢM`
+   - `>= threshold` -> `TĂNG`
+   - `< threshold` -> `GIẢM`
+   - `threshold` được tune theo validation cho từng ticker khi train, mặc định tối ưu F1 của class `TĂNG` để tránh ngưỡng hiếm khi phát tín hiệu tăng, rồi lưu trong file model.
 6. `confidence = max(prob, 1 - prob)`.
 7. Lấy `current_price` từ `history(period="1d", interval="1m")`.
 8. Tính `predicted_price` bằng heuristic volatility.

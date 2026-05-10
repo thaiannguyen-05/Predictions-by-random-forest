@@ -13,6 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from core.config import (
     MODEL_CONFIG,
     FEATURE_THRESHOLD,
+    DEFAULT_PROBABILITY_THRESHOLD,
     BACKTEST_START,
     BACKTEST_STEP,
     MODELS_DIR,
@@ -28,6 +29,8 @@ logger = logging.getLogger(__name__)
 def create_model() -> DecisionTreeClassifier:
     return DecisionTreeClassifier(
         min_samples_split=MODEL_CONFIG["min_samples_split"],
+        min_samples_leaf=MODEL_CONFIG["min_samples_leaf"],
+        max_depth=MODEL_CONFIG["max_depth"],
         random_state=MODEL_CONFIG["random_state"],
     )
 
@@ -56,8 +59,8 @@ def predict(
     # Dự đoán xác suất cổ phiếu tăng
     preds_proba = model.predict_proba(test[predictors])[:, 1]
     
-    # Quy đổi về nhãn: >= 0.5 → tăng
-    preds = (preds_proba >= 0.5).astype(int)
+    # Quy đổi về nhãn theo ngưỡng mặc định.
+    preds = (preds_proba >= DEFAULT_PROBABILITY_THRESHOLD).astype(int)
     
     return pd.Series(preds, index=test.index, name="Predictions")
 

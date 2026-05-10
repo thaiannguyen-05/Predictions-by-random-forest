@@ -353,13 +353,21 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
                 volatility = 0.01
 
             val_size = max(5, min(test_size, int(len(train_df) * 0.2)))
-            tuning_train_df = train_df.iloc[:-val_size] if len(train_df) > val_size else train_df
-            tuning_val_df = train_df.iloc[-val_size:] if len(train_df) > val_size else test_df
+            val_gap = max(3, test_size // 4)  # gap giữa val và test để tránh temporal autocorrelation
+
+            if len(train_df) > val_size + val_gap:
+                tuning_train_df = train_df.iloc[:-(val_size + val_gap)]
+                tuning_val_df = train_df.iloc[-(val_size + val_gap):-val_gap]
+            else:
+                tuning_train_df = train_df.iloc[:-val_size] if len(train_df) > val_size else train_df
+                tuning_val_df = train_df.iloc[-val_size:] if len(train_df) > val_size else test_df
 
             for model_type, (create_model_fn, select_features_fn) in MODEL_REGISTRY.items():
                 try:
+                    # Feature selection trên tuning_train_df (không dùng toàn bộ train_df)
+                    selection_df = tuning_train_df if not tuning_train_df.empty else train_df
                     selected_predictors, _ = select_features_fn(
-                        train_df, predictors, threshold=FEATURE_THRESHOLD
+                        selection_df, predictors, threshold=FEATURE_THRESHOLD
                     )
                     if not selected_predictors:
                         selected_predictors = predictors
@@ -399,7 +407,7 @@ def evaluate_models(ticker: str, recent_days: int = 365) -> Dict[str, Any]:
                         prediction_val = int(prob >= threshold)
                         direction = 1 if prediction_val == 1 else -1
                         confidence = max(prob, 1 - prob)
-                        price_change_factor = direction * confidence * volatility * 2.0
+                        price_change_factor = direction * confidence * volatility
                         pred_pr = prev_prices[i] * (1 + price_change_factor)
                         predicted_prices.append(pred_pr)
 

@@ -12,6 +12,7 @@ def create_model() -> HistGradientBoostingClassifier:
     return HistGradientBoostingClassifier(
         max_iter=200,
         learning_rate=0.05,
-        min_samples_leaf=MODEL_CONFIG["min_samples_split"],
+        min_samples_leaf=MODEL_CONFIG["min_samples_leaf"],
+        max_depth=MODEL_CONFIG["max_depth"],
         random_state=MODEL_CONFIG["random_state"],
     )

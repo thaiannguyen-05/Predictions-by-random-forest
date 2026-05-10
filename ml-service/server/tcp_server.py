@@ -182,6 +182,7 @@ class StockPredictionTCPServer:
                 "prediction": result["prediction"],
                 "probability": result["probability"],
                 "confidence": result["confidence"],
+                "threshold": result.get("threshold"),
                 "predicted_price": result.get("predicted_price"),
                 "hours_ahead": result["hours_ahead"],
                 "timestamp": datetime.now().isoformat(),
@@ -232,6 +233,7 @@ class StockPredictionTCPServer:
                             "prediction": result["prediction"],
                             "probability": result["probability"],
                             "confidence": result["confidence"],
+                            "threshold": result.get("threshold"),
                             "prediction_time": result["prediction_time"].isoformat(),
                         }
                     )

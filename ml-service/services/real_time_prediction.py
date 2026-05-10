@@ -14,6 +14,8 @@ import yfinance as yf
 from core.config import (
     TRADING_HOURS_PER_DAY,
     DEFAULT_HOURLY_PRICE_CHANGE,
+    DEFAULT_PROBABILITY_THRESHOLD,
+    FEATURE_THRESHOLD,
     PREDICTION_INTERVALS,
     standardize_ticker,
     get_csv_path,
@@ -21,7 +23,12 @@ from core.config import (
 )
 from data_pipeline.data_loader import load_data
 from data_pipeline.features import add_features
-from modeling.random_forest_model import create_model, select_features
+from modeling.random_forest_model import (
+    create_model,
+    positive_class_probability,
+    select_features,
+    tune_threshold_with_validation,
+)
 from core.exceptions import (
     ModelNotTrainedException,
     PredictionException,
@@ -65,6 +72,7 @@ class RealTimePrediction:
         self.model_file = model_file or get_model_path(self.ticker)
         self.model = None
         self.selected_predictors: Optional[List[str]] = None
+        self.threshold: float = DEFAULT_PROBABILITY_THRESHOLD
         self.is_trained = False
 
     def get_current_price(self) -> Optional[Dict[str, Any]]:
@@ -170,10 +178,23 @@ class RealTimePrediction:
             # Sinh features
             df, predictors = add_features(df)
             
+            split_idx = int(len(df) * 0.8)
+            tuning_train_df = df.iloc[:split_idx].copy()
+            tuning_val_df = df.iloc[split_idx:].copy()
+
             # Chọn features quan trọng
             self.selected_predictors, feat_importances = select_features(
-                df, predictors, threshold=0.01
+                tuning_train_df, predictors, threshold=FEATURE_THRESHOLD
             )
+            if not self.selected_predictors:
+                self.selected_predictors = predictors
+
+            threshold_meta = tune_threshold_with_validation(
+                tuning_train_df,
+                tuning_val_df,
+                self.selected_predictors,
+            )
+            self.threshold = threshold_meta["threshold"]
             
             # Train model
             self.model = create_model()
@@ -198,6 +219,7 @@ class RealTimePrediction:
             "model": self.model,
             "selected_predictors": self.selected_predictors,
             "ticker": self.ticker,
+            "threshold": self.threshold,
         }
         
         os.makedirs(os.path.dirname(self.model_file), exist_ok=True)
@@ -221,6 +243,9 @@ class RealTimePrediction:
                 
                 self.model = model_data["model"]
                 self.selected_predictors = model_data["selected_predictors"]
+                self.threshold = float(
+                    model_data.get("threshold", DEFAULT_PROBABILITY_THRESHOLD)
+                )
                 self.is_trained = True
                 
                 logger.info(f"Loaded model from {self.model_file}")
@@ -261,8 +286,10 @@ class RealTimePrediction:
             latest_data = df[self.selected_predictors].iloc[-1:]
             
             # Dự đoán
-            prediction_prob = self.model.predict_proba(latest_data)[0][1]
-            prediction = int(prediction_prob >= 0.5)
+            prediction_prob = float(
+                positive_class_probability(self.model, latest_data).iloc[0]
+            )
+            prediction = int(prediction_prob >= self.threshold)
             
             # Lấy giá hiện tại
             current_info = self.get_current_price()
@@ -287,6 +314,7 @@ class RealTimePrediction:
                 "prediction": "TĂNG" if prediction == 1 else "GIẢM",
                 "probability": prediction_prob,
                 "confidence": confidence,
+                "threshold": self.threshold,
                 "predicted_price": predicted_price,
                 "hours_ahead": hours_ahead,
                 "symbol": self.ticker,

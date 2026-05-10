@@ -1,6 +1,6 @@
 # Chi tiết cách tính `prediction_prob`, `prediction`, `confidence`, `predicted_price`
 
-Tài liệu này mô tả đúng theo code hiện tại trong `ml-service/real_time_prediction.py` và `ml-service/features.py`.
+Tài liệu này mô tả đúng theo code hiện tại trong `ml-service/services/real_time_prediction.py` và `ml-service/data_pipeline/features.py`.
 
 ## 1. Đầu vào trước khi dự đoán
 
@@ -43,16 +43,18 @@ Ví dụ:
 Code:
 
 ```python
-prediction = int(prediction_prob >= 0.5)
+prediction = int(prediction_prob >= threshold)
 ```
 
 Ý nghĩa:
-- Nếu xác suất tăng >= 0.5 thì dự đoán là tăng (`1`).
+- `threshold` được tune theo validation khi train từng ticker, mặc định tối ưu F1 của class `TĂNG` để tránh ngưỡng hiếm khi phát tín hiệu tăng, và được lưu trong file model `.pkl`.
+- Nếu model cũ chưa có `threshold`, hệ thống fallback về `0.5`.
+- Nếu xác suất tăng >= `threshold` thì dự đoán là tăng (`1`).
 - Ngược lại dự đoán là giảm (`0`).
 
 Ví dụ:
-- `prediction_prob = 0.68` -> `prediction = 1` (TĂNG).
-- `prediction_prob = 0.41` -> `prediction = 0` (GIẢM).
+- `prediction_prob = 0.68`, `threshold = 0.60` -> `prediction = 1` (TĂNG).
+- `prediction_prob = 0.55`, `threshold = 0.60` -> `prediction = 0` (GIẢM).
 
 ## 4. Tính `confidence` (độ tin tưởng)
 
@@ -65,7 +67,7 @@ confidence = max(prediction_prob, 1 - prediction_prob)
 Ý nghĩa:
 - Độ tin tưởng là xác suất của lớp được chọn (lớn hơn giữa tăng và giảm).
 - Luôn nằm trong đoạn `[0.5, 1.0]`.
-- Càng xa mốc `0.5` thì model càng tự tin.
+- Càng xa vùng lưỡng lự quanh `0.5` thì xác suất lớp càng rõ ràng.
 
 Ví dụ:
 - `prediction_prob = 0.68` -> `confidence = max(0.68, 0.32) = 0.68`.
